@@ -356,27 +356,44 @@ class Trainer(object):
 
     @torch.no_grad()
     def get_covar_metadata(self, teacher_logits, valid_mask, epsilon=1e-8):
+        # align mask spatial size to teacher logits
+        _, _, ht, wt = teacher_logits.shape
+        if valid_mask.shape[-2:] != (ht, wt):
+            vm = valid_mask.float().unsqueeze(1)
+            vm = F.interpolate(vm, size=(ht, wt), mode='nearest')
+            valid_mask_resized = (vm.squeeze(1) > 0.5)
+        else:
+            valid_mask_resized = valid_mask
+
         prob = F.softmax(teacher_logits, dim=1)
         num_classes = prob.size(1)
         max_confidence, scaled_residual_variance = get_max_confidence_and_residual_variance(
-            prob, valid_mask, num_classes, epsilon=epsilon)
+            prob, valid_mask_resized, num_classes, epsilon=epsilon)
 
-        mask_high = self.split_quality(max_confidence, scaled_residual_variance, valid_mask)
+        mask_high = self.split_quality(max_confidence, scaled_residual_variance, valid_mask_resized)
 
         temp_map_base = self.args.covar_temp_base + self.args.covar_temp_alpha * scaled_residual_variance
         temp_map = torch.clamp(temp_map_base, min=1e-4)
         
         # record temperature stats for logging/plotting
-        temp_mean = temp_map[valid_mask].mean().item() if valid_mask.any() else temp_map.mean().item()
-        temp_max = temp_map[valid_mask].max().item() if valid_mask.any() else temp_map.max().item()
-        temp_min = temp_map[valid_mask].min().item() if valid_mask.any() else temp_map.min().item()
+        if valid_mask_resized.any():
+            temp_valid = temp_map[valid_mask_resized]
+            temp_mean = temp_valid.mean().item()
+            temp_max = temp_valid.max().item()
+            temp_min = temp_valid.min().item()
+        else:
+            temp_mean = temp_map.mean().item()
+            temp_max = temp_map.max().item()
+            temp_min = temp_map.min().item()
         self.temp_history.append((temp_mean, temp_min, temp_max))
 
-        return temp_map, mask_high
+        return temp_map, mask_high, valid_mask_resized
 
     def covar_temperature_kd_loss(self, student_logits, teacher_logits, temperature_map, valid_mask, epsilon=1e-8):
-        s_log_prob = F.log_softmax(student_logits / temperature_map, dim=1)
-        t_prob = F.softmax(teacher_logits / temperature_map, dim=1)
+        # Broadcast per-pixel temperature across channel dimension
+        temp = temperature_map.unsqueeze(1)
+        s_log_prob = F.log_softmax(student_logits / temp, dim=1)
+        t_prob = F.softmax(teacher_logits / temp, dim=1)
 
         kd_map = F.kl_div(s_log_prob, t_prob, reduction='none').sum(dim=1)
         denom = valid_mask.sum().clamp_min(1)
@@ -406,7 +423,7 @@ class Trainer(object):
             if self.args.use_covar and self.args.lambda_kd != 0.:
                 with torch.no_grad():
                     valid_mask = (targets != self.args.ignore_label)
-                    temperature_map, _ = self.get_covar_metadata(t_outputs[0], valid_mask)
+                    temperature_map, _, valid_mask_resized = self.get_covar_metadata(t_outputs[0], valid_mask)
             
             if self.args.aux:
                 task_loss = self.criterion(s_outputs[0], targets) + 0.4 * self.criterion(s_outputs[1], targets)
@@ -420,7 +437,7 @@ class Trainer(object):
             if self.args.lambda_kd != 0.:
                 if self.args.use_covar and temperature_map is not None:
                     kd_loss = self.args.lambda_kd * self.covar_temperature_kd_loss(
-                        s_outputs[0], t_outputs[0], temperature_map, valid_mask)
+                        s_outputs[0], t_outputs[0], temperature_map, valid_mask_resized)
                 else:
                     kd_loss = self.args.lambda_kd * self.criterion_kd(s_outputs[0], t_outputs[0])
 
@@ -561,7 +578,11 @@ class Trainer(object):
     def save_temperature_curve(self):
         if not self.temp_history:
             return
-        import matplotlib.pyplot as plt
+        try:
+            import matplotlib.pyplot as plt
+        except Exception as e:
+            logger.info(f"Skipping temperature curve plot (matplotlib unavailable): {e}")
+            return
         temps = torch.tensor(self.temp_history)
         iters = list(range(1, temps.size(0)+1))
         plt.figure()
