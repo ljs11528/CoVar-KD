@@ -1,0 +1,30 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Logs & outputs
+logs/
+outputs/
+runs/
+
+# Datasets & large assets
+data/
+dataset/VOCAug/
+figures/
+
+# Model weights & artifacts
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.npz
+*.npy
+
+# VSCode
+.vscode/
