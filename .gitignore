@@ -25,6 +25,8 @@ figures/
 *.onnx
 *.npz
 *.npy
+*.jpg
+*.png
 
 # VSCode
 .vscode/
