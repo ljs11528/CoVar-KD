@@ -118,27 +118,4 @@ You can zip the resulting images and submit it to the [Cityscapes test server](h
 | COCO-Stuff-164K |![top1](figures/000000025394.png) |![top1](figures/000000025394.jpg) |[sh](https://github.com/winycg/CIRKD/tree/main/train_scripts/visualize/coco_stuff_164k.sh)|
 
 
-## Citation
-We would appreciate it if you could give this repo a star or cite our paper!
-```
-@inproceedings{yang2022cross,
-  title={Cross-image relational knowledge distillation for semantic segmentation},
-  author={Yang, Chuanguang and Zhou, Helong and An, Zhulin and Jiang, Xue and Xu, Yongjun and Zhang, Qian},
-  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
-  pages={12319--12328},
-  year={2022}
-}
-
-@article{yang2023online,
-    title={CIRKDV2: Cross-Image Relational Knowledge Distillation with Contextual Modeling for Efficient Semantic Segmentation},
-    author={Yang, Chuanguang and Wang, Yu and Yu, Chengqing and Yu, Xinqiang and Feng, Weilun and Li, Yuqi and An, Zhulin and Huang, Libo and Diao, Boyu and Wang, Fei and Zhuang, Fuzhen and Xu, Yongjun and Tian, Yingli and Huang, Tingwen and Song, Yongduan},
-    journal={Technical Report},
-    pages={1--17},
-    year={2025}
-}
-
-
-```
-
-
 

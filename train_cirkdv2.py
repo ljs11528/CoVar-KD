@@ -122,6 +122,8 @@ def parse_args():
                         help='per iters to save')
     parser.add_argument('--val-per-iters', type=int, default=800,
                         help='per iters to val')
+    parser.add_argument('--topk-checkpoints', type=int, default=5,
+                        help='keep top-K checkpoints by validation mIoU')
     parser.add_argument('--teacher-pretrained-base', type=str, default='None',
                         help='pretrained backbone')
     parser.add_argument('--teacher-pretrained', type=str, default='None',
@@ -313,6 +315,9 @@ class Trainer(object):
         self.best_pred = 0.0
         # track temperature statistics for logging and plotting
         self.temp_history = []
+        # track top-K checkpoints (mIoU, filepath)
+        self.topk_checkpoints = []
+        self.topk_k = args.topk_checkpoints
 
     def adjust_lr(self, base_lr, iter, max_iter, power):
         cur_lr = base_lr*((1-float(iter)/max_iter)**(power))
@@ -487,14 +492,20 @@ class Trainer(object):
             eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
 
             if iteration % log_per_iters == 0 and save_to_disk:
+                t_info = ""
                 if self.args.use_covar and self.temp_history:
                     t_mean, t_min, t_max = self.temp_history[-1]
-                    logger.info(f"Temp stats -> mean: {t_mean:.4f}, min: {t_min:.4f}, max: {t_max:.4f}")
+                    if len(self.temp_history) >= 2:
+                        prev_mean = self.temp_history[-2][0]
+                        d_mean = t_mean - prev_mean
+                        t_info = f" || T_mean: {t_mean:.4f} (d{d_mean:+.4f}) || T_min: {t_min:.4f} || T_max: {t_max:.4f}"
+                    else:
+                        t_info = f" || T_mean: {t_mean:.4f} || T_min: {t_min:.4f} || T_max: {t_max:.4f}"
                 logger.info(
                     "Iters: {:d}/{:d} || Lr: {:.6f} || Task Loss: {:.4f} || KD Loss: {:.4f} " \
                     "|| Mini-batch p2p Loss: {:.4f} || Memory p2p Loss: {:.4f} || Memory p2r Loss: {:.4f} " \
                     "|| Mini-batch c2c Loss: {:.4f} || Memory c2c Loss: {:.4f} || Channel MSE Loss: {:.4f} " \
-                    "|| Fitnet Loss: {:.4f} " \
+                    "|| Fitnet Loss: {:.4f}{} " \
                     "|| Cost Time: {} || Estimated Time: {}".format(
                         iteration, args.max_iterations, self.optimizer.param_groups[0]['lr'], task_losses_reduced.item(),
                         kd_losses_reduced.item(), 
@@ -504,7 +515,7 @@ class Trainer(object):
                         minibatch_channel_contrast_loss_reduced.item(),
                         memory_channel_contrast_loss_reduced.item(),
                         channel_mse_loss_reduced.item(),
-                        fitnet_loss_reduced.item(),
+                        fitnet_loss_reduced.item(), t_info,
                         str(datetime.timedelta(seconds=int(time.time() - start_time))), eta_string))
 
             if iteration % save_per_iters == 0 and save_to_disk:
@@ -573,7 +584,34 @@ class Trainer(object):
             self.best_pred = new_pred
         if (args.distributed is not True) or (args.distributed and args.local_rank == 0):
             save_checkpoint(self.s_model, self.args, is_best)
+            # maintain top-K by mIoU
+            self._maybe_save_topk(new_pred)
         synchronize()
+
+    def _maybe_save_topk(self, score):
+        try:
+            directory = os.path.expanduser(self.args.save_dir)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+            # save with mIoU in filename
+            filename = 'kd_{}_{}_{}_miou-{:.4f}.pth'.format(self.args.student_model, self.args.student_backbone, self.args.dataset, score)
+            path = os.path.join(directory, filename)
+            model = self.s_model
+            if self.args.distributed:
+                model = model.module
+            torch.save(model.state_dict(), path)
+            # update list and prune
+            self.topk_checkpoints.append((score, path))
+            self.topk_checkpoints.sort(key=lambda x: x[0], reverse=True)
+            if len(self.topk_checkpoints) > self.topk_k:
+                drop_score, drop_path = self.topk_checkpoints.pop()
+                try:
+                    if os.path.exists(drop_path):
+                        os.remove(drop_path)
+                except Exception:
+                    pass
+        except Exception as e:
+            logger.info(f"Top-K checkpoint save skipped: {e}")
 
     def save_temperature_curve(self):
         if not self.temp_history:
