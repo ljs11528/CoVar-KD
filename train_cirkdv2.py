@@ -90,7 +90,7 @@ def parse_args():
                         help='enable CoVar weighting on teacher outputs')
     parser.add_argument('--covar-temp-base', type=float, default=1.0,
                         help='base temperature T0 for dynamic CoVar KD')
-    parser.add_argument('--covar-temp-alpha', type=float, default=1.0,
+    parser.add_argument('--covar-temp-alpha', type=float, default=0.5,
                         help='alpha for temperature ramp T(x)=T0+alpha*g(C_T)*v_T')
     
     parser.add_argument("--lambda-kd", type=float, default=1., help="lambda_kd")
@@ -378,6 +378,7 @@ class Trainer(object):
         mask_high = self.split_quality(max_confidence, scaled_residual_variance, valid_mask_resized)
 
         temp_map_base = self.args.covar_temp_base + self.args.covar_temp_alpha * scaled_residual_variance
+        temp_map_base = torch.clamp(temp_map_base, max=2.5)
         temp_map = torch.clamp(temp_map_base, min=1e-4)
         
         # record temperature stats for logging/plotting
