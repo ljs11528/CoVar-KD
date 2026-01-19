@@ -91,7 +91,13 @@ def parse_args():
     parser.add_argument('--covar-temp-base', type=float, default=1.0,
                         help='base temperature T0 for dynamic CoVar KD')
     parser.add_argument('--covar-temp-alpha', type=float, default=0.5,
-                        help='alpha for temperature ramp T(x)=T0+alpha*g(C_T)*v_T')
+                        help='alpha for temperature ramp T(x)=ΔT(x)=α⋅tanh(β⋅r~(x))')
+    parser.add_argument('--covar-temp-beta', type=float, default=0.2,
+                        help='beta for temperature ramp T(x)=ΔT(x)=α⋅tanh(β⋅r~(x))')
+    parser.add_argument('--covar-temp-min', type=float, default=0.8,
+                        help='minimum temperature for dynamic CoVar KD')
+    parser.add_argument('--covar-temp-max', type=float, default=2.0,
+                        help='maximum temperature for dynamic CoVar KD')
     
     parser.add_argument("--lambda-kd", type=float, default=1., help="lambda_kd")
     parser.add_argument("--lambda-fitnet", type=float, default=0., help="lambda_fitnet")
@@ -361,7 +367,7 @@ class Trainer(object):
 
     @torch.no_grad()
     def get_covar_metadata(self, teacher_logits, valid_mask, epsilon=1e-8):
-        # align mask spatial size to teacher logits
+        # --- align mask spatial size ---
         _, _, ht, wt = teacher_logits.shape
         if valid_mask.shape[-2:] != (ht, wt):
             vm = valid_mask.float().unsqueeze(1)
@@ -370,18 +376,51 @@ class Trainer(object):
         else:
             valid_mask_resized = valid_mask
 
+        # --- teacher prob ---
         prob = F.softmax(teacher_logits, dim=1)
         num_classes = prob.size(1)
-        max_confidence, scaled_residual_variance = get_max_confidence_and_residual_variance(
-            prob, valid_mask_resized, num_classes, epsilon=epsilon)
 
-        mask_high = self.split_quality(max_confidence, scaled_residual_variance, valid_mask_resized)
+        # --- MC & RCV ---
+        max_confidence, scaled_residual_variance = \
+            get_max_confidence_and_residual_variance(
+                prob, valid_mask_resized, num_classes, epsilon=epsilon
+            )
 
-        temp_map_base = self.args.covar_temp_base + self.args.covar_temp_alpha * scaled_residual_variance
-        temp_map_base = torch.clamp(temp_map_base, max=2.5)
-        temp_map = torch.clamp(temp_map_base, min=1e-4)
-        
-        # record temperature stats for logging/plotting
+        # --- optional: still keep hard split for analysis / ablation ---
+        mask_high = self.split_quality(
+            max_confidence, scaled_residual_variance, valid_mask_resized
+        )
+
+        # ===============================
+        # Core: symmetric temperature map
+        # ===============================
+
+        r = scaled_residual_variance  # r(x) = g(CT) * vT
+
+        if valid_mask_resized.any():
+            r_valid = r[valid_mask_resized]
+            r_mean = r_valid.mean()
+        else:
+            r_mean = r.mean()
+
+        # zero-mean reliability deviation
+        r_centered = r - r_mean
+
+        # smooth, bounded temperature perturbation
+        alpha = self.args.covar_temp_alpha   # e.g. 0.5
+        beta  = self.args.covar_temp_beta    # e.g. 0.2
+
+        delta_T = alpha * torch.tanh(beta * r_centered)
+
+        # base temperature = 1
+        temp_map = 1.0 + delta_T
+
+        # optional symmetric clamp
+        T_min = getattr(self.args, "covar_temp_min", 0.8)
+        T_max = getattr(self.args, "covar_temp_max", 2.0)
+        temp_map = torch.clamp(temp_map, min=T_min, max=T_max)
+
+        # --- logging ---
         if valid_mask_resized.any():
             temp_valid = temp_map[valid_mask_resized]
             temp_mean = temp_valid.mean().item()
@@ -391,9 +430,11 @@ class Trainer(object):
             temp_mean = temp_map.mean().item()
             temp_max = temp_map.max().item()
             temp_min = temp_map.min().item()
+
         self.temp_history.append((temp_mean, temp_min, temp_max))
 
         return temp_map, mask_high, valid_mask_resized
+
 
     def covar_temperature_kd_loss(self, student_logits, teacher_logits, temperature_map, valid_mask, epsilon=1e-8):
         # Broadcast per-pixel temperature across channel dimension
@@ -635,6 +676,24 @@ class Trainer(object):
         plt.savefig(out_path, dpi=200, bbox_inches='tight')
         plt.close()
         logger.info(f"Saved temperature curve to {out_path}")
+
+        # Epoch-level diagnostic (mean T per epoch chunk). Epoch here is approximated by val_per_iters.
+        epoch_size = max(self.args.val_per_iters, 1)
+        epoch_means = []
+        t_mean_series = temps[:,0]
+        for i in range(0, t_mean_series.numel(), epoch_size):
+            chunk = t_mean_series[i:i+epoch_size]
+            epoch_means.append(chunk.mean().item())
+        if epoch_means:
+            plt.figure()
+            plt.plot(range(1, len(epoch_means)+1), epoch_means, marker='o')
+            plt.xlabel('Epoch (chunked by val_per_iters)')
+            plt.ylabel('Temperature (mean)')
+            plt.title('Epoch-wise Temperature (mean of temp_map)')
+            out_path_epoch = os.path.join(self.args.save_dir, 'temperature_curve_epoch.png')
+            plt.savefig(out_path_epoch, dpi=200, bbox_inches='tight')
+            plt.close()
+            logger.info(f"Saved epoch-wise temperature curve to {out_path_epoch}")
 
 
 def save_checkpoint(model, args, is_best=False):
