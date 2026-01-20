@@ -92,7 +92,7 @@ def parse_args():
                         help='base temperature T0 for dynamic CoVar KD')
     parser.add_argument('--covar-temp-alpha', type=float, default=0.5,
                         help='alpha for temperature ramp T(x)=ΔT(x)=α⋅tanh(β⋅r~(x))')
-    parser.add_argument('--covar-temp-beta', type=float, default=0.2,
+    parser.add_argument('--covar-temp-beta', type=float, default=0.5,
                         help='beta for temperature ramp T(x)=ΔT(x)=α⋅tanh(β⋅r~(x))')
     parser.add_argument('--covar-temp-min', type=float, default=0.8,
                         help='minimum temperature for dynamic CoVar KD')
