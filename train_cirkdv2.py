@@ -408,10 +408,17 @@ class Trainer(object):
 
         # smooth, bounded temperature perturbation
         alpha = self.args.covar_temp_alpha   # e.g. 0.5
-        beta  = self.args.covar_temp_beta    # e.g. 0.2
+        beta  = self.args.covar_temp_beta    # e.g. 0.5
 
-        delta_T = alpha * torch.tanh(beta * r_centered)
+        raw_delta = torch.tanh(beta * r_centered)
+        # ===== 显式零均值约束 =====
+        if valid_mask_resized.any():
+            raw_delta_valid = raw_delta[valid_mask_resized]
+            raw_delta = raw_delta - raw_delta_valid.mean()
+        else:
+            raw_delta = raw_delta - raw_delta.mean()
 
+        delta_T = alpha * raw_delta
         # base temperature = 1
         temp_map = 1.0 + delta_T
 
