@@ -91,9 +91,7 @@ def parse_args():
     parser.add_argument('--covar-temp-base', type=float, default=1.0,
                         help='base temperature T0 for dynamic CoVar KD')
     parser.add_argument('--covar-temp-alpha', type=float, default=0.5,
-                        help='alpha for temperature ramp T(x)=ΔT(x)=α⋅tanh(β⋅r~(x))')
-    parser.add_argument('--covar-temp-beta', type=float, default=0.5,
-                        help='beta for temperature ramp T(x)=ΔT(x)=α⋅tanh(β⋅r~(x))')
+                        help='alpha for temperature ramp T(x)=ΔT(x)=1+α⋅sqrt(r~(x))')
     parser.add_argument('--covar-temp-min', type=float, default=0.8,
                         help='minimum temperature for dynamic CoVar KD')
     parser.add_argument('--covar-temp-max', type=float, default=2.0,
@@ -367,7 +365,6 @@ class Trainer(object):
 
     @torch.no_grad()
     def get_covar_metadata(self, teacher_logits, valid_mask, epsilon=1e-8):
-        # --- align mask spatial size ---
         _, _, ht, wt = teacher_logits.shape
         if valid_mask.shape[-2:] != (ht, wt):
             vm = valid_mask.float().unsqueeze(1)
@@ -376,26 +373,23 @@ class Trainer(object):
         else:
             valid_mask_resized = valid_mask
 
-        # --- teacher prob ---
         prob = F.softmax(teacher_logits, dim=1)
         num_classes = prob.size(1)
 
-        # --- MC & RCV ---
         max_confidence, scaled_residual_variance = \
             get_max_confidence_and_residual_variance(
                 prob, valid_mask_resized, num_classes, epsilon=epsilon
             )
 
-        # --- optional: still keep hard split for analysis / ablation ---
         mask_high = self.split_quality(
             max_confidence, scaled_residual_variance, valid_mask_resized
         )
 
-        # ===============================
-        # Core: symmetric temperature map
-        # ===============================
+        # ==========================================
+        # NEW: sqrt-reliability temperature (theory)
+        # ==========================================
 
-        r = scaled_residual_variance  # r(x) = g(CT) * vT
+        r = scaled_residual_variance  # r(x)
 
         if valid_mask_resized.any():
             r_valid = r[valid_mask_resized]
@@ -403,31 +397,34 @@ class Trainer(object):
         else:
             r_mean = r.mean()
 
-        # zero-mean reliability deviation
-        r_centered = r - r_mean
+        # ---- normalize reliability scale ----
+        r_norm = r / (r_mean + epsilon)
 
-        # smooth, bounded temperature perturbation
-        alpha = self.args.covar_temp_alpha   # e.g. 0.5
-        beta  = self.args.covar_temp_beta    # e.g. 0.5
+        # ---- critical-order transform ----
+        sqrt_r = torch.sqrt(r_norm + epsilon)
 
-        raw_delta = torch.tanh(beta * r_centered)
-        # ===== 显式零均值约束 =====
+        # ---- zero-mean constraint ----
         if valid_mask_resized.any():
-            raw_delta_valid = raw_delta[valid_mask_resized]
-            raw_delta = raw_delta - raw_delta_valid.mean()
+            sqrt_r_mean = sqrt_r[valid_mask_resized].mean()
         else:
-            raw_delta = raw_delta - raw_delta.mean()
+            sqrt_r_mean = sqrt_r.mean()
 
-        delta_T = alpha * raw_delta
+        sqrt_r_centered = sqrt_r - sqrt_r_mean
+
+        # ---- modulation strength (same role as before) ----
+        alpha = self.args.covar_temp_alpha  # e.g. 0.2
+
+        delta_T = alpha * sqrt_r_centered
+
         # base temperature = 1
         temp_map = 1.0 + delta_T
 
-        # optional symmetric clamp
-        T_min = getattr(self.args, "covar_temp_min", 0.8)
-        T_max = getattr(self.args, "covar_temp_max", 2.0)
+        # ---- safety clamp (rarely triggered) ----
+        T_min = getattr(self.args, "covar_temp_min", 0.7)
+        T_max = getattr(self.args, "covar_temp_max", 1.7)
         temp_map = torch.clamp(temp_map, min=T_min, max=T_max)
 
-        # --- logging ---
+        # ---- logging ----
         if valid_mask_resized.any():
             temp_valid = temp_map[valid_mask_resized]
             temp_mean = temp_valid.mean().item()
