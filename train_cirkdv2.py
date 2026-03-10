@@ -37,6 +37,16 @@ try:
 except Exception:
     save_varg_r_scatter = None
 
+try:
+    from scripts.visualize.plot_z_r_relation import save_z_r_relation_plot
+except Exception:
+    save_z_r_relation_plot = None
+
+try:
+    from scripts.visualize.plot_g2_r_over_t2 import save_g2_r_over_t2_scatter
+except Exception:
+    save_g2_r_over_t2_scatter = None
+
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Semantic Segmentation Training With Pytorch')
@@ -107,10 +117,22 @@ def parse_args():
                         help='MC dropout forward times for logit noise energy z')
     parser.add_argument('--noise-plot-samples', type=int, default=1000,
                         help='number of (z, r) pairs sampled for each diagnostic plot')
+    parser.add_argument('--noise-single-image-pixels', type=int, default=-1,
+                        help='number of valid pixels sampled from one selected validation image for z-r diagnostics; <=0 means use all valid pixels')
+    parser.add_argument('--noise-single-image-seed', type=int, default=1234,
+                        help='random seed for selecting one validation image and pixel sampling')
+    parser.add_argument('--noise-min-delta-p2', type=float, default=1e-3,
+                        help='minimum ||delta p||^2 threshold for z-r diagnostic sampling; points below are dropped')
+    parser.add_argument('--zstar-label-eps', type=float, default=1e-4,
+                        help='label smoothing epsilon used to build ideal p_T^* and z_T^*=log p_T^* for z-r diagnostics')
     parser.add_argument('--gradvar-plot-interval', type=int, default=10000,
                         help='interval (steps) to save var(g)-r scatter')
     parser.add_argument('--gradvar-plot-samples', type=int, default=1000,
                         help='number of quantile-sampled points for each var(g)-r scatter')
+    parser.add_argument('--g2-rtt-plot-interval', type=int, default=10000,
+                        help='interval (steps) to save g^2 vs r/T^2 scatter')
+    parser.add_argument('--g2-rtt-plot-samples', type=int, default=1000,
+                        help='number of random sampled points for each g^2 vs r/T^2 scatter')
     
     parser.add_argument("--lambda-kd", type=float, default=1., help="lambda_kd")
     parser.add_argument("--lambda-fitnet", type=float, default=0., help="lambda_fitnet")
@@ -337,10 +359,14 @@ class Trainer(object):
         # track top-K checkpoints (mIoU, filepath)
         self.topk_checkpoints = []
         self.topk_k = args.topk_checkpoints
-        self.noise_z_buffer = []
-        self.noise_r_buffer = []
+        self.val_delta_z2_buffer = []
+        self.val_delta_p2_buffer = []
+        self.val_r_buffer = []
+        self.grad2_buffer = []
         self.gradvar_buffer = []
         self.gradvar_r_buffer = []
+        self.g2_rtt_g2_buffer = []
+        self.g2_rtt_y_buffer = []
 
     def adjust_lr(self, base_lr, iter, max_iter, power):
         cur_lr = base_lr*((1-float(iter)/max_iter)**(power))
@@ -424,7 +450,7 @@ class Trainer(object):
 
         # ---- zero-mean constraint ----
         if valid_mask_resized.any():
-            sqrt_r_mean = sqrt_r[valid_mask_resized].mean()
+            sqrt_r_mean = sqrt_r[valid_mask_resized].mean().detach()
         else:
             sqrt_r_mean = sqrt_r.mean()
 
@@ -439,8 +465,8 @@ class Trainer(object):
         temp_map = 1.0 + delta_T
 
         # ---- safety clamp (rarely triggered) ----
-        T_min = getattr(self.args, "covar_temp_min", 0.8)
-        T_max = getattr(self.args, "covar_temp_max", 2.0)
+        T_min = getattr(self.args, "covar_temp_min", 0.7)
+        T_max = getattr(self.args, "covar_temp_max", 1.7)
         temp_map = torch.clamp(temp_map, min=T_min, max=T_max)
 
         # ---- logging ----
@@ -476,128 +502,184 @@ class Trainer(object):
             return outputs[0]
         return outputs
 
+    def _gather_1d_from_all_ranks(self, x_1d):
+        if not (dist.is_available() and dist.is_initialized() and self.num_gpus > 1):
+            return x_1d.detach().float().cpu()
+
+        x_1d = x_1d.contiguous()
+        local_len = torch.tensor([x_1d.numel()], device=x_1d.device, dtype=torch.long)
+        len_gather = [torch.zeros_like(local_len) for _ in range(self.num_gpus)]
+        dist.all_gather(len_gather, local_len)
+        lens = [int(t.item()) for t in len_gather]
+        max_len = max(lens) if lens else 0
+
+        if max_len == 0:
+            if get_rank() == 0:
+                return torch.empty(0, dtype=torch.float32)
+            return None
+
+        pad = torch.zeros(max_len, device=x_1d.device, dtype=x_1d.dtype)
+        if x_1d.numel() > 0:
+            pad[:x_1d.numel()] = x_1d
+
+        gather_pad = [torch.zeros_like(pad) for _ in range(self.num_gpus)]
+        dist.all_gather(gather_pad, pad)
+
+        if get_rank() != 0:
+            return None
+
+        out = []
+        for i, g in enumerate(gather_pad):
+            if lens[i] > 0:
+                out.append(g[:lens[i]].detach().float().cpu())
+        if not out:
+            return torch.empty(0, dtype=torch.float32)
+        return torch.cat(out, dim=0)
+
     @torch.no_grad()
-    def compute_logit_noise_energy(self, teacher, inputs, mc_times=20):
+    def _build_ideal_prob_and_logits_from_labels(self, targets, num_classes):
         """
-        Segmentation version of ||δz||^2 = E[ ||z - mean(z)||^2 ]
-        Returns per-sample scalar: shape (N,)
+        Build p_T^* from labels and derive one admissible z_T^*=log(p_T^*) so that
+        softmax(z_T^*) = p_T^* exactly. We use epsilon smoothing to avoid log(0).
         """
-        was_training = teacher.training
+        eps = float(self.args.zstar_label_eps)
+        eps = min(max(eps, 1e-8), 1.0 - 1e-6)
 
-        teacher.eval()
-        dropout_modules = []
-        for module in teacher.modules():
-            if isinstance(module, (nn.Dropout, nn.Dropout2d, nn.Dropout3d, nn.AlphaDropout, nn.FeatureAlphaDropout)):
-                if not module.training:
-                    module.train()
-                    dropout_modules.append(module)
+        targets_clamped = targets.clone()
+        targets_clamped[targets_clamped < 0] = 0
 
-        logits_mc = []
-        for _ in range(mc_times):
-            logits = self._extract_main_logits(teacher(inputs))  # (N, C, H, W)
-            logits_mc.append(logits.unsqueeze(0))
+        onehot = F.one_hot(targets_clamped, num_classes=num_classes).permute(0, 3, 1, 2).float()
+        neg = eps / max(num_classes - 1, 1)
+        pos = 1.0 - eps
+        p_star = onehot * pos + (1.0 - onehot) * neg
 
-        logits_mc = torch.cat(logits_mc, dim=0)  # (M, N, C, H, W)
-        mean_logits = logits_mc.mean(dim=0)      # (N, C, H, W)
-        delta_z = logits_mc - mean_logits.unsqueeze(0)
-
-        noise_energy = (delta_z ** 2).sum(dim=2).mean(dim=(0, 2, 3))  # (N,)
-
-        for module in dropout_modules:
-            module.eval()
-        if was_training:
-            teacher.train()
-
-        return noise_energy
+        # z_T^*=log p_T^* is defined up to additive constant per pixel.
+        z_star = torch.log(p_star.clamp_min(1e-12))
+        z_star = z_star - z_star.mean(dim=1, keepdim=True)
+        return p_star, z_star
 
     @torch.no_grad()
-    def compute_r_per_sample(self, teacher_logits, valid_mask, epsilon=1e-8):
-        _, _, ht, wt = teacher_logits.shape
-        if valid_mask.shape[-2:] != (ht, wt):
-            vm = valid_mask.float().unsqueeze(1)
-            vm = F.interpolate(vm, size=(ht, wt), mode='nearest')
-            valid_mask_resized = (vm.squeeze(1) > 0.5)
-        else:
-            valid_mask_resized = valid_mask
+    def collect_val_z_dp_r_pairs(self, teacher_logits, targets, epsilon=1e-8):
+        valid_mask = (targets != self.args.ignore_label)
+        if not valid_mask.any():
+            return
 
         prob = F.softmax(teacher_logits, dim=1)
         num_classes = prob.size(1)
-        _, scaled_residual_variance = get_max_confidence_and_residual_variance(
-            prob, valid_mask_resized, num_classes, epsilon=epsilon
+        _, r_map = get_max_confidence_and_residual_variance(
+            prob, valid_mask, num_classes, epsilon=epsilon
         )
 
-        valid_f = valid_mask_resized.float()
-        denom = valid_f.sum(dim=(1, 2)).clamp_min(1.0)
-        r_per_sample = (scaled_residual_variance * valid_f).sum(dim=(1, 2)) / denom
-        return r_per_sample
+        p_star, z_star = self._build_ideal_prob_and_logits_from_labels(targets, num_classes)
 
-    @torch.no_grad()
-    def collect_noise_r_pairs(self, images, teacher_logits, valid_mask):
-        z = self.compute_logit_noise_energy(self.t_model, images, mc_times=self.args.noise_mc_times)
-        r = self.compute_r_per_sample(teacher_logits, valid_mask)
+        delta_z = teacher_logits - z_star
+        # Jacobian-vector product: J(p)v = diag(p)v - p(p^T v)
+        p_dot_dz = (prob * delta_z).sum(dim=1, keepdim=True)
+        delta_p = prob * (delta_z - p_dot_dz)
 
-        if dist.is_available() and dist.is_initialized() and self.num_gpus > 1:
-            z_gather = [torch.zeros_like(z) for _ in range(self.num_gpus)]
-            r_gather = [torch.zeros_like(r) for _ in range(self.num_gpus)]
-            dist.all_gather(z_gather, z)
-            dist.all_gather(r_gather, r)
-            if get_rank() == 0:
-                z_all = torch.cat(z_gather, dim=0).detach().float().cpu()
-                r_all = torch.cat(r_gather, dim=0).detach().float().cpu()
-                self.noise_z_buffer.append(z_all)
-                self.noise_r_buffer.append(r_all)
+        delta_z2 = (delta_z ** 2).sum(dim=1)
+        delta_p2 = (delta_p ** 2).sum(dim=1)
+
+        z_valid = delta_z2[valid_mask]
+        dp_valid = delta_p2[valid_mask]
+        r_valid = r_map[valid_mask]
+
+        min_dp2 = float(self.args.noise_min_delta_p2)
+        keep = (
+            torch.isfinite(z_valid)
+            & torch.isfinite(dp_valid)
+            & torch.isfinite(r_valid)
+            & (dp_valid >= 0.0)
+            & (dp_valid >= min_dp2)
+        )
+        if keep.any():
+            z_valid = z_valid[keep]
+            dp_valid = dp_valid[keep]
+            r_valid = r_valid[keep]
         else:
-            self.noise_z_buffer.append(z.detach().float().cpu())
-            self.noise_r_buffer.append(r.detach().float().cpu())
+            return
+
+        max_pixels = int(self.args.noise_single_image_pixels)
+        n_valid = z_valid.numel()
+        if n_valid == 0:
+            return
+        if max_pixels > 0 and n_valid > max_pixels:
+            idx = torch.randperm(n_valid, device=z_valid.device)[:max_pixels]
+            z_valid = z_valid[idx]
+            dp_valid = dp_valid[idx]
+            r_valid = r_valid[idx]
+
+        self.val_delta_z2_buffer.append(z_valid.detach().float().cpu())
+        self.val_delta_p2_buffer.append(dp_valid.detach().float().cpu())
+        self.val_r_buffer.append(r_valid.detach().float().cpu())
 
     @torch.no_grad()
     def save_noise_r_diagnostic(self, step):
-        try:
-            import matplotlib.pyplot as plt
-        except Exception as e:
-            logger.info(f"Skipping z-r diagnostic plot (matplotlib unavailable): {e}")
-            return
-
-        if not self.noise_z_buffer or not self.noise_r_buffer:
-            logger.info(f"Skipping z-r diagnostic at step {step}: no collected (z, r) pairs")
-            return
-
-        z_cpu = torch.cat(self.noise_z_buffer, dim=0)
-        r_cpu = torch.cat(self.noise_r_buffer, dim=0)
-
-        sample_num = min(self.args.noise_plot_samples, z_cpu.numel())
-        if sample_num <= 0:
-            logger.info(f"Skipping z-r diagnostic at step {step}: empty buffers")
-            return
-
-        order = torch.argsort(z_cpu)
-        z_sorted_all = z_cpu[order]
-        r_sorted_all = r_cpu[order]
-
-        # Deterministic stratified/quantile sampling on sorted z
-        if z_sorted_all.numel() > sample_num:
-            n = z_sorted_all.numel()
-            q_idx = torch.div(torch.arange(sample_num) * n, sample_num, rounding_mode='floor')
-            z_sorted = z_sorted_all[q_idx]
-            r_sorted = r_sorted_all[q_idx]
+        if self.val_delta_z2_buffer:
+            delta_z2_local = torch.cat(self.val_delta_z2_buffer, dim=0).to(self.device)
         else:
-            z_sorted = z_sorted_all
-            r_sorted = r_sorted_all
+            delta_z2_local = torch.empty(0, device=self.device, dtype=torch.float32)
 
-        plt.figure()
-        plt.plot(z_sorted.numpy(), r_sorted.numpy(), marker='o', linewidth=1.5)
-        plt.xlabel('Logit Noise z')
-        plt.ylabel('r (scaled_residual_variance)')
-        plt.title(f'z-r Diagnostic Curve @ step {step}')
-        plt.grid(alpha=0.3)
+        if self.val_delta_p2_buffer:
+            delta_p2_local = torch.cat(self.val_delta_p2_buffer, dim=0).to(self.device)
+        else:
+            delta_p2_local = torch.empty(0, device=self.device, dtype=torch.float32)
+
+        if self.val_r_buffer:
+            r_local = torch.cat(self.val_r_buffer, dim=0).to(self.device)
+        else:
+            r_local = torch.empty(0, device=self.device, dtype=torch.float32)
+
+        z_cpu = self._gather_1d_from_all_ranks(delta_z2_local)
+        dp_cpu = self._gather_1d_from_all_ranks(delta_p2_local)
+        r_cpu = self._gather_1d_from_all_ranks(r_local)
+
+        self.val_delta_z2_buffer = []
+        self.val_delta_p2_buffer = []
+        self.val_r_buffer = []
+
+        if (dist.is_available() and dist.is_initialized() and self.num_gpus > 1) and get_rank() != 0:
+            return
+
+        if z_cpu is None or dp_cpu is None or r_cpu is None or z_cpu.numel() == 0:
+            logger.info(f"Skipping z-r diagnostic at step {step}: gathered pairs are empty")
+            return
+
+        pairs_path = os.path.join(self.args.save_dir, f'z_r_pairs_step_{step}.pt')
+        try:
+            torch.save({'delta_z_norm2': z_cpu, 'delta_p_norm2': dp_cpu, 'r': r_cpu, 'step': step}, pairs_path)
+            logger.info(f"Saved z-r pairs to {pairs_path}")
+        except Exception as e:
+            logger.info(f"Failed to save z-r pairs at step {step}: {e}")
 
         out_path = os.path.join(self.args.save_dir, f'z_r_curve_step_{step}.png')
-        plt.savefig(out_path, dpi=200, bbox_inches='tight')
-        plt.close()
-        logger.info(f"Saved z-r diagnostic curve to {out_path} with {sample_num} quantile-sampled points")
 
-        self.noise_z_buffer = []
-        self.noise_r_buffer = []
+        if save_z_r_relation_plot is None:
+            logger.info("Skipping z-r diagnostic plot: plotting script import failed")
+            return
+
+        try:
+            sample_num = int(z_cpu.numel())
+            if int(self.args.noise_single_image_pixels) > 0:
+                sample_num = min(sample_num, int(self.args.noise_single_image_pixels))
+            stats = save_z_r_relation_plot(
+                z_cpu,
+                dp_cpu,
+                r_cpu,
+                out_path,
+                sample_num=max(sample_num, 1),
+                title=f'Relation: ||delta z||^2 vs ||delta p||^2 and r @ step {step}'
+            )
+            fit_dp = stats.get('fit_delta_p2', None)
+            fit_r = stats.get('fit_r', None)
+            msg = f"Saved z-r diagnostic to {out_path} with {stats['num_points']} random sampled points"
+            if fit_dp is not None:
+                msg += f"; dp2 corr={fit_dp['corr']:.4f}, R^2={fit_dp['r2']:.4f}"
+            if fit_r is not None:
+                msg += f"; r corr={fit_r['corr']:.4f}, R^2={fit_r['r2']:.4f}"
+            logger.info(msg)
+        except Exception as e:
+            logger.info(f"Failed to save z-r diagnostic at step {step}: {e}")
 
     @torch.no_grad()
     def collect_gradvar_r_pairs(self, student_logits, teacher_logits, temperature_map, r_map, valid_mask):
@@ -605,28 +687,32 @@ class Trainer(object):
         ps = F.softmax(student_logits / temp, dim=1)
         pt = F.softmax(teacher_logits / temp, dim=1)
         g = (ps - pt) / temp
+        g2 = (g ** 2).mean(dim=1)
         var_g = torch.var(g, dim=1, unbiased=False)
 
+        g2_valid = g2[valid_mask]
         var_valid = var_g[valid_mask]
         r_valid = r_map[valid_mask]
         if var_valid.numel() == 0:
             return
 
+        self.grad2_buffer.append(g2_valid.detach().float().cpu())
         self.gradvar_buffer.append(var_valid.detach().float().cpu())
         self.gradvar_r_buffer.append(r_valid.detach().float().cpu())
 
     @torch.no_grad()
     def save_gradvar_r_scatter(self, step):
-        if not self.gradvar_buffer or not self.gradvar_r_buffer:
+        if not self.grad2_buffer or not self.gradvar_buffer or not self.gradvar_r_buffer:
             logger.info(f"Skipping var(g)-r scatter at step {step}: no collected pairs")
             return
 
+        g2_cpu = torch.cat(self.grad2_buffer, dim=0)
         var_g_cpu = torch.cat(self.gradvar_buffer, dim=0)
         r_cpu = torch.cat(self.gradvar_r_buffer, dim=0)
 
         pairs_path = os.path.join(self.args.save_dir, f'varg_r_pairs_step_{step}.pt')
         try:
-            torch.save({'var_g': var_g_cpu, 'r': r_cpu}, pairs_path)
+            torch.save({'g2': g2_cpu, 'var_g': var_g_cpu, 'r': r_cpu}, pairs_path)
             logger.info(f"Saved var(g)-r pairs to {pairs_path}")
         except Exception as e:
             logger.info(f"Failed to save var(g)-r pairs at step {step}: {e}")
@@ -634,24 +720,89 @@ class Trainer(object):
         out_path = os.path.join(self.args.save_dir, f'varg_r_scatter_step_{step}.png')
         if save_varg_r_scatter is None:
             logger.info("Skipping var(g)-r scatter: plotting script import failed")
+            self.grad2_buffer = []
             self.gradvar_buffer = []
             self.gradvar_r_buffer = []
             return
 
         try:
-            used_num = save_varg_r_scatter(
+            stats = save_varg_r_scatter(
+                g2_cpu,
                 var_g_cpu,
                 r_cpu,
                 out_path,
                 sample_num=self.args.gradvar_plot_samples,
-                title=f'var(g)-r Scatter @ step {step}'
+                title=f'r-g^2-var(g) Scatter @ step {step}'
             )
-            logger.info(f"Saved var(g)-r scatter to {out_path} with {used_num} quantile-sampled points")
+            logger.info(
+                f"Saved var(g)-r scatter to {out_path} with {stats['num_points']} quantile-sampled points; "
+                f"corr={stats['corr']:.6f}, mean|g^2-var|={stats['mean_abs_diff']:.3e}, "
+                f"max|g^2-var|={stats['max_abs_diff']:.3e}"
+            )
         except Exception as e:
             logger.info(f"Failed to save var(g)-r scatter at step {step}: {e}")
 
+        self.grad2_buffer = []
         self.gradvar_buffer = []
         self.gradvar_r_buffer = []
+
+    @torch.no_grad()
+    def collect_g2_r_over_t2_pairs(self, student_logits, teacher_logits, temperature_map, r_map, valid_mask):
+        temp = temperature_map.unsqueeze(1).clamp_min(1e-8)
+        ps = F.softmax(student_logits / temp, dim=1)
+        pt = F.softmax(teacher_logits / temp, dim=1)
+        g = (ps - pt) / temp
+        g2 = (g ** 2).mean(dim=1)
+        r_over_t2 = r_map / (temperature_map.clamp_min(1e-8) ** 2)
+
+        g2_valid = g2[valid_mask]
+        y_valid = r_over_t2[valid_mask]
+        if g2_valid.numel() == 0:
+            return
+
+        self.g2_rtt_g2_buffer.append(g2_valid.detach().float().cpu())
+        self.g2_rtt_y_buffer.append(y_valid.detach().float().cpu())
+
+    @torch.no_grad()
+    def save_g2_r_over_t2_scatter(self, step):
+        if not self.g2_rtt_g2_buffer or not self.g2_rtt_y_buffer:
+            logger.info(f"Skipping g^2-r/T^2 scatter at step {step}: no collected pairs")
+            return
+
+        g2_cpu = torch.cat(self.g2_rtt_g2_buffer, dim=0)
+        y_cpu = torch.cat(self.g2_rtt_y_buffer, dim=0)
+
+        pairs_path = os.path.join(self.args.save_dir, f'g2_r_over_t2_pairs_step_{step}.pt')
+        try:
+            torch.save({'g2': g2_cpu, 'r_over_t2': y_cpu, 'step': step}, pairs_path)
+            logger.info(f"Saved g^2-r/T^2 pairs to {pairs_path}")
+        except Exception as e:
+            logger.info(f"Failed to save g^2-r/T^2 pairs at step {step}: {e}")
+
+        out_path = os.path.join(self.args.save_dir, f'g2_r_over_t2_scatter_step_{step}.png')
+        if save_g2_r_over_t2_scatter is None:
+            logger.info("Skipping g^2-r/T^2 scatter: plotting script import failed")
+            self.g2_rtt_g2_buffer = []
+            self.g2_rtt_y_buffer = []
+            return
+
+        try:
+            stats = save_g2_r_over_t2_scatter(
+                g2_cpu,
+                y_cpu,
+                out_path,
+                sample_num=self.args.g2_rtt_plot_samples,
+                title=f'g^2 vs r/T^2 @ step {step}'
+            )
+            logger.info(
+                f"Saved g^2-r/T^2 scatter to {out_path} with {stats['num_points']} random sampled points; "
+                f"corr={stats['corr']:.6f}"
+            )
+        except Exception as e:
+            logger.info(f"Failed to save g^2-r/T^2 scatter at step {step}: {e}")
+
+        self.g2_rtt_g2_buffer = []
+        self.g2_rtt_y_buffer = []
 
     def train(self):
         save_to_disk = get_rank() == 0
@@ -670,19 +821,15 @@ class Trainer(object):
             with torch.no_grad():
                 t_outputs = self.t_model(images)
 
-            if self.args.use_covar:
-                valid_mask_for_plot = (targets != self.args.ignore_label)
-                self.collect_noise_r_pairs(images, t_outputs[0], valid_mask_for_plot)
-                if save_to_disk and self.args.noise_plot_interval > 0 and iteration % self.args.noise_plot_interval == 0:
-                    self.save_noise_r_diagnostic(iteration)
-
             s_outputs = self.s_model(images)
 
             temperature_map = None
             r_map = None
             valid_mask_resized = None
             need_covar_metadata = self.args.use_covar and (
-                self.args.lambda_kd != 0. or (save_to_disk and self.args.gradvar_plot_interval > 0)
+                self.args.lambda_kd != 0.
+                or (save_to_disk and self.args.gradvar_plot_interval > 0)
+                or (save_to_disk and self.args.g2_rtt_plot_interval > 0)
             )
             if need_covar_metadata:
                 with torch.no_grad():
@@ -695,6 +842,13 @@ class Trainer(object):
                     )
                     if iteration % self.args.gradvar_plot_interval == 0:
                         self.save_gradvar_r_scatter(iteration)
+
+                if save_to_disk and self.args.g2_rtt_plot_interval > 0:
+                    self.collect_g2_r_over_t2_pairs(
+                        s_outputs[0], t_outputs[0], temperature_map, r_map, valid_mask_resized
+                    )
+                    if iteration % self.args.g2_rtt_plot_interval == 0:
+                        self.save_g2_r_over_t2_scatter(iteration)
             
             if self.args.aux:
                 task_loss = self.criterion(s_outputs[0], targets) + 0.4 * self.criterion(s_outputs[1], targets)
@@ -788,7 +942,7 @@ class Trainer(object):
                 save_checkpoint(self.s_model, self.args, is_best=False)
 
             if not self.args.skip_val and iteration % val_per_iters == 0:
-                self.validation()
+                self.validation(step=iteration)
                 self.s_model.train()
 
         save_checkpoint(self.s_model, self.args, is_best=False)
@@ -803,9 +957,12 @@ class Trainer(object):
         
 
 
-    def validation(self):
+    def validation(self, step=None):
         is_best = False
         self.metric.reset()
+        self.val_delta_z2_buffer = []
+        self.val_delta_p2_buffer = []
+        self.val_r_buffer = []
         if self.args.distributed:
             model = self.s_model.module
         else:
@@ -813,19 +970,43 @@ class Trainer(object):
         torch.cuda.empty_cache()  # TODO check if it helps
         model.eval()
         logger.info("Start validation, Total sample: {:d}".format(len(self.val_loader)))
+
+        selected_local_idx = None
+        if self.args.use_covar:
+            rng = torch.Generator(device='cpu')
+            seed = int(self.args.noise_single_image_seed) + int(0 if step is None else step)
+            rng.manual_seed(seed)
+            selected_local_idx = int(torch.randint(low=0, high=len(self.val_loader), size=(1,), generator=rng).item())
+            if (not self.args.distributed) or get_rank() == 0:
+                logger.info(
+                    f"z-r diagnostic selected validation image local index: {selected_local_idx} "
+                    f"(seed={seed}, sample_pixels={self.args.noise_single_image_pixels})"
+                )
+
         for i, (image, target, filename) in enumerate(self.val_loader):
             image = image.to(self.device)
             target = target.to(self.device)
 
             with torch.no_grad():
                 outputs = model(image)
+                t_outputs = self.t_model(image)
 
             B, H, W = target.size()
             outputs[0] = F.interpolate(outputs[0], (H, W), mode='bilinear', align_corners=True)
+            t_logits = F.interpolate(t_outputs[0], (H, W), mode='bilinear', align_corners=True)
+
+            if self.args.use_covar and selected_local_idx is not None and i == selected_local_idx:
+                if (not self.args.distributed) or get_rank() == 0:
+                    logger.info(f"z-r diagnostic picked filename: {filename}")
+                    self.collect_val_z_dp_r_pairs(t_logits, target)
 
             self.metric.update(outputs[0], target)
             pixAcc, mIoU = self.metric.get()
             logger.info("Sample: {:d}, Validation pixAcc: {:.3f}, mIoU: {:.3f}".format(i + 1, pixAcc, mIoU))
+
+        if self.args.use_covar:
+            diag_step = 0 if step is None else step
+            self.save_noise_r_diagnostic(diag_step)
         
         if self.num_gpus > 1:
             sum_total_correct = torch.tensor(self.metric.total_correct).to(self.device)

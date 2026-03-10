@@ -41,8 +41,8 @@ def get_max_confidence_and_residual_variance(predictions, valid_mask, num_classe
     # Step 9: Scale residual variance by g_j
     scaled_residual_variance = g_j * residual_variance  # [n, w, h]
     # Zero out invalid pixels for stability
-    max_confidence = torch.where(valid_mask == 1, max_confidence, torch.zeros_like(max_confidence))
-    scaled_residual_variance = torch.where(valid_mask == 1, scaled_residual_variance, torch.zeros_like(scaled_residual_variance))
+    # max_confidence = torch.where(valid_mask == 1, max_confidence, torch.zeros_like(max_confidence))
+    # scaled_residual_variance = torch.where(valid_mask == 1, scaled_residual_variance, torch.zeros_like(scaled_residual_variance))
     
     return max_confidence, scaled_residual_variance
 
