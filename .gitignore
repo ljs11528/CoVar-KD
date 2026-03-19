@@ -1,5 +1,6 @@
 # Python cache
 __pycache__/
+.venv/
 *.pyc
 *.pyo
 *.pyd
@@ -15,7 +16,7 @@ runs/
 
 # Datasets & large assets
 data/
-dataset/VOCAug/
+dataset/
 figures/
 
 # Model weights & artifacts

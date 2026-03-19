@@ -536,82 +536,140 @@ class Trainer(object):
             return torch.empty(0, dtype=torch.float32)
         return torch.cat(out, dim=0)
 
+    # =========================
+    # 1. 构造 label-based z_star（改进版）
+    # =========================
     @torch.no_grad()
     def _build_ideal_prob_and_logits_from_labels(self, targets, num_classes):
-        """
-        Build p_T^* from labels and derive one admissible z_T^*=log(p_T^*) so that
-        softmax(z_T^*) = p_T^* exactly. We use epsilon smoothing to avoid log(0).
-        """
         eps = float(self.args.zstar_label_eps)
-        eps = min(max(eps, 1e-8), 1.0 - 1e-6)
+        eps = min(max(eps, 1e-6), 1.0 - 1e-4)
 
-        targets_clamped = targets.clone()
+        T = float(getattr(self.args, "zstar_temperature", 2.0))  # ⭐ 新增温度
+
+        # one_hot requires integer class indices
+        targets_clamped = targets.to(dtype=torch.long).clone()
         targets_clamped[targets_clamped < 0] = 0
 
         onehot = F.one_hot(targets_clamped, num_classes=num_classes).permute(0, 3, 1, 2).float()
+
         neg = eps / max(num_classes - 1, 1)
         pos = 1.0 - eps
+
         p_star = onehot * pos + (1.0 - onehot) * neg
 
-        # z_T^*=log p_T^* is defined up to additive constant per pixel.
-        z_star = torch.log(p_star.clamp_min(1e-12))
+        # ⭐ 温度缩放，避免 logit 过大
+        z_star = torch.log(p_star.clamp_min(1e-12)) / T
+
+        # 去掉 gauge 自由度
         z_star = z_star - z_star.mean(dim=1, keepdim=True)
+
         return p_star, z_star
 
+
+    # =========================
+    # 2. 主采样函数（修复版）
+    # =========================
     @torch.no_grad()
     def collect_val_z_dp_r_pairs(self, teacher_logits, targets, epsilon=1e-8):
+
         valid_mask = (targets != self.args.ignore_label)
         if not valid_mask.any():
             return
 
         prob = F.softmax(teacher_logits, dim=1)
         num_classes = prob.size(1)
-        _, r_map = get_max_confidence_and_residual_variance(
+
+        # =========================
+        # r(C_T, v_T)
+        # =========================
+        confidence, r_map = get_max_confidence_and_residual_variance(
             prob, valid_mask, num_classes, epsilon=epsilon
         )
 
+        # =========================
+        # z_star
+        # =========================
         p_star, z_star = self._build_ideal_prob_and_logits_from_labels(targets, num_classes)
 
-        delta_z = teacher_logits - z_star
-        # Jacobian-vector product: J(p)v = diag(p)v - p(p^T v)
+        # =========================
+        # delta_z（对齐 gauge）
+        # =========================
+        teacher_logits_centered = teacher_logits - teacher_logits.mean(dim=1, keepdim=True)
+        delta_z = teacher_logits_centered - z_star
+
+        # =========================
+        # Jacobian-vector product
+        # =========================
         p_dot_dz = (prob * delta_z).sum(dim=1, keepdim=True)
         delta_p = prob * (delta_z - p_dot_dz)
 
+        # =========================
+        # 能量
+        # =========================
         delta_z2 = (delta_z ** 2).sum(dim=1)
         delta_p2 = (delta_p ** 2).sum(dim=1)
 
-        z_valid = delta_z2[valid_mask]
+        # =========================
+        # 正确的理论关系变量
+        # =========================
+        one_minus_ct = (1.0 - confidence).clamp_min(1e-6)
+        scaled_dz2 = one_minus_ct * delta_z2  # ⭐ 核心修复
+
+        # =========================
+        # flatten + mask
+        # =========================
+        z_valid = scaled_dz2[valid_mask]
         dp_valid = delta_p2[valid_mask]
         r_valid = r_map[valid_mask]
+        conf_valid = confidence[valid_mask]
 
+        # =========================
+        # 数值过滤（关键修复）
+        # =========================
         min_dp2 = float(self.args.noise_min_delta_p2)
+        max_dz2 = float(getattr(self.args, "noise_max_delta_z2", 1e4))
+        conf_upper = float(getattr(self.args, "noise_conf_upper", 0.90))  # ⭐ 新增上限过滤，避免 Jacobian collapse 区域
+
         keep = (
             torch.isfinite(z_valid)
             & torch.isfinite(dp_valid)
             & torch.isfinite(r_valid)
-            & (dp_valid >= 0.0)
             & (dp_valid >= min_dp2)
+            & (z_valid >= 0.0)
+            & (z_valid <= max_dz2)
+            & (conf_valid < conf_upper)   # ⭐ 避免 Jacobian collapse
         )
-        if keep.any():
-            z_valid = z_valid[keep]
-            dp_valid = dp_valid[keep]
-            r_valid = r_valid[keep]
-        else:
+
+        if not keep.any():
             return
 
+        z_valid = z_valid[keep]
+        dp_valid = dp_valid[keep]
+        r_valid = r_valid[keep]
+
+        # =========================
+        # 随机采样（避免点太多）
+        # =========================
         max_pixels = int(self.args.noise_single_image_pixels)
         n_valid = z_valid.numel()
+
         if n_valid == 0:
             return
+
         if max_pixels > 0 and n_valid > max_pixels:
             idx = torch.randperm(n_valid, device=z_valid.device)[:max_pixels]
             z_valid = z_valid[idx]
             dp_valid = dp_valid[idx]
             r_valid = r_valid[idx]
 
-        self.val_delta_z2_buffer.append(z_valid.detach().float().cpu())
+        # =========================
+        # 保存
+        # =========================
+        self.val_scaled_dz2_buffer.append(z_valid.detach().float().cpu())
         self.val_delta_p2_buffer.append(dp_valid.detach().float().cpu())
         self.val_r_buffer.append(r_valid.detach().float().cpu())
+        self.val_confidence_buffer.append(conf_valid.detach().float().cpu())
+
 
     @torch.no_grad()
     def save_noise_r_diagnostic(self, step):
@@ -630,6 +688,12 @@ class Trainer(object):
         else:
             r_local = torch.empty(0, device=self.device, dtype=torch.float32)
 
+        if self.val_confidence_buffer:
+            conf_local = torch.cat(self.val_confidence_buffer, dim=0).to(self.device)
+        else:
+            conf_local = torch.empty(0, device=self.device, dtype=torch.float32)
+
+        conf_cpu = self._gather_1d_from_all_ranks(conf_local)
         z_cpu = self._gather_1d_from_all_ranks(delta_z2_local)
         dp_cpu = self._gather_1d_from_all_ranks(delta_p2_local)
         r_cpu = self._gather_1d_from_all_ranks(r_local)
@@ -637,6 +701,7 @@ class Trainer(object):
         self.val_delta_z2_buffer = []
         self.val_delta_p2_buffer = []
         self.val_r_buffer = []
+        self.val_confidence_buffer = []
 
         if (dist.is_available() and dist.is_initialized() and self.num_gpus > 1) and get_rank() != 0:
             return
@@ -647,7 +712,13 @@ class Trainer(object):
 
         pairs_path = os.path.join(self.args.save_dir, f'z_r_pairs_step_{step}.pt')
         try:
-            torch.save({'delta_z_norm2': z_cpu, 'delta_p_norm2': dp_cpu, 'r': r_cpu, 'step': step}, pairs_path)
+            torch.save({
+                'scaled_delta_z_norm2': z_cpu,
+                'delta_p_norm2': dp_cpu,
+                'r': r_cpu,
+                'confidence': conf_cpu,
+                'step': step,
+            }, pairs_path)
             logger.info(f"Saved z-r pairs to {pairs_path}")
         except Exception as e:
             logger.info(f"Failed to save z-r pairs at step {step}: {e}")
