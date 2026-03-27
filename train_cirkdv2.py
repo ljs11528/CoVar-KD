@@ -103,6 +103,8 @@ def parse_args():
 
     parser.add_argument('--use-covar', action='store_true', default=False,
                         help='enable CoVar weighting on teacher outputs')
+    parser.add_argument('--covar-temp-mode', type=str, default='sqrt', choices=['sqrt', 'grad'],
+                        help='temperature generation strategy for CoVar KD')
     parser.add_argument('--covar-temp-base', type=float, default=1.0,
                         help='base temperature T0 for dynamic CoVar KD')
     parser.add_argument('--covar-temp-alpha', type=float, default=0.5,
@@ -111,6 +113,16 @@ def parse_args():
                         help='minimum temperature for dynamic CoVar KD')
     parser.add_argument('--covar-temp-max', type=float, default=2.0,
                         help='maximum temperature for dynamic CoVar KD')
+    parser.add_argument('--covar-grad-eta', type=float, default=0.8,
+                        help='gradient step size eta for iterative temperature updates')
+    parser.add_argument('--covar-grad-max-iter', type=int, default=4,
+                        help='number of gradient iterations for dynamic temperature updates')
+    parser.add_argument('--covar-grad-converge-thresh', type=float, default=1e-3,
+                        help='threshold for treating |dr/dT| as converged in grad-mode diagnostics')
+    parser.add_argument('--covar-grad-detail-interval', type=int, default=100,
+                        help='interval (steps) to print detailed grad-mode diagnostics; <=0 disables')
+    parser.add_argument('--enable-visualizations', action='store_true', default=False,
+                        help='enable all diagnostic plotting and plot-related data collection')
     parser.add_argument('--noise-plot-interval', type=int, default=10000,
                         help='interval (steps) to save z-r diagnostic curve')
     parser.add_argument('--noise-mc-times', type=int, default=20,
@@ -359,14 +371,18 @@ class Trainer(object):
         # track top-K checkpoints (mIoU, filepath)
         self.topk_checkpoints = []
         self.topk_k = args.topk_checkpoints
-        self.val_delta_z2_buffer = []
+        self.val_scaled_dz2_buffer = []
         self.val_delta_p2_buffer = []
         self.val_r_buffer = []
+        self.val_confidence_buffer = []
         self.grad2_buffer = []
         self.gradvar_buffer = []
         self.gradvar_r_buffer = []
         self.g2_rtt_g2_buffer = []
         self.g2_rtt_y_buffer = []
+        self.last_covar_grad_stats = None
+        self.covar_grad_time_total_ms = 0.0
+        self.covar_grad_time_steps = 0
 
     def adjust_lr(self, base_lr, iter, max_iter, power):
         cur_lr = base_lr*((1-float(iter)/max_iter)**(power))
@@ -408,8 +424,353 @@ class Trainer(object):
             mask_high[i] = (assign_full == high_label).view(h, w) & valid_mask[i]
         return mask_high
 
+    @staticmethod
+    def _sort_logits_for_temperature(teacher_logits):
+        logits_hwk = teacher_logits.permute(0, 2, 3, 1).contiguous()
+        return torch.sort(logits_hwk, dim=-1, descending=True).values
+
+    @staticmethod
+    def _get_covar_grad_a(num_classes):
+        return ((max(num_classes, 1) - 1) ** 2) / 2.0
+
+    def _sync_cuda_if_needed(self):
+        if self.device.type == 'cuda':
+            torch.cuda.synchronize(self.device)
+
+    def _visualizations_enabled(self, save_to_disk=True):
+        if not getattr(self.args, 'enable_visualizations', False):
+            return False
+        if not save_to_disk:
+            return False
+        return True
+
+    @staticmethod
+    def _flatten_valid_values(tensor, valid_mask=None):
+        if valid_mask is None:
+            return tensor.reshape(-1)
+        return tensor[valid_mask].reshape(-1)
+
+    @staticmethod
+    def _collect_value_stats(values, threshold=None, include_quantile=False, use_abs=False):
+        values = values.detach().float().reshape(-1)
+        nan_count = int(torch.isnan(values).sum().item())
+        inf_count = int(torch.isinf(values).sum().item())
+        finite_values = values[torch.isfinite(values)]
+
+        stats = {
+            'count': int(values.numel()),
+            'nan_count': nan_count,
+            'inf_count': inf_count,
+            'mean': 0.0,
+            'min': 0.0,
+            'max': 0.0,
+        }
+        if include_quantile:
+            stats['p95'] = 0.0
+        if threshold is not None:
+            stats['below_thresh_ratio'] = 0.0
+
+        if finite_values.numel() == 0:
+            return stats
+
+        target = finite_values.abs() if use_abs else finite_values
+        stats['mean'] = float(target.mean().item())
+        stats['min'] = float(target.min().item())
+        stats['max'] = float(target.max().item())
+
+        if include_quantile:
+            stats['p95'] = float(torch.quantile(target, 0.95).item())
+        if threshold is not None:
+            compare = finite_values.abs()
+            stats['below_thresh_ratio'] = float((compare < threshold).float().mean().item())
+
+        return stats
+
+    def _collect_temperature_state_stats(self, temperature_map, valid_mask, t_min, t_max, include_quantile=False):
+        temp_values = self._flatten_valid_values(temperature_map, valid_mask)
+        temp_stats = self._collect_value_stats(temp_values, include_quantile=include_quantile)
+        clamp_eps = 1e-6
+
+        if temp_values.numel() == 0:
+            return {
+                't_mean': 0.0,
+                't_min': 0.0,
+                't_max': 0.0,
+                't_p95': 0.0,
+                't_nan_count': 0,
+                't_inf_count': 0,
+                'clamp_min_ratio': 0.0,
+                'clamp_max_ratio': 0.0,
+                'clamp_ratio': 0.0,
+            }
+
+        clamp_min_ratio = float((temp_values <= (t_min + clamp_eps)).float().mean().item())
+        clamp_max_ratio = float((temp_values >= (t_max - clamp_eps)).float().mean().item())
+        out = {
+            't_mean': temp_stats['mean'],
+            't_min': temp_stats['min'],
+            't_max': temp_stats['max'],
+            't_nan_count': temp_stats['nan_count'],
+            't_inf_count': temp_stats['inf_count'],
+            'clamp_min_ratio': clamp_min_ratio,
+            'clamp_max_ratio': clamp_max_ratio,
+            'clamp_ratio': clamp_min_ratio + clamp_max_ratio,
+        }
+        if include_quantile:
+            out['t_p95'] = temp_stats['p95']
+        return out
+
+    def _build_grad_iteration_stats(self, dr_dT, delta_t, temperature_map, valid_mask, threshold, t_min, t_max,
+                                    include_quantile=False):
+        grad_abs_stats = self._collect_value_stats(
+            self._flatten_valid_values(dr_dT, valid_mask),
+            threshold=threshold,
+            include_quantile=include_quantile,
+            use_abs=True,
+        )
+        delta_abs_stats = self._collect_value_stats(
+            self._flatten_valid_values(delta_t, valid_mask),
+            include_quantile=include_quantile,
+            use_abs=True,
+        )
+        temp_stats = self._collect_temperature_state_stats(
+            temperature_map, valid_mask, t_min, t_max, include_quantile=include_quantile
+        )
+
+        stats = {
+            'grad_abs_mean': grad_abs_stats['mean'],
+            'grad_abs_max': grad_abs_stats['max'],
+            'grad_small_ratio': grad_abs_stats.get('below_thresh_ratio', 0.0),
+            'dr_nan_count': grad_abs_stats['nan_count'],
+            'dr_inf_count': grad_abs_stats['inf_count'],
+            'delta_t_abs_mean': delta_abs_stats['mean'],
+            'delta_t_abs_max': delta_abs_stats['max'],
+        }
+        if include_quantile:
+            stats['grad_abs_p95'] = grad_abs_stats['p95']
+            stats['delta_t_abs_p95'] = delta_abs_stats['p95']
+
+        stats.update(temp_stats)
+        return stats
+
+    def _format_covar_grad_brief(self):
+        stats = self.last_covar_grad_stats
+        if not stats:
+            return ""
+
+        final = stats['final']
+        avg_time_ms = self.covar_grad_time_total_ms / max(self.covar_grad_time_steps, 1)
+        return (
+            f" || GradT: {stats['time_ms']:.1f}ms(avg {avg_time_ms:.1f}, inner {stats['inner_iter_time_ms']:.1f})"
+            f" || |dr/dT|: {final['grad_abs_mean']:.2e}"
+            f" || conv<{stats['threshold']:.0e}: {final['grad_small_ratio'] * 100:.1f}%"
+            f" || |T-T0|: {final['total_delta_abs_mean']:.3f}"
+            f" || clamp: {final['clamp_ratio'] * 100:.1f}%"
+        )
+
+    def _log_covar_grad_detail(self, iteration):
+        stats = self.last_covar_grad_stats
+        if not stats:
+            return
+
+        final = stats['final']
+        logger.info(
+            "GradTemp Detail @ {:d} || time: {:.2f}ms || inner: {:.2f}ms x {:d} || a: {:.3f} || "
+            "|dr/dT| mean/p95/max: {:.3e}/{:.3e}/{:.3e} || conv<{:.0e}: {:.2f}% || "
+            "|T-T0| mean/p95/max: {:.3e}/{:.3e}/{:.3e} || T mean/min/max: {:.4f}/{:.4f}/{:.4f} || "
+            "clamp[min/max]: {:.2f}%/{:.2f}% || r mean/p95/max: {:.4f}/{:.4f}/{:.4f} || "
+            "c mean/min: {:.4f}/{:.4f} || v mean/p95/max: {:.4e}/{:.4e}/{:.4e} || "
+            "NaN(dr,T): {:d}/{:d} || Inf(dr,T): {:d}/{:d}".format(
+                iteration,
+                stats['time_ms'],
+                stats['inner_iter_time_ms'],
+                stats['max_iter'],
+                stats['a'],
+                final['grad_abs_mean'],
+                final['grad_abs_p95'],
+                final['grad_abs_max'],
+                stats['threshold'],
+                final['grad_small_ratio'] * 100.0,
+                final['total_delta_abs_mean'],
+                final['total_delta_abs_p95'],
+                final['total_delta_abs_max'],
+                final['t_mean'],
+                final['t_min'],
+                final['t_max'],
+                final['clamp_min_ratio'] * 100.0,
+                final['clamp_max_ratio'] * 100.0,
+                final['r_mean'],
+                final['r_p95'],
+                final['r_max'],
+                final['c_mean'],
+                final['c_min'],
+                final['v_mean'],
+                final['v_p95'],
+                final['v_max'],
+                final['dr_nan_count'],
+                final['t_nan_count'],
+                final['dr_inf_count'],
+                final['t_inf_count'],
+            )
+        )
+
+        if stats['per_iter']:
+            trace = []
+            for item in stats['per_iter']:
+                trace.append(
+                    "i{:d}[|dr|={:.2e}, conv={:.1f}%, |dT|={:.2e}, T={:.3f}, clamp={:.1f}%]".format(
+                        item['iter'],
+                        item['grad_abs_mean'],
+                        item['grad_small_ratio'] * 100.0,
+                        item['delta_t_abs_mean'],
+                        item['t_mean'],
+                        item['clamp_ratio'] * 100.0,
+                    )
+                )
+            logger.info("GradTemp Trace @ {:d} || {}".format(iteration, ' -> '.join(trace)))
+
     @torch.no_grad()
-    def get_covar_metadata(self, teacher_logits, valid_mask, epsilon=1e-8):
+    def _compute_reliability_terms(self, sorted_logits, temperature_map, a, epsilon=1e-8):
+        temp = temperature_map.clamp_min(epsilon)
+        prob = F.softmax(sorted_logits / temp.unsqueeze(-1), dim=-1)
+
+        c = prob[..., 0].clamp(min=epsilon, max=1.0 - epsilon)
+        nonmax_prob = prob[..., 1:]
+        if nonmax_prob.shape[-1] == 0:
+            v = torch.zeros_like(c)
+        else:
+            mu = nonmax_prob.mean(dim=-1, keepdim=True)
+            v = torch.mean((nonmax_prob - mu) ** 2, dim=-1)
+
+        s = (1.0 - c).clamp_min(epsilon)
+        r = -torch.log(c) + a * v / s
+        return prob, c, v, r
+
+    @torch.no_grad()
+    def compute_dr_dT(self, sorted_logits, temperature_map, a, epsilon=1e-8):
+        temp = temperature_map.clamp_min(epsilon)
+        prob, c, v, r = self._compute_reliability_terms(sorted_logits, temp, a, epsilon=epsilon)
+
+        nonmax_prob = prob[..., 1:]
+        if nonmax_prob.shape[-1] == 0:
+            return torch.zeros_like(temp), r, c, v
+
+        bar_z = torch.sum(prob * sorted_logits, dim=-1)
+        s = (1.0 - c).clamp_min(epsilon)
+        num_nonmax = nonmax_prob.shape[-1]
+        mu = s / num_nonmax
+
+        dc_dT = c * (bar_z - sorted_logits[..., 0]) / (temp ** 2)
+        sum_for_dv = torch.sum(
+            nonmax_prob ** 2 * (bar_z.unsqueeze(-1) - sorted_logits[..., 1:]),
+            dim=-1,
+        )
+        dv_dT = (2.0 / (num_nonmax * temp ** 2)) * sum_for_dv + (2.0 * mu / num_nonmax) * dc_dT
+
+        coeff_c = -1.0 / c + a * v / (s ** 2)
+        dr_dT = coeff_c * dc_dT + (a / s) * dv_dT
+        return dr_dT, r, c, v
+
+    @torch.no_grad()
+    def get_gradient_temperature_map(self, teacher_logits, valid_mask, capture_detail=False, epsilon=1e-8):
+        sorted_logits = self._sort_logits_for_temperature(teacher_logits)
+        base_temp = float(getattr(self.args, 'covar_temp_base', 1.0))
+        eta = float(getattr(self.args, 'covar_grad_eta', 0.8))
+        max_iter = max(int(getattr(self.args, 'covar_grad_max_iter', 4)), 0)
+        a = self._get_covar_grad_a(sorted_logits.shape[-1])
+        t_min = float(getattr(self.args, 'covar_temp_min', 0.8))
+        t_max = float(getattr(self.args, 'covar_temp_max', 2.0))
+        threshold = float(getattr(self.args, 'covar_grad_converge_thresh', 1e-3))
+        stats_valid_mask = valid_mask
+
+        temperature_map = torch.full(
+            sorted_logits.shape[:-1],
+            base_temp,
+            device=teacher_logits.device,
+            dtype=teacher_logits.dtype,
+        )
+        iter_stats = []
+
+        self._sync_cuda_if_needed()
+        grad_start = time.perf_counter()
+
+        for iter_idx in range(max_iter):
+            prev_temp = temperature_map
+            dr_dT, _, _, _ = self.compute_dr_dT(sorted_logits, temperature_map, a, epsilon=epsilon)
+            updated_temp = torch.clamp(temperature_map - eta * dr_dT, min=t_min, max=t_max)
+            if capture_detail:
+                iter_stat = self._build_grad_iteration_stats(
+                    dr_dT,
+                    updated_temp - prev_temp,
+                    updated_temp,
+                    stats_valid_mask,
+                    threshold,
+                    t_min,
+                    t_max,
+                    include_quantile=False,
+                )
+                iter_stat['iter'] = iter_idx
+                iter_stats.append(iter_stat)
+            temperature_map = updated_temp
+
+        final_dr_dT, r_map, c_map, v_map = self.compute_dr_dT(sorted_logits, temperature_map, a, epsilon=epsilon)
+        self._sync_cuda_if_needed()
+        grad_time_ms = (time.perf_counter() - grad_start) * 1000.0
+
+        total_delta = temperature_map - base_temp
+        final_stats = self._build_grad_iteration_stats(
+            final_dr_dT,
+            total_delta,
+            temperature_map,
+            stats_valid_mask,
+            threshold,
+            t_min,
+            t_max,
+            include_quantile=True,
+        )
+        final_stats['total_delta_abs_mean'] = final_stats.pop('delta_t_abs_mean')
+        final_stats['total_delta_abs_max'] = final_stats.pop('delta_t_abs_max')
+        final_stats['total_delta_abs_p95'] = final_stats.pop('delta_t_abs_p95')
+        r_stats = self._collect_value_stats(
+            self._flatten_valid_values(r_map, stats_valid_mask), include_quantile=True
+        )
+        c_stats = self._collect_value_stats(
+            self._flatten_valid_values(c_map, stats_valid_mask), include_quantile=False
+        )
+        v_stats = self._collect_value_stats(
+            self._flatten_valid_values(v_map, stats_valid_mask), include_quantile=True
+        )
+        final_stats.update({
+            'r_mean': r_stats['mean'],
+            'r_p95': r_stats['p95'],
+            'r_max': r_stats['max'],
+            'c_mean': c_stats['mean'],
+            'c_min': c_stats['min'],
+            'c_max': c_stats['max'],
+            'v_mean': v_stats['mean'],
+            'v_p95': v_stats['p95'],
+            'v_max': v_stats['max'],
+        })
+
+        grad_stats = {
+            'a': a,
+            'threshold': threshold,
+            'time_ms': grad_time_ms,
+            'inner_iter_time_ms': grad_time_ms / max(max_iter, 1),
+            'max_iter': max_iter,
+            'num_valid': int(stats_valid_mask.sum().item()) if stats_valid_mask is not None else int(temperature_map.numel()),
+            'final': final_stats,
+            'per_iter': iter_stats,
+        }
+
+        if valid_mask is not None:
+            temperature_map = torch.where(valid_mask, temperature_map, torch.full_like(temperature_map, base_temp))
+            r_map = torch.where(valid_mask, r_map, torch.zeros_like(r_map))
+
+        return temperature_map, r_map, grad_stats
+
+    @torch.no_grad()
+    def get_covar_metadata(self, teacher_logits, valid_mask, capture_grad_detail=False, epsilon=1e-8):
         _, _, ht, wt = teacher_logits.shape
         if valid_mask.shape[-2:] != (ht, wt):
             vm = valid_mask.float().unsqueeze(1)
@@ -430,44 +791,32 @@ class Trainer(object):
             max_confidence, scaled_residual_variance, valid_mask_resized
         )
 
-        # ==========================================
-        # NEW: sqrt-reliability temperature (theory)
-        # ==========================================
-
-        r = scaled_residual_variance  # r(x)
-
-        if valid_mask_resized.any():
-            r_valid = r[valid_mask_resized]
-            r_mean = r_valid.mean()
+        temp_mode = getattr(self.args, 'covar_temp_mode', 'sqrt')
+        if temp_mode == 'grad':
+            temp_map, r, grad_stats = self.get_gradient_temperature_map(
+                teacher_logits, valid_mask_resized, capture_detail=capture_grad_detail, epsilon=epsilon
+            )
+            self.last_covar_grad_stats = grad_stats
+            self.covar_grad_time_total_ms += grad_stats['time_ms']
+            self.covar_grad_time_steps += 1
         else:
-            r_mean = r.mean()
+            self.last_covar_grad_stats = None
+            r = scaled_residual_variance
 
-        # ---- normalize reliability scale ----
-        # r_norm = r / (r_mean + epsilon)
+            sqrt_r = torch.sqrt(r + epsilon)
+            if valid_mask_resized.any():
+                sqrt_r_mean = sqrt_r[valid_mask_resized].mean().detach()
+            else:
+                sqrt_r_mean = sqrt_r.mean()
 
-        # ---- critical-order transform ----
-        sqrt_r = torch.sqrt(r+ epsilon)
+            sqrt_r_centered = sqrt_r - sqrt_r_mean
+            alpha = self.args.covar_temp_alpha
+            base_temp = float(getattr(self.args, 'covar_temp_base', 1.0))
+            temp_map = base_temp + alpha * sqrt_r_centered
 
-        # ---- zero-mean constraint ----
-        if valid_mask_resized.any():
-            sqrt_r_mean = sqrt_r[valid_mask_resized].mean().detach()
-        else:
-            sqrt_r_mean = sqrt_r.mean()
-
-        sqrt_r_centered = sqrt_r - sqrt_r_mean
-
-        # ---- modulation strength (same role as before) ----
-        alpha = self.args.covar_temp_alpha  # e.g. 0.5
-
-        delta_T = alpha * sqrt_r_centered
-
-        # base temperature = 1
-        temp_map = 1.0 + delta_T
-
-        # ---- safety clamp (rarely triggered) ----
-        T_min = getattr(self.args, "covar_temp_min", 0.7)
-        T_max = getattr(self.args, "covar_temp_max", 1.7)
-        temp_map = torch.clamp(temp_map, min=T_min, max=T_max)
+            t_min = getattr(self.args, 'covar_temp_min', 0.7)
+            t_max = getattr(self.args, 'covar_temp_max', 1.7)
+            temp_map = torch.clamp(temp_map, min=t_min, max=t_max)
 
         # ---- logging ----
         if valid_mask_resized.any():
@@ -486,12 +835,12 @@ class Trainer(object):
 
 
     def covar_temperature_kd_loss(self, student_logits, teacher_logits, temperature_map, valid_mask, epsilon=1e-8):
-        # Broadcast per-pixel temperature across channel dimension
-        temp = temperature_map.unsqueeze(1)
+        temp = temperature_map.unsqueeze(1).clamp_min(epsilon)
         s_log_prob = F.log_softmax(student_logits / temp, dim=1)
         t_prob = F.softmax(teacher_logits / temp, dim=1)
 
         kd_map = F.kl_div(s_log_prob, t_prob, reduction='none').sum(dim=1)
+        kd_map = kd_map * valid_mask.float() * (temperature_map.clamp_min(epsilon) ** 2)
         denom = valid_mask.sum().clamp_min(1)
         loss = kd_map.sum() / denom
         return loss
@@ -646,6 +995,7 @@ class Trainer(object):
         z_valid = z_valid[keep]
         dp_valid = dp_valid[keep]
         r_valid = r_valid[keep]
+        conf_valid = conf_valid[keep]
 
         # =========================
         # 随机采样（避免点太多）
@@ -661,6 +1011,7 @@ class Trainer(object):
             z_valid = z_valid[idx]
             dp_valid = dp_valid[idx]
             r_valid = r_valid[idx]
+            conf_valid = conf_valid[idx]
 
         # =========================
         # 保存
@@ -673,8 +1024,14 @@ class Trainer(object):
 
     @torch.no_grad()
     def save_noise_r_diagnostic(self, step):
-        if self.val_delta_z2_buffer:
-            delta_z2_local = torch.cat(self.val_delta_z2_buffer, dim=0).to(self.device)
+        if not getattr(self.args, 'enable_visualizations', False):
+            self.val_scaled_dz2_buffer = []
+            self.val_delta_p2_buffer = []
+            self.val_r_buffer = []
+            self.val_confidence_buffer = []
+            return
+        if self.val_scaled_dz2_buffer:
+            delta_z2_local = torch.cat(self.val_scaled_dz2_buffer, dim=0).to(self.device)
         else:
             delta_z2_local = torch.empty(0, device=self.device, dtype=torch.float32)
 
@@ -698,7 +1055,7 @@ class Trainer(object):
         dp_cpu = self._gather_1d_from_all_ranks(delta_p2_local)
         r_cpu = self._gather_1d_from_all_ranks(r_local)
 
-        self.val_delta_z2_buffer = []
+        self.val_scaled_dz2_buffer = []
         self.val_delta_p2_buffer = []
         self.val_r_buffer = []
         self.val_confidence_buffer = []
@@ -773,6 +1130,11 @@ class Trainer(object):
 
     @torch.no_grad()
     def save_gradvar_r_scatter(self, step):
+        if not getattr(self.args, 'enable_visualizations', False):
+            self.grad2_buffer = []
+            self.gradvar_buffer = []
+            self.gradvar_r_buffer = []
+            return
         if not self.grad2_buffer or not self.gradvar_buffer or not self.gradvar_r_buffer:
             logger.info(f"Skipping var(g)-r scatter at step {step}: no collected pairs")
             return
@@ -836,6 +1198,10 @@ class Trainer(object):
 
     @torch.no_grad()
     def save_g2_r_over_t2_scatter(self, step):
+        if not getattr(self.args, 'enable_visualizations', False):
+            self.g2_rtt_g2_buffer = []
+            self.g2_rtt_y_buffer = []
+            return
         if not self.g2_rtt_g2_buffer or not self.g2_rtt_y_buffer:
             logger.info(f"Skipping g^2-r/T^2 scatter at step {step}: no collected pairs")
             return
@@ -877,6 +1243,7 @@ class Trainer(object):
 
     def train(self):
         save_to_disk = get_rank() == 0
+        enable_visualizations = self._visualizations_enabled(save_to_disk=save_to_disk)
         log_per_iters, val_per_iters = self.args.log_iter, self.args.val_per_iters
         save_per_iters = self.args.save_per_iters
         start_time = time.time()
@@ -888,6 +1255,7 @@ class Trainer(object):
             
             images = images.to(self.device)
             targets = targets.long().to(self.device)
+            self.last_covar_grad_stats = None
             
             with torch.no_grad():
                 t_outputs = self.t_model(images)
@@ -899,22 +1267,30 @@ class Trainer(object):
             valid_mask_resized = None
             need_covar_metadata = self.args.use_covar and (
                 self.args.lambda_kd != 0.
-                or (save_to_disk and self.args.gradvar_plot_interval > 0)
-                or (save_to_disk and self.args.g2_rtt_plot_interval > 0)
+                or (enable_visualizations and self.args.gradvar_plot_interval > 0)
+                or (enable_visualizations and self.args.g2_rtt_plot_interval > 0)
             )
             if need_covar_metadata:
                 with torch.no_grad():
                     valid_mask = (targets != self.args.ignore_label)
-                    temperature_map, _, valid_mask_resized, r_map = self.get_covar_metadata(t_outputs[0], valid_mask)
+                    capture_grad_detail = (
+                        save_to_disk
+                        and getattr(self.args, 'covar_temp_mode', 'sqrt') == 'grad'
+                        and self.args.covar_grad_detail_interval > 0
+                        and iteration % self.args.covar_grad_detail_interval == 0
+                    )
+                    temperature_map, _, valid_mask_resized, r_map = self.get_covar_metadata(
+                        t_outputs[0], valid_mask, capture_grad_detail=capture_grad_detail
+                    )
 
-                if save_to_disk and self.args.gradvar_plot_interval > 0:
+                if enable_visualizations and self.args.gradvar_plot_interval > 0:
                     self.collect_gradvar_r_pairs(
                         s_outputs[0], t_outputs[0], temperature_map, r_map, valid_mask_resized
                     )
                     if iteration % self.args.gradvar_plot_interval == 0:
                         self.save_gradvar_r_scatter(iteration)
 
-                if save_to_disk and self.args.g2_rtt_plot_interval > 0:
+                if enable_visualizations and self.args.g2_rtt_plot_interval > 0:
                     self.collect_g2_r_over_t2_pairs(
                         s_outputs[0], t_outputs[0], temperature_map, r_map, valid_mask_resized
                     )
@@ -992,6 +1368,8 @@ class Trainer(object):
                         t_info = f" || T_mean: {t_mean:.4f} (d{d_mean:+.4f}) || T_min: {t_min:.4f} || T_max: {t_max:.4f}"
                     else:
                         t_info = f" || T_mean: {t_mean:.4f} || T_min: {t_min:.4f} || T_max: {t_max:.4f}"
+                if self.args.use_covar and getattr(self.args, 'covar_temp_mode', 'sqrt') == 'grad':
+                    t_info += self._format_covar_grad_brief()
                 logger.info(
                     "Iters: {:d}/{:d} || Lr: {:.6f} || Task Loss: {:.4f} || KD Loss: {:.4f} " \
                     "|| Mini-batch p2p Loss: {:.4f} || Memory p2p Loss: {:.4f} || Memory p2r Loss: {:.4f} " \
@@ -1009,6 +1387,10 @@ class Trainer(object):
                         fitnet_loss_reduced.item(), t_info,
                         str(datetime.timedelta(seconds=int(time.time() - start_time))), eta_string))
 
+                if self.args.use_covar and getattr(self.args, 'covar_temp_mode', 'sqrt') == 'grad':
+                    if self.args.covar_grad_detail_interval > 0 and iteration % self.args.covar_grad_detail_interval == 0:
+                        self._log_covar_grad_detail(iteration)
+
             if iteration % save_per_iters == 0 and save_to_disk:
                 save_checkpoint(self.s_model, self.args, is_best=False)
 
@@ -1023,17 +1405,19 @@ class Trainer(object):
             "Total training time: {} ({:.4f}s / it)".format(
                 total_training_str, total_training_time / args.max_iterations))
         # save temperature curve if CoVar is enabled
-        if self.args.use_covar and get_rank() == 0:
+        if self.args.use_covar and enable_visualizations and get_rank() == 0:
             self.save_temperature_curve()
         
 
 
     def validation(self, step=None):
         is_best = False
+        enable_visualizations = self._visualizations_enabled(save_to_disk=(get_rank() == 0))
         self.metric.reset()
-        self.val_delta_z2_buffer = []
+        self.val_scaled_dz2_buffer = []
         self.val_delta_p2_buffer = []
         self.val_r_buffer = []
+        self.val_confidence_buffer = []
         if self.args.distributed:
             model = self.s_model.module
         else:
@@ -1043,7 +1427,7 @@ class Trainer(object):
         logger.info("Start validation, Total sample: {:d}".format(len(self.val_loader)))
 
         selected_local_idx = None
-        if self.args.use_covar:
+        if self.args.use_covar and enable_visualizations:
             rng = torch.Generator(device='cpu')
             seed = int(self.args.noise_single_image_seed) + int(0 if step is None else step)
             rng.manual_seed(seed)
@@ -1066,7 +1450,7 @@ class Trainer(object):
             outputs[0] = F.interpolate(outputs[0], (H, W), mode='bilinear', align_corners=True)
             t_logits = F.interpolate(t_outputs[0], (H, W), mode='bilinear', align_corners=True)
 
-            if self.args.use_covar and selected_local_idx is not None and i == selected_local_idx:
+            if self.args.use_covar and enable_visualizations and selected_local_idx is not None and i == selected_local_idx:
                 if (not self.args.distributed) or get_rank() == 0:
                     logger.info(f"z-r diagnostic picked filename: {filename}")
                     self.collect_val_z_dp_r_pairs(t_logits, target)
@@ -1075,7 +1459,7 @@ class Trainer(object):
             pixAcc, mIoU = self.metric.get()
             logger.info("Sample: {:d}, Validation pixAcc: {:.3f}, mIoU: {:.3f}".format(i + 1, pixAcc, mIoU))
 
-        if self.args.use_covar:
+        if self.args.use_covar and enable_visualizations:
             diag_step = 0 if step is None else step
             self.save_noise_r_diagnostic(diag_step)
         
@@ -1132,6 +1516,8 @@ class Trainer(object):
             logger.info(f"Top-K checkpoint save skipped: {e}")
 
     def save_temperature_curve(self):
+        if not getattr(self.args, 'enable_visualizations', False):
+            return
         if not self.temp_history:
             return
         try:
