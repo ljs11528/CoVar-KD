@@ -103,20 +103,24 @@ def parse_args():
 
     parser.add_argument('--use-covar', action='store_true', default=False,
                         help='enable CoVar weighting on teacher outputs')
-    parser.add_argument('--covar-temp-mode', type=str, default='sqrt', choices=['sqrt', 'grad'],
+    parser.add_argument('--covar-temp-mode', type=str, default='sqrt', choices=['sqrt', 'grad', 'newton'],
                         help='temperature generation strategy for CoVar KD')
     parser.add_argument('--covar-temp-base', type=float, default=1.0,
                         help='base temperature T0 for dynamic CoVar KD')
     parser.add_argument('--covar-temp-alpha', type=float, default=0.5,
                         help='alpha for temperature ramp T(x)=ΔT(x)=1+α⋅sqrt(r~(x))')
-    parser.add_argument('--covar-temp-min', type=float, default=0.8,
+    parser.add_argument('--covar-temp-min', type=float, default=0.1,
                         help='minimum temperature for dynamic CoVar KD')
-    parser.add_argument('--covar-temp-max', type=float, default=2.0,
+    parser.add_argument('--covar-temp-max', type=float, default=8.0,
                         help='maximum temperature for dynamic CoVar KD')
-    parser.add_argument('--covar-grad-eta', type=float, default=0.8,
-                        help='gradient step size eta for iterative temperature updates')
-    parser.add_argument('--covar-grad-max-iter', type=int, default=4,
+    parser.add_argument('--covar-grad-eta', type=float, default=2.0,
+                        help='step size / damping factor eta for iterative temperature updates')
+    parser.add_argument('--covar-grad-max-iter', type=int, default=8,
                         help='number of gradient iterations for dynamic temperature updates')
+    parser.add_argument('--covar-newton-hessian-eps', type=float, default=1e-6,
+                        help='minimum |d2r/dT2| required by Newton updates before fallback to gradient descent')
+    parser.add_argument('--covar-newton-max-step', type=float, default=1.0,
+                        help='maximum absolute Newton step per iteration; <=0 disables step clipping')
     parser.add_argument('--covar-grad-converge-thresh', type=float, default=1e-3,
                         help='threshold for treating |dr/dT| as converged in grad-mode diagnostics')
     parser.add_argument('--covar-grad-detail-interval', type=int, default=100,
@@ -560,8 +564,9 @@ class Trainer(object):
 
         final = stats['final']
         avg_time_ms = self.covar_grad_time_total_ms / max(self.covar_grad_time_steps, 1)
+        label = 'NewtonT' if stats.get('update_method') == 'newton' else 'GradT'
         return (
-            f" || GradT: {stats['time_ms']:.1f}ms(avg {avg_time_ms:.1f}, inner {stats['inner_iter_time_ms']:.1f})"
+            f" || {label}: {stats['time_ms']:.1f}ms(avg {avg_time_ms:.1f}, inner {stats['inner_iter_time_ms']:.1f})"
             f" || |dr/dT|: {final['grad_abs_mean']:.2e}"
             f" || conv<{stats['threshold']:.0e}: {final['grad_small_ratio'] * 100:.1f}%"
             f" || |T-T0|: {final['total_delta_abs_mean']:.3f}"
@@ -574,13 +579,15 @@ class Trainer(object):
             return
 
         final = stats['final']
+        label = 'NewtonTemp' if stats.get('update_method') == 'newton' else 'GradTemp'
         logger.info(
-            "GradTemp Detail @ {:d} || time: {:.2f}ms || inner: {:.2f}ms x {:d} || a: {:.3f} || "
+            "{} Detail @ {:d} || time: {:.2f}ms || inner: {:.2f}ms x {:d} || a: {:.3f} || "
             "|dr/dT| mean/p95/max: {:.3e}/{:.3e}/{:.3e} || conv<{:.0e}: {:.2f}% || "
             "|T-T0| mean/p95/max: {:.3e}/{:.3e}/{:.3e} || T mean/min/max: {:.4f}/{:.4f}/{:.4f} || "
             "clamp[min/max]: {:.2f}%/{:.2f}% || r mean/p95/max: {:.4f}/{:.4f}/{:.4f} || "
             "c mean/min: {:.4f}/{:.4f} || v mean/p95/max: {:.4e}/{:.4e}/{:.4e} || "
             "NaN(dr,T): {:d}/{:d} || Inf(dr,T): {:d}/{:d}".format(
+                label,
                 iteration,
                 stats['time_ms'],
                 stats['inner_iter_time_ms'],
@@ -627,7 +634,7 @@ class Trainer(object):
                         item['clamp_ratio'] * 100.0,
                     )
                 )
-            logger.info("GradTemp Trace @ {:d} || {}".format(iteration, ' -> '.join(trace)))
+            logger.info("{} Trace @ {:d} || {}".format(label, iteration, ' -> '.join(trace)))
 
     @torch.no_grad()
     def _compute_reliability_terms(self, sorted_logits, temperature_map, a, epsilon=1e-8):
@@ -648,28 +655,82 @@ class Trainer(object):
 
     @torch.no_grad()
     def compute_dr_dT(self, sorted_logits, temperature_map, a, epsilon=1e-8):
+        dr_dT, _, r, c, v = self.compute_r_derivatives(sorted_logits, temperature_map, a, epsilon=epsilon)
+        return dr_dT, r, c, v
+
+    @torch.no_grad()
+    def compute_r_derivatives(self, sorted_logits, temperature_map, a, epsilon=1e-8):
         temp = temperature_map.clamp_min(epsilon)
         prob, c, v, r = self._compute_reliability_terms(sorted_logits, temp, a, epsilon=epsilon)
 
         nonmax_prob = prob[..., 1:]
         if nonmax_prob.shape[-1] == 0:
-            return torch.zeros_like(temp), r, c, v
+            zeros = torch.zeros_like(temp)
+            return zeros, zeros, r, c, v
 
         bar_z = torch.sum(prob * sorted_logits, dim=-1)
+        centered_logits = bar_z.unsqueeze(-1) - sorted_logits
+        temp_sq = temp ** 2
+        temp_cu = temp_sq * temp
+        temp_qd = temp_sq * temp_sq
+        prob_prime = prob * centered_logits / temp_sq.unsqueeze(-1)
+        logit_var = torch.sum(prob * centered_logits ** 2, dim=-1)
+        prob_double_prime = prob * (
+            (centered_logits ** 2 - logit_var.unsqueeze(-1)) / temp_qd.unsqueeze(-1)
+            - 2.0 * centered_logits / temp_cu.unsqueeze(-1)
+        )
+
         s = (1.0 - c).clamp_min(epsilon)
         num_nonmax = nonmax_prob.shape[-1]
         mu = s / num_nonmax
 
-        dc_dT = c * (bar_z - sorted_logits[..., 0]) / (temp ** 2)
-        sum_for_dv = torch.sum(
-            nonmax_prob ** 2 * (bar_z.unsqueeze(-1) - sorted_logits[..., 1:]),
+        dc_dT = prob_prime[..., 0]
+        d2c_dT2 = prob_double_prime[..., 0]
+
+        nonmax_prob_prime = prob_prime[..., 1:]
+        nonmax_prob_double_prime = prob_double_prime[..., 1:]
+        mu_prime = -dc_dT / num_nonmax
+        mu_double_prime = -d2c_dT2 / num_nonmax
+
+        dv_dT = (2.0 / num_nonmax) * torch.sum(nonmax_prob * nonmax_prob_prime, dim=-1) - 2.0 * mu * mu_prime
+        d2v_dT2 = (2.0 / num_nonmax) * torch.sum(
+            nonmax_prob_prime ** 2 + nonmax_prob * nonmax_prob_double_prime,
             dim=-1,
-        )
-        dv_dT = (2.0 / (num_nonmax * temp ** 2)) * sum_for_dv + (2.0 * mu / num_nonmax) * dc_dT
+        ) - 2.0 * (mu_prime ** 2 + mu * mu_double_prime)
 
         coeff_c = -1.0 / c + a * v / (s ** 2)
         dr_dT = coeff_c * dc_dT + (a / s) * dv_dT
-        return dr_dT, r, c, v
+
+        d2r_dT2 = (
+            (dc_dT ** 2) / (c ** 2)
+            - d2c_dT2 / c
+            + a * (
+                d2v_dT2 / s
+                + v * d2c_dT2 / (s ** 2)
+                + 2.0 * dc_dT * dv_dT / (s ** 2)
+                + 2.0 * v * (dc_dT ** 2) / (s ** 3)
+            )
+        )
+        return dr_dT, d2r_dT2, r, c, v
+
+    @torch.no_grad()
+    def _compute_iterative_temperature_step(self, dr_dT, d2r_dT2, eta, update_method):
+        if update_method != 'newton':
+            return eta * dr_dT
+
+        hessian_eps = float(getattr(self.args, 'covar_newton_hessian_eps', 1e-6))
+        max_step = float(getattr(self.args, 'covar_newton_max_step', 1.0))
+        valid_hessian = (
+            torch.isfinite(d2r_dT2)
+            & (d2r_dT2.abs() >= hessian_eps)
+            & (d2r_dT2 > 0)
+        )
+        safe_hessian = torch.where(valid_hessian, d2r_dT2, torch.ones_like(d2r_dT2))
+        delta_t = torch.where(valid_hessian, eta * dr_dT / safe_hessian, eta * dr_dT)
+
+        if max_step > 0:
+            delta_t = torch.clamp(delta_t, min=-max_step, max=max_step)
+        return delta_t
 
     @torch.no_grad()
     def get_gradient_temperature_map(self, teacher_logits, valid_mask, capture_detail=False, epsilon=1e-8):
@@ -677,7 +738,10 @@ class Trainer(object):
         base_temp = float(getattr(self.args, 'covar_temp_base', 1.0))
         eta = float(getattr(self.args, 'covar_grad_eta', 0.8))
         max_iter = max(int(getattr(self.args, 'covar_grad_max_iter', 4)), 0)
+        update_method = getattr(self.args, 'covar_temp_mode', 'grad')
         a = self._get_covar_grad_a(sorted_logits.shape[-1])
+
+        a = 8 # default to a large value to emphasize the variance term in reliability, which empirically leads to better temperature maps and distillation performance
         t_min = float(getattr(self.args, 'covar_temp_min', 0.8))
         t_max = float(getattr(self.args, 'covar_temp_max', 2.0))
         threshold = float(getattr(self.args, 'covar_grad_converge_thresh', 1e-3))
@@ -696,8 +760,11 @@ class Trainer(object):
 
         for iter_idx in range(max_iter):
             prev_temp = temperature_map
-            dr_dT, _, _, _ = self.compute_dr_dT(sorted_logits, temperature_map, a, epsilon=epsilon)
-            updated_temp = torch.clamp(temperature_map - eta * dr_dT, min=t_min, max=t_max)
+            dr_dT, d2r_dT2, _, _, _ = self.compute_r_derivatives(
+                sorted_logits, temperature_map, a, epsilon=epsilon
+            )
+            delta_t = self._compute_iterative_temperature_step(dr_dT, d2r_dT2, eta, update_method)
+            updated_temp = torch.clamp(temperature_map - delta_t, min=t_min, max=t_max)
             if capture_detail:
                 iter_stat = self._build_grad_iteration_stats(
                     dr_dT,
@@ -713,7 +780,9 @@ class Trainer(object):
                 iter_stats.append(iter_stat)
             temperature_map = updated_temp
 
-        final_dr_dT, r_map, c_map, v_map = self.compute_dr_dT(sorted_logits, temperature_map, a, epsilon=epsilon)
+        final_dr_dT, _, r_map, c_map, v_map = self.compute_r_derivatives(
+            sorted_logits, temperature_map, a, epsilon=epsilon
+        )
         self._sync_cuda_if_needed()
         grad_time_ms = (time.perf_counter() - grad_start) * 1000.0
 
@@ -758,6 +827,7 @@ class Trainer(object):
             'time_ms': grad_time_ms,
             'inner_iter_time_ms': grad_time_ms / max(max_iter, 1),
             'max_iter': max_iter,
+            'update_method': update_method,
             'num_valid': int(stats_valid_mask.sum().item()) if stats_valid_mask is not None else int(temperature_map.numel()),
             'final': final_stats,
             'per_iter': iter_stats,
@@ -792,7 +862,7 @@ class Trainer(object):
         )
 
         temp_mode = getattr(self.args, 'covar_temp_mode', 'sqrt')
-        if temp_mode == 'grad':
+        if temp_mode in ('grad', 'newton'):
             temp_map, r, grad_stats = self.get_gradient_temperature_map(
                 teacher_logits, valid_mask_resized, capture_detail=capture_grad_detail, epsilon=epsilon
             )
@@ -1275,7 +1345,7 @@ class Trainer(object):
                     valid_mask = (targets != self.args.ignore_label)
                     capture_grad_detail = (
                         save_to_disk
-                        and getattr(self.args, 'covar_temp_mode', 'sqrt') == 'grad'
+                        and getattr(self.args, 'covar_temp_mode', 'sqrt') in ('grad', 'newton')
                         and self.args.covar_grad_detail_interval > 0
                         and iteration % self.args.covar_grad_detail_interval == 0
                     )
@@ -1368,7 +1438,7 @@ class Trainer(object):
                         t_info = f" || T_mean: {t_mean:.4f} (d{d_mean:+.4f}) || T_min: {t_min:.4f} || T_max: {t_max:.4f}"
                     else:
                         t_info = f" || T_mean: {t_mean:.4f} || T_min: {t_min:.4f} || T_max: {t_max:.4f}"
-                if self.args.use_covar and getattr(self.args, 'covar_temp_mode', 'sqrt') == 'grad':
+                if self.args.use_covar and getattr(self.args, 'covar_temp_mode', 'sqrt') in ('grad', 'newton'):
                     t_info += self._format_covar_grad_brief()
                 logger.info(
                     "Iters: {:d}/{:d} || Lr: {:.6f} || Task Loss: {:.4f} || KD Loss: {:.4f} " \
@@ -1387,7 +1457,7 @@ class Trainer(object):
                         fitnet_loss_reduced.item(), t_info,
                         str(datetime.timedelta(seconds=int(time.time() - start_time))), eta_string))
 
-                if self.args.use_covar and getattr(self.args, 'covar_temp_mode', 'sqrt') == 'grad':
+                if self.args.use_covar and getattr(self.args, 'covar_temp_mode', 'sqrt') in ('grad', 'newton'):
                     if self.args.covar_grad_detail_interval > 0 and iteration % self.args.covar_grad_detail_interval == 0:
                         self._log_covar_grad_detail(iteration)
 
