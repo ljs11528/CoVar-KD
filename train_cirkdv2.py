@@ -101,9 +101,9 @@ def parse_args():
     parser.add_argument("--contrast-kd-temperature", type=float, default=1.0, help="similarity distribution KD temperature")
     parser.add_argument("--contrast-temperature", type=float, default=0.1, help="similarity distribution temperature")
 
-    parser.add_argument('--use-covar', action='store_true', default=False,
+    parser.add_argument('--use-covar', action='store_true', default=True,
                         help='enable CoVar weighting on teacher outputs')
-    parser.add_argument('--covar-temp-mode', type=str, default='sqrt', choices=['sqrt', 'grad', 'newton'],
+    parser.add_argument('--covar-temp-mode', type=str, default='newton', choices=['sqrt', 'grad', 'newton'],
                         help='temperature generation strategy for CoVar KD')
     parser.add_argument('--covar-temp-base', type=float, default=1.0,
                         help='base temperature T0 for dynamic CoVar KD')
