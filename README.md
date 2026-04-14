@@ -109,13 +109,3 @@ You can zip the resulting images and submit it to the [Cityscapes test server](h
 
 
 
-## Visualization of segmentation mask using pretrained models
-| Dataset | Color Pallete | Blend | Scripts |
-| -- | -- |-- |-- |
-| Pascal VOC |![top1](figures/2007_000033.png) |![top1](figures/2007_000033.jpg) |[sh](https://github.com/winycg/CIRKD/tree/main/train_scripts/visualize/pascal_voc.sh)|
-| Cityscapes |![top1](figures/frankfurt_000000_000576_gtFine_labelIds.png) |![top1](figures/frankfurt_000000_000576_leftImg8bit.png) |[sh](https://github.com/winycg/CIRKD/tree/main/train_scripts/visualize/cityscapes.sh)|
-| ADE20K |![top1](figures/ADE_val_00000053.png) |![top1](figures/ADE_val_00000053.jpg) |[sh](https://github.com/winycg/CIRKD/tree/main/train_scripts/visualize/ade20k.sh)|
-| COCO-Stuff-164K |![top1](figures/000000025394.png) |![top1](figures/000000025394.jpg) |[sh](https://github.com/winycg/CIRKD/tree/main/train_scripts/visualize/coco_stuff_164k.sh)|
-
-
-
