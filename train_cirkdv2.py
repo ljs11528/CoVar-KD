@@ -109,15 +109,15 @@ def parse_args():
                         help='base temperature T0 for dynamic CoVar KD')
     parser.add_argument('--covar-temp-alpha', type=float, default=0.5,
                         help='alpha for temperature ramp T(x)=ΔT(x)=1+α⋅sqrt(r~(x))')
-    parser.add_argument('--covar-temp-min', type=float, default=0.8,
+    parser.add_argument('--covar-temp-min', type=float, default=0.5,
                         help='minimum temperature for dynamic CoVar KD')
     parser.add_argument('--covar-temp-max', type=float, default=8.0,
                         help='maximum temperature for dynamic CoVar KD')
-    parser.add_argument('--covar-grad-eta', type=float, default=0.5,
+    parser.add_argument('--covar-grad-eta', type=float, default=1.0,
                         help='step size / damping factor eta for iterative temperature updates')
     parser.add_argument('--covar-grad-max-iter', type=int, default=4,
                         help='number of gradient iterations for dynamic temperature updates')
-    parser.add_argument('--covar-newton-hessian-eps', type=float, default=1e-4,
+    parser.add_argument('--covar-newton-hessian-eps', type=float, default=1e-5,
                         help='minimum |d2r/dT2| required by Newton updates before fallback to gradient descent')
     parser.add_argument('--covar-newton-max-step', type=float, default=0.3,
                         help='maximum absolute Newton step per iteration; <=0 disables step clipping')
