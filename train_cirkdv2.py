@@ -15,7 +15,7 @@ import torch.utils.data as data
 import torch.backends.cudnn as cudnn
 import torch.distributed as dist
 import torch.nn.functional as F
-from PCOS import get_max_confidence_and_residual_variance, _class_assignment, _compute_class_centers
+from PCOS import get_max_confidence_and_residual_variance_components, _class_assignment, _compute_class_centers
 
 from losses import *
 from losses import SegCrossEntropyLoss, CriterionKD, CriterionMiniBatchCrossImagePair
@@ -113,15 +113,17 @@ def parse_args():
                         help='minimum temperature for dynamic CoVar KD')
     parser.add_argument('--covar-temp-max', type=float, default=8.0,
                         help='maximum temperature for dynamic CoVar KD')
-    parser.add_argument('--covar-grad-eta', type=float, default=1.0,
+    parser.add_argument('--covar-grad-eta', type=float, default=0.6,
                         help='step size / damping factor eta for iterative temperature updates')
-    parser.add_argument('--covar-grad-max-iter', type=int, default=4,
+    parser.add_argument('--covar-grad-max-iter', type=int, default=8,
                         help='number of gradient iterations for dynamic temperature updates')
+    parser.add_argument('--covar-a', type=float, default=None,
+                        help='constant CoVar coefficient a in r=-log(mc)+a*v/(1-mc); defaults to (K-1)^2/2')
     parser.add_argument('--covar-newton-hessian-eps', type=float, default=1e-5,
                         help='minimum |d2r/dT2| required by Newton updates before fallback to gradient descent')
-    parser.add_argument('--covar-newton-max-step', type=float, default=0.3,
+    parser.add_argument('--covar-newton-max-step', type=float, default=0.25,
                         help='maximum absolute Newton step per iteration; <=0 disables step clipping')
-    parser.add_argument('--covar-grad-converge-thresh', type=float, default=1e-3,
+    parser.add_argument('--covar-grad-converge-thresh', type=float, default=1e-2,
                         help='threshold for treating |dr/dT| as converged in grad-mode diagnostics')
     parser.add_argument('--covar-grad-detail-interval', type=int, default=100,
                         help='interval (steps) to print detailed grad-mode diagnostics; <=0 disables')
@@ -435,11 +437,16 @@ class Trainer(object):
         return torch.sort(logits_hwk, dim=-1, descending=True).values
 
     @staticmethod
-    def _get_covar_grad_a(num_classes, mc, epsilon=1e-8):
-        scale = float((max(num_classes, 1) - 1) ** 2) / 2.0
-        if torch.is_tensor(mc):
-            return scale / (1.0 - mc).clamp_min(epsilon)
-        return scale / max(1.0 - float(mc), epsilon)
+    def _get_covar_constant_a(num_classes, like=None, configured_a=None):
+        if configured_a is None:
+            a_value = float((max(num_classes, 1) - 1) ** 2) / 2.0
+        else:
+            a_value = float(configured_a)
+
+        if like is None:
+            return a_value
+
+        return torch.full_like(like, a_value)
 
     def _sync_cuda_if_needed(self):
         if self.device.type == 'cuda':
@@ -737,13 +744,17 @@ class Trainer(object):
         return delta_t
 
     @torch.no_grad()
-    def get_gradient_temperature_map(self, teacher_logits, valid_mask, max_confidence, capture_detail=False, epsilon=1e-8):
+    def get_gradient_temperature_map(self, teacher_logits, valid_mask, capture_detail=False, epsilon=1e-8):
         sorted_logits = self._sort_logits_for_temperature(teacher_logits)
         base_temp = float(getattr(self.args, 'covar_temp_base', 1.0))
         eta = float(getattr(self.args, 'covar_grad_eta', 0.8))
         max_iter = max(int(getattr(self.args, 'covar_grad_max_iter', 4)), 0)
         update_method = getattr(self.args, 'covar_temp_mode', 'grad')
-        a = self._get_covar_grad_a(sorted_logits.shape[-1], max_confidence, epsilon=epsilon)
+        a = self._get_covar_constant_a(
+            sorted_logits.shape[-1],
+            like=valid_mask.float(),
+            configured_a=getattr(self.args, 'covar_a', None),
+        )
         a_stats = self._collect_value_stats(
             self._flatten_valid_values(a, valid_mask), include_quantile=False
         )
@@ -864,16 +875,25 @@ class Trainer(object):
         prob = F.softmax(teacher_logits, dim=1)
         num_classes = prob.size(1)
 
-        max_confidence, scaled_residual_variance = \
-            get_max_confidence_and_residual_variance(
-                prob, valid_mask_resized, num_classes, epsilon=epsilon
+        a_value = self._get_covar_constant_a(
+            num_classes,
+            configured_a=getattr(self.args, 'covar_a', None),
+        )
+        max_confidence, residual_variance, scaled_residual_variance = \
+            get_max_confidence_and_residual_variance_components(
+                prob, valid_mask_resized, num_classes=num_classes, epsilon=epsilon, a=a_value
             )
+
+        reliability = -torch.log(max_confidence.clamp(min=epsilon, max=1.0 - epsilon)) + scaled_residual_variance
 
         max_conf_stats = self._collect_value_stats(
             self._flatten_valid_values(max_confidence, valid_mask_resized), include_quantile=False
         )
-        srv_stats = self._collect_value_stats(
-            self._flatten_valid_values(scaled_residual_variance, valid_mask_resized), include_quantile=False
+        rv_stats = self._collect_value_stats(
+            self._flatten_valid_values(residual_variance, valid_mask_resized), include_quantile=False
+        )
+        reliability_stats = self._collect_value_stats(
+            self._flatten_valid_values(reliability, valid_mask_resized), include_quantile=False
         )
 
         mask_high = self.split_quality(
@@ -885,7 +905,6 @@ class Trainer(object):
             temp_map, r, grad_stats = self.get_gradient_temperature_map(
                 teacher_logits,
                 valid_mask_resized,
-                max_confidence,
                 capture_detail=capture_grad_detail,
                 epsilon=epsilon,
             )
@@ -895,8 +914,11 @@ class Trainer(object):
             a_stats = grad_stats.get('a_stats', {'mean': 0.0, 'min': 0.0, 'max': 0.0})
         else:
             self.last_covar_grad_stats = None
-            r = scaled_residual_variance
-            a_map = self._get_covar_grad_a(num_classes, max_confidence, epsilon=epsilon)
+            a_map = self._get_covar_constant_a(
+                num_classes,
+                like=max_confidence,
+                configured_a=getattr(self.args, 'covar_a', None),
+            )
             a_map_stats = self._collect_value_stats(
                 self._flatten_valid_values(a_map, valid_mask_resized), include_quantile=False
             )
@@ -905,6 +927,9 @@ class Trainer(object):
                 'min': a_map_stats['min'],
                 'max': a_map_stats['max'],
             }
+
+            r = -torch.log(max_confidence.clamp(min=epsilon, max=1.0 - epsilon)) + \
+                a_map * residual_variance / (1.0 - max_confidence).clamp_min(epsilon)
 
             sqrt_r = torch.sqrt(r + epsilon)
             if valid_mask_resized.any():
@@ -927,10 +952,15 @@ class Trainer(object):
                 'min': max_conf_stats['min'],
                 'max': max_conf_stats['max'],
             },
-            'scaled_residual_variance': {
-                'mean': srv_stats['mean'],
-                'min': srv_stats['min'],
-                'max': srv_stats['max'],
+            'residual_variance': {
+                'mean': rv_stats['mean'],
+                'min': rv_stats['min'],
+                'max': rv_stats['max'],
+            },
+            'reliability': {
+                'mean': reliability_stats['mean'],
+                'min': reliability_stats['min'],
+                'max': reliability_stats['max'],
             },
             'a': a_stats,
         }
@@ -1044,13 +1074,18 @@ class Trainer(object):
 
         prob = F.softmax(teacher_logits, dim=1)
         num_classes = prob.size(1)
+        a_value = self._get_covar_constant_a(
+            num_classes,
+            configured_a=getattr(self.args, 'covar_a', None),
+        )
 
         # =========================
         # r(C_T, v_T)
         # =========================
-        confidence, r_map = get_max_confidence_and_residual_variance(
-            prob, valid_mask, num_classes, epsilon=epsilon
+        confidence, _, scaled_residual_variance = get_max_confidence_and_residual_variance_components(
+            prob, valid_mask, num_classes=num_classes, epsilon=epsilon, a=a_value
         )
+        r_map = -torch.log(confidence.clamp(min=epsilon, max=1.0 - epsilon)) + scaled_residual_variance
 
         # =========================
         # z_star
@@ -1488,15 +1523,18 @@ class Trainer(object):
                         t_info = f" || T_mean: {t_mean:.4f} || T_min: {t_min:.4f} || T_max: {t_max:.4f}"
                 if self.args.use_covar and self.last_covar_input_stats is not None:
                     mc_stats = self.last_covar_input_stats['max_confidence']
-                    srv_stats = self.last_covar_input_stats['scaled_residual_variance']
+                    rv_stats = self.last_covar_input_stats['residual_variance']
+                    reliability_stats = self.last_covar_input_stats['reliability']
                     a_stats = self.last_covar_input_stats['a']
                     t_info += (
                         " || mc(mean/min/max): {:.4f}/{:.4f}/{:.4f}"
-                        " || r~(mean/min/max): {:.4e}/{:.4e}/{:.4e}"
+                        " || v(mean/min/max): {:.4e}/{:.4e}/{:.4e}"
+                        " || r(mean/min/max): {:.4e}/{:.4e}/{:.4e}"
                         " || a(mean/min/max): {:.4f}/{:.4f}/{:.4f}"
                     ).format(
                         mc_stats['mean'], mc_stats['min'], mc_stats['max'],
-                        srv_stats['mean'], srv_stats['min'], srv_stats['max'],
+                        rv_stats['mean'], rv_stats['min'], rv_stats['max'],
+                        reliability_stats['mean'], reliability_stats['min'], reliability_stats['max'],
                         a_stats['mean'], a_stats['min'], a_stats['max'],
                     )
                 if self.args.use_covar and getattr(self.args, 'covar_temp_mode', 'sqrt') in ('grad', 'newton'):

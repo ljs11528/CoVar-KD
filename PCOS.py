@@ -1,11 +1,18 @@
 import torch
 
 @torch.no_grad()
-def get_max_confidence_and_residual_variance(predictions, valid_mask, num_classes, epsilon=1e-8):
+def get_max_confidence_and_residual_variance_components(predictions, valid_mask, num_classes=None, epsilon=1e-8,
+                                                       a=None):
+    if num_classes is None:
+        num_classes = predictions.shape[1]
+
+    if a is None:
+        a = float((max(num_classes, 1) - 1) ** 2) / 2.0
+
     # predictions: [n, c, w, h]
     # valid_mask: [n, w, h]
     # num_classes: K (total number of classes)
-    
+
     # Step 1: Expand valid_mask to match predictions' shape
     valid_mask_expanded = valid_mask.unsqueeze(1).expand_as(predictions)  # [n, c, w, h]
 
@@ -15,35 +22,38 @@ def get_max_confidence_and_residual_variance(predictions, valid_mask, num_classe
 
     # Step 3: Calculate the maximum confidence and corresponding class (only over valid entries)
     max_confidence, max_indices = torch.max(predictions_masked, dim=1)  # [n, w, h]
-    
-    # Step 4: Compute the coefficient g_j
-    g_j = (num_classes - 1)**2 / (2 * (1 - max_confidence + epsilon))  # [n, w, h]
 
-    # Step 5: Create a mask to exclude the maximum confidence class
+    # Step 4: Create a mask to exclude the maximum confidence class
     one_hot_max = torch.nn.functional.one_hot(max_indices, num_classes=predictions.shape[1])  # [n, w, h, c]
     one_hot_max = one_hot_max.permute(0, 3, 1, 2)  # [n, c, w, h]
-    
-    # Step 6: Exclude the maximum prediction via mask (no NaNs)
+
+    # Step 5: Exclude the maximum prediction via mask (no NaNs)
     remaining_mask = valid_mask_expanded * (1 - one_hot_max)  # [n, c, w, h]
     remaining_predictions = predictions_masked * remaining_mask
-    
-    # Step 7: Compute mean over remaining classes (masked average)
+
+    # Step 6: Compute mean over remaining classes (masked average)
     count_remaining = remaining_mask.sum(dim=1).clamp_min(1)  # [n, w, h]
     sum_remaining = remaining_predictions.sum(dim=1)  # [n, w, h]
     mean_remaining_predictions = sum_remaining / count_remaining  # [n, w, h]
-    
-    # Step 8: Calculate variance over remaining classes (mean of squared deviation, masked)
+
+    # Step 7: Calculate variance over remaining classes (mean of squared deviation, masked)
     diff = remaining_predictions - mean_remaining_predictions.unsqueeze(1)  # [n, c, w, h]
     sq_diff = diff ** 2 * remaining_mask
     sum_sq_diff = sq_diff.sum(dim=1)  # [n, w, h]
     residual_variance = sum_sq_diff / count_remaining  # [n, w, h]
 
-    # Step 9: Scale residual variance by g_j
-    scaled_residual_variance = g_j * residual_variance  # [n, w, h]
-    # Zero out invalid pixels for stability
-    # max_confidence = torch.where(valid_mask == 1, max_confidence, torch.zeros_like(max_confidence))
-    # scaled_residual_variance = torch.where(valid_mask == 1, scaled_residual_variance, torch.zeros_like(scaled_residual_variance))
-    
+    # Step 8: Scale residual variance with the theory-consistent constant a
+    denom = (1 - max_confidence + epsilon)
+    scaled_residual_variance = a * residual_variance / denom  # [n, w, h]
+
+    return max_confidence, residual_variance, scaled_residual_variance
+
+
+@torch.no_grad()
+def get_max_confidence_and_residual_variance(predictions, valid_mask, num_classes=None, epsilon=1e-8, a=None):
+    max_confidence, _, scaled_residual_variance = get_max_confidence_and_residual_variance_components(
+        predictions, valid_mask, num_classes=num_classes, epsilon=epsilon, a=a
+    )
     return max_confidence, scaled_residual_variance
 
 @torch.no_grad()
