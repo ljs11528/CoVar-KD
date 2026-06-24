@@ -103,16 +103,24 @@ def parse_args():
 
     parser.add_argument('--use-covar', action='store_true', default=True,
                         help='enable CoVar weighting on teacher outputs')
-    parser.add_argument('--covar-temp-mode', type=str, default='newton', choices=['sqrt', 'grad', 'newton'],
+    parser.add_argument('--no-covar', dest='use_covar', action='store_false',
+                        help='disable CoVar temperature adaptation')
+    parser.add_argument('--covar-temp-mode', type=str, default='newton', choices=['sqrt', 'grad', 'newton', 'calib_conf'],
                         help='temperature generation strategy for CoVar KD')
     parser.add_argument('--covar-temp-base', type=float, default=1.0,
                         help='base temperature T0 for dynamic CoVar KD')
+    parser.add_argument('--covar-ref-temp', type=float, default=1.0,
+                        help='reference temperature used to evaluate teacher reliability before calibration')
     parser.add_argument('--covar-temp-alpha', type=float, default=0.5,
                         help='alpha for temperature ramp T(x)=ΔT(x)=1+α⋅sqrt(r~(x))')
     parser.add_argument('--covar-temp-min', type=float, default=0.5,
                         help='minimum temperature for dynamic CoVar KD')
     parser.add_argument('--covar-temp-max', type=float, default=8.0,
                         help='maximum temperature for dynamic CoVar KD')
+    parser.add_argument('--covar-kd-temp-power', type=float, default=2.0,
+                        help='temperature power gamma for CoVar KD loss scaling: KL(student/T, teacher/T) * T^gamma')
+    parser.add_argument('--teacher-output-temp', type=float, default=1.0,
+                        help='temperature to scale teacher logits (T>1 reduces teacher confidence, tests low-confidence scenario)')
     parser.add_argument('--covar-grad-eta', type=float, default=0.6,
                         help='step size / damping factor eta for iterative temperature updates')
     parser.add_argument('--covar-grad-max-iter', type=int, default=8,
@@ -127,6 +135,24 @@ def parse_args():
                         help='threshold for treating |dr/dT| as converged in grad-mode diagnostics')
     parser.add_argument('--covar-grad-detail-interval', type=int, default=100,
                         help='interval (steps) to print detailed grad-mode diagnostics; <=0 disables')
+    parser.add_argument('--covar-calib-centered', action='store_true', default=False,
+                        help='use centered calibration target c0*exp(-(r0-median(r0))) enabling bidirectional temperature (sharpening for reliable pixels, smoothing for unreliable ones)')
+    parser.add_argument('--covar-calib-anchor-mode', type=str, default='median',
+                        choices=['median', 'adaptive_mc', 'fixed'],
+                        help='anchor strategy for centered calibration: '
+                             'median (current default: always 50%% sharpen), '
+                             'adaptive_mc (p=mean(mc)^power, auto-adapts to teacher quality), '
+                             'fixed (use explicit anchor-quantile value)')
+    parser.add_argument('--covar-calib-anchor-power', type=float, default=1.0,
+                        help='power exponent for adaptive_mc mode: p=mean(mc)^power; '
+                             '<1→more aggressive sharpen (higher p), >1→more conservative (lower p)')
+    parser.add_argument('--covar-calib-anchor-quantile', type=float, default=None,
+                        help='explicit anchor quantile [0,1] for fixed mode; '
+                             '0.97=97%% sharpen, 0.5=median (50%%), overrides all other anchor logic')
+    parser.add_argument('--covar-calib-anchor-alpha', type=float, default=1.0,
+                        help='alpha factor for centered calibration: c_target=c0*exp(-alpha*(r0-anchor)); '
+                             'alpha>1→steeper transition (less identity, more extreme T); '
+                             'alpha<1→smoother transition (more identity)')
     parser.add_argument('--enable-visualizations', action='store_true', default=False,
                         help='enable all diagnostic plotting and plot-related data collection')
     parser.add_argument('--noise-plot-interval', type=int, default=10000,
@@ -275,7 +301,7 @@ class Trainer(object):
         self.t_model = get_segmentation_model(model=args.teacher_model, 
                                             backbone=args.teacher_backbone,
                                             local_rank=args.local_rank,
-                                            pretrained_base='None',
+                                            pretrained_base=args.teacher_pretrained_base,
                                             pretrained=args.teacher_pretrained,
                                             aux=True, 
                                             norm_layer=nn.BatchNorm2d,
@@ -481,6 +507,9 @@ class Trainer(object):
             'max': 0.0,
         }
         if include_quantile:
+            stats['q10'] = 0.0
+            stats['q50'] = 0.0
+            stats['q90'] = 0.0
             stats['p95'] = 0.0
         if threshold is not None:
             stats['below_thresh_ratio'] = 0.0
@@ -494,6 +523,9 @@ class Trainer(object):
         stats['max'] = float(target.max().item())
 
         if include_quantile:
+            stats['q10'] = float(torch.quantile(target, 0.10).item())
+            stats['q50'] = float(torch.quantile(target, 0.50).item())
+            stats['q90'] = float(torch.quantile(target, 0.90).item())
             stats['p95'] = float(torch.quantile(target, 0.95).item())
         if threshold is not None:
             compare = finite_values.abs()
@@ -511,6 +543,9 @@ class Trainer(object):
                 't_mean': 0.0,
                 't_min': 0.0,
                 't_max': 0.0,
+                't_q10': 0.0,
+                't_q50': 0.0,
+                't_q90': 0.0,
                 't_p95': 0.0,
                 't_nan_count': 0,
                 't_inf_count': 0,
@@ -532,6 +567,9 @@ class Trainer(object):
             'clamp_ratio': clamp_min_ratio + clamp_max_ratio,
         }
         if include_quantile:
+            out['t_q10'] = temp_stats['q10']
+            out['t_q50'] = temp_stats['q50']
+            out['t_q90'] = temp_stats['q90']
             out['t_p95'] = temp_stats['p95']
         return out
 
@@ -575,7 +613,22 @@ class Trainer(object):
 
         final = stats['final']
         avg_time_ms = self.covar_grad_time_total_ms / max(self.covar_grad_time_steps, 1)
-        label = 'NewtonT' if stats.get('update_method') == 'newton' else 'GradT'
+        update_method = stats.get('update_method')
+        if update_method == 'calib_conf':
+            calib_mode = stats.get('calib_mode', 'original')
+            mode_tag = 'CalibCtrT' if calib_mode == 'centered' else 'CalibT'
+            msg = (
+                f" || {mode_tag}: {stats['time_ms']:.1f}ms(avg {avg_time_ms:.1f}, inner {stats['inner_iter_time_ms']:.1f})"
+                f" || err(logc): {final['calib_err_mean']:.2e}/{final['active_calib_err_mean']:.2e}"
+                f" || c0/tgt/cf: {final['c0_mean']:.4f}/{final['c_target_mean']:.4f}/{final['c_final_mean']:.4f}"
+                f" || Tq10/50/90: {final['t_q10']:.3f}/{final['t_q50']:.3f}/{final['t_q90']:.3f}"
+                f" || Tmax: {final['clamp_max_ratio'] * 100:.1f}%"
+            )
+            if 'target_sharpen_active_ratio' in final:
+                msg += f" || sh/sm/id: {final['target_sharpen_active_ratio']*100:.0f}/{final['target_smooth_active_ratio']*100:.0f}/{final['target_identity_ratio']*100:.0f}%"
+            return msg
+
+        label = 'NewtonT' if update_method == 'newton' else 'GradT'
         return (
             f" || {label}: {stats['time_ms']:.1f}ms(avg {avg_time_ms:.1f}, inner {stats['inner_iter_time_ms']:.1f})"
             f" || |dr/dT|: {final['grad_abs_mean']:.2e}"
@@ -590,6 +643,66 @@ class Trainer(object):
             return
 
         final = stats['final']
+        if stats.get('update_method') == 'calib_conf':
+            calib_mode = stats.get('calib_mode', 'original')
+            mode_label = 'CalibConfCenteredTemp' if calib_mode == 'centered' else 'CalibConfTemp'
+            sharpen_info = ""
+            if 'target_sharpen_active_ratio' in final:
+                sharpen_info = (
+                    " || sharpen/smooth/id/unreach: {:.2f}%/{:.2f}%/{:.2f}%/{:.2f}%"
+                ).format(
+                    final['target_sharpen_active_ratio'] * 100.0,
+                    final['target_smooth_active_ratio'] * 100.0,
+                    final['target_identity_ratio'] * 100.0,
+                    final['target_unreachable_ratio'] * 100.0,
+                )
+            logger.info(
+                "{} Detail @ {:d} || time: {:.2f}ms || inner: {:.2f}ms x {:d} || a: {:.3f} || "
+                "T mean/q10/q50/q90/max: {:.4f}/{:.4f}/{:.4f}/{:.4f}/{:.4f} || "
+                "c0 target final mean: {:.4f}/{:.4f}/{:.4f} || "
+                "r0 mean/p95/max: {:.4f}/{:.4f}/{:.4f} || v0 mean/p95/max: {:.4e}/{:.4e}/{:.4e} || "
+                "err(logc) all mean/p95/max: {:.3e}/{:.3e}/{:.3e} || active mean/p95/max: {:.3e}/{:.3e}/{:.3e} || "
+                "active/unreachable/identity: {:.2f}%/{:.2f}%/{:.2f}%{} || "
+                "clamp[min/max]: {:.2f}%/{:.2f}% || anchor_q: {:.3f} || NaN(T): {:d} || Inf(T): {:d}".format(
+                    mode_label,
+                    iteration,
+                    stats['time_ms'],
+                    stats['inner_iter_time_ms'],
+                    stats['max_iter'],
+                    stats['a'],
+                    final['t_mean'],
+                    final['t_q10'],
+                    final['t_q50'],
+                    final['t_q90'],
+                    final['t_max'],
+                    final['c0_mean'],
+                    final['c_target_mean'],
+                    final['c_final_mean'],
+                    final['r0_mean'],
+                    final['r0_p95'],
+                    final['r0_max'],
+                    final['v0_mean'],
+                    final['v0_p95'],
+                    final['v0_max'],
+                    final['calib_err_mean'],
+                    final['calib_err_p95'],
+                    final['calib_err_max'],
+                    final['active_calib_err_mean'],
+                    final['active_calib_err_p95'],
+                    final['active_calib_err_max'],
+                    final['target_active_ratio'] * 100.0,
+                    final['target_unreachable_ratio'] * 100.0,
+                    final['target_identity_ratio'] * 100.0,
+                    sharpen_info,
+                    final['clamp_min_ratio'] * 100.0,
+                    final['clamp_max_ratio'] * 100.0,
+                    final.get('anchor_quantile', 0.5),
+                    final['t_nan_count'],
+                    final['t_inf_count'],
+                )
+            )
+            return
+
         label = 'NewtonTemp' if stats.get('update_method') == 'newton' else 'GradTemp'
         logger.info(
             "{} Detail @ {:d} || time: {:.2f}ms || inner: {:.2f}ms x {:d} || a: {:.3f} || "
@@ -723,6 +836,308 @@ class Trainer(object):
             )
         )
         return dr_dT, d2r_dT2, r, c, v
+
+    @torch.no_grad()
+    def _compute_log_confidence_and_derivative(self, sorted_logits, temperature_map, epsilon=1e-8):
+        temp = temperature_map.clamp_min(epsilon)
+        prob = F.softmax(sorted_logits / temp.unsqueeze(-1), dim=-1)
+        c = prob[..., 0].clamp(min=epsilon, max=1.0 - epsilon)
+        log_c = torch.log(c)
+        bar_z = torch.sum(prob * sorted_logits, dim=-1)
+        dlogc_dT = (bar_z - sorted_logits[..., 0]) / (temp ** 2)
+        return log_c, dlogc_dT, c
+
+    @torch.no_grad()
+    def get_calibrated_conf_temperature_map(self, teacher_logits, valid_mask, capture_detail=False, epsilon=1e-8):
+        sorted_logits = self._sort_logits_for_temperature(teacher_logits)
+        num_classes = sorted_logits.shape[-1]
+        ref_temp = max(float(getattr(self.args, 'covar_ref_temp', 1.0)), epsilon)
+        base_temp = float(getattr(self.args, 'covar_temp_base', ref_temp))
+        # Decoupled from ref_temp: allow T < 1 (sharpening) when explicitly requested via --covar-temp-min
+        t_min = float(getattr(self.args, 'covar_temp_min', ref_temp))
+        t_max = max(float(getattr(self.args, 'covar_temp_max', t_min)), t_min)
+        use_centered = bool(getattr(self.args, 'covar_calib_centered', False))
+        eta = float(getattr(self.args, 'covar_grad_eta', 1.0))
+        max_iter = max(int(getattr(self.args, 'covar_grad_max_iter', 8)), 0)
+        hessian_eps = float(getattr(self.args, 'covar_newton_hessian_eps', 1e-6))
+        calib_tol = min(float(getattr(self.args, 'covar_grad_converge_thresh', 1e-3)), 1e-4)
+        stats_valid_mask = valid_mask
+
+        a = self._get_covar_constant_a(
+            num_classes,
+            like=valid_mask.float(),
+            configured_a=getattr(self.args, 'covar_a', None),
+        )
+        a_stats = self._collect_value_stats(
+            self._flatten_valid_values(a, valid_mask), include_quantile=False
+        )
+
+        ref_map = torch.full(
+            sorted_logits.shape[:-1],
+            ref_temp,
+            device=teacher_logits.device,
+            dtype=teacher_logits.dtype,
+        )
+        _, c0_map, v0_map, r0_map = self._compute_reliability_terms(
+            sorted_logits, ref_map, a, epsilon=epsilon
+        )
+
+        uniform_conf = 1.0 / float(max(num_classes, 1))
+        _anchor_q = 0.5  # default: median; updated in centered block
+
+        if use_centered:
+            # Bidirectional calibration: c_target = c0 * exp(-(r0 - r_anchor))
+            # Reliable pixels (r0 < r_anchor) → c_target > c0 → T < 1 (sharpen)
+            # Unreliable pixels (r0 > r_anchor) → c_target < c0 → T > 1 (smooth)
+            # Anchor adapts to teacher quality: higher mean(mc) → higher anchor → more sharpen
+            r0_valid_flat = self._flatten_valid_values(r0_map, valid_mask)
+            if r0_valid_flat.numel() > 0:
+                anchor_mode = str(getattr(self.args, 'covar_calib_anchor_mode', 'median'))
+                override_q = getattr(self.args, 'covar_calib_anchor_quantile', None)
+
+                if override_q is not None:
+                    _anchor_q = min(max(float(override_q), 0.01), 0.99)
+                elif anchor_mode == 'adaptive_mc':
+                    c0_valid_flat = self._flatten_valid_values(c0_map, valid_mask)
+                    mean_mc = c0_valid_flat.mean()
+                    power = float(getattr(self.args, 'covar_calib_anchor_power', 1.0))
+                    _anchor_q = float(torch.clamp(mean_mc.pow(power), 0.01, 0.99).item())
+                else:  # median (current default)
+                    _anchor_q = 0.5
+
+                if _anchor_q == 0.5:
+                    r_anchor = torch.median(r0_valid_flat)
+                else:
+                    r_anchor = torch.quantile(r0_valid_flat, _anchor_q)
+            else:
+                r_anchor = torch.tensor(0.0, device=r0_map.device, dtype=r0_map.dtype)
+            _anchor_alpha = float(getattr(self.args, 'covar_calib_anchor_alpha', 1.0))
+            raw_target_conf = (c0_map * torch.exp(-_anchor_alpha * (r0_map - r_anchor))).clamp(min=epsilon, max=1.0 - epsilon)
+            target_conf = torch.clamp(raw_target_conf, min=uniform_conf + epsilon, max=1.0 - epsilon)
+            _mode_parts = []
+            if r0_valid_flat.numel() > 0 and _anchor_q != 0.5:
+                _mode_parts.append(f'a{_anchor_q:.3f}')
+            if _anchor_alpha != 1.0:
+                _mode_parts.append(f'α{_anchor_alpha:.1f}')
+            calib_mode_str = f"centered_{'_'.join(_mode_parts)}" if _mode_parts else 'centered'
+        else:
+            # Original: c_target = clamp(exp(-r0), 1/K+eps, c0) — smoothing only
+            target_floor = torch.full_like(c0_map, min(uniform_conf + epsilon, 1.0 - epsilon))
+            raw_target_conf = torch.exp(-r0_map).clamp(min=epsilon, max=1.0 - epsilon)
+            target_conf = torch.minimum(torch.maximum(raw_target_conf, target_floor), c0_map)
+            calib_mode_str = 'original'
+
+        target_conf = target_conf.clamp(min=epsilon, max=1.0 - epsilon)
+        target_log_conf = torch.log(target_conf)
+
+        # Evaluate log-confidence at reference and boundary temperatures
+        ref_log_conf, _, _ = self._compute_log_confidence_and_derivative(
+            sorted_logits, ref_map, epsilon=epsilon
+        )
+        lower_t = torch.full_like(c0_map, t_min)
+        upper_t = torch.full_like(c0_map, t_max)
+        lower_log_conf, _, _ = self._compute_log_confidence_and_derivative(
+            sorted_logits, lower_t, epsilon=epsilon
+        )
+        upper_log_conf, _, _ = self._compute_log_confidence_and_derivative(
+            sorted_logits, upper_t, epsilon=epsilon
+        )
+
+        # Classify pixels by required direction:
+        #   sharpen: c_target > c0 → T in [t_min, ref_temp]
+        #   smooth:  c_target < c0 → T in [ref_temp, t_max]
+        #   identity: c_target ≈ c0 → T = ref_temp
+        needs_sharpen = target_log_conf > (ref_log_conf + calib_tol)
+        needs_smooth = target_log_conf < (ref_log_conf - calib_tol)
+        identity = ~(needs_sharpen | needs_smooth)
+
+        # Sharpening reachability: can we achieve c_target at T = t_min?
+        sharpen_reachable = target_log_conf <= (lower_log_conf + calib_tol)
+        sharpen_active = needs_sharpen & sharpen_reachable
+        sharpen_unreachable = needs_sharpen & (~sharpen_reachable)
+
+        # Smoothing reachability: can we achieve c_target at T = t_max?
+        smooth_reachable = target_log_conf >= (upper_log_conf - calib_tol)
+        smooth_active = needs_smooth & smooth_reachable
+        smooth_unreachable = needs_smooth & (~smooth_reachable)
+
+        active = sharpen_active | smooth_active
+        unreachable = sharpen_unreachable | smooth_unreachable
+
+        # Initialize temperature and brackets per direction
+        init_temp = torch.full_like(c0_map, min(max(base_temp, t_min), t_max))
+        # Sharpen: start midway between ref and t_min; Smooth: use base init
+        sharpen_init_val = max(min(0.5 * (ref_temp + t_min), ref_temp), t_min)
+        sharpen_init = torch.full_like(c0_map, sharpen_init_val)
+        temperature_map = torch.where(
+            sharpen_active, sharpen_init,
+            torch.where(smooth_active, init_temp,
+                        torch.where(unreachable, lower_t, ref_map))
+        )
+        temperature_map = torch.where(sharpen_unreachable, lower_t,
+                                      torch.where(smooth_unreachable, upper_t, temperature_map))
+
+        # Brackets: sharpen uses [t_min, ref_temp]; smooth uses [ref_temp, t_max]
+        bracket_low = torch.where(sharpen_active, lower_t,
+                                  torch.where(smooth_active, ref_map, lower_t))
+        bracket_high = torch.where(sharpen_active, ref_map,
+                                   torch.where(smooth_active, upper_t, upper_t))
+        iter_stats = []
+
+        self._sync_cuda_if_needed()
+        calib_start = time.perf_counter()
+
+        for iter_idx in range(max_iter):
+            log_conf, dlogc_dT, _ = self._compute_log_confidence_and_derivative(
+                sorted_logits, temperature_map, epsilon=epsilon
+            )
+            residual = log_conf - target_log_conf
+            valid_derivative = torch.isfinite(dlogc_dT) & (dlogc_dT <= -hessian_eps)
+            safe_dlogc_dT = torch.where(
+                valid_derivative,
+                dlogc_dT,
+                torch.full_like(dlogc_dT, -hessian_eps),
+            )
+            newton_candidate = temperature_map - eta * residual / safe_dlogc_dT
+            midpoint = 0.5 * (bracket_low + bracket_high)
+            use_newton = (
+                active
+                & valid_derivative
+                & torch.isfinite(newton_candidate)
+                & (newton_candidate >= bracket_low)
+                & (newton_candidate <= bracket_high)
+            )
+            candidate = torch.where(use_newton, newton_candidate, midpoint)
+            candidate_log_conf, _, _ = self._compute_log_confidence_and_derivative(
+                sorted_logits, candidate, epsilon=epsilon
+            )
+            too_confident = candidate_log_conf > target_log_conf
+            bracket_low = torch.where(active & too_confident, candidate, bracket_low)
+            bracket_high = torch.where(active & (~too_confident), candidate, bracket_high)
+            updated_temp = torch.where(active, candidate, temperature_map)
+
+            if capture_detail:
+                err_stats = self._collect_value_stats(
+                    self._flatten_valid_values((candidate_log_conf - target_log_conf).abs(), stats_valid_mask),
+                    include_quantile=False,
+                )
+                temp_stats = self._collect_temperature_state_stats(
+                    updated_temp, stats_valid_mask, t_min, t_max, include_quantile=False
+                )
+                iter_stat = {
+                    'iter': iter_idx,
+                    'calib_err_mean': err_stats['mean'],
+                    'calib_err_max': err_stats['max'],
+                    'newton_ratio': self._collect_value_stats(
+                        self._flatten_valid_values(use_newton.float(), stats_valid_mask), include_quantile=False
+                    )['mean'],
+                }
+                iter_stat.update(temp_stats)
+                iter_stats.append(iter_stat)
+
+            temperature_map = updated_temp
+
+        final_log_conf, _, c_final_map = self._compute_log_confidence_and_derivative(
+            sorted_logits, temperature_map, epsilon=epsilon
+        )
+        calib_err = (final_log_conf - target_log_conf).abs()
+
+        self._sync_cuda_if_needed()
+        calib_time_ms = (time.perf_counter() - calib_start) * 1000.0
+
+        final_stats = self._collect_temperature_state_stats(
+            temperature_map, stats_valid_mask, t_min, t_max, include_quantile=True
+        )
+        r0_stats = self._collect_value_stats(
+            self._flatten_valid_values(r0_map, stats_valid_mask), include_quantile=True
+        )
+        c0_stats = self._collect_value_stats(
+            self._flatten_valid_values(c0_map, stats_valid_mask), include_quantile=False
+        )
+        v0_stats = self._collect_value_stats(
+            self._flatten_valid_values(v0_map, stats_valid_mask), include_quantile=True
+        )
+        target_stats = self._collect_value_stats(
+            self._flatten_valid_values(target_conf, stats_valid_mask), include_quantile=False
+        )
+        c_final_stats = self._collect_value_stats(
+            self._flatten_valid_values(c_final_map, stats_valid_mask), include_quantile=False
+        )
+        err_stats = self._collect_value_stats(
+            self._flatten_valid_values(calib_err, stats_valid_mask), include_quantile=True
+        )
+        active_valid_mask = active if stats_valid_mask is None else (active & stats_valid_mask)
+        active_err_stats = self._collect_value_stats(
+            self._flatten_valid_values(calib_err, active_valid_mask), include_quantile=True
+        )
+        sharpen_active_stats = self._collect_value_stats(
+            self._flatten_valid_values(sharpen_active.float(), stats_valid_mask), include_quantile=False
+        )
+        smooth_active_stats = self._collect_value_stats(
+            self._flatten_valid_values(smooth_active.float(), stats_valid_mask), include_quantile=False
+        )
+        active_stats = self._collect_value_stats(
+            self._flatten_valid_values(active.float(), stats_valid_mask), include_quantile=False
+        )
+        unreachable_stats = self._collect_value_stats(
+            self._flatten_valid_values(unreachable.float(), stats_valid_mask), include_quantile=False
+        )
+        identity_stats = self._collect_value_stats(
+            self._flatten_valid_values(identity.float(), stats_valid_mask), include_quantile=False
+        )
+        final_stats.update({
+            'r0_mean': r0_stats['mean'],
+            'r0_p95': r0_stats['p95'],
+            'r0_max': r0_stats['max'],
+            'c0_mean': c0_stats['mean'],
+            'c0_min': c0_stats['min'],
+            'c0_max': c0_stats['max'],
+            'v0_mean': v0_stats['mean'],
+            'v0_p95': v0_stats['p95'],
+            'v0_max': v0_stats['max'],
+            'c_target_mean': target_stats['mean'],
+            'c_target_min': target_stats['min'],
+            'c_target_max': target_stats['max'],
+            'c_final_mean': c_final_stats['mean'],
+            'c_final_min': c_final_stats['min'],
+            'c_final_max': c_final_stats['max'],
+            'calib_err_mean': err_stats['mean'],
+            'calib_err_p95': err_stats['p95'],
+            'calib_err_max': err_stats['max'],
+            'active_calib_err_mean': active_err_stats['mean'],
+            'active_calib_err_p95': active_err_stats['p95'],
+            'active_calib_err_max': active_err_stats['max'],
+            'target_active_ratio': active_stats['mean'],
+            'target_sharpen_active_ratio': sharpen_active_stats['mean'],
+            'target_smooth_active_ratio': smooth_active_stats['mean'],
+            'target_unreachable_ratio': unreachable_stats['mean'],
+            'target_identity_ratio': identity_stats['mean'],
+            'anchor_quantile': float(_anchor_q),
+        })
+
+        grad_stats = {
+            'a': a_stats['mean'],
+            'a_stats': {
+                'mean': a_stats['mean'],
+                'min': a_stats['min'],
+                'max': a_stats['max'],
+            },
+            'threshold': calib_tol,
+            'time_ms': calib_time_ms,
+            'inner_iter_time_ms': calib_time_ms / max(max_iter, 1),
+            'max_iter': max_iter,
+            'update_method': 'calib_conf',
+            'calib_mode': calib_mode_str,
+            'num_valid': int(stats_valid_mask.sum().item()) if stats_valid_mask is not None else int(temperature_map.numel()),
+            'final': final_stats,
+            'per_iter': iter_stats,
+        }
+
+        if valid_mask is not None:
+            temperature_map = torch.where(valid_mask, temperature_map, torch.full_like(temperature_map, ref_temp))
+            r0_map = torch.where(valid_mask, r0_map, torch.zeros_like(r0_map))
+
+        return temperature_map, r0_map, grad_stats
 
     @torch.no_grad()
     def _compute_iterative_temperature_step(self, dr_dT, d2r_dT2, eta, update_method):
@@ -912,6 +1327,17 @@ class Trainer(object):
             self.covar_grad_time_total_ms += grad_stats['time_ms']
             self.covar_grad_time_steps += 1
             a_stats = grad_stats.get('a_stats', {'mean': 0.0, 'min': 0.0, 'max': 0.0})
+        elif temp_mode == 'calib_conf':
+            temp_map, r, grad_stats = self.get_calibrated_conf_temperature_map(
+                teacher_logits,
+                valid_mask_resized,
+                capture_detail=capture_grad_detail,
+                epsilon=epsilon,
+            )
+            self.last_covar_grad_stats = grad_stats
+            self.covar_grad_time_total_ms += grad_stats['time_ms']
+            self.covar_grad_time_steps += 1
+            a_stats = grad_stats.get('a_stats', {'mean': 0.0, 'min': 0.0, 'max': 0.0})
         else:
             self.last_covar_grad_stats = None
             a_map = self._get_covar_constant_a(
@@ -987,7 +1413,9 @@ class Trainer(object):
         t_prob = F.softmax(teacher_logits / temp, dim=1)
 
         kd_map = F.kl_div(s_log_prob, t_prob, reduction='none').sum(dim=1)
-        kd_map = kd_map * valid_mask.float() * (temperature_map.clamp_min(epsilon) ** 2)
+        temp_power = float(getattr(self.args, 'covar_kd_temp_power', 2.0))
+        kd_scale = temperature_map.clamp_min(epsilon) ** temp_power
+        kd_map = kd_map * valid_mask.float() * kd_scale
         denom = valid_mask.sum().clamp_min(1)
         loss = kd_map.sum() / denom
         return loss
@@ -1412,6 +1840,9 @@ class Trainer(object):
             
             with torch.no_grad():
                 t_outputs = self.t_model(images)
+                if self.args.teacher_output_temp != 1.0:
+                    t_outputs = list(t_outputs)
+                    t_outputs[0] = t_outputs[0] / self.args.teacher_output_temp
 
             s_outputs = self.s_model(images)
 
@@ -1428,7 +1859,7 @@ class Trainer(object):
                     valid_mask = (targets != self.args.ignore_label)
                     capture_grad_detail = (
                         save_to_disk
-                        and getattr(self.args, 'covar_temp_mode', 'sqrt') in ('grad', 'newton')
+                        and getattr(self.args, 'covar_temp_mode', 'sqrt') in ('grad', 'newton', 'calib_conf')
                         and self.args.covar_grad_detail_interval > 0
                         and iteration % self.args.covar_grad_detail_interval == 0
                     )
@@ -1537,7 +1968,7 @@ class Trainer(object):
                         reliability_stats['mean'], reliability_stats['min'], reliability_stats['max'],
                         a_stats['mean'], a_stats['min'], a_stats['max'],
                     )
-                if self.args.use_covar and getattr(self.args, 'covar_temp_mode', 'sqrt') in ('grad', 'newton'):
+                if self.args.use_covar and getattr(self.args, 'covar_temp_mode', 'sqrt') in ('grad', 'newton', 'calib_conf'):
                     t_info += self._format_covar_grad_brief()
                 logger.info(
                     "Iters: {:d}/{:d} || Lr: {:.6f} || Task Loss: {:.4f} || KD Loss: {:.4f} " \
@@ -1556,7 +1987,7 @@ class Trainer(object):
                         fitnet_loss_reduced.item(), t_info,
                         str(datetime.timedelta(seconds=int(time.time() - start_time))), eta_string))
 
-                if self.args.use_covar and getattr(self.args, 'covar_temp_mode', 'sqrt') in ('grad', 'newton'):
+                if self.args.use_covar and getattr(self.args, 'covar_temp_mode', 'sqrt') in ('grad', 'newton', 'calib_conf'):
                     if self.args.covar_grad_detail_interval > 0 and iteration % self.args.covar_grad_detail_interval == 0:
                         self._log_covar_grad_detail(iteration)
 
