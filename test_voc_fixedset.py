@@ -16,6 +16,12 @@ import torch.backends.cudnn as cudnn
 import numpy as np
 from PIL import Image
 
+try:
+    import torch_npu  # noqa: F401
+    HAS_TORCH_NPU = True
+except Exception:
+    HAS_TORCH_NPU = False
+
 from models.model_zoo import get_segmentation_model
 from utils.score import SegmentationMetric
 from utils.visualize import get_color_pallete
@@ -36,8 +42,29 @@ def parse_args():
 
     parser.add_argument('--save-dir', type=str, default='./runs/voc_test_results',
                         help='directory to save outputs')
+    parser.add_argument('--device-type', type=str, default='auto', choices=['auto', 'cuda', 'npu', 'cpu'],
+                        help='accelerator backend; auto prefers CUDA, then Ascend NPU, then CPU')
     parser.add_argument('--no-cuda', action='store_true', default=False, help='disable CUDA')
     return parser.parse_args()
+
+
+def npu_is_available():
+    return HAS_TORCH_NPU and hasattr(torch, "npu") and torch.npu.is_available()
+
+
+def resolve_device(args):
+    if args.no_cuda:
+        return torch.device('cpu')
+    requested = args.device_type.lower()
+    if requested == 'cuda':
+        return torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    if requested == 'npu':
+        return torch.device('npu') if npu_is_available() else torch.device('cpu')
+    if torch.cuda.is_available():
+        return torch.device('cuda')
+    if npu_is_available():
+        return torch.device('npu')
+    return torch.device('cpu')
 
 
 def build_model(args, num_class, device):
@@ -112,10 +139,10 @@ def save_outputs(image_path, pred_np, gt_np, name, out_root):
 def main():
     args = parse_args()
 
-    use_cuda = (not args.no_cuda) and torch.cuda.is_available()
+    device = resolve_device(args)
+    use_cuda = device.type == 'cuda'
     if use_cuda:
         cudnn.benchmark = True
-    device = torch.device('cuda' if use_cuda else 'cpu')
 
     dataset = VOCDataValSet(args.data, args.data_list)
     loader = data.DataLoader(dataset, batch_size=1, shuffle=False,
@@ -131,6 +158,7 @@ def main():
     print('Data root :', args.data)
     print('Save dir  :', args.save_dir)
     print('Samples   :', len(loader))
+    print('Device    :', device)
 
     with torch.no_grad():
         for idx, (image, target, filename) in enumerate(loader, start=1):

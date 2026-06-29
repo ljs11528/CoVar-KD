@@ -72,7 +72,7 @@ class CriterionMiniBatchCrossImagePair(nn.Module):
         feat_S = F.normalize(feat_S, p=2, dim=1)
         feat_T = F.normalize(feat_T, p=2, dim=1)
         
-        sim_dis = torch.tensor(0.).cuda()
+        sim_dis = feat_S.new_tensor(0.)
         for i in range(B):
             for j in range(B):
                 

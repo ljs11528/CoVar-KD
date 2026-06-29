@@ -34,7 +34,7 @@ class CriterionPSD(nn.Module):
         ra_T_list = self.residual_attention(feat_T_list)
 
         K = len(ra_S_list)
-        psd_loss = torch.tensor(0.).cuda()
+        psd_loss = feat_S_list[0].new_tensor(0.)
         for k in range(K):
             psd_loss += (F.normalize(ra_S_list[k])-F.normalize(ra_T_list[k])).pow(2).mean()
         

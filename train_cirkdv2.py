@@ -4,17 +4,25 @@ import datetime
 import os
 import shutil
 import sys
+import random
 
 cur_path = os.path.abspath(os.path.dirname(__file__))
 root_path = os.path.split(cur_path)[0]
 sys.path.append(root_path)
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.utils.data as data
 import torch.backends.cudnn as cudnn
 import torch.distributed as dist
 import torch.nn.functional as F
+
+try:
+    import torch_npu  # noqa: F401
+    HAS_TORCH_NPU = True
+except Exception:
+    HAS_TORCH_NPU = False
 from PCOS import get_max_confidence_and_residual_variance_components, _class_assignment, _compute_class_centers
 
 from losses import *
@@ -46,6 +54,101 @@ try:
     from scripts.visualize.plot_g2_r_over_t2 import save_g2_r_over_t2_scatter
 except Exception:
     save_g2_r_over_t2_scatter = None
+
+
+def npu_is_available():
+    return HAS_TORCH_NPU and hasattr(torch, "npu") and torch.npu.is_available()
+
+
+def resolve_device_type(requested):
+    requested = str(requested).lower()
+    if requested != 'auto':
+        if requested == 'cuda' and not torch.cuda.is_available():
+            raise RuntimeError('Requested --device-type cuda, but CUDA is not available.')
+        if requested == 'npu' and not npu_is_available():
+            raise RuntimeError('Requested --device-type npu, but torch_npu/NPU is not available.')
+        return requested
+    if torch.cuda.is_available():
+        return 'cuda'
+    if npu_is_available():
+        return 'npu'
+    return 'cpu'
+
+
+def set_accelerator_device(device_type, local_rank):
+    if device_type == 'cuda':
+        torch.cuda.set_device(local_rank)
+    elif device_type == 'npu':
+        torch.npu.set_device(local_rank)
+
+
+def synchronize_accelerator(device):
+    if device.type == 'cuda':
+        torch.cuda.synchronize(device)
+    elif device.type == 'npu':
+        torch.npu.synchronize(device)
+
+
+def empty_accelerator_cache(device):
+    if device.type == 'cuda':
+        torch.cuda.empty_cache()
+    elif device.type == 'npu':
+        torch.npu.empty_cache()
+
+
+def seed_everything(seed, rank=0):
+    seed = int(seed) + int(rank)
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    if npu_is_available():
+        torch.npu.manual_seed_all(seed)
+
+
+def make_worker_init_fn(base_seed, rank):
+    def _init_fn(worker_id):
+        seed = int(base_seed) + int(rank) * 1000 + int(worker_id)
+        random.seed(seed)
+        np.random.seed(seed)
+        torch.manual_seed(seed)
+    return _init_fn
+
+
+def unwrap_module(module):
+    return module.module if isinstance(module, nn.parallel.DistributedDataParallel) else module
+
+
+def load_state_dict_compatible(module, state_dict, strict=True):
+    if state_dict is None:
+        return
+    target = unwrap_module(module)
+    cleaned = {}
+    for key, value in state_dict.items():
+        cleaned[key[7:] if key.startswith('module.') else key] = value
+    target.load_state_dict(cleaned, strict=strict)
+
+
+def move_optimizer_state_to_device(optimizer, device):
+    for state in optimizer.state.values():
+        for key, value in state.items():
+            if torch.is_tensor(value):
+                state[key] = value.to(device)
+
+
+def training_state_path(args, filename='training_state_latest.pth'):
+    return os.path.join(os.path.expanduser(args.save_dir), filename)
+
+
+def resolve_resume_state_path(args):
+    if getattr(args, 'resume_state', None):
+        return args.resume_state if os.path.isfile(args.resume_state) else None
+    if getattr(args, 'auto_resume', False):
+        candidate = training_state_path(args)
+        if os.path.isfile(candidate):
+            return candidate
+    return None
 
 
 def parse_args():
@@ -187,14 +290,24 @@ def parse_args():
     parser.add_argument("--lambda-memory-region", type=float, default=0.1, help="lambda memory-based region")
     parser.add_argument("--lambda-memory-channel", type=float, default=0.1, help="lambda memory-based channel")
     
-    # cuda setting
+    # accelerator setting
     parser.add_argument('--gpu-id', type=str, default='0') 
+    parser.add_argument('--device-type', type=str, default='auto', choices=['auto', 'cuda', 'npu', 'cpu'],
+                        help='accelerator backend; auto prefers CUDA, then Ascend NPU, then CPU')
+    parser.add_argument('--seed', type=int, default=1234,
+                        help='base random seed for reproducible training and data workers')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
     parser.add_argument('--local-rank', type=int, default=0)
     # checkpoint and log
     parser.add_argument('--resume', type=str, default=None,
                         help='put the path to resuming file if needed')
+    parser.add_argument('--resume-state', type=str, default=None,
+                        help='full training-state checkpoint to resume from')
+    parser.add_argument('--auto-resume', action='store_true', default=True,
+                        help='automatically resume from training_state_latest.pth in save-dir')
+    parser.add_argument('--no-auto-resume', dest='auto_resume', action='store_false',
+                        help='disable automatic training-state resume')
     parser.add_argument('--save-dir', default='~/.torch/models',
                         help='Directory for saving checkpoint models')
     parser.add_argument('--save-dir-name', default='seg_kd_exps',
@@ -245,11 +358,19 @@ def parse_args():
 class Trainer(object):
     def __init__(self, args):
         self.args = args
-        if args.distributed and args.device == "cuda":
-            self.device = torch.device("cuda", args.local_rank)
+        if args.distributed and args.device in ("cuda", "npu"):
+            self.device = torch.device(f"{args.device}:{args.local_rank}")
         else:
             self.device = torch.device(args.device)
         self.num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
+        self.rank = get_rank()
+        self.resume_state_path = resolve_resume_state_path(args)
+        self.resume_state = None
+        self.start_iteration = 0
+        if self.resume_state_path:
+            self.resume_state = torch.load(self.resume_state_path, map_location='cpu')
+            if isinstance(self.resume_state, dict):
+                self.start_iteration = int(self.resume_state.get('iteration', 0))
 
         if args.dataset == 'citys':
             train_dataset = CSTrainValSet(args.data, 
@@ -281,19 +402,24 @@ class Trainer(object):
     
         args.batch_size = args.batch_size // num_gpus
         train_sampler = make_data_sampler(train_dataset, shuffle=True, distributed=args.distributed)
-        train_batch_sampler = make_batch_data_sampler(train_sampler, args.batch_size, args.max_iterations)
+        train_batch_sampler = make_batch_data_sampler(
+            train_sampler, args.batch_size, args.max_iterations, start_iter=self.start_iteration
+        )
         val_sampler = make_data_sampler(val_dataset, False, args.distributed)
         val_batch_sampler = make_batch_data_sampler(val_sampler, images_per_batch=1)
+        pin_memory = self.device.type == 'cuda'
 
         self.train_loader = data.DataLoader(dataset=train_dataset,
                                             batch_sampler=train_batch_sampler,
                                             num_workers=args.workers,
-                                            pin_memory=True)
+                                            pin_memory=pin_memory,
+                                            worker_init_fn=make_worker_init_fn(args.seed, self.rank))
 
         self.val_loader = data.DataLoader(dataset=val_dataset,
                                           batch_sampler=val_batch_sampler,
                                           num_workers=args.workers,
-                                          pin_memory=True)
+                                          pin_memory=pin_memory,
+                                          worker_init_fn=make_worker_init_fn(args.seed + 100000, self.rank))
 
         # create network
         BatchNorm2d = nn.SyncBatchNorm if args.distributed else nn.BatchNorm2d
@@ -326,9 +452,12 @@ class Trainer(object):
         if args.resume:
             if os.path.isfile(args.resume):
                 name, ext = os.path.splitext(args.resume)
-                assert ext == '.pkl' or '.pth', 'Sorry only .pth and .pkl files supported.'
+                assert ext in ('.pkl', '.pth'), 'Sorry only .pth and .pkl files supported.'
                 print('Resuming training, loading {}...'.format(args.resume))
-                self.s_model.load_state_dict(torch.load(args.resume, map_location=lambda storage, loc: storage))
+                resume_data = torch.load(args.resume, map_location='cpu')
+                if isinstance(resume_data, dict) and 'state_dict' in resume_data:
+                    resume_data = resume_data['state_dict']
+                load_state_dict_compatible(self.s_model, resume_data, strict=True)
 
         # create criterion
         x = torch.randn(1, 3, args.crop_size[0], args.crop_size[1]).to(self.device)
@@ -383,17 +512,17 @@ class Trainer(object):
         else:
             raise ValueError('no such optimizer')
 
-
         if args.distributed:
-            self.s_model = nn.parallel.DistributedDataParallel(self.s_model, 
-                                                                device_ids=[args.local_rank],
-                                                                output_device=args.local_rank)
-            self.criterion_memory_contrast = nn.parallel.DistributedDataParallel(self.criterion_memory_contrast, 
-                                                             device_ids=[args.local_rank],
-                                                             output_device=args.local_rank)
-            self.criterion_channel_contrast = nn.parallel.DistributedDataParallel(self.criterion_channel_contrast, 
-                                                             device_ids=[args.local_rank],
-                                                             output_device=args.local_rank)
+            ddp_kwargs = {}
+            if self.device.type in ('cuda', 'npu'):
+                ddp_kwargs = {'device_ids': [args.local_rank], 'output_device': args.local_rank}
+            self.s_model = nn.parallel.DistributedDataParallel(self.s_model, **ddp_kwargs)
+            self.criterion_memory_contrast = nn.parallel.DistributedDataParallel(
+                self.criterion_memory_contrast, **ddp_kwargs
+            )
+            self.criterion_channel_contrast = nn.parallel.DistributedDataParallel(
+                self.criterion_channel_contrast, **ddp_kwargs
+            )
             
         # evaluation metrics
         self.metric = SegmentationMetric(train_dataset.num_class)
@@ -416,6 +545,46 @@ class Trainer(object):
         self.last_covar_input_stats = None
         self.covar_grad_time_total_ms = 0.0
         self.covar_grad_time_steps = 0
+        if self.resume_state is not None:
+            self._load_training_state(self.resume_state, self.resume_state_path)
+
+    def _load_training_state(self, checkpoint, path):
+        if not isinstance(checkpoint, dict):
+            logger.info(f"Skipping full resume from {path}: checkpoint is not a dict")
+            return
+
+        if 'student' in checkpoint:
+            load_state_dict_compatible(self.s_model, checkpoint.get('student'), strict=True)
+        elif 'state_dict' in checkpoint:
+            load_state_dict_compatible(self.s_model, checkpoint.get('state_dict'), strict=True)
+
+        module_states = [
+            ('criterion_memory_contrast', self.criterion_memory_contrast),
+            ('criterion_fitnet', self.criterion_fitnet),
+            ('criterion_channel_contrast', self.criterion_channel_contrast),
+            ('gcn', self.gcn),
+        ]
+        for key, module in module_states:
+            if key in checkpoint:
+                load_state_dict_compatible(module, checkpoint.get(key), strict=True)
+
+        if 'optimizer' in checkpoint:
+            self.optimizer.load_state_dict(checkpoint['optimizer'])
+            move_optimizer_state_to_device(self.optimizer, self.device)
+
+        self.start_iteration = int(checkpoint.get('iteration', self.start_iteration))
+        self.best_pred = float(checkpoint.get('best_pred', self.best_pred))
+        self.topk_checkpoints = [
+            (float(score), path_)
+            for score, path_ in checkpoint.get('topk_checkpoints', self.topk_checkpoints)
+            if os.path.exists(path_)
+        ]
+        self.temp_history = checkpoint.get('temp_history', self.temp_history)
+        logger.info(
+            f"Resumed full training state from {path}: "
+            f"iteration={self.start_iteration}, best_mIoU={self.best_pred:.4f}, "
+            f"topk={len(self.topk_checkpoints)}"
+        )
 
     def adjust_lr(self, base_lr, iter, max_iter, power):
         cur_lr = base_lr*((1-float(iter)/max_iter)**(power))
@@ -475,8 +644,7 @@ class Trainer(object):
         return torch.full_like(like, a_value)
 
     def _sync_cuda_if_needed(self):
-        if self.device.type == 'cuda':
-            torch.cuda.synchronize(self.device)
+        synchronize_accelerator(self.device)
 
     def _visualizations_enabled(self, save_to_disk=True):
         if not getattr(self.args, 'enable_visualizations', False):
@@ -1828,10 +1996,12 @@ class Trainer(object):
         save_per_iters = self.args.save_per_iters
         start_time = time.time()
         logger.info('Start training, Total Iterations {:d}'.format(args.max_iterations))
+        if self.start_iteration > 0:
+            logger.info(f"Continuing training from iteration {self.start_iteration}")
 
         self.s_model.train()
-        for iteration, (images, targets, _) in enumerate(self.train_loader):
-            iteration = iteration + 1
+        for iteration, (images, targets, _) in enumerate(
+                self.train_loader, start=self.start_iteration + 1):
             
             images = images.to(self.device)
             targets = targets.long().to(self.device)
@@ -1939,7 +2109,8 @@ class Trainer(object):
             fitnet_loss_reduced = self.reduce_mean_tensor(fitnet_loss)
             
             
-            eta_seconds = ((time.time() - start_time) / iteration) * (args.max_iterations - iteration)
+            elapsed_iters = max(iteration - self.start_iteration, 1)
+            eta_seconds = ((time.time() - start_time) / elapsed_iters) * (args.max_iterations - iteration)
             eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
 
             if iteration % log_per_iters == 0 and save_to_disk:
@@ -1992,18 +2163,19 @@ class Trainer(object):
                         self._log_covar_grad_detail(iteration)
 
             if iteration % save_per_iters == 0 and save_to_disk:
-                save_checkpoint(self.s_model, self.args, is_best=False)
+                self.save_checkpoint(is_best=False, iteration=iteration)
 
             if not self.args.skip_val and iteration % val_per_iters == 0:
                 self.validation(step=iteration)
                 self.s_model.train()
 
-        save_checkpoint(self.s_model, self.args, is_best=False)
+        if save_to_disk:
+            self.save_checkpoint(is_best=False, iteration=args.max_iterations)
         total_training_time = time.time() - start_time
         total_training_str = str(datetime.timedelta(seconds=total_training_time))
         logger.info(
             "Total training time: {} ({:.4f}s / it)".format(
-                total_training_str, total_training_time / args.max_iterations))
+                total_training_str, total_training_time / max(args.max_iterations - self.start_iteration, 1)))
         # save temperature curve if CoVar is enabled
         if self.args.use_covar and enable_visualizations and get_rank() == 0:
             self.save_temperature_curve()
@@ -2022,7 +2194,7 @@ class Trainer(object):
             model = self.s_model.module
         else:
             model = self.s_model
-        torch.cuda.empty_cache()  # TODO check if it helps
+        empty_accelerator_cache(self.device)
         model.eval()
         logger.info("Start validation, Total sample: {:d}".format(len(self.val_loader)))
 
@@ -2084,11 +2256,49 @@ class Trainer(object):
         if new_pred > self.best_pred:
             is_best = True
             self.best_pred = new_pred
-        if (args.distributed is not True) or (args.distributed and args.local_rank == 0):
-            save_checkpoint(self.s_model, self.args, is_best)
+        if (self.args.distributed is not True) or (self.args.distributed and self.args.local_rank == 0):
             # maintain top-K by mIoU
             self._maybe_save_topk(new_pred)
+            self.save_checkpoint(is_best=is_best, iteration=step)
         synchronize()
+
+    def _student_state_dict(self):
+        return unwrap_module(self.s_model).state_dict()
+
+    def _training_state_dict(self, iteration=None):
+        return {
+            'student': self._student_state_dict(),
+            'criterion_memory_contrast': unwrap_module(self.criterion_memory_contrast).state_dict(),
+            'criterion_fitnet': unwrap_module(self.criterion_fitnet).state_dict(),
+            'criterion_channel_contrast': unwrap_module(self.criterion_channel_contrast).state_dict(),
+            'gcn': unwrap_module(self.gcn).state_dict(),
+            'optimizer': self.optimizer.state_dict(),
+            'iteration': int(iteration or 0),
+            'best_pred': float(self.best_pred),
+            'topk_checkpoints': self.topk_checkpoints,
+            'temp_history': self.temp_history,
+            'args': vars(self.args),
+        }
+
+    def save_checkpoint(self, is_best=False, iteration=None):
+        directory = os.path.expanduser(self.args.save_dir)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+
+        base_filename = 'kd_{}_{}_{}'.format(
+            self.args.student_model, self.args.student_backbone, self.args.dataset
+        )
+        model_path = os.path.join(directory, base_filename + '.pth')
+        torch.save(self._student_state_dict(), model_path)
+
+        state = self._training_state_dict(iteration=iteration)
+        latest_path = training_state_path(self.args)
+        torch.save(state, latest_path)
+
+        if is_best:
+            best_model_path = os.path.join(directory, base_filename + '_best_model.pth')
+            shutil.copyfile(model_path, best_model_path)
+            torch.save(state, training_state_path(self.args, 'training_state_best.pth'))
 
     def _maybe_save_topk(self, score):
         try:
@@ -2098,10 +2308,7 @@ class Trainer(object):
             # save with mIoU in filename
             filename = 'kd_{}_{}_{}_miou-{:.4f}.pth'.format(self.args.student_model, self.args.student_backbone, self.args.dataset, score)
             path = os.path.join(directory, filename)
-            model = self.s_model
-            if self.args.distributed:
-                model = model.module
-            torch.save(model.state_dict(), path)
+            torch.save(self._student_state_dict(), path)
             # update list and prune
             self.topk_checkpoints.append((score, path))
             self.topk_checkpoints.sort(key=lambda x: x[0], reverse=True)
@@ -2158,24 +2365,6 @@ class Trainer(object):
             logger.info(f"Saved epoch-wise temperature curve to {out_path_epoch}")
 
 
-def save_checkpoint(model, args, is_best=False):
-    """Save Checkpoint"""
-    directory = os.path.expanduser(args.save_dir)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    filename = 'kd_{}_{}_{}.pth'.format(args.student_model, args.student_backbone, args.dataset)
-    filename = os.path.join(directory, filename)
-
-    if args.distributed:
-        model = model.module
-    
-    torch.save(model.state_dict(), filename)
-    if is_best:
-        best_filename = 'kd_{}_{}_{}_best_model.pth'.format(args.student_model, args.student_backbone, args.dataset)
-        best_filename = os.path.join(directory, best_filename)
-        shutil.copyfile(filename, best_filename)
-
-
 if __name__ == '__main__':
     args = parse_args()
 
@@ -2183,22 +2372,29 @@ if __name__ == '__main__':
     num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
     args.num_gpus = num_gpus
     args.distributed = num_gpus > 1
-    if not args.no_cuda and torch.cuda.is_available():
+    if args.no_cuda:
+        args.device_type = 'cpu'
+    args.device = resolve_device_type(args.device_type)
+    seed_everything(args.seed, rank=int(os.environ.get("RANK", 0)))
+
+    if args.device == "cuda":
         cudnn.benchmark = False
-        args.device = "cuda"
+        set_accelerator_device(args.device, args.local_rank)
+    elif args.device == "npu":
+        set_accelerator_device(args.device, args.local_rank)
     else:
         args.distributed = False
         args.device = "cpu"
     if args.distributed:
-        torch.cuda.set_device(args.local_rank)
-        torch.distributed.init_process_group(backend="nccl", init_method='env://')
+        backend = "hccl" if args.device == "npu" else "nccl"
+        torch.distributed.init_process_group(backend=backend, init_method='env://')
         synchronize()
 
     logger = setup_logger("semantic_segmentation", args.save_dir, get_rank(), filename='{}_{}_{}_log.txt'.format(
         args.student_model, args.teacher_backbone, args.student_backbone, args.dataset))
-    logger.info("Using {} GPUs".format(num_gpus))
+    logger.info("Using {} process(es) on device {}".format(num_gpus, args.device))
     logger.info(args)
 
     trainer = Trainer(args)
     trainer.train()
-    torch.cuda.empty_cache()
+    empty_accelerator_cache(torch.device(args.device))
