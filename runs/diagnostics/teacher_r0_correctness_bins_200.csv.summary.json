@@ -1,0 +1,17 @@
+{
+  "processed_images": 200,
+  "dataset_size": 1449,
+  "sampled_pixels": 819200,
+  "teacher_acc": 0.9540674090385437,
+  "wrong_rate": 0.04593261703848839,
+  "r_mean": 0.23223716020584106,
+  "r_min": 0.0,
+  "r_max": 5.435855865478516,
+  "confidence_mean": 0.9744583964347839,
+  "variance_mean": 0.0002895898651331663,
+  "corr_r_wrong": 0.4197772741317749,
+  "bins": 10,
+  "binning": "quantile",
+  "covar_ref_temp": 1.0,
+  "covar_a": null
+}

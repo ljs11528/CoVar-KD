@@ -1,0 +1,2 @@
+variant,best_miou,best_step,last_miou,last_step,last_t_mean,last_t_min,last_t_max,last_calib_err_all,last_calib_err_active,last_c0,last_c_target,last_c_final,last_t_q10,last_t_q50,last_t_q90,last_tmax_ratio,last_newton_abs_dr,last_newton_clamp_ratio,log_path
+smoke_calib_gamma0_tmax4,,,,,1.5809,1.0,4.0,0.0942,3.82e-05,0.972,0.8872,0.9011,1.0,1.243,2.994,7.9,,,runs/covar_calib_conf_smoke/smoke_calib_gamma0_tmax4/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt

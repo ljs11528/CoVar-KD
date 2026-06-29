@@ -1,0 +1,5 @@
+step,variant,pixacc,miou,baseline_miou,delta_vs_baseline
+800,04_calib_gamma1_tmax4,0.768,0.151,0.151,0.0
+1600,04_calib_gamma1_tmax4,0.825,0.305,0.305,0.0
+2400,04_calib_gamma1_tmax4,0.827,0.339,0.339,0.0
+3200,04_calib_gamma1_tmax4,0.834,0.355,0.355,0.0

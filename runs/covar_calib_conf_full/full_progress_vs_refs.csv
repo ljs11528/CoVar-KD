@@ -1,0 +1,5 @@
+step,full_variant,full_miou,reference_variant,reference_miou,delta_vs_reference,stage1_variant,stage1_miou,delta_vs_stage1
+800,04_calib_gamma1_tmax4,0.151,train1,0.265,-0.114,04_calib_gamma1_tmax4,0.227,-0.076
+1600,04_calib_gamma1_tmax4,0.305,train1,0.357,-0.052,04_calib_gamma1_tmax4,0.324,-0.019
+2400,04_calib_gamma1_tmax4,0.339,train1,0.425,-0.086,04_calib_gamma1_tmax4,0.423,-0.084
+3200,04_calib_gamma1_tmax4,0.355,train1,0.410,-0.055,04_calib_gamma1_tmax4,0.438,-0.083

@@ -1,0 +1,874 @@
+[covar-npu] Phase C triage started at 2026-06-29T20:05:12+08:00
+[covar-npu] variants=phaseC_lc_newton_gamma0 phaseC_lc_newton_gamma2_repro phaseC_lc_newton_gamma1 phaseC_lc_no_covar_tout3
+[covar-npu] >>> start phaseC_lc_newton_gamma0 at 2026-06-29T20:05:12+08:00
+[covar-npu] 2026-06-29T20:05:12+08:00 variant=phaseC_lc_newton_gamma0
+[covar-npu] root=/home/ma-user/work/ljs
+[covar-npu] python=/home/ma-user/anaconda3/envs/PyTorch-2.6.0/bin/python
+[covar-npu] devices=0,1 nproc=2 master_port=29620
+[covar-npu] save_dir=/home/ma-user/work/ljs/data/winycg/checkpoints/cirkd_checkpoints/voc/covar_npu_phaseC/phaseC_lc_newton_gamma0
+[covar-npu] max_iterations=20000 batch_size=16 workers=8
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0 owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0/aarch64-linux/ascend_ops_install.info owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0 owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0/aarch64-linux/ascend_ops_install.info owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+<frozen runpy>:128: RuntimeWarning: 'torch.distributed.run' found in sys.modules after import of package 'torch.distributed', but prior to execution of 'torch.distributed.run'; this may result in unpredictable behaviour
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0 owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0 owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0/aarch64-linux/ascend_ops_install.info owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0/aarch64-linux/ascend_ops_install.info owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0 owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0 owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0/aarch64-linux/ascend_ops_install.info owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch_npu/utils/collect_env.py:58: UserWarning: Warning: The /usr/local/Ascend/cann-8.5.0/aarch64-linux/ascend_ops_install.info owner does not match the current owner.
+  warnings.warn(f"Warning: The {path} owner does not match the current owner.")
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/distributed_c10d.py:4807: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
+  warnings.warn(  # warn only once
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/distributed_c10d.py:4807: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
+  warnings.warn(  # warn only once
+2026-06-29 20:05:26,334 semantic_segmentation INFO: Using 2 process(es) on device npu
+2026-06-29 20:05:26,335 semantic_segmentation INFO: Namespace(teacher_model='deeplabv3', student_model='deeplabv3_mobilenet_ssseg', student_backbone='mobilenetv3_small', teacher_backbone='resnet101', dataset='voc', data='/home/ma-user/work/ljs/dataset/VOCAug/', crop_size=[512, 512], workers=8, ignore_label=-1, aux=False, batch_size=16, start_epoch=0, max_iterations=20000, lr=0.02, momentum=0.9, weight_decay=0.0001, optimizer_type='sgd', pixel_memory_size=20000, region_memory_size=2000, channel_memory_size=10000, region_contrast_size=1024, pixel_contrast_size=4096, channel_contrast_size=2048, kd_temperature=1.0, contrast_kd_temperature=1.0, contrast_temperature=0.1, use_covar=True, covar_temp_mode='newton', covar_temp_base=1.0, covar_ref_temp=1.0, covar_temp_alpha=0.5, covar_temp_min=0.5, covar_temp_max=8.0, covar_kd_temp_power=0.0, teacher_output_temp=3.0, covar_grad_eta=0.6, covar_grad_max_iter=8, covar_a=None, covar_newton_hessian_eps=1e-05, covar_newton_max_step=0.25, covar_grad_converge_thresh=0.01, covar_grad_detail_interval=100, covar_calib_centered=False, covar_calib_anchor_mode='median', covar_calib_anchor_power=1.0, covar_calib_anchor_quantile=None, covar_calib_anchor_alpha=1.0, enable_visualizations=False, noise_plot_interval=10000, noise_mc_times=20, noise_plot_samples=1000, noise_single_image_pixels=-1, noise_single_image_seed=1234, noise_min_delta_p2=0.001, zstar_label_eps=0.0001, gradvar_plot_interval=10000, gradvar_plot_samples=1000, g2_rtt_plot_interval=10000, g2_rtt_plot_samples=1000, lambda_kd=1.0, lambda_fitnet=10.0, lambda_channel_kd=100.0, lambda_minibatch_pixel=1.0, lambda_minibatch_channel=1.0, lambda_memory_pixel=0.1, lambda_memory_region=0.1, lambda_memory_channel=0.1, gpu_id='0', device_type='npu', seed=1234, no_cuda=False, local_rank=0, resume=None, resume_state=None, auto_resume=True, save_dir='/home/ma-user/work/ljs/data/winycg/checkpoints/cirkd_checkpoints/voc/covar_npu_phaseC/phaseC_lc_newton_gamma0', save_dir_name='phaseC_lc_newton_gamma0', save_epoch=10, log_iter=20, save_per_iters=800, val_per_iters=800, topk_checkpoints=5, teacher_pretrained_base='None', teacher_pretrained='/home/ma-user/work/ljs/data/winycg/cirkd/teachers/deeplabv3_resnet101_voc_best_model.pth', student_pretrained_base='/home/ma-user/work/ljs/data/winycg/imagenet_pretrained/mobilenet_v3_small-47085aa1.pth', student_pretrained='None', val_epoch=1, skip_val=False, num_gpus=2, distributed=True, device='npu')
+[rank0]:[W629 20:05:32.214036637 compiler_depend.ts:338] Warning: Cannot create tensor with interal format while allow_internel_format=False, tensor will be created with base format. (function operator())
+[rank1]:[W629 20:05:32.249113847 compiler_depend.ts:338] Warning: Cannot create tensor with interal format while allow_internel_format=False, tensor will be created with base format. (function operator())
+2026-06-29 20:05:32,564 semantic_segmentation INFO: Start training, Total Iterations 20000
+2026-06-29 20:05:53,471 semantic_segmentation INFO: Iters: 20/20000 || Lr: 0.019983 || Task Loss: 1.4327 || KD Loss: 0.9829 || Mini-batch p2p Loss: 0.6941 || Memory p2p Loss: 0.1221 || Memory p2r Loss: 0.0988 || Mini-batch c2c Loss: 1.0003 || Memory c2c Loss: 0.1491 || Channel MSE Loss: 0.3235 || Fitnet Loss: 1.0471 || T_mean: 0.5613 (d-0.0201) || T_min: 0.5000 || T_max: 2.1864 || mc(mean/min/max): 0.7457/0.1545/0.9726 || v(mean/min/max): 3.1173e-04/2.9909e-07/7.9939e-03 || r(mean/min/max): 4.5936e-01/3.0005e-02/3.7088e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.2ms(avg 12.7, inner 1.5) || |dr/dT|: 2.90e-01 || conv<1e-02: 8.2% || |T-T0|: 0.488 || clamp: 92.4% || Cost Time: 0:00:20 || Estimated Time: 5:47:17
+2026-06-29 20:06:03,409 semantic_segmentation INFO: Iters: 40/20000 || Lr: 0.019965 || Task Loss: 1.4727 || KD Loss: 1.3893 || Mini-batch p2p Loss: 0.5961 || Memory p2p Loss: 0.1320 || Memory p2r Loss: 0.1089 || Mini-batch c2c Loss: 0.9461 || Memory c2c Loss: 0.1355 || Channel MSE Loss: 0.3112 || Fitnet Loss: 0.8911 || T_mean: 0.5874 (d+0.0231) || T_min: 0.5000 || T_max: 2.1467 || mc(mean/min/max): 0.7189/0.2001/0.9680 || v(mean/min/max): 4.2832e-04/2.7908e-07/8.0144e-03 || r(mean/min/max): 5.4357e-01/3.4309e-02/3.6276e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.5ms(avg 12.7, inner 1.6) || |dr/dT|: 3.56e-01 || conv<1e-02: 11.3% || |T-T0|: 0.487 || clamp: 89.7% || Cost Time: 0:00:30 || Estimated Time: 4:16:06
+2026-06-29 20:06:13,373 semantic_segmentation INFO: Iters: 60/20000 || Lr: 0.019947 || Task Loss: 1.7822 || KD Loss: 1.7663 || Mini-batch p2p Loss: 0.5054 || Memory p2p Loss: 0.1462 || Memory p2r Loss: 0.1416 || Mini-batch c2c Loss: 1.0086 || Memory c2c Loss: 0.1496 || Channel MSE Loss: 0.3132 || Fitnet Loss: 1.0567 || T_mean: 0.5678 (d-0.0014) || T_min: 0.5000 || T_max: 1.9887 || mc(mean/min/max): 0.6997/0.1754/0.9651 || v(mean/min/max): 4.1486e-04/8.7886e-07/6.7348e-03 || r(mean/min/max): 5.6695e-01/4.3387e-02/3.1594e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.3ms(avg 12.6, inner 1.5) || |dr/dT|: 4.44e-01 || conv<1e-02: 9.7% || |T-T0|: 0.479 || clamp: 90.8% || Cost Time: 0:00:40 || Estimated Time: 3:45:45
+2026-06-29 20:06:23,393 semantic_segmentation INFO: Iters: 80/20000 || Lr: 0.019929 || Task Loss: 1.3159 || KD Loss: 1.0262 || Mini-batch p2p Loss: 0.5289 || Memory p2p Loss: 0.1234 || Memory p2r Loss: 0.1189 || Mini-batch c2c Loss: 0.9607 || Memory c2c Loss: 0.1249 || Channel MSE Loss: 0.2963 || Fitnet Loss: 0.9145 || T_mean: 0.5926 (d+0.0492) || T_min: 0.5000 || T_max: 2.3396 || mc(mean/min/max): 0.7347/0.2129/0.9817 || v(mean/min/max): 4.4970e-04/1.3246e-07/8.9995e-03 || r(mean/min/max): 5.2901e-01/2.0255e-02/4.0922e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.4ms(avg 12.6, inner 1.5) || |dr/dT|: 3.42e-01 || conv<1e-02: 14.4% || |T-T0|: 0.480 || clamp: 88.5% || Cost Time: 0:00:50 || Estimated Time: 3:30:44
+2026-06-29 20:06:33,487 semantic_segmentation INFO: Iters: 100/20000 || Lr: 0.019911 || Task Loss: 1.1437 || KD Loss: 0.8996 || Mini-batch p2p Loss: 0.5299 || Memory p2p Loss: 0.1048 || Memory p2r Loss: 0.1074 || Mini-batch c2c Loss: 0.9343 || Memory c2c Loss: 0.1254 || Channel MSE Loss: 0.2871 || Fitnet Loss: 0.7882 || T_mean: 0.5929 (d+0.0356) || T_min: 0.5000 || T_max: 2.0739 || mc(mean/min/max): 0.7174/0.2061/0.9736 || v(mean/min/max): 4.5288e-04/3.7680e-07/7.7789e-03 || r(mean/min/max): 5.5277e-01/3.0083e-02/3.5360e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 45.6ms(avg 12.9, inner 5.7) || |dr/dT|: 3.52e-01 || conv<1e-02: 11.0% || |T-T0|: 0.487 || clamp: 89.2% || Cost Time: 0:01:00 || Estimated Time: 3:21:53
+2026-06-29 20:06:33,488 semantic_segmentation INFO: NewtonTemp Detail @ 100 || time: 45.64ms || inner: 5.70ms x 8 || a: 200.000 || |dr/dT| mean/p95/max: 3.520e-01/1.628e+00/2.877e+00 || conv<1e-02: 11.02% || |T-T0| mean/p95/max: 4.870e-01/5.000e-01/1.074e+00 || T mean/min/max: 0.5929/0.5000/2.0739 || clamp[min/max]: 89.23%/0.00% || r mean/p95/max: 0.2385/1.6796/2.1515 || c mean/min: 0.9141/0.1675 || v mean/p95/max: 1.8529e-04/1.5709e-03/2.2093e-03 || NaN(dr,T): 0/0 || Inf(dr,T): 0/0
+2026-06-29 20:06:33,488 semantic_segmentation INFO: NewtonTemp Trace @ 100 || i0[|dr|=9.27e-01, conv=0.2%, |dT|=2.37e-01, T=0.794, clamp=0.0%] -> i1[|dr|=6.31e-01, conv=0.3%, |dT|=1.84e-01, T=0.628, clamp=31.7%] -> i2[|dr|=4.16e-01, conv=0.7%, |dT|=4.60e-02, T=0.595, clamp=60.4%] -> i3[|dr|=3.64e-01, conv=1.5%, |dT|=1.34e-02, T=0.590, clamp=85.3%] -> i4[|dr|=3.54e-01, conv=2.7%, |dT|=3.45e-03, T=0.591, clamp=88.6%] -> i5[|dr|=3.53e-01, conv=4.4%, |dT|=1.53e-03, T=0.592, clamp=89.1%] -> i6[|dr|=3.52e-01, conv=6.5%, |dT|=7.03e-04, T=0.593, clamp=89.2%] -> i7[|dr|=3.52e-01, conv=9.0%, |dT|=3.49e-04, T=0.593, clamp=89.2%]
+2026-06-29 20:06:43,531 semantic_segmentation INFO: Iters: 120/20000 || Lr: 0.019893 || Task Loss: 1.4069 || KD Loss: 1.2666 || Mini-batch p2p Loss: 0.5370 || Memory p2p Loss: 0.1304 || Memory p2r Loss: 0.1375 || Mini-batch c2c Loss: 0.9527 || Memory c2c Loss: 0.1359 || Channel MSE Loss: 0.2899 || Fitnet Loss: 0.7718 || T_mean: 0.5343 (d-0.0553) || T_min: 0.5000 || T_max: 1.8533 || mc(mean/min/max): 0.7366/0.2375/0.9732 || v(mean/min/max): 2.1798e-04/2.3983e-07/6.5176e-03 || r(mean/min/max): 4.2532e-01/2.9238e-02/3.0760e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.2ms(avg 12.8, inner 1.5) || |dr/dT|: 2.94e-01 || conv<1e-02: 5.1% || |T-T0|: 0.491 || clamp: 95.5% || Cost Time: 0:01:10 || Estimated Time: 3:15:48
+2026-06-29 20:06:53,555 semantic_segmentation INFO: Iters: 140/20000 || Lr: 0.019875 || Task Loss: 1.4798 || KD Loss: 1.3228 || Mini-batch p2p Loss: 0.5540 || Memory p2p Loss: 0.1211 || Memory p2r Loss: 0.1056 || Mini-batch c2c Loss: 0.9470 || Memory c2c Loss: 0.1179 || Channel MSE Loss: 0.2840 || Fitnet Loss: 0.7984 || T_mean: 0.6502 (d+0.0903) || T_min: 0.5000 || T_max: 2.1464 || mc(mean/min/max): 0.6988/0.1875/0.9678 || v(mean/min/max): 6.8766e-04/8.1683e-07/8.1748e-03 || r(mean/min/max): 6.8243e-01/4.3710e-02/3.7138e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.2ms(avg 12.7, inner 1.5) || |dr/dT|: 4.22e-01 || conv<1e-02: 18.2% || |T-T0|: 0.473 || clamp: 81.9% || Cost Time: 0:01:20 || Estimated Time: 3:11:22
+2026-06-29 20:07:03,650 semantic_segmentation INFO: Iters: 160/20000 || Lr: 0.019857 || Task Loss: 1.1631 || KD Loss: 1.0529 || Mini-batch p2p Loss: 0.4478 || Memory p2p Loss: 0.1141 || Memory p2r Loss: 0.1192 || Mini-batch c2c Loss: 0.9170 || Memory c2c Loss: 0.1283 || Channel MSE Loss: 0.2723 || Fitnet Loss: 0.8599 || T_mean: 0.5453 (d-0.0192) || T_min: 0.5000 || T_max: 1.9267 || mc(mean/min/max): 0.7517/0.1715/0.9773 || v(mean/min/max): 2.3839e-04/6.4834e-07/6.9080e-03 || r(mean/min/max): 4.0985e-01/2.8930e-02/3.2224e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.1ms(avg 12.7, inner 1.5) || |dr/dT|: 2.36e-01 || conv<1e-02: 6.9% || |T-T0|: 0.488 || clamp: 94.0% || Cost Time: 0:01:31 || Estimated Time: 3:08:08
+2026-06-29 20:07:13,675 semantic_segmentation INFO: Iters: 180/20000 || Lr: 0.019839 || Task Loss: 1.1194 || KD Loss: 0.7880 || Mini-batch p2p Loss: 0.4645 || Memory p2p Loss: 0.1069 || Memory p2r Loss: 0.1172 || Mini-batch c2c Loss: 0.9674 || Memory c2c Loss: 0.1313 || Channel MSE Loss: 0.2818 || Fitnet Loss: 0.9256 || T_mean: 0.5975 (d+0.0206) || T_min: 0.5000 || T_max: 2.0861 || mc(mean/min/max): 0.7281/0.1820/0.9629 || v(mean/min/max): 4.8478e-04/1.2032e-06/7.5563e-03 || r(mean/min/max): 5.5626e-01/4.4308e-02/3.4937e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.2ms(avg 12.7, inner 1.5) || |dr/dT|: 3.74e-01 || conv<1e-02: 11.3% || |T-T0|: 0.486 || clamp: 88.6% || Cost Time: 0:01:41 || Estimated Time: 3:05:27
+2026-06-29 20:07:23,757 semantic_segmentation INFO: Iters: 200/20000 || Lr: 0.019821 || Task Loss: 0.9444 || KD Loss: 0.8182 || Mini-batch p2p Loss: 0.4966 || Memory p2p Loss: 0.0936 || Memory p2r Loss: 0.0978 || Mini-batch c2c Loss: 0.9202 || Memory c2c Loss: 0.1174 || Channel MSE Loss: 0.2679 || Fitnet Loss: 0.8286 || T_mean: 0.5485 (d-0.0233) || T_min: 0.5000 || T_max: 1.9547 || mc(mean/min/max): 0.7032/0.0895/0.9514 || v(mean/min/max): 3.0055e-04/8.6127e-07/7.1597e-03 || r(mean/min/max): 5.0578e-01/5.3398e-02/3.3012e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 45.7ms(avg 12.9, inner 5.7) || |dr/dT|: 3.61e-01 || conv<1e-02: 6.9% || |T-T0|: 0.484 || clamp: 93.2% || Cost Time: 0:01:51 || Estimated Time: 3:03:23
+2026-06-29 20:07:23,757 semantic_segmentation INFO: NewtonTemp Detail @ 200 || time: 45.73ms || inner: 5.72ms x 8 || a: 200.000 || |dr/dT| mean/p95/max: 3.610e-01/1.529e+00/2.810e+00 || conv<1e-02: 6.90% || |T-T0| mean/p95/max: 4.836e-01/5.000e-01/9.547e-01 || T mean/min/max: 0.5485/0.5000/1.9547 || clamp[min/max]: 93.21%/0.00% || r mean/p95/max: 0.1803/1.4784/2.1370 || c mean/min: 0.9343/0.1487 || v mean/p95/max: 1.3052e-04/1.5211e-03/2.4664e-03 || NaN(dr,T): 0/0 || Inf(dr,T): 0/0
+2026-06-29 20:07:23,757 semantic_segmentation INFO: NewtonTemp Trace @ 200 || i0[|dr|=9.44e-01, conv=0.1%, |dT|=2.39e-01, T=0.773, clamp=0.0%] -> i1[|dr|=6.67e-01, conv=0.2%, |dT|=1.85e-01, T=0.596, clamp=36.4%] -> i2[|dr|=4.21e-01, conv=0.5%, |dT|=4.21e-02, T=0.559, clamp=56.7%] -> i3[|dr|=3.71e-01, conv=1.4%, |dT|=1.42e-02, T=0.548, clamp=86.6%] -> i4[|dr|=3.62e-01, conv=2.4%, |dT|=2.13e-03, T=0.548, clamp=92.7%] -> i5[|dr|=3.61e-01, conv=3.4%, |dT|=6.18e-04, T=0.548, clamp=93.2%] -> i6[|dr|=3.61e-01, conv=4.8%, |dT|=2.96e-04, T=0.548, clamp=93.2%] -> i7[|dr|=3.61e-01, conv=6.2%, |dT|=1.36e-04, T=0.549, clamp=93.2%]
+2026-06-29 20:07:33,796 semantic_segmentation INFO: Iters: 220/20000 || Lr: 0.019803 || Task Loss: 1.1267 || KD Loss: 0.9374 || Mini-batch p2p Loss: 0.4423 || Memory p2p Loss: 0.1038 || Memory p2r Loss: 0.1097 || Mini-batch c2c Loss: 0.8858 || Memory c2c Loss: 0.1075 || Channel MSE Loss: 0.2555 || Fitnet Loss: 0.8002 || T_mean: 0.5928 (d+0.0418) || T_min: 0.5000 || T_max: 2.0512 || mc(mean/min/max): 0.7345/0.1630/0.9540 || v(mean/min/max): 4.4597e-04/1.1502e-06/7.4171e-03 || r(mean/min/max): 5.3190e-01/5.5033e-02/3.4225e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.2ms(avg 12.8, inner 1.5) || |dr/dT|: 3.41e-01 || conv<1e-02: 11.1% || |T-T0|: 0.484 || clamp: 88.9% || Cost Time: 0:02:01 || Estimated Time: 3:01:35
+2026-06-29 20:07:43,916 semantic_segmentation INFO: Iters: 240/20000 || Lr: 0.019785 || Task Loss: 0.9213 || KD Loss: 0.5980 || Mini-batch p2p Loss: 0.4241 || Memory p2p Loss: 0.0798 || Memory p2r Loss: 0.0948 || Mini-batch c2c Loss: 0.8605 || Memory c2c Loss: 0.0993 || Channel MSE Loss: 0.2412 || Fitnet Loss: 0.6986 || T_mean: 0.5895 (d+0.0336) || T_min: 0.5000 || T_max: 2.1841 || mc(mean/min/max): 0.7253/0.1124/0.9601 || v(mean/min/max): 4.5070e-04/1.3099e-06/8.2622e-03 || r(mean/min/max): 5.4792e-01/5.1600e-02/3.7468e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.4ms(avg 12.8, inner 1.5) || |dr/dT|: 3.58e-01 || conv<1e-02: 10.2% || |T-T0|: 0.488 || clamp: 89.7% || Cost Time: 0:02:11 || Estimated Time: 3:00:10
+2026-06-29 20:07:54,017 semantic_segmentation INFO: Iters: 260/20000 || Lr: 0.019767 || Task Loss: 1.1713 || KD Loss: 1.0082 || Mini-batch p2p Loss: 0.4578 || Memory p2p Loss: 0.0966 || Memory p2r Loss: 0.1001 || Mini-batch c2c Loss: 0.8605 || Memory c2c Loss: 0.1129 || Channel MSE Loss: 0.2602 || Fitnet Loss: 0.7018 || T_mean: 0.5580 (d+0.0113) || T_min: 0.5000 || T_max: 2.1495 || mc(mean/min/max): 0.7434/0.1846/0.9747 || v(mean/min/max): 3.4064e-04/2.0615e-07/8.0466e-03 || r(mean/min/max): 4.7644e-01/2.7660e-02/3.7094e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.5ms(avg 12.8, inner 1.6) || |dr/dT|: 3.49e-01 || conv<1e-02: 7.9% || |T-T0|: 0.487 || clamp: 92.7% || Cost Time: 0:02:21 || Estimated Time: 2:58:55
+2026-06-29 20:08:04,073 semantic_segmentation INFO: Iters: 280/20000 || Lr: 0.019749 || Task Loss: 1.3188 || KD Loss: 1.2936 || Mini-batch p2p Loss: 0.3558 || Memory p2p Loss: 0.1187 || Memory p2r Loss: 0.1328 || Mini-batch c2c Loss: 0.9221 || Memory c2c Loss: 0.1234 || Channel MSE Loss: 0.2637 || Fitnet Loss: 0.7558 || T_mean: 0.5566 (d-0.0076) || T_min: 0.5000 || T_max: 1.8129 || mc(mean/min/max): 0.7165/0.2488/0.9628 || v(mean/min/max): 2.9939e-04/4.4035e-07/6.0825e-03 || r(mean/min/max): 4.7873e-01/4.0252e-02/2.9278e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.2ms(avg 12.8, inner 1.5) || |dr/dT|: 2.94e-01 || conv<1e-02: 7.4% || |T-T0|: 0.488 || clamp: 93.0% || Cost Time: 0:02:31 || Estimated Time: 2:57:46
+2026-06-29 20:08:14,179 semantic_segmentation INFO: Iters: 300/20000 || Lr: 0.019731 || Task Loss: 1.3406 || KD Loss: 1.4071 || Mini-batch p2p Loss: 0.4345 || Memory p2p Loss: 0.1265 || Memory p2r Loss: 0.1326 || Mini-batch c2c Loss: 0.8943 || Memory c2c Loss: 0.1141 || Channel MSE Loss: 0.2611 || Fitnet Loss: 0.8189 || T_mean: 0.5631 (d-0.0213) || T_min: 0.5000 || T_max: 2.0480 || mc(mean/min/max): 0.7383/0.1721/0.9613 || v(mean/min/max): 3.6470e-04/1.0906e-06/7.6161e-03 || r(mean/min/max): 5.0046e-01/4.6393e-02/3.4911e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 44.7ms(avg 12.9, inner 5.6) || |dr/dT|: 3.83e-01 || conv<1e-02: 8.2% || |T-T0|: 0.486 || clamp: 92.0% || Cost Time: 0:02:41 || Estimated Time: 2:56:50
+2026-06-29 20:08:14,180 semantic_segmentation INFO: NewtonTemp Detail @ 300 || time: 44.67ms || inner: 5.58ms x 8 || a: 200.000 || |dr/dT| mean/p95/max: 3.830e-01/1.536e+00/2.809e+00 || conv<1e-02: 8.19% || |T-T0| mean/p95/max: 4.860e-01/5.000e-01/1.048e+00 || T mean/min/max: 0.5631/0.5000/2.0480 || clamp[min/max]: 92.01%/0.00% || r mean/p95/max: 0.1942/1.5203/2.1751 || c mean/min: 0.9331/0.1652 || v mean/p95/max: 1.3971e-04/1.5298e-03/2.1693e-03 || NaN(dr,T): 0/0 || Inf(dr,T): 0/0
+2026-06-29 20:08:14,180 semantic_segmentation INFO: NewtonTemp Trace @ 300 || i0[|dr|=8.59e-01, conv=0.1%, |dT|=2.39e-01, T=0.781, clamp=0.0%] -> i1[|dr|=6.17e-01, conv=0.3%, |dT|=1.93e-01, T=0.599, clamp=44.3%] -> i2[|dr|=4.24e-01, conv=0.6%, |dT|=3.70e-02, T=0.570, clamp=65.3%] -> i3[|dr|=3.90e-01, conv=1.4%, |dT|=1.27e-02, T=0.562, clamp=84.8%] -> i4[|dr|=3.83e-01, conv=2.4%, |dT|=3.04e-03, T=0.562, clamp=91.3%] -> i5[|dr|=3.82e-01, conv=3.7%, |dT|=1.03e-03, T=0.563, clamp=91.9%] -> i6[|dr|=3.82e-01, conv=5.2%, |dT|=4.69e-04, T=0.563, clamp=92.0%] -> i7[|dr|=3.82e-01, conv=6.9%, |dT|=2.75e-04, T=0.563, clamp=92.0%]
+2026-06-29 20:08:24,213 semantic_segmentation INFO: Iters: 320/20000 || Lr: 0.019713 || Task Loss: 0.8364 || KD Loss: 0.6805 || Mini-batch p2p Loss: 0.3907 || Memory p2p Loss: 0.0762 || Memory p2r Loss: 0.0844 || Mini-batch c2c Loss: 0.8608 || Memory c2c Loss: 0.1022 || Channel MSE Loss: 0.2490 || Fitnet Loss: 0.6785 || T_mean: 0.5804 (d+0.0132) || T_min: 0.5000 || T_max: 2.0225 || mc(mean/min/max): 0.6998/0.2338/0.9719 || v(mean/min/max): 4.3919e-04/4.8048e-07/7.1356e-03 || r(mean/min/max): 5.7334e-01/3.1920e-02/3.3020e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.3ms(avg 12.9, inner 1.5) || |dr/dT|: 4.10e-01 || conv<1e-02: 11.1% || |T-T0|: 0.478 || clamp: 89.4% || Cost Time: 0:02:51 || Estimated Time: 2:55:53
+2026-06-29 20:08:34,315 semantic_segmentation INFO: Iters: 340/20000 || Lr: 0.019695 || Task Loss: 1.0977 || KD Loss: 0.7745 || Mini-batch p2p Loss: 0.4072 || Memory p2p Loss: 0.0904 || Memory p2r Loss: 0.0912 || Mini-batch c2c Loss: 0.8706 || Memory c2c Loss: 0.1015 || Channel MSE Loss: 0.2432 || Fitnet Loss: 0.7203 || T_mean: 0.5825 (d+0.0215) || T_min: 0.5000 || T_max: 2.2981 || mc(mean/min/max): 0.7270/0.1829/0.9817 || v(mean/min/max): 4.4109e-04/1.3246e-07/8.3793e-03 || r(mean/min/max): 5.3909e-01/2.0255e-02/3.8407e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.5ms(avg 12.9, inner 1.6) || |dr/dT|: 3.81e-01 || conv<1e-02: 11.4% || |T-T0|: 0.489 || clamp: 90.5% || Cost Time: 0:03:01 || Estimated Time: 2:55:06
+2026-06-29 20:08:44,417 semantic_segmentation INFO: Iters: 360/20000 || Lr: 0.019677 || Task Loss: 0.9275 || KD Loss: 0.7132 || Mini-batch p2p Loss: 0.4292 || Memory p2p Loss: 0.0797 || Memory p2r Loss: 0.0907 || Mini-batch c2c Loss: 0.8569 || Memory c2c Loss: 0.0972 || Channel MSE Loss: 0.2368 || Fitnet Loss: 0.6650 || T_mean: 0.5493 (d-0.0523) || T_min: 0.5000 || T_max: 2.1286 || mc(mean/min/max): 0.7568/0.1987/0.9529 || v(mean/min/max): 2.6587e-04/3.9439e-07/7.7831e-03 || r(mean/min/max): 4.2206e-01/5.0942e-02/3.6156e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 11.7ms(avg 12.8, inner 1.5) || |dr/dT|: 2.68e-01 || conv<1e-02: 6.5% || |T-T0|: 0.490 || clamp: 93.9% || Cost Time: 0:03:11 || Estimated Time: 2:54:23
+2026-06-29 20:08:54,410 semantic_segmentation INFO: Iters: 380/20000 || Lr: 0.019659 || Task Loss: 0.8250 || KD Loss: 0.5385 || Mini-batch p2p Loss: 0.5057 || Memory p2p Loss: 0.0783 || Memory p2r Loss: 0.0833 || Mini-batch c2c Loss: 0.8397 || Memory c2c Loss: 0.0952 || Channel MSE Loss: 0.2435 || Fitnet Loss: 0.6546 || T_mean: 0.5496 (d-0.0090) || T_min: 0.5000 || T_max: 1.9536 || mc(mean/min/max): 0.7698/0.2070/0.9669 || v(mean/min/max): 2.9057e-04/4.0572e-07/6.8857e-03 || r(mean/min/max): 4.1303e-01/3.6721e-02/3.2344e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.4ms(avg 12.8, inner 1.5) || |dr/dT|: 2.86e-01 || conv<1e-02: 9.5% || |T-T0|: 0.489 || clamp: 93.8% || Cost Time: 0:03:21 || Estimated Time: 2:53:39
+2026-06-29 20:09:04,419 semantic_segmentation INFO: Iters: 400/20000 || Lr: 0.019641 || Task Loss: 0.9652 || KD Loss: 0.7949 || Mini-batch p2p Loss: 0.3735 || Memory p2p Loss: 0.0907 || Memory p2r Loss: 0.1057 || Mini-batch c2c Loss: 0.9052 || Memory c2c Loss: 0.1193 || Channel MSE Loss: 0.2522 || Fitnet Loss: 0.7894 || T_mean: 0.5589 (d-0.0367) || T_min: 0.5000 || T_max: 1.9893 || mc(mean/min/max): 0.7531/0.2018/0.9614 || v(mean/min/max): 3.0402e-04/7.6220e-07/7.1427e-03 || r(mean/min/max): 4.3710e-01/4.3321e-02/3.3034e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 44.8ms(avg 12.9, inner 5.6) || |dr/dT|: 2.65e-01 || conv<1e-02: 8.0% || |T-T0|: 0.488 || clamp: 92.7% || Cost Time: 0:03:31 || Estimated Time: 2:52:58
+2026-06-29 20:09:04,420 semantic_segmentation INFO: NewtonTemp Detail @ 400 || time: 44.77ms || inner: 5.60ms x 8 || a: 200.000 || |dr/dT| mean/p95/max: 2.655e-01/1.321e+00/2.793e+00 || conv<1e-02: 7.98% || |T-T0| mean/p95/max: 4.876e-01/5.000e-01/9.893e-01 || T mean/min/max: 0.5589/0.5000/1.9893 || clamp[min/max]: 92.73%/0.00% || r mean/p95/max: 0.1632/1.4920/2.0501 || c mean/min: 0.9407/0.1944 || v mean/p95/max: 1.2498e-04/1.5236e-03/2.3320e-03 || NaN(dr,T): 0/0 || Inf(dr,T): 0/0
+2026-06-29 20:09:04,420 semantic_segmentation INFO: NewtonTemp Trace @ 400 || i0[|dr|=8.66e-01, conv=0.1%, |dT|=2.39e-01, T=0.779, clamp=0.0%] -> i1[|dr|=5.51e-01, conv=0.2%, |dT|=1.68e-01, T=0.622, clamp=23.4%] -> i2[|dr|=3.41e-01, conv=0.5%, |dT|=5.44e-02, T=0.575, clamp=44.7%] -> i3[|dr|=2.81e-01, conv=1.2%, |dT|=2.02e-02, T=0.559, clamp=79.7%] -> i4[|dr|=2.67e-01, conv=2.0%, |dT|=4.14e-03, T=0.558, clamp=91.2%] -> i5[|dr|=2.65e-01, conv=3.2%, |dT|=1.06e-03, T=0.559, clamp=92.6%] -> i6[|dr|=2.65e-01, conv=5.1%, |dT|=4.49e-04, T=0.559, clamp=92.7%] -> i7[|dr|=2.65e-01, conv=6.6%, |dT|=2.04e-04, T=0.559, clamp=92.7%]
+2026-06-29 20:09:14,444 semantic_segmentation INFO: Iters: 420/20000 || Lr: 0.019623 || Task Loss: 1.0257 || KD Loss: 1.0088 || Mini-batch p2p Loss: 0.4061 || Memory p2p Loss: 0.0951 || Memory p2r Loss: 0.1004 || Mini-batch c2c Loss: 0.8650 || Memory c2c Loss: 0.1010 || Channel MSE Loss: 0.2428 || Fitnet Loss: 0.7289 || T_mean: 0.5444 (d-0.0018) || T_min: 0.5000 || T_max: 1.9966 || mc(mean/min/max): 0.7359/0.1842/0.9677 || v(mean/min/max): 2.5703e-04/5.0679e-07/7.4584e-03 || r(mean/min/max): 4.4358e-01/3.5973e-02/3.4186e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.3ms(avg 12.9, inner 1.5) || |dr/dT|: 2.92e-01 || conv<1e-02: 6.5% || |T-T0|: 0.487 || clamp: 94.0% || Cost Time: 0:03:41 || Estimated Time: 2:52:21
+2026-06-29 20:09:24,522 semantic_segmentation INFO: Iters: 440/20000 || Lr: 0.019604 || Task Loss: 1.0846 || KD Loss: 1.0337 || Mini-batch p2p Loss: 0.4164 || Memory p2p Loss: 0.0840 || Memory p2r Loss: 0.1008 || Mini-batch c2c Loss: 0.8499 || Memory c2c Loss: 0.1006 || Channel MSE Loss: 0.2403 || Fitnet Loss: 0.7893 || T_mean: 0.5637 (d-0.0819) || T_min: 0.5000 || T_max: 2.0422 || mc(mean/min/max): 0.7649/0.1748/0.9841 || v(mean/min/max): 3.1439e-04/1.5215e-07/7.5085e-03 || r(mean/min/max): 4.2987e-01/1.8055e-02/3.4495e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.5ms(avg 12.9, inner 1.6) || |dr/dT|: 2.58e-01 || conv<1e-02: 7.8% || |T-T0|: 0.491 || clamp: 92.6% || Cost Time: 0:03:51 || Estimated Time: 2:51:49
+2026-06-29 20:09:34,625 semantic_segmentation INFO: Iters: 460/20000 || Lr: 0.019586 || Task Loss: 1.4295 || KD Loss: 1.5684 || Mini-batch p2p Loss: 0.4221 || Memory p2p Loss: 0.1339 || Memory p2r Loss: 0.1358 || Mini-batch c2c Loss: 0.9168 || Memory c2c Loss: 0.1175 || Channel MSE Loss: 0.2647 || Fitnet Loss: 0.8832 || T_mean: 0.5773 (d-0.0033) || T_min: 0.5000 || T_max: 2.2778 || mc(mean/min/max): 0.7001/0.1755/0.9429 || v(mean/min/max): 4.6398e-04/7.8271e-07/8.2836e-03 || r(mean/min/max): 5.9495e-01/6.5854e-02/3.8862e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 14.6ms(avg 12.9, inner 1.8) || |dr/dT|: 4.83e-01 || conv<1e-02: 10.0% || |T-T0|: 0.480 || clamp: 89.9% || Cost Time: 0:04:02 || Estimated Time: 2:51:20
+2026-06-29 20:09:44,632 semantic_segmentation INFO: Iters: 480/20000 || Lr: 0.019568 || Task Loss: 0.8413 || KD Loss: 0.6617 || Mini-batch p2p Loss: 0.4064 || Memory p2p Loss: 0.0772 || Memory p2r Loss: 0.0884 || Mini-batch c2c Loss: 0.7999 || Memory c2c Loss: 0.0937 || Channel MSE Loss: 0.2331 || Fitnet Loss: 0.6040 || T_mean: 0.5589 (d-0.0187) || T_min: 0.5000 || T_max: 1.9956 || mc(mean/min/max): 0.7592/0.1994/0.9721 || v(mean/min/max): 2.9457e-04/1.7205e-07/7.0473e-03 || r(mean/min/max): 4.2799e-01/2.9568e-02/3.3044e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.0ms(avg 12.8, inner 1.5) || |dr/dT|: 2.56e-01 || conv<1e-02: 9.8% || |T-T0|: 0.489 || clamp: 92.9% || Cost Time: 0:04:12 || Estimated Time: 2:50:48
+2026-06-29 20:09:54,754 semantic_segmentation INFO: Iters: 500/20000 || Lr: 0.019550 || Task Loss: 0.9487 || KD Loss: 0.7018 || Mini-batch p2p Loss: 0.4775 || Memory p2p Loss: 0.0940 || Memory p2r Loss: 0.0996 || Mini-batch c2c Loss: 0.8734 || Memory c2c Loss: 0.1073 || Channel MSE Loss: 0.2502 || Fitnet Loss: 0.7080 || T_mean: 0.5670 (d-0.0083) || T_min: 0.5000 || T_max: 2.0782 || mc(mean/min/max): 0.7512/0.1975/0.9712 || v(mean/min/max): 3.3422e-04/2.9203e-07/7.1851e-03 || r(mean/min/max): 4.5378e-01/3.1251e-02/3.3238e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 44.5ms(avg 12.8, inner 5.6) || |dr/dT|: 2.73e-01 || conv<1e-02: 10.2% || |T-T0|: 0.487 || clamp: 91.8% || Cost Time: 0:04:22 || Estimated Time: 2:50:23
+2026-06-29 20:09:54,754 semantic_segmentation INFO: NewtonTemp Detail @ 500 || time: 44.49ms || inner: 5.56ms x 8 || a: 200.000 || |dr/dT| mean/p95/max: 2.729e-01/1.483e+00/2.818e+00 || conv<1e-02: 10.20% || |T-T0| mean/p95/max: 4.865e-01/5.000e-01/1.078e+00 || T mean/min/max: 0.5670/0.5000/2.0782 || clamp[min/max]: 91.81%/0.00% || r mean/p95/max: 0.1811/1.5462/2.1800 || c mean/min: 0.9346/0.1593 || v mean/p95/max: 1.4127e-04/1.5467e-03/2.1885e-03 || NaN(dr,T): 0/0 || Inf(dr,T): 0/0
+2026-06-29 20:09:54,754 semantic_segmentation INFO: NewtonTemp Trace @ 500 || i0[|dr|=8.59e-01, conv=0.1%, |dT|=2.36e-01, T=0.785, clamp=0.0%] -> i1[|dr|=5.49e-01, conv=0.3%, |dT|=1.70e-01, T=0.627, clamp=22.0%] -> i2[|dr|=3.41e-01, conv=0.6%, |dT|=5.21e-02, T=0.583, clamp=50.8%] -> i3[|dr|=2.87e-01, conv=1.3%, |dT|=1.95e-02, T=0.569, clamp=74.2%] -> i4[|dr|=2.75e-01, conv=2.3%, |dT|=6.04e-03, T=0.566, clamp=88.3%] -> i5[|dr|=2.73e-01, conv=4.1%, |dT|=1.50e-03, T=0.567, clamp=91.5%] -> i6[|dr|=2.72e-01, conv=7.0%, |dT|=4.98e-04, T=0.567, clamp=91.8%] -> i7[|dr|=2.72e-01, conv=8.9%, |dT|=2.60e-04, T=0.567, clamp=91.8%]
+2026-06-29 20:10:04,831 semantic_segmentation INFO: Iters: 520/20000 || Lr: 0.019532 || Task Loss: 0.8782 || KD Loss: 0.5713 || Mini-batch p2p Loss: 0.3807 || Memory p2p Loss: 0.0712 || Memory p2r Loss: 0.0827 || Mini-batch c2c Loss: 0.8502 || Memory c2c Loss: 0.1050 || Channel MSE Loss: 0.2393 || Fitnet Loss: 0.7054 || T_mean: 0.5718 (d+0.0008) || T_min: 0.5000 || T_max: 2.1280 || mc(mean/min/max): 0.6746/0.1421/0.9847 || v(mean/min/max): 4.2379e-04/1.5671e-07/7.4823e-03 || r(mean/min/max): 6.0724e-01/1.7464e-02/3.4403e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.6ms(avg 12.8, inner 1.6) || |dr/dT|: 4.30e-01 || conv<1e-02: 11.9% || |T-T0|: 0.478 || clamp: 89.8% || Cost Time: 0:04:32 || Estimated Time: 2:49:57
+2026-06-29 20:10:14,893 semantic_segmentation INFO: Iters: 540/20000 || Lr: 0.019514 || Task Loss: 1.3320 || KD Loss: 1.5320 || Mini-batch p2p Loss: 0.5161 || Memory p2p Loss: 0.1201 || Memory p2r Loss: 0.1303 || Mini-batch c2c Loss: 0.8996 || Memory c2c Loss: 0.1011 || Channel MSE Loss: 0.2510 || Fitnet Loss: 0.7653 || T_mean: 0.6106 (d+0.0508) || T_min: 0.5000 || T_max: 2.5330 || mc(mean/min/max): 0.7350/0.2167/0.9691 || v(mean/min/max): 5.2306e-04/5.5555e-07/9.3339e-03 || r(mean/min/max): 5.7174e-01/3.4973e-02/4.3561e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.1ms(avg 12.8, inner 1.5) || |dr/dT|: 3.78e-01 || conv<1e-02: 12.6% || |T-T0|: 0.495 || clamp: 88.2% || Cost Time: 0:04:42 || Estimated Time: 2:49:32
+2026-06-29 20:10:24,950 semantic_segmentation INFO: Iters: 560/20000 || Lr: 0.019496 || Task Loss: 1.1383 || KD Loss: 1.1253 || Mini-batch p2p Loss: 0.3746 || Memory p2p Loss: 0.0949 || Memory p2r Loss: 0.0996 || Mini-batch c2c Loss: 0.8819 || Memory c2c Loss: 0.1162 || Channel MSE Loss: 0.2503 || Fitnet Loss: 0.8578 || T_mean: 0.5723 (d-0.0324) || T_min: 0.5000 || T_max: 2.0130 || mc(mean/min/max): 0.7377/0.1999/0.9665 || v(mean/min/max): 3.8560e-04/1.1230e-06/7.2710e-03 || r(mean/min/max): 5.0199e-01/4.5783e-02/3.3602e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 14.1ms(avg 12.8, inner 1.8) || |dr/dT|: 3.39e-01 || conv<1e-02: 9.3% || |T-T0|: 0.482 || clamp: 90.7% || Cost Time: 0:04:52 || Estimated Time: 2:49:08
+2026-06-29 20:10:35,003 semantic_segmentation INFO: Iters: 580/20000 || Lr: 0.019478 || Task Loss: 0.9613 || KD Loss: 0.7515 || Mini-batch p2p Loss: 0.4371 || Memory p2p Loss: 0.0813 || Memory p2r Loss: 0.0841 || Mini-batch c2c Loss: 0.8378 || Memory c2c Loss: 0.1010 || Channel MSE Loss: 0.2394 || Fitnet Loss: 0.6433 || T_mean: 0.5625 (d-0.0235) || T_min: 0.5000 || T_max: 1.9109 || mc(mean/min/max): 0.7310/0.1564/0.9539 || v(mean/min/max): 3.4984e-04/9.3488e-07/6.6814e-03 || r(mean/min/max): 4.9084e-01/5.2950e-02/3.1351e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.4ms(avg 12.8, inner 1.5) || |dr/dT|: 3.41e-01 || conv<1e-02: 8.7% || |T-T0|: 0.485 || clamp: 92.1% || Cost Time: 0:05:02 || Estimated Time: 2:48:44
+2026-06-29 20:10:45,108 semantic_segmentation INFO: Iters: 600/20000 || Lr: 0.019460 || Task Loss: 0.8333 || KD Loss: 0.6254 || Mini-batch p2p Loss: 0.4038 || Memory p2p Loss: 0.0611 || Memory p2r Loss: 0.0798 || Mini-batch c2c Loss: 0.8666 || Memory c2c Loss: 0.1015 || Channel MSE Loss: 0.2362 || Fitnet Loss: 0.5791 || T_mean: 0.5367 (d-0.0263) || T_min: 0.5000 || T_max: 1.9038 || mc(mean/min/max): 0.7738/0.1316/0.9760 || v(mean/min/max): 2.0436e-04/6.1749e-07/6.7288e-03 || r(mean/min/max): 3.6719e-01/3.1102e-02/3.1533e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 44.3ms(avg 12.8, inner 5.5) || |dr/dT|: 2.10e-01 || conv<1e-02: 6.8% || |T-T0|: 0.491 || clamp: 95.3% || Cost Time: 0:05:12 || Estimated Time: 2:48:24
+2026-06-29 20:10:45,108 semantic_segmentation INFO: NewtonTemp Detail @ 600 || time: 44.34ms || inner: 5.54ms x 8 || a: 200.000 || |dr/dT| mean/p95/max: 2.095e-01/1.096e+00/2.835e+00 || conv<1e-02: 6.76% || |T-T0| mean/p95/max: 4.906e-01/5.000e-01/9.038e-01 || T mean/min/max: 0.5367/0.5000/1.9038 || clamp[min/max]: 95.25%/0.00% || r mean/p95/max: 0.1173/1.0421/2.2825 || c mean/min: 0.9568/0.1457 || v mean/p95/max: 8.9585e-05/9.3189e-04/2.1635e-03 || NaN(dr,T): 0/0 || Inf(dr,T): 0/0
+2026-06-29 20:10:45,108 semantic_segmentation INFO: NewtonTemp Trace @ 600 || i0[|dr|=8.25e-01, conv=0.1%, |dT|=2.41e-01, T=0.770, clamp=0.0%] -> i1[|dr|=5.02e-01, conv=0.2%, |dT|=1.58e-01, T=0.618, clamp=17.0%] -> i2[|dr|=2.89e-01, conv=0.4%, |dT|=6.01e-02, T=0.562, clamp=34.9%] -> i3[|dr|=2.26e-01, conv=0.9%, |dT|=2.57e-02, T=0.539, clamp=75.7%] -> i4[|dr|=2.11e-01, conv=1.4%, |dT|=4.57e-03, T=0.537, clamp=92.7%] -> i5[|dr|=2.09e-01, conv=3.3%, |dT|=9.05e-04, T=0.536, clamp=95.0%] -> i6[|dr|=2.09e-01, conv=5.2%, |dT|=2.48e-04, T=0.537, clamp=95.3%] -> i7[|dr|=2.10e-01, conv=6.2%, |dT|=9.74e-05, T=0.537, clamp=95.3%]
+2026-06-29 20:10:55,217 semantic_segmentation INFO: Iters: 620/20000 || Lr: 0.019442 || Task Loss: 1.1465 || KD Loss: 1.0253 || Mini-batch p2p Loss: 0.4278 || Memory p2p Loss: 0.0998 || Memory p2r Loss: 0.1133 || Mini-batch c2c Loss: 0.8844 || Memory c2c Loss: 0.1154 || Channel MSE Loss: 0.2520 || Fitnet Loss: 0.7580 || T_mean: 0.5645 (d+0.0047) || T_min: 0.5000 || T_max: 2.0368 || mc(mean/min/max): 0.7518/0.2206/0.9664 || v(mean/min/max): 3.6895e-04/6.5373e-07/7.3635e-03 || r(mean/min/max): 4.7846e-01/3.8564e-02/3.3827e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.6ms(avg 12.8, inner 1.6) || |dr/dT|: 3.55e-01 || conv<1e-02: 7.9% || |T-T0|: 0.492 || clamp: 92.6% || Cost Time: 0:05:22 || Estimated Time: 2:48:03
+2026-06-29 20:11:05,524 semantic_segmentation INFO: Iters: 640/20000 || Lr: 0.019424 || Task Loss: 1.0008 || KD Loss: 0.9125 || Mini-batch p2p Loss: 0.3889 || Memory p2p Loss: 0.0804 || Memory p2r Loss: 0.0909 || Mini-batch c2c Loss: 0.8576 || Memory c2c Loss: 0.0997 || Channel MSE Loss: 0.2366 || Fitnet Loss: 0.6478 || T_mean: 0.5574 (d-0.0176) || T_min: 0.5000 || T_max: 1.9120 || mc(mean/min/max): 0.7390/0.1742/0.9724 || v(mean/min/max): 3.4986e-04/2.9558e-07/6.6621e-03 || r(mean/min/max): 4.8540e-01/3.0134e-02/3.1254e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.3ms(avg 12.8, inner 1.5) || |dr/dT|: 3.61e-01 || conv<1e-02: 9.1% || |T-T0|: 0.487 || clamp: 92.7% || Cost Time: 0:05:32 || Estimated Time: 2:47:50
+2026-06-29 20:11:15,865 semantic_segmentation INFO: Iters: 660/20000 || Lr: 0.019406 || Task Loss: 0.7971 || KD Loss: 0.6381 || Mini-batch p2p Loss: 0.3537 || Memory p2p Loss: 0.0691 || Memory p2r Loss: 0.0807 || Mini-batch c2c Loss: 0.7810 || Memory c2c Loss: 0.0951 || Channel MSE Loss: 0.2219 || Fitnet Loss: 0.6643 || T_mean: 0.5627 (d-0.0295) || T_min: 0.5000 || T_max: 2.1027 || mc(mean/min/max): 0.7365/0.2332/0.9508 || v(mean/min/max): 3.1849e-04/6.4551e-07/7.6375e-03 || r(mean/min/max): 4.6688e-01/5.8337e-02/3.5625e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 15.6ms(avg 12.9, inner 2.0) || |dr/dT|: 2.84e-01 || conv<1e-02: 7.8% || |T-T0|: 0.487 || clamp: 92.2% || Cost Time: 0:05:43 || Estimated Time: 2:47:38
+2026-06-29 20:11:25,989 semantic_segmentation INFO: Iters: 680/20000 || Lr: 0.019388 || Task Loss: 0.7401 || KD Loss: 0.5408 || Mini-batch p2p Loss: 0.2948 || Memory p2p Loss: 0.0728 || Memory p2r Loss: 0.0865 || Mini-batch c2c Loss: 0.8641 || Memory c2c Loss: 0.1214 || Channel MSE Loss: 0.2440 || Fitnet Loss: 0.8302 || T_mean: 0.5638 (d-0.0450) || T_min: 0.5000 || T_max: 2.0308 || mc(mean/min/max): 0.7527/0.2300/0.9533 || v(mean/min/max): 3.3723e-04/6.3676e-07/7.5702e-03 || r(mean/min/max): 4.5888e-01/5.1313e-02/3.4647e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.2ms(avg 12.8, inner 1.5) || |dr/dT|: 3.02e-01 || conv<1e-02: 7.7% || |T-T0|: 0.491 || clamp: 92.6% || Cost Time: 0:05:53 || Estimated Time: 2:47:19
+2026-06-29 20:11:36,147 semantic_segmentation INFO: Iters: 700/20000 || Lr: 0.019370 || Task Loss: 0.8783 || KD Loss: 0.6124 || Mini-batch p2p Loss: 0.4104 || Memory p2p Loss: 0.0611 || Memory p2r Loss: 0.0724 || Mini-batch c2c Loss: 0.7626 || Memory c2c Loss: 0.0834 || Channel MSE Loss: 0.2190 || Fitnet Loss: 0.5965 || T_mean: 0.5708 (d+0.0000) || T_min: 0.5000 || T_max: 2.0178 || mc(mean/min/max): 0.7481/0.2041/0.9764 || v(mean/min/max): 3.6688e-04/1.7485e-07/6.8573e-03 || r(mean/min/max): 4.8084e-01/2.6311e-02/3.2523e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 47.2ms(avg 12.9, inner 5.9) || |dr/dT|: 3.24e-01 || conv<1e-02: 11.0% || |T-T0|: 0.486 || clamp: 91.3% || Cost Time: 0:06:03 || Estimated Time: 2:47:03
+2026-06-29 20:11:36,148 semantic_segmentation INFO: NewtonTemp Detail @ 700 || time: 47.17ms || inner: 5.90ms x 8 || a: 200.000 || |dr/dT| mean/p95/max: 3.244e-01/1.576e+00/2.874e+00 || conv<1e-02: 10.99% || |T-T0| mean/p95/max: 4.857e-01/5.000e-01/1.018e+00 || T mean/min/max: 0.5708/0.5000/2.0178 || clamp[min/max]: 91.32%/0.00% || r mean/p95/max: 0.2003/1.5842/2.2129 || c mean/min: 0.9283/0.1551 || v mean/p95/max: 1.5514e-04/1.5691e-03/2.6271e-03 || NaN(dr,T): 0/0 || Inf(dr,T): 0/0
+2026-06-29 20:11:36,148 semantic_segmentation INFO: NewtonTemp Trace @ 700 || i0[|dr|=8.28e-01, conv=0.1%, |dT|=2.36e-01, T=0.787, clamp=0.0%] -> i1[|dr|=5.63e-01, conv=0.3%, |dT|=1.73e-01, T=0.627, clamp=29.6%] -> i2[|dr|=3.83e-01, conv=0.6%, |dT|=4.88e-02, T=0.587, clamp=49.8%] -> i3[|dr|=3.38e-01, conv=1.5%, |dT|=2.01e-02, T=0.573, clamp=75.5%] -> i4[|dr|=3.26e-01, conv=2.5%, |dT|=5.66e-03, T=0.570, clamp=87.8%] -> i5[|dr|=3.25e-01, conv=4.7%, |dT|=1.64e-03, T=0.570, clamp=90.8%] -> i6[|dr|=3.24e-01, conv=7.9%, |dT|=5.25e-04, T=0.571, clamp=91.3%] -> i7[|dr|=3.24e-01, conv=9.9%, |dT|=2.09e-04, T=0.571, clamp=91.3%]
+2026-06-29 20:11:46,199 semantic_segmentation INFO: Iters: 720/20000 || Lr: 0.019352 || Task Loss: 0.8924 || KD Loss: 0.4847 || Mini-batch p2p Loss: 0.3826 || Memory p2p Loss: 0.0705 || Memory p2r Loss: 0.0817 || Mini-batch c2c Loss: 0.7720 || Memory c2c Loss: 0.0821 || Channel MSE Loss: 0.2210 || Fitnet Loss: 0.6015 || T_mean: 0.5978 (d+0.0146) || T_min: 0.5000 || T_max: 1.9793 || mc(mean/min/max): 0.7216/0.2052/0.9785 || v(mean/min/max): 4.8339e-04/1.5337e-07/7.1398e-03 || r(mean/min/max): 5.5700e-01/2.3359e-02/3.3150e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.4ms(avg 12.9, inner 1.5) || |dr/dT|: 3.69e-01 || conv<1e-02: 13.8% || |T-T0|: 0.482 || clamp: 88.3% || Cost Time: 0:06:13 || Estimated Time: 2:46:43
+2026-06-29 20:11:56,317 semantic_segmentation INFO: Iters: 740/20000 || Lr: 0.019334 || Task Loss: 0.8733 || KD Loss: 0.5812 || Mini-batch p2p Loss: 0.3497 || Memory p2p Loss: 0.0655 || Memory p2r Loss: 0.0778 || Mini-batch c2c Loss: 0.8083 || Memory c2c Loss: 0.0996 || Channel MSE Loss: 0.2333 || Fitnet Loss: 0.6641 || T_mean: 0.5985 (d-0.0587) || T_min: 0.5000 || T_max: 2.0027 || mc(mean/min/max): 0.7272/0.1874/0.9753 || v(mean/min/max): 4.5347e-04/2.8431e-07/7.1967e-03 || r(mean/min/max): 5.3967e-01/2.7300e-02/3.3189e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.4ms(avg 12.9, inner 1.6) || |dr/dT|: 3.05e-01 || conv<1e-02: 13.2% || |T-T0|: 0.476 || clamp: 87.3% || Cost Time: 0:06:23 || Estimated Time: 2:46:26
+2026-06-29 20:12:06,389 semantic_segmentation INFO: Iters: 760/20000 || Lr: 0.019316 || Task Loss: 0.9530 || KD Loss: 0.6652 || Mini-batch p2p Loss: 0.4510 || Memory p2p Loss: 0.0837 || Memory p2r Loss: 0.1008 || Mini-batch c2c Loss: 0.8158 || Memory c2c Loss: 0.0927 || Channel MSE Loss: 0.2315 || Fitnet Loss: 0.5981 || T_mean: 0.5866 (d+0.0245) || T_min: 0.5000 || T_max: 2.1166 || mc(mean/min/max): 0.7082/0.1845/0.9718 || v(mean/min/max): 4.6142e-04/8.2671e-07/6.8522e-03 || r(mean/min/max): 5.7424e-01/4.3247e-02/3.3247e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.6ms(avg 12.9, inner 1.6) || |dr/dT|: 3.98e-01 || conv<1e-02: 11.6% || |T-T0|: 0.477 || clamp: 88.7% || Cost Time: 0:06:33 || Estimated Time: 2:46:08
+2026-06-29 20:12:16,411 semantic_segmentation INFO: Iters: 780/20000 || Lr: 0.019298 || Task Loss: 1.1019 || KD Loss: 0.9851 || Mini-batch p2p Loss: 0.4361 || Memory p2p Loss: 0.1165 || Memory p2r Loss: 0.1221 || Mini-batch c2c Loss: 0.8915 || Memory c2c Loss: 0.1106 || Channel MSE Loss: 0.2447 || Fitnet Loss: 0.8166 || T_mean: 0.6121 (d+0.0478) || T_min: 0.5000 || T_max: 2.0955 || mc(mean/min/max): 0.7310/0.1743/0.9573 || v(mean/min/max): 5.6145e-04/4.7101e-07/7.7547e-03 || r(mean/min/max): 5.8965e-01/5.0372e-02/3.5430e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 12.4ms(avg 12.9, inner 1.5) || |dr/dT|: 3.97e-01 || conv<1e-02: 13.3% || |T-T0|: 0.486 || clamp: 87.1% || Cost Time: 0:06:43 || Estimated Time: 2:45:50
+2026-06-29 20:12:26,520 semantic_segmentation INFO: Iters: 800/20000 || Lr: 0.019279 || Task Loss: 1.0468 || KD Loss: 0.9210 || Mini-batch p2p Loss: 0.4501 || Memory p2p Loss: 0.0933 || Memory p2r Loss: 0.1063 || Mini-batch c2c Loss: 0.8377 || Memory c2c Loss: 0.0984 || Channel MSE Loss: 0.2342 || Fitnet Loss: 0.6828 || T_mean: 0.6149 (d+0.0535) || T_min: 0.5000 || T_max: 2.1415 || mc(mean/min/max): 0.7159/0.1613/0.9609 || v(mean/min/max): 5.5060e-04/4.2143e-07/7.8883e-03 || r(mean/min/max): 6.0220e-01/4.5237e-02/3.6323e+00 || a(mean/min/max): 200.0000/200.0000/200.0000 || NewtonT: 44.8ms(avg 12.9, inner 5.6) || |dr/dT|: 3.92e-01 || conv<1e-02: 15.0% || |T-T0|: 0.480 || clamp: 86.2% || Cost Time: 0:06:53 || Estimated Time: 2:45:33
+2026-06-29 20:12:26,520 semantic_segmentation INFO: NewtonTemp Detail @ 800 || time: 44.83ms || inner: 5.60ms x 8 || a: 200.000 || |dr/dT| mean/p95/max: 3.920e-01/1.851e+00/3.047e+00 || conv<1e-02: 15.03% || |T-T0| mean/p95/max: 4.800e-01/5.000e-01/1.141e+00 || T mean/min/max: 0.6149/0.5000/2.1415 || clamp[min/max]: 86.25%/0.00% || r mean/p95/max: 0.3020/1.7520/2.2053 || c mean/min: 0.8915/0.1644 || v mean/p95/max: 2.4318e-04/1.5907e-03/2.5969e-03 || NaN(dr,T): 0/0 || Inf(dr,T): 0/0
+2026-06-29 20:12:26,520 semantic_segmentation INFO: NewtonTemp Trace @ 800 || i0[|dr|=8.63e-01, conv=0.2%, |dT|=2.32e-01, T=0.807, clamp=0.0%] -> i1[|dr|=5.99e-01, conv=0.4%, |dT|=1.78e-01, T=0.651, clamp=32.5%] -> i2[|dr|=4.47e-01, conv=1.0%, |dT|=4.48e-02, T=0.621, clamp=56.8%] -> i3[|dr|=4.05e-01, conv=2.1%, |dT|=1.68e-02, T=0.614, clamp=74.9%] -> i4[|dr|=3.95e-01, conv=3.7%, |dT|=5.93e-03, T=0.613, clamp=83.7%] -> i5[|dr|=3.92e-01, conv=6.1%, |dT|=2.09e-03, T=0.614, clamp=86.0%] -> i6[|dr|=3.92e-01, conv=9.9%, |dT|=8.40e-04, T=0.615, clamp=86.2%] -> i7[|dr|=3.92e-01, conv=12.9%, |dT|=3.98e-04, T=0.615, clamp=86.2%]
+2026-06-29 20:12:27,893 semantic_segmentation INFO: Start validation, Total sample: 725
+2026-06-29 20:12:28,828 semantic_segmentation INFO: Sample: 1, Validation pixAcc: 0.937, mIoU: 0.072
+2026-06-29 20:12:28,883 semantic_segmentation INFO: Sample: 2, Validation pixAcc: 0.636, mIoU: 0.069
+2026-06-29 20:12:28,939 semantic_segmentation INFO: Sample: 3, Validation pixAcc: 0.734, mIoU: 0.073
+2026-06-29 20:12:28,989 semantic_segmentation INFO: Sample: 4, Validation pixAcc: 0.679, mIoU: 0.073
+2026-06-29 20:12:29,039 semantic_segmentation INFO: Sample: 5, Validation pixAcc: 0.637, mIoU: 0.108
+2026-06-29 20:12:29,090 semantic_segmentation INFO: Sample: 6, Validation pixAcc: 0.638, mIoU: 0.110
+2026-06-29 20:12:29,139 semantic_segmentation INFO: Sample: 7, Validation pixAcc: 0.655, mIoU: 0.126
+2026-06-29 20:12:29,189 semantic_segmentation INFO: Sample: 8, Validation pixAcc: 0.688, mIoU: 0.143
+2026-06-29 20:12:29,238 semantic_segmentation INFO: Sample: 9, Validation pixAcc: 0.704, mIoU: 0.148
+2026-06-29 20:12:29,286 semantic_segmentation INFO: Sample: 10, Validation pixAcc: 0.715, mIoU: 0.144
+2026-06-29 20:12:29,334 semantic_segmentation INFO: Sample: 11, Validation pixAcc: 0.731, mIoU: 0.181
+2026-06-29 20:12:29,383 semantic_segmentation INFO: Sample: 12, Validation pixAcc: 0.750, mIoU: 0.181
+2026-06-29 20:12:29,433 semantic_segmentation INFO: Sample: 13, Validation pixAcc: 0.725, mIoU: 0.179
+2026-06-29 20:12:29,482 semantic_segmentation INFO: Sample: 14, Validation pixAcc: 0.722, mIoU: 0.162
+2026-06-29 20:12:29,530 semantic_segmentation INFO: Sample: 15, Validation pixAcc: 0.730, mIoU: 0.170
+2026-06-29 20:12:29,580 semantic_segmentation INFO: Sample: 16, Validation pixAcc: 0.742, mIoU: 0.168
+2026-06-29 20:12:29,627 semantic_segmentation INFO: Sample: 17, Validation pixAcc: 0.738, mIoU: 0.166
+2026-06-29 20:12:29,675 semantic_segmentation INFO: Sample: 18, Validation pixAcc: 0.739, mIoU: 0.166
+2026-06-29 20:12:29,724 semantic_segmentation INFO: Sample: 19, Validation pixAcc: 0.749, mIoU: 0.156
+2026-06-29 20:12:29,774 semantic_segmentation INFO: Sample: 20, Validation pixAcc: 0.757, mIoU: 0.173
+2026-06-29 20:12:29,823 semantic_segmentation INFO: Sample: 21, Validation pixAcc: 0.757, mIoU: 0.172
+2026-06-29 20:12:29,874 semantic_segmentation INFO: Sample: 22, Validation pixAcc: 0.764, mIoU: 0.172
+2026-06-29 20:12:29,922 semantic_segmentation INFO: Sample: 23, Validation pixAcc: 0.753, mIoU: 0.169
+2026-06-29 20:12:29,973 semantic_segmentation INFO: Sample: 24, Validation pixAcc: 0.757, mIoU: 0.165
+2026-06-29 20:12:30,027 semantic_segmentation INFO: Sample: 25, Validation pixAcc: 0.759, mIoU: 0.183
+2026-06-29 20:12:30,077 semantic_segmentation INFO: Sample: 26, Validation pixAcc: 0.760, mIoU: 0.175
+2026-06-29 20:12:30,128 semantic_segmentation INFO: Sample: 27, Validation pixAcc: 0.766, mIoU: 0.175
+2026-06-29 20:12:30,176 semantic_segmentation INFO: Sample: 28, Validation pixAcc: 0.772, mIoU: 0.175
+2026-06-29 20:12:30,226 semantic_segmentation INFO: Sample: 29, Validation pixAcc: 0.771, mIoU: 0.175
+2026-06-29 20:12:30,275 semantic_segmentation INFO: Sample: 30, Validation pixAcc: 0.780, mIoU: 0.175
+2026-06-29 20:12:30,322 semantic_segmentation INFO: Sample: 31, Validation pixAcc: 0.778, mIoU: 0.176
+2026-06-29 20:12:30,371 semantic_segmentation INFO: Sample: 32, Validation pixAcc: 0.780, mIoU: 0.178
+2026-06-29 20:12:30,418 semantic_segmentation INFO: Sample: 33, Validation pixAcc: 0.784, mIoU: 0.176
+2026-06-29 20:12:30,465 semantic_segmentation INFO: Sample: 34, Validation pixAcc: 0.788, mIoU: 0.175
+2026-06-29 20:12:30,513 semantic_segmentation INFO: Sample: 35, Validation pixAcc: 0.791, mIoU: 0.186
+2026-06-29 20:12:30,564 semantic_segmentation INFO: Sample: 36, Validation pixAcc: 0.794, mIoU: 0.187
+2026-06-29 20:12:30,611 semantic_segmentation INFO: Sample: 37, Validation pixAcc: 0.793, mIoU: 0.187
+2026-06-29 20:12:30,658 semantic_segmentation INFO: Sample: 38, Validation pixAcc: 0.797, mIoU: 0.205
+2026-06-29 20:12:30,708 semantic_segmentation INFO: Sample: 39, Validation pixAcc: 0.797, mIoU: 0.203
+2026-06-29 20:12:30,756 semantic_segmentation INFO: Sample: 40, Validation pixAcc: 0.796, mIoU: 0.200
+2026-06-29 20:12:30,804 semantic_segmentation INFO: Sample: 41, Validation pixAcc: 0.788, mIoU: 0.202
+2026-06-29 20:12:30,853 semantic_segmentation INFO: Sample: 42, Validation pixAcc: 0.793, mIoU: 0.202
+2026-06-29 20:12:30,902 semantic_segmentation INFO: Sample: 43, Validation pixAcc: 0.790, mIoU: 0.201
+2026-06-29 20:12:30,950 semantic_segmentation INFO: Sample: 44, Validation pixAcc: 0.792, mIoU: 0.201
+2026-06-29 20:12:30,997 semantic_segmentation INFO: Sample: 45, Validation pixAcc: 0.790, mIoU: 0.201
+2026-06-29 20:12:31,044 semantic_segmentation INFO: Sample: 46, Validation pixAcc: 0.792, mIoU: 0.201
+2026-06-29 20:12:31,092 semantic_segmentation INFO: Sample: 47, Validation pixAcc: 0.792, mIoU: 0.197
+2026-06-29 20:12:31,140 semantic_segmentation INFO: Sample: 48, Validation pixAcc: 0.789, mIoU: 0.198
+2026-06-29 20:12:31,187 semantic_segmentation INFO: Sample: 49, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:31,238 semantic_segmentation INFO: Sample: 50, Validation pixAcc: 0.793, mIoU: 0.201
+2026-06-29 20:12:31,286 semantic_segmentation INFO: Sample: 51, Validation pixAcc: 0.794, mIoU: 0.198
+2026-06-29 20:12:31,333 semantic_segmentation INFO: Sample: 52, Validation pixAcc: 0.798, mIoU: 0.198
+2026-06-29 20:12:31,381 semantic_segmentation INFO: Sample: 53, Validation pixAcc: 0.801, mIoU: 0.198
+2026-06-29 20:12:31,432 semantic_segmentation INFO: Sample: 54, Validation pixAcc: 0.800, mIoU: 0.198
+2026-06-29 20:12:31,481 semantic_segmentation INFO: Sample: 55, Validation pixAcc: 0.800, mIoU: 0.198
+2026-06-29 20:12:31,530 semantic_segmentation INFO: Sample: 56, Validation pixAcc: 0.800, mIoU: 0.196
+2026-06-29 20:12:31,583 semantic_segmentation INFO: Sample: 57, Validation pixAcc: 0.802, mIoU: 0.195
+2026-06-29 20:12:31,664 semantic_segmentation INFO: Sample: 58, Validation pixAcc: 0.806, mIoU: 0.193
+2026-06-29 20:12:31,715 semantic_segmentation INFO: Sample: 59, Validation pixAcc: 0.807, mIoU: 0.197
+2026-06-29 20:12:31,764 semantic_segmentation INFO: Sample: 60, Validation pixAcc: 0.798, mIoU: 0.211
+2026-06-29 20:12:31,812 semantic_segmentation INFO: Sample: 61, Validation pixAcc: 0.800, mIoU: 0.217
+2026-06-29 20:12:31,862 semantic_segmentation INFO: Sample: 62, Validation pixAcc: 0.801, mIoU: 0.216
+2026-06-29 20:12:31,911 semantic_segmentation INFO: Sample: 63, Validation pixAcc: 0.804, mIoU: 0.216
+2026-06-29 20:12:31,962 semantic_segmentation INFO: Sample: 64, Validation pixAcc: 0.801, mIoU: 0.219
+2026-06-29 20:12:32,011 semantic_segmentation INFO: Sample: 65, Validation pixAcc: 0.802, mIoU: 0.220
+2026-06-29 20:12:32,059 semantic_segmentation INFO: Sample: 66, Validation pixAcc: 0.803, mIoU: 0.220
+2026-06-29 20:12:32,108 semantic_segmentation INFO: Sample: 67, Validation pixAcc: 0.805, mIoU: 0.219
+2026-06-29 20:12:32,156 semantic_segmentation INFO: Sample: 68, Validation pixAcc: 0.803, mIoU: 0.217
+2026-06-29 20:12:32,204 semantic_segmentation INFO: Sample: 69, Validation pixAcc: 0.802, mIoU: 0.216
+2026-06-29 20:12:32,252 semantic_segmentation INFO: Sample: 70, Validation pixAcc: 0.798, mIoU: 0.213
+2026-06-29 20:12:32,301 semantic_segmentation INFO: Sample: 71, Validation pixAcc: 0.799, mIoU: 0.220
+2026-06-29 20:12:32,348 semantic_segmentation INFO: Sample: 72, Validation pixAcc: 0.799, mIoU: 0.220
+2026-06-29 20:12:32,395 semantic_segmentation INFO: Sample: 73, Validation pixAcc: 0.798, mIoU: 0.218
+2026-06-29 20:12:32,443 semantic_segmentation INFO: Sample: 74, Validation pixAcc: 0.801, mIoU: 0.218
+2026-06-29 20:12:32,491 semantic_segmentation INFO: Sample: 75, Validation pixAcc: 0.797, mIoU: 0.201
+2026-06-29 20:12:32,538 semantic_segmentation INFO: Sample: 76, Validation pixAcc: 0.800, mIoU: 0.201
+2026-06-29 20:12:32,585 semantic_segmentation INFO: Sample: 77, Validation pixAcc: 0.798, mIoU: 0.199
+2026-06-29 20:12:32,629 semantic_segmentation INFO: Sample: 78, Validation pixAcc: 0.798, mIoU: 0.199
+2026-06-29 20:12:32,677 semantic_segmentation INFO: Sample: 79, Validation pixAcc: 0.796, mIoU: 0.191
+2026-06-29 20:12:32,726 semantic_segmentation INFO: Sample: 80, Validation pixAcc: 0.797, mIoU: 0.195
+2026-06-29 20:12:32,774 semantic_segmentation INFO: Sample: 81, Validation pixAcc: 0.787, mIoU: 0.188
+2026-06-29 20:12:32,822 semantic_segmentation INFO: Sample: 82, Validation pixAcc: 0.785, mIoU: 0.187
+2026-06-29 20:12:32,869 semantic_segmentation INFO: Sample: 83, Validation pixAcc: 0.785, mIoU: 0.188
+2026-06-29 20:12:32,917 semantic_segmentation INFO: Sample: 84, Validation pixAcc: 0.782, mIoU: 0.187
+2026-06-29 20:12:32,965 semantic_segmentation INFO: Sample: 85, Validation pixAcc: 0.782, mIoU: 0.186
+2026-06-29 20:12:33,012 semantic_segmentation INFO: Sample: 86, Validation pixAcc: 0.782, mIoU: 0.186
+2026-06-29 20:12:33,059 semantic_segmentation INFO: Sample: 87, Validation pixAcc: 0.783, mIoU: 0.186
+2026-06-29 20:12:33,107 semantic_segmentation INFO: Sample: 88, Validation pixAcc: 0.784, mIoU: 0.186
+2026-06-29 20:12:33,155 semantic_segmentation INFO: Sample: 89, Validation pixAcc: 0.783, mIoU: 0.184
+2026-06-29 20:12:33,201 semantic_segmentation INFO: Sample: 90, Validation pixAcc: 0.782, mIoU: 0.183
+2026-06-29 20:12:33,248 semantic_segmentation INFO: Sample: 91, Validation pixAcc: 0.782, mIoU: 0.183
+2026-06-29 20:12:33,296 semantic_segmentation INFO: Sample: 92, Validation pixAcc: 0.783, mIoU: 0.184
+2026-06-29 20:12:33,343 semantic_segmentation INFO: Sample: 93, Validation pixAcc: 0.782, mIoU: 0.186
+2026-06-29 20:12:33,392 semantic_segmentation INFO: Sample: 94, Validation pixAcc: 0.780, mIoU: 0.184
+2026-06-29 20:12:33,441 semantic_segmentation INFO: Sample: 95, Validation pixAcc: 0.778, mIoU: 0.183
+2026-06-29 20:12:33,488 semantic_segmentation INFO: Sample: 96, Validation pixAcc: 0.779, mIoU: 0.183
+2026-06-29 20:12:33,536 semantic_segmentation INFO: Sample: 97, Validation pixAcc: 0.780, mIoU: 0.183
+2026-06-29 20:12:33,584 semantic_segmentation INFO: Sample: 98, Validation pixAcc: 0.782, mIoU: 0.187
+2026-06-29 20:12:33,631 semantic_segmentation INFO: Sample: 99, Validation pixAcc: 0.782, mIoU: 0.187
+2026-06-29 20:12:33,679 semantic_segmentation INFO: Sample: 100, Validation pixAcc: 0.782, mIoU: 0.189
+2026-06-29 20:12:33,727 semantic_segmentation INFO: Sample: 101, Validation pixAcc: 0.784, mIoU: 0.189
+2026-06-29 20:12:33,774 semantic_segmentation INFO: Sample: 102, Validation pixAcc: 0.785, mIoU: 0.189
+2026-06-29 20:12:33,822 semantic_segmentation INFO: Sample: 103, Validation pixAcc: 0.787, mIoU: 0.189
+2026-06-29 20:12:33,869 semantic_segmentation INFO: Sample: 104, Validation pixAcc: 0.786, mIoU: 0.189
+2026-06-29 20:12:33,917 semantic_segmentation INFO: Sample: 105, Validation pixAcc: 0.783, mIoU: 0.186
+2026-06-29 20:12:33,964 semantic_segmentation INFO: Sample: 106, Validation pixAcc: 0.784, mIoU: 0.191
+2026-06-29 20:12:34,011 semantic_segmentation INFO: Sample: 107, Validation pixAcc: 0.783, mIoU: 0.189
+2026-06-29 20:12:34,058 semantic_segmentation INFO: Sample: 108, Validation pixAcc: 0.783, mIoU: 0.187
+2026-06-29 20:12:34,106 semantic_segmentation INFO: Sample: 109, Validation pixAcc: 0.783, mIoU: 0.185
+2026-06-29 20:12:34,155 semantic_segmentation INFO: Sample: 110, Validation pixAcc: 0.784, mIoU: 0.185
+2026-06-29 20:12:34,202 semantic_segmentation INFO: Sample: 111, Validation pixAcc: 0.783, mIoU: 0.183
+2026-06-29 20:12:34,251 semantic_segmentation INFO: Sample: 112, Validation pixAcc: 0.783, mIoU: 0.182
+2026-06-29 20:12:34,299 semantic_segmentation INFO: Sample: 113, Validation pixAcc: 0.785, mIoU: 0.182
+2026-06-29 20:12:34,344 semantic_segmentation INFO: Sample: 114, Validation pixAcc: 0.782, mIoU: 0.181
+2026-06-29 20:12:34,390 semantic_segmentation INFO: Sample: 115, Validation pixAcc: 0.780, mIoU: 0.183
+2026-06-29 20:12:34,437 semantic_segmentation INFO: Sample: 116, Validation pixAcc: 0.781, mIoU: 0.183
+2026-06-29 20:12:34,485 semantic_segmentation INFO: Sample: 117, Validation pixAcc: 0.781, mIoU: 0.181
+2026-06-29 20:12:34,533 semantic_segmentation INFO: Sample: 118, Validation pixAcc: 0.781, mIoU: 0.181
+2026-06-29 20:12:34,581 semantic_segmentation INFO: Sample: 119, Validation pixAcc: 0.783, mIoU: 0.181
+2026-06-29 20:12:34,628 semantic_segmentation INFO: Sample: 120, Validation pixAcc: 0.782, mIoU: 0.182
+2026-06-29 20:12:34,676 semantic_segmentation INFO: Sample: 121, Validation pixAcc: 0.784, mIoU: 0.182
+2026-06-29 20:12:34,724 semantic_segmentation INFO: Sample: 122, Validation pixAcc: 0.785, mIoU: 0.182
+2026-06-29 20:12:34,772 semantic_segmentation INFO: Sample: 123, Validation pixAcc: 0.785, mIoU: 0.181
+2026-06-29 20:12:34,822 semantic_segmentation INFO: Sample: 124, Validation pixAcc: 0.786, mIoU: 0.183
+2026-06-29 20:12:34,868 semantic_segmentation INFO: Sample: 125, Validation pixAcc: 0.787, mIoU: 0.183
+2026-06-29 20:12:34,912 semantic_segmentation INFO: Sample: 126, Validation pixAcc: 0.787, mIoU: 0.182
+2026-06-29 20:12:34,958 semantic_segmentation INFO: Sample: 127, Validation pixAcc: 0.787, mIoU: 0.182
+2026-06-29 20:12:35,009 semantic_segmentation INFO: Sample: 128, Validation pixAcc: 0.783, mIoU: 0.181
+2026-06-29 20:12:35,054 semantic_segmentation INFO: Sample: 129, Validation pixAcc: 0.783, mIoU: 0.182
+2026-06-29 20:12:35,102 semantic_segmentation INFO: Sample: 130, Validation pixAcc: 0.783, mIoU: 0.182
+2026-06-29 20:12:35,149 semantic_segmentation INFO: Sample: 131, Validation pixAcc: 0.785, mIoU: 0.182
+2026-06-29 20:12:35,196 semantic_segmentation INFO: Sample: 132, Validation pixAcc: 0.786, mIoU: 0.186
+2026-06-29 20:12:35,241 semantic_segmentation INFO: Sample: 133, Validation pixAcc: 0.786, mIoU: 0.187
+2026-06-29 20:12:35,290 semantic_segmentation INFO: Sample: 134, Validation pixAcc: 0.787, mIoU: 0.187
+2026-06-29 20:12:35,335 semantic_segmentation INFO: Sample: 135, Validation pixAcc: 0.786, mIoU: 0.187
+2026-06-29 20:12:35,382 semantic_segmentation INFO: Sample: 136, Validation pixAcc: 0.787, mIoU: 0.188
+2026-06-29 20:12:35,429 semantic_segmentation INFO: Sample: 137, Validation pixAcc: 0.785, mIoU: 0.187
+2026-06-29 20:12:35,477 semantic_segmentation INFO: Sample: 138, Validation pixAcc: 0.786, mIoU: 0.187
+2026-06-29 20:12:35,524 semantic_segmentation INFO: Sample: 139, Validation pixAcc: 0.787, mIoU: 0.186
+2026-06-29 20:12:35,570 semantic_segmentation INFO: Sample: 140, Validation pixAcc: 0.788, mIoU: 0.186
+2026-06-29 20:12:35,618 semantic_segmentation INFO: Sample: 141, Validation pixAcc: 0.788, mIoU: 0.188
+2026-06-29 20:12:35,665 semantic_segmentation INFO: Sample: 142, Validation pixAcc: 0.789, mIoU: 0.188
+2026-06-29 20:12:35,713 semantic_segmentation INFO: Sample: 143, Validation pixAcc: 0.789, mIoU: 0.188
+2026-06-29 20:12:35,762 semantic_segmentation INFO: Sample: 144, Validation pixAcc: 0.789, mIoU: 0.188
+2026-06-29 20:12:35,811 semantic_segmentation INFO: Sample: 145, Validation pixAcc: 0.789, mIoU: 0.187
+2026-06-29 20:12:35,859 semantic_segmentation INFO: Sample: 146, Validation pixAcc: 0.787, mIoU: 0.185
+2026-06-29 20:12:35,906 semantic_segmentation INFO: Sample: 147, Validation pixAcc: 0.788, mIoU: 0.185
+2026-06-29 20:12:35,954 semantic_segmentation INFO: Sample: 148, Validation pixAcc: 0.786, mIoU: 0.184
+2026-06-29 20:12:36,000 semantic_segmentation INFO: Sample: 149, Validation pixAcc: 0.785, mIoU: 0.185
+2026-06-29 20:12:36,048 semantic_segmentation INFO: Sample: 150, Validation pixAcc: 0.784, mIoU: 0.185
+2026-06-29 20:12:36,097 semantic_segmentation INFO: Sample: 151, Validation pixAcc: 0.784, mIoU: 0.185
+2026-06-29 20:12:36,145 semantic_segmentation INFO: Sample: 152, Validation pixAcc: 0.783, mIoU: 0.185
+2026-06-29 20:12:36,195 semantic_segmentation INFO: Sample: 153, Validation pixAcc: 0.784, mIoU: 0.184
+2026-06-29 20:12:36,245 semantic_segmentation INFO: Sample: 154, Validation pixAcc: 0.785, mIoU: 0.185
+2026-06-29 20:12:36,294 semantic_segmentation INFO: Sample: 155, Validation pixAcc: 0.785, mIoU: 0.186
+2026-06-29 20:12:36,343 semantic_segmentation INFO: Sample: 156, Validation pixAcc: 0.784, mIoU: 0.185
+2026-06-29 20:12:36,391 semantic_segmentation INFO: Sample: 157, Validation pixAcc: 0.785, mIoU: 0.185
+2026-06-29 20:12:36,441 semantic_segmentation INFO: Sample: 158, Validation pixAcc: 0.786, mIoU: 0.189
+2026-06-29 20:12:36,490 semantic_segmentation INFO: Sample: 159, Validation pixAcc: 0.786, mIoU: 0.188
+2026-06-29 20:12:36,539 semantic_segmentation INFO: Sample: 160, Validation pixAcc: 0.785, mIoU: 0.187
+2026-06-29 20:12:36,587 semantic_segmentation INFO: Sample: 161, Validation pixAcc: 0.786, mIoU: 0.187
+2026-06-29 20:12:36,638 semantic_segmentation INFO: Sample: 162, Validation pixAcc: 0.788, mIoU: 0.187
+2026-06-29 20:12:36,687 semantic_segmentation INFO: Sample: 163, Validation pixAcc: 0.788, mIoU: 0.187
+2026-06-29 20:12:36,736 semantic_segmentation INFO: Sample: 164, Validation pixAcc: 0.789, mIoU: 0.187
+2026-06-29 20:12:36,785 semantic_segmentation INFO: Sample: 165, Validation pixAcc: 0.790, mIoU: 0.187
+2026-06-29 20:12:36,833 semantic_segmentation INFO: Sample: 166, Validation pixAcc: 0.789, mIoU: 0.186
+2026-06-29 20:12:36,882 semantic_segmentation INFO: Sample: 167, Validation pixAcc: 0.787, mIoU: 0.186
+2026-06-29 20:12:36,931 semantic_segmentation INFO: Sample: 168, Validation pixAcc: 0.788, mIoU: 0.186
+2026-06-29 20:12:36,979 semantic_segmentation INFO: Sample: 169, Validation pixAcc: 0.786, mIoU: 0.181
+2026-06-29 20:12:37,028 semantic_segmentation INFO: Sample: 170, Validation pixAcc: 0.782, mIoU: 0.179
+2026-06-29 20:12:37,078 semantic_segmentation INFO: Sample: 171, Validation pixAcc: 0.783, mIoU: 0.180
+2026-06-29 20:12:37,126 semantic_segmentation INFO: Sample: 172, Validation pixAcc: 0.783, mIoU: 0.180
+2026-06-29 20:12:37,174 semantic_segmentation INFO: Sample: 173, Validation pixAcc: 0.783, mIoU: 0.181
+2026-06-29 20:12:37,222 semantic_segmentation INFO: Sample: 174, Validation pixAcc: 0.784, mIoU: 0.181
+2026-06-29 20:12:37,270 semantic_segmentation INFO: Sample: 175, Validation pixAcc: 0.784, mIoU: 0.183
+2026-06-29 20:12:37,320 semantic_segmentation INFO: Sample: 176, Validation pixAcc: 0.784, mIoU: 0.184
+2026-06-29 20:12:37,367 semantic_segmentation INFO: Sample: 177, Validation pixAcc: 0.783, mIoU: 0.184
+2026-06-29 20:12:37,414 semantic_segmentation INFO: Sample: 178, Validation pixAcc: 0.783, mIoU: 0.184
+2026-06-29 20:12:37,461 semantic_segmentation INFO: Sample: 179, Validation pixAcc: 0.784, mIoU: 0.185
+2026-06-29 20:12:37,509 semantic_segmentation INFO: Sample: 180, Validation pixAcc: 0.785, mIoU: 0.185
+2026-06-29 20:12:37,557 semantic_segmentation INFO: Sample: 181, Validation pixAcc: 0.785, mIoU: 0.187
+2026-06-29 20:12:37,604 semantic_segmentation INFO: Sample: 182, Validation pixAcc: 0.785, mIoU: 0.191
+2026-06-29 20:12:37,651 semantic_segmentation INFO: Sample: 183, Validation pixAcc: 0.782, mIoU: 0.190
+2026-06-29 20:12:37,699 semantic_segmentation INFO: Sample: 184, Validation pixAcc: 0.781, mIoU: 0.189
+2026-06-29 20:12:37,747 semantic_segmentation INFO: Sample: 185, Validation pixAcc: 0.782, mIoU: 0.190
+2026-06-29 20:12:37,794 semantic_segmentation INFO: Sample: 186, Validation pixAcc: 0.783, mIoU: 0.189
+2026-06-29 20:12:37,841 semantic_segmentation INFO: Sample: 187, Validation pixAcc: 0.783, mIoU: 0.189
+2026-06-29 20:12:37,889 semantic_segmentation INFO: Sample: 188, Validation pixAcc: 0.784, mIoU: 0.189
+2026-06-29 20:12:37,937 semantic_segmentation INFO: Sample: 189, Validation pixAcc: 0.785, mIoU: 0.190
+2026-06-29 20:12:37,985 semantic_segmentation INFO: Sample: 190, Validation pixAcc: 0.785, mIoU: 0.190
+2026-06-29 20:12:38,031 semantic_segmentation INFO: Sample: 191, Validation pixAcc: 0.785, mIoU: 0.190
+2026-06-29 20:12:38,080 semantic_segmentation INFO: Sample: 192, Validation pixAcc: 0.786, mIoU: 0.190
+2026-06-29 20:12:38,125 semantic_segmentation INFO: Sample: 193, Validation pixAcc: 0.787, mIoU: 0.192
+2026-06-29 20:12:38,171 semantic_segmentation INFO: Sample: 194, Validation pixAcc: 0.788, mIoU: 0.192
+2026-06-29 20:12:38,216 semantic_segmentation INFO: Sample: 195, Validation pixAcc: 0.788, mIoU: 0.192
+2026-06-29 20:12:38,262 semantic_segmentation INFO: Sample: 196, Validation pixAcc: 0.788, mIoU: 0.191
+2026-06-29 20:12:38,309 semantic_segmentation INFO: Sample: 197, Validation pixAcc: 0.789, mIoU: 0.191
+2026-06-29 20:12:38,355 semantic_segmentation INFO: Sample: 198, Validation pixAcc: 0.790, mIoU: 0.191
+2026-06-29 20:12:38,403 semantic_segmentation INFO: Sample: 199, Validation pixAcc: 0.790, mIoU: 0.191
+2026-06-29 20:12:38,452 semantic_segmentation INFO: Sample: 200, Validation pixAcc: 0.788, mIoU: 0.191
+2026-06-29 20:12:38,499 semantic_segmentation INFO: Sample: 201, Validation pixAcc: 0.788, mIoU: 0.191
+2026-06-29 20:12:38,546 semantic_segmentation INFO: Sample: 202, Validation pixAcc: 0.787, mIoU: 0.191
+2026-06-29 20:12:38,593 semantic_segmentation INFO: Sample: 203, Validation pixAcc: 0.786, mIoU: 0.191
+2026-06-29 20:12:38,640 semantic_segmentation INFO: Sample: 204, Validation pixAcc: 0.785, mIoU: 0.190
+2026-06-29 20:12:38,687 semantic_segmentation INFO: Sample: 205, Validation pixAcc: 0.786, mIoU: 0.192
+2026-06-29 20:12:38,734 semantic_segmentation INFO: Sample: 206, Validation pixAcc: 0.786, mIoU: 0.192
+2026-06-29 20:12:38,780 semantic_segmentation INFO: Sample: 207, Validation pixAcc: 0.785, mIoU: 0.191
+2026-06-29 20:12:38,828 semantic_segmentation INFO: Sample: 208, Validation pixAcc: 0.785, mIoU: 0.191
+2026-06-29 20:12:38,874 semantic_segmentation INFO: Sample: 209, Validation pixAcc: 0.786, mIoU: 0.191
+2026-06-29 20:12:38,921 semantic_segmentation INFO: Sample: 210, Validation pixAcc: 0.785, mIoU: 0.193
+2026-06-29 20:12:38,970 semantic_segmentation INFO: Sample: 211, Validation pixAcc: 0.786, mIoU: 0.193
+2026-06-29 20:12:39,019 semantic_segmentation INFO: Sample: 212, Validation pixAcc: 0.786, mIoU: 0.193
+2026-06-29 20:12:39,066 semantic_segmentation INFO: Sample: 213, Validation pixAcc: 0.786, mIoU: 0.194
+2026-06-29 20:12:39,113 semantic_segmentation INFO: Sample: 214, Validation pixAcc: 0.786, mIoU: 0.198
+2026-06-29 20:12:39,160 semantic_segmentation INFO: Sample: 215, Validation pixAcc: 0.786, mIoU: 0.200
+2026-06-29 20:12:39,208 semantic_segmentation INFO: Sample: 216, Validation pixAcc: 0.786, mIoU: 0.202
+2026-06-29 20:12:39,254 semantic_segmentation INFO: Sample: 217, Validation pixAcc: 0.787, mIoU: 0.203
+2026-06-29 20:12:39,301 semantic_segmentation INFO: Sample: 218, Validation pixAcc: 0.788, mIoU: 0.203
+2026-06-29 20:12:39,347 semantic_segmentation INFO: Sample: 219, Validation pixAcc: 0.787, mIoU: 0.204
+2026-06-29 20:12:39,396 semantic_segmentation INFO: Sample: 220, Validation pixAcc: 0.788, mIoU: 0.204
+2026-06-29 20:12:39,443 semantic_segmentation INFO: Sample: 221, Validation pixAcc: 0.788, mIoU: 0.204
+2026-06-29 20:12:39,489 semantic_segmentation INFO: Sample: 222, Validation pixAcc: 0.787, mIoU: 0.204
+2026-06-29 20:12:39,534 semantic_segmentation INFO: Sample: 223, Validation pixAcc: 0.787, mIoU: 0.204
+2026-06-29 20:12:39,581 semantic_segmentation INFO: Sample: 224, Validation pixAcc: 0.787, mIoU: 0.204
+2026-06-29 20:12:39,626 semantic_segmentation INFO: Sample: 225, Validation pixAcc: 0.786, mIoU: 0.204
+2026-06-29 20:12:39,673 semantic_segmentation INFO: Sample: 226, Validation pixAcc: 0.787, mIoU: 0.204
+2026-06-29 20:12:39,719 semantic_segmentation INFO: Sample: 227, Validation pixAcc: 0.785, mIoU: 0.205
+2026-06-29 20:12:39,766 semantic_segmentation INFO: Sample: 228, Validation pixAcc: 0.786, mIoU: 0.204
+2026-06-29 20:12:39,814 semantic_segmentation INFO: Sample: 229, Validation pixAcc: 0.787, mIoU: 0.205
+2026-06-29 20:12:39,862 semantic_segmentation INFO: Sample: 230, Validation pixAcc: 0.786, mIoU: 0.206
+2026-06-29 20:12:39,909 semantic_segmentation INFO: Sample: 231, Validation pixAcc: 0.786, mIoU: 0.206
+2026-06-29 20:12:39,957 semantic_segmentation INFO: Sample: 232, Validation pixAcc: 0.787, mIoU: 0.210
+2026-06-29 20:12:40,004 semantic_segmentation INFO: Sample: 233, Validation pixAcc: 0.787, mIoU: 0.210
+2026-06-29 20:12:40,052 semantic_segmentation INFO: Sample: 234, Validation pixAcc: 0.787, mIoU: 0.210
+2026-06-29 20:12:40,099 semantic_segmentation INFO: Sample: 235, Validation pixAcc: 0.788, mIoU: 0.209
+2026-06-29 20:12:40,147 semantic_segmentation INFO: Sample: 236, Validation pixAcc: 0.788, mIoU: 0.209
+2026-06-29 20:12:40,195 semantic_segmentation INFO: Sample: 237, Validation pixAcc: 0.788, mIoU: 0.209
+2026-06-29 20:12:40,241 semantic_segmentation INFO: Sample: 238, Validation pixAcc: 0.786, mIoU: 0.208
+2026-06-29 20:12:40,289 semantic_segmentation INFO: Sample: 239, Validation pixAcc: 0.787, mIoU: 0.208
+2026-06-29 20:12:40,340 semantic_segmentation INFO: Sample: 240, Validation pixAcc: 0.787, mIoU: 0.208
+2026-06-29 20:12:40,388 semantic_segmentation INFO: Sample: 241, Validation pixAcc: 0.788, mIoU: 0.208
+2026-06-29 20:12:40,437 semantic_segmentation INFO: Sample: 242, Validation pixAcc: 0.785, mIoU: 0.208
+2026-06-29 20:12:40,485 semantic_segmentation INFO: Sample: 243, Validation pixAcc: 0.786, mIoU: 0.209
+2026-06-29 20:12:40,533 semantic_segmentation INFO: Sample: 244, Validation pixAcc: 0.784, mIoU: 0.210
+2026-06-29 20:12:40,581 semantic_segmentation INFO: Sample: 245, Validation pixAcc: 0.784, mIoU: 0.210
+2026-06-29 20:12:40,629 semantic_segmentation INFO: Sample: 246, Validation pixAcc: 0.783, mIoU: 0.209
+2026-06-29 20:12:40,677 semantic_segmentation INFO: Sample: 247, Validation pixAcc: 0.782, mIoU: 0.212
+2026-06-29 20:12:40,725 semantic_segmentation INFO: Sample: 248, Validation pixAcc: 0.782, mIoU: 0.211
+2026-06-29 20:12:40,773 semantic_segmentation INFO: Sample: 249, Validation pixAcc: 0.782, mIoU: 0.211
+2026-06-29 20:12:40,823 semantic_segmentation INFO: Sample: 250, Validation pixAcc: 0.780, mIoU: 0.211
+2026-06-29 20:12:40,870 semantic_segmentation INFO: Sample: 251, Validation pixAcc: 0.780, mIoU: 0.212
+2026-06-29 20:12:40,919 semantic_segmentation INFO: Sample: 252, Validation pixAcc: 0.781, mIoU: 0.212
+2026-06-29 20:12:40,966 semantic_segmentation INFO: Sample: 253, Validation pixAcc: 0.780, mIoU: 0.211
+2026-06-29 20:12:41,013 semantic_segmentation INFO: Sample: 254, Validation pixAcc: 0.781, mIoU: 0.211
+2026-06-29 20:12:41,060 semantic_segmentation INFO: Sample: 255, Validation pixAcc: 0.780, mIoU: 0.211
+2026-06-29 20:12:41,107 semantic_segmentation INFO: Sample: 256, Validation pixAcc: 0.780, mIoU: 0.211
+2026-06-29 20:12:41,155 semantic_segmentation INFO: Sample: 257, Validation pixAcc: 0.780, mIoU: 0.211
+2026-06-29 20:12:41,203 semantic_segmentation INFO: Sample: 258, Validation pixAcc: 0.781, mIoU: 0.211
+2026-06-29 20:12:41,252 semantic_segmentation INFO: Sample: 259, Validation pixAcc: 0.781, mIoU: 0.211
+2026-06-29 20:12:41,301 semantic_segmentation INFO: Sample: 260, Validation pixAcc: 0.781, mIoU: 0.210
+2026-06-29 20:12:41,348 semantic_segmentation INFO: Sample: 261, Validation pixAcc: 0.781, mIoU: 0.209
+2026-06-29 20:12:41,396 semantic_segmentation INFO: Sample: 262, Validation pixAcc: 0.781, mIoU: 0.210
+2026-06-29 20:12:41,445 semantic_segmentation INFO: Sample: 263, Validation pixAcc: 0.782, mIoU: 0.209
+2026-06-29 20:12:41,492 semantic_segmentation INFO: Sample: 264, Validation pixAcc: 0.779, mIoU: 0.207
+2026-06-29 20:12:41,539 semantic_segmentation INFO: Sample: 265, Validation pixAcc: 0.779, mIoU: 0.207
+2026-06-29 20:12:41,586 semantic_segmentation INFO: Sample: 266, Validation pixAcc: 0.780, mIoU: 0.207
+2026-06-29 20:12:41,633 semantic_segmentation INFO: Sample: 267, Validation pixAcc: 0.780, mIoU: 0.206
+2026-06-29 20:12:41,681 semantic_segmentation INFO: Sample: 268, Validation pixAcc: 0.781, mIoU: 0.207
+2026-06-29 20:12:41,730 semantic_segmentation INFO: Sample: 269, Validation pixAcc: 0.781, mIoU: 0.207
+2026-06-29 20:12:41,778 semantic_segmentation INFO: Sample: 270, Validation pixAcc: 0.780, mIoU: 0.206
+2026-06-29 20:12:41,826 semantic_segmentation INFO: Sample: 271, Validation pixAcc: 0.781, mIoU: 0.207
+2026-06-29 20:12:41,874 semantic_segmentation INFO: Sample: 272, Validation pixAcc: 0.781, mIoU: 0.207
+2026-06-29 20:12:41,923 semantic_segmentation INFO: Sample: 273, Validation pixAcc: 0.782, mIoU: 0.207
+2026-06-29 20:12:41,971 semantic_segmentation INFO: Sample: 274, Validation pixAcc: 0.782, mIoU: 0.207
+2026-06-29 20:12:42,019 semantic_segmentation INFO: Sample: 275, Validation pixAcc: 0.783, mIoU: 0.207
+2026-06-29 20:12:42,068 semantic_segmentation INFO: Sample: 276, Validation pixAcc: 0.783, mIoU: 0.206
+2026-06-29 20:12:42,116 semantic_segmentation INFO: Sample: 277, Validation pixAcc: 0.783, mIoU: 0.206
+2026-06-29 20:12:42,167 semantic_segmentation INFO: Sample: 278, Validation pixAcc: 0.783, mIoU: 0.205
+2026-06-29 20:12:42,217 semantic_segmentation INFO: Sample: 279, Validation pixAcc: 0.783, mIoU: 0.205
+2026-06-29 20:12:42,272 semantic_segmentation INFO: Sample: 280, Validation pixAcc: 0.783, mIoU: 0.205
+2026-06-29 20:12:42,322 semantic_segmentation INFO: Sample: 281, Validation pixAcc: 0.782, mIoU: 0.205
+2026-06-29 20:12:42,371 semantic_segmentation INFO: Sample: 282, Validation pixAcc: 0.782, mIoU: 0.205
+2026-06-29 20:12:42,427 semantic_segmentation INFO: Sample: 283, Validation pixAcc: 0.783, mIoU: 0.206
+2026-06-29 20:12:42,476 semantic_segmentation INFO: Sample: 284, Validation pixAcc: 0.783, mIoU: 0.206
+2026-06-29 20:12:42,525 semantic_segmentation INFO: Sample: 285, Validation pixAcc: 0.783, mIoU: 0.206
+2026-06-29 20:12:42,574 semantic_segmentation INFO: Sample: 286, Validation pixAcc: 0.783, mIoU: 0.207
+2026-06-29 20:12:42,622 semantic_segmentation INFO: Sample: 287, Validation pixAcc: 0.781, mIoU: 0.206
+2026-06-29 20:12:42,668 semantic_segmentation INFO: Sample: 288, Validation pixAcc: 0.781, mIoU: 0.206
+2026-06-29 20:12:42,716 semantic_segmentation INFO: Sample: 289, Validation pixAcc: 0.782, mIoU: 0.207
+2026-06-29 20:12:42,765 semantic_segmentation INFO: Sample: 290, Validation pixAcc: 0.782, mIoU: 0.207
+2026-06-29 20:12:42,813 semantic_segmentation INFO: Sample: 291, Validation pixAcc: 0.782, mIoU: 0.207
+2026-06-29 20:12:42,866 semantic_segmentation INFO: Sample: 292, Validation pixAcc: 0.781, mIoU: 0.207
+2026-06-29 20:12:42,916 semantic_segmentation INFO: Sample: 293, Validation pixAcc: 0.781, mIoU: 0.207
+2026-06-29 20:12:42,964 semantic_segmentation INFO: Sample: 294, Validation pixAcc: 0.781, mIoU: 0.206
+2026-06-29 20:12:43,013 semantic_segmentation INFO: Sample: 295, Validation pixAcc: 0.781, mIoU: 0.206
+2026-06-29 20:12:43,061 semantic_segmentation INFO: Sample: 296, Validation pixAcc: 0.782, mIoU: 0.206
+2026-06-29 20:12:43,109 semantic_segmentation INFO: Sample: 297, Validation pixAcc: 0.782, mIoU: 0.207
+2026-06-29 20:12:43,158 semantic_segmentation INFO: Sample: 298, Validation pixAcc: 0.783, mIoU: 0.207
+2026-06-29 20:12:43,210 semantic_segmentation INFO: Sample: 299, Validation pixAcc: 0.781, mIoU: 0.207
+2026-06-29 20:12:43,263 semantic_segmentation INFO: Sample: 300, Validation pixAcc: 0.781, mIoU: 0.207
+2026-06-29 20:12:43,312 semantic_segmentation INFO: Sample: 301, Validation pixAcc: 0.782, mIoU: 0.208
+2026-06-29 20:12:43,363 semantic_segmentation INFO: Sample: 302, Validation pixAcc: 0.781, mIoU: 0.206
+2026-06-29 20:12:43,411 semantic_segmentation INFO: Sample: 303, Validation pixAcc: 0.781, mIoU: 0.206
+2026-06-29 20:12:43,461 semantic_segmentation INFO: Sample: 304, Validation pixAcc: 0.781, mIoU: 0.208
+2026-06-29 20:12:43,506 semantic_segmentation INFO: Sample: 305, Validation pixAcc: 0.781, mIoU: 0.208
+2026-06-29 20:12:43,554 semantic_segmentation INFO: Sample: 306, Validation pixAcc: 0.782, mIoU: 0.208
+2026-06-29 20:12:43,602 semantic_segmentation INFO: Sample: 307, Validation pixAcc: 0.780, mIoU: 0.207
+2026-06-29 20:12:43,653 semantic_segmentation INFO: Sample: 308, Validation pixAcc: 0.780, mIoU: 0.207
+2026-06-29 20:12:43,700 semantic_segmentation INFO: Sample: 309, Validation pixAcc: 0.780, mIoU: 0.207
+2026-06-29 20:12:43,747 semantic_segmentation INFO: Sample: 310, Validation pixAcc: 0.780, mIoU: 0.208
+2026-06-29 20:12:43,795 semantic_segmentation INFO: Sample: 311, Validation pixAcc: 0.780, mIoU: 0.208
+2026-06-29 20:12:43,844 semantic_segmentation INFO: Sample: 312, Validation pixAcc: 0.781, mIoU: 0.207
+2026-06-29 20:12:43,893 semantic_segmentation INFO: Sample: 313, Validation pixAcc: 0.781, mIoU: 0.208
+2026-06-29 20:12:43,942 semantic_segmentation INFO: Sample: 314, Validation pixAcc: 0.781, mIoU: 0.210
+2026-06-29 20:12:43,992 semantic_segmentation INFO: Sample: 315, Validation pixAcc: 0.780, mIoU: 0.208
+2026-06-29 20:12:44,040 semantic_segmentation INFO: Sample: 316, Validation pixAcc: 0.781, mIoU: 0.208
+2026-06-29 20:12:44,094 semantic_segmentation INFO: Sample: 317, Validation pixAcc: 0.781, mIoU: 0.208
+2026-06-29 20:12:44,145 semantic_segmentation INFO: Sample: 318, Validation pixAcc: 0.781, mIoU: 0.208
+2026-06-29 20:12:44,195 semantic_segmentation INFO: Sample: 319, Validation pixAcc: 0.782, mIoU: 0.208
+2026-06-29 20:12:44,244 semantic_segmentation INFO: Sample: 320, Validation pixAcc: 0.782, mIoU: 0.208
+2026-06-29 20:12:44,292 semantic_segmentation INFO: Sample: 321, Validation pixAcc: 0.783, mIoU: 0.208
+2026-06-29 20:12:44,341 semantic_segmentation INFO: Sample: 322, Validation pixAcc: 0.783, mIoU: 0.208
+2026-06-29 20:12:44,389 semantic_segmentation INFO: Sample: 323, Validation pixAcc: 0.783, mIoU: 0.205
+2026-06-29 20:12:44,438 semantic_segmentation INFO: Sample: 324, Validation pixAcc: 0.783, mIoU: 0.205
+2026-06-29 20:12:44,490 semantic_segmentation INFO: Sample: 325, Validation pixAcc: 0.783, mIoU: 0.205
+2026-06-29 20:12:44,540 semantic_segmentation INFO: Sample: 326, Validation pixAcc: 0.783, mIoU: 0.205
+2026-06-29 20:12:44,591 semantic_segmentation INFO: Sample: 327, Validation pixAcc: 0.783, mIoU: 0.205
+2026-06-29 20:12:44,640 semantic_segmentation INFO: Sample: 328, Validation pixAcc: 0.783, mIoU: 0.203
+2026-06-29 20:12:44,688 semantic_segmentation INFO: Sample: 329, Validation pixAcc: 0.783, mIoU: 0.203
+2026-06-29 20:12:44,734 semantic_segmentation INFO: Sample: 330, Validation pixAcc: 0.784, mIoU: 0.203
+2026-06-29 20:12:44,783 semantic_segmentation INFO: Sample: 331, Validation pixAcc: 0.784, mIoU: 0.203
+2026-06-29 20:12:44,830 semantic_segmentation INFO: Sample: 332, Validation pixAcc: 0.784, mIoU: 0.203
+2026-06-29 20:12:44,877 semantic_segmentation INFO: Sample: 333, Validation pixAcc: 0.784, mIoU: 0.204
+2026-06-29 20:12:44,926 semantic_segmentation INFO: Sample: 334, Validation pixAcc: 0.784, mIoU: 0.203
+2026-06-29 20:12:44,973 semantic_segmentation INFO: Sample: 335, Validation pixAcc: 0.784, mIoU: 0.203
+2026-06-29 20:12:45,025 semantic_segmentation INFO: Sample: 336, Validation pixAcc: 0.785, mIoU: 0.203
+2026-06-29 20:12:45,076 semantic_segmentation INFO: Sample: 337, Validation pixAcc: 0.785, mIoU: 0.204
+2026-06-29 20:12:45,124 semantic_segmentation INFO: Sample: 338, Validation pixAcc: 0.786, mIoU: 0.204
+2026-06-29 20:12:45,170 semantic_segmentation INFO: Sample: 339, Validation pixAcc: 0.786, mIoU: 0.204
+2026-06-29 20:12:45,218 semantic_segmentation INFO: Sample: 340, Validation pixAcc: 0.786, mIoU: 0.204
+2026-06-29 20:12:45,263 semantic_segmentation INFO: Sample: 341, Validation pixAcc: 0.787, mIoU: 0.205
+2026-06-29 20:12:45,312 semantic_segmentation INFO: Sample: 342, Validation pixAcc: 0.787, mIoU: 0.205
+2026-06-29 20:12:45,358 semantic_segmentation INFO: Sample: 343, Validation pixAcc: 0.787, mIoU: 0.205
+2026-06-29 20:12:45,403 semantic_segmentation INFO: Sample: 344, Validation pixAcc: 0.787, mIoU: 0.205
+2026-06-29 20:12:45,449 semantic_segmentation INFO: Sample: 345, Validation pixAcc: 0.787, mIoU: 0.206
+2026-06-29 20:12:45,494 semantic_segmentation INFO: Sample: 346, Validation pixAcc: 0.788, mIoU: 0.206
+2026-06-29 20:12:45,542 semantic_segmentation INFO: Sample: 347, Validation pixAcc: 0.788, mIoU: 0.205
+2026-06-29 20:12:45,589 semantic_segmentation INFO: Sample: 348, Validation pixAcc: 0.788, mIoU: 0.205
+2026-06-29 20:12:45,636 semantic_segmentation INFO: Sample: 349, Validation pixAcc: 0.789, mIoU: 0.205
+2026-06-29 20:12:45,683 semantic_segmentation INFO: Sample: 350, Validation pixAcc: 0.789, mIoU: 0.205
+2026-06-29 20:12:45,734 semantic_segmentation INFO: Sample: 351, Validation pixAcc: 0.789, mIoU: 0.206
+2026-06-29 20:12:45,781 semantic_segmentation INFO: Sample: 352, Validation pixAcc: 0.789, mIoU: 0.207
+2026-06-29 20:12:45,827 semantic_segmentation INFO: Sample: 353, Validation pixAcc: 0.789, mIoU: 0.206
+2026-06-29 20:12:45,873 semantic_segmentation INFO: Sample: 354, Validation pixAcc: 0.789, mIoU: 0.206
+2026-06-29 20:12:45,921 semantic_segmentation INFO: Sample: 355, Validation pixAcc: 0.789, mIoU: 0.206
+2026-06-29 20:12:45,969 semantic_segmentation INFO: Sample: 356, Validation pixAcc: 0.789, mIoU: 0.206
+2026-06-29 20:12:46,017 semantic_segmentation INFO: Sample: 357, Validation pixAcc: 0.788, mIoU: 0.205
+2026-06-29 20:12:46,061 semantic_segmentation INFO: Sample: 358, Validation pixAcc: 0.789, mIoU: 0.206
+2026-06-29 20:12:46,104 semantic_segmentation INFO: Sample: 359, Validation pixAcc: 0.788, mIoU: 0.205
+2026-06-29 20:12:46,154 semantic_segmentation INFO: Sample: 360, Validation pixAcc: 0.789, mIoU: 0.205
+2026-06-29 20:12:46,202 semantic_segmentation INFO: Sample: 361, Validation pixAcc: 0.789, mIoU: 0.205
+2026-06-29 20:12:46,248 semantic_segmentation INFO: Sample: 362, Validation pixAcc: 0.789, mIoU: 0.205
+2026-06-29 20:12:46,296 semantic_segmentation INFO: Sample: 363, Validation pixAcc: 0.787, mIoU: 0.204
+2026-06-29 20:12:46,345 semantic_segmentation INFO: Sample: 364, Validation pixAcc: 0.787, mIoU: 0.204
+2026-06-29 20:12:46,394 semantic_segmentation INFO: Sample: 365, Validation pixAcc: 0.787, mIoU: 0.203
+2026-06-29 20:12:46,441 semantic_segmentation INFO: Sample: 366, Validation pixAcc: 0.787, mIoU: 0.203
+2026-06-29 20:12:46,488 semantic_segmentation INFO: Sample: 367, Validation pixAcc: 0.787, mIoU: 0.203
+2026-06-29 20:12:46,536 semantic_segmentation INFO: Sample: 368, Validation pixAcc: 0.786, mIoU: 0.202
+2026-06-29 20:12:46,588 semantic_segmentation INFO: Sample: 369, Validation pixAcc: 0.787, mIoU: 0.202
+2026-06-29 20:12:46,636 semantic_segmentation INFO: Sample: 370, Validation pixAcc: 0.787, mIoU: 0.202
+2026-06-29 20:12:46,686 semantic_segmentation INFO: Sample: 371, Validation pixAcc: 0.787, mIoU: 0.202
+2026-06-29 20:12:46,734 semantic_segmentation INFO: Sample: 372, Validation pixAcc: 0.787, mIoU: 0.201
+2026-06-29 20:12:46,784 semantic_segmentation INFO: Sample: 373, Validation pixAcc: 0.787, mIoU: 0.202
+2026-06-29 20:12:46,831 semantic_segmentation INFO: Sample: 374, Validation pixAcc: 0.787, mIoU: 0.202
+2026-06-29 20:12:46,881 semantic_segmentation INFO: Sample: 375, Validation pixAcc: 0.787, mIoU: 0.202
+2026-06-29 20:12:46,929 semantic_segmentation INFO: Sample: 376, Validation pixAcc: 0.787, mIoU: 0.202
+2026-06-29 20:12:46,982 semantic_segmentation INFO: Sample: 377, Validation pixAcc: 0.787, mIoU: 0.201
+2026-06-29 20:12:47,030 semantic_segmentation INFO: Sample: 378, Validation pixAcc: 0.788, mIoU: 0.202
+2026-06-29 20:12:47,079 semantic_segmentation INFO: Sample: 379, Validation pixAcc: 0.788, mIoU: 0.202
+2026-06-29 20:12:47,127 semantic_segmentation INFO: Sample: 380, Validation pixAcc: 0.788, mIoU: 0.201
+2026-06-29 20:12:47,174 semantic_segmentation INFO: Sample: 381, Validation pixAcc: 0.788, mIoU: 0.201
+2026-06-29 20:12:47,222 semantic_segmentation INFO: Sample: 382, Validation pixAcc: 0.789, mIoU: 0.201
+2026-06-29 20:12:47,270 semantic_segmentation INFO: Sample: 383, Validation pixAcc: 0.789, mIoU: 0.201
+2026-06-29 20:12:47,319 semantic_segmentation INFO: Sample: 384, Validation pixAcc: 0.790, mIoU: 0.201
+2026-06-29 20:12:47,367 semantic_segmentation INFO: Sample: 385, Validation pixAcc: 0.790, mIoU: 0.201
+2026-06-29 20:12:47,418 semantic_segmentation INFO: Sample: 386, Validation pixAcc: 0.791, mIoU: 0.201
+2026-06-29 20:12:47,466 semantic_segmentation INFO: Sample: 387, Validation pixAcc: 0.790, mIoU: 0.200
+2026-06-29 20:12:47,514 semantic_segmentation INFO: Sample: 388, Validation pixAcc: 0.790, mIoU: 0.200
+2026-06-29 20:12:47,565 semantic_segmentation INFO: Sample: 389, Validation pixAcc: 0.790, mIoU: 0.200
+2026-06-29 20:12:47,614 semantic_segmentation INFO: Sample: 390, Validation pixAcc: 0.790, mIoU: 0.200
+2026-06-29 20:12:47,663 semantic_segmentation INFO: Sample: 391, Validation pixAcc: 0.790, mIoU: 0.200
+2026-06-29 20:12:47,714 semantic_segmentation INFO: Sample: 392, Validation pixAcc: 0.790, mIoU: 0.199
+2026-06-29 20:12:47,761 semantic_segmentation INFO: Sample: 393, Validation pixAcc: 0.790, mIoU: 0.199
+2026-06-29 20:12:47,815 semantic_segmentation INFO: Sample: 394, Validation pixAcc: 0.790, mIoU: 0.199
+2026-06-29 20:12:47,863 semantic_segmentation INFO: Sample: 395, Validation pixAcc: 0.790, mIoU: 0.199
+2026-06-29 20:12:47,913 semantic_segmentation INFO: Sample: 396, Validation pixAcc: 0.790, mIoU: 0.199
+2026-06-29 20:12:47,962 semantic_segmentation INFO: Sample: 397, Validation pixAcc: 0.790, mIoU: 0.199
+2026-06-29 20:12:48,013 semantic_segmentation INFO: Sample: 398, Validation pixAcc: 0.791, mIoU: 0.199
+2026-06-29 20:12:48,062 semantic_segmentation INFO: Sample: 399, Validation pixAcc: 0.791, mIoU: 0.199
+2026-06-29 20:12:48,110 semantic_segmentation INFO: Sample: 400, Validation pixAcc: 0.791, mIoU: 0.199
+2026-06-29 20:12:48,160 semantic_segmentation INFO: Sample: 401, Validation pixAcc: 0.791, mIoU: 0.199
+2026-06-29 20:12:48,212 semantic_segmentation INFO: Sample: 402, Validation pixAcc: 0.792, mIoU: 0.199
+2026-06-29 20:12:48,261 semantic_segmentation INFO: Sample: 403, Validation pixAcc: 0.792, mIoU: 0.199
+2026-06-29 20:12:48,309 semantic_segmentation INFO: Sample: 404, Validation pixAcc: 0.792, mIoU: 0.200
+2026-06-29 20:12:48,357 semantic_segmentation INFO: Sample: 405, Validation pixAcc: 0.793, mIoU: 0.200
+2026-06-29 20:12:48,405 semantic_segmentation INFO: Sample: 406, Validation pixAcc: 0.793, mIoU: 0.199
+2026-06-29 20:12:48,453 semantic_segmentation INFO: Sample: 407, Validation pixAcc: 0.793, mIoU: 0.199
+2026-06-29 20:12:48,502 semantic_segmentation INFO: Sample: 408, Validation pixAcc: 0.793, mIoU: 0.199
+2026-06-29 20:12:48,549 semantic_segmentation INFO: Sample: 409, Validation pixAcc: 0.793, mIoU: 0.199
+2026-06-29 20:12:48,600 semantic_segmentation INFO: Sample: 410, Validation pixAcc: 0.793, mIoU: 0.198
+2026-06-29 20:12:48,648 semantic_segmentation INFO: Sample: 411, Validation pixAcc: 0.792, mIoU: 0.199
+2026-06-29 20:12:48,697 semantic_segmentation INFO: Sample: 412, Validation pixAcc: 0.791, mIoU: 0.198
+2026-06-29 20:12:48,746 semantic_segmentation INFO: Sample: 413, Validation pixAcc: 0.792, mIoU: 0.198
+2026-06-29 20:12:48,794 semantic_segmentation INFO: Sample: 414, Validation pixAcc: 0.792, mIoU: 0.199
+2026-06-29 20:12:48,842 semantic_segmentation INFO: Sample: 415, Validation pixAcc: 0.792, mIoU: 0.199
+2026-06-29 20:12:48,891 semantic_segmentation INFO: Sample: 416, Validation pixAcc: 0.792, mIoU: 0.199
+2026-06-29 20:12:48,938 semantic_segmentation INFO: Sample: 417, Validation pixAcc: 0.792, mIoU: 0.201
+2026-06-29 20:12:48,985 semantic_segmentation INFO: Sample: 418, Validation pixAcc: 0.793, mIoU: 0.202
+2026-06-29 20:12:49,036 semantic_segmentation INFO: Sample: 419, Validation pixAcc: 0.793, mIoU: 0.202
+2026-06-29 20:12:49,084 semantic_segmentation INFO: Sample: 420, Validation pixAcc: 0.793, mIoU: 0.204
+2026-06-29 20:12:49,134 semantic_segmentation INFO: Sample: 421, Validation pixAcc: 0.793, mIoU: 0.204
+2026-06-29 20:12:49,182 semantic_segmentation INFO: Sample: 422, Validation pixAcc: 0.793, mIoU: 0.205
+2026-06-29 20:12:49,230 semantic_segmentation INFO: Sample: 423, Validation pixAcc: 0.793, mIoU: 0.204
+2026-06-29 20:12:49,278 semantic_segmentation INFO: Sample: 424, Validation pixAcc: 0.793, mIoU: 0.204
+2026-06-29 20:12:49,327 semantic_segmentation INFO: Sample: 425, Validation pixAcc: 0.792, mIoU: 0.204
+2026-06-29 20:12:49,373 semantic_segmentation INFO: Sample: 426, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:49,428 semantic_segmentation INFO: Sample: 427, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:49,477 semantic_segmentation INFO: Sample: 428, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:49,525 semantic_segmentation INFO: Sample: 429, Validation pixAcc: 0.791, mIoU: 0.202
+2026-06-29 20:12:49,575 semantic_segmentation INFO: Sample: 430, Validation pixAcc: 0.792, mIoU: 0.202
+2026-06-29 20:12:49,622 semantic_segmentation INFO: Sample: 431, Validation pixAcc: 0.792, mIoU: 0.202
+2026-06-29 20:12:49,671 semantic_segmentation INFO: Sample: 432, Validation pixAcc: 0.792, mIoU: 0.202
+2026-06-29 20:12:49,719 semantic_segmentation INFO: Sample: 433, Validation pixAcc: 0.793, mIoU: 0.202
+2026-06-29 20:12:49,768 semantic_segmentation INFO: Sample: 434, Validation pixAcc: 0.793, mIoU: 0.202
+2026-06-29 20:12:49,819 semantic_segmentation INFO: Sample: 435, Validation pixAcc: 0.793, mIoU: 0.202
+2026-06-29 20:12:49,876 semantic_segmentation INFO: Sample: 436, Validation pixAcc: 0.793, mIoU: 0.202
+2026-06-29 20:12:49,924 semantic_segmentation INFO: Sample: 437, Validation pixAcc: 0.793, mIoU: 0.203
+2026-06-29 20:12:49,975 semantic_segmentation INFO: Sample: 438, Validation pixAcc: 0.793, mIoU: 0.203
+2026-06-29 20:12:50,023 semantic_segmentation INFO: Sample: 439, Validation pixAcc: 0.792, mIoU: 0.202
+2026-06-29 20:12:50,072 semantic_segmentation INFO: Sample: 440, Validation pixAcc: 0.792, mIoU: 0.202
+2026-06-29 20:12:50,121 semantic_segmentation INFO: Sample: 441, Validation pixAcc: 0.793, mIoU: 0.202
+2026-06-29 20:12:50,170 semantic_segmentation INFO: Sample: 442, Validation pixAcc: 0.793, mIoU: 0.202
+2026-06-29 20:12:50,219 semantic_segmentation INFO: Sample: 443, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:50,269 semantic_segmentation INFO: Sample: 444, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:50,318 semantic_segmentation INFO: Sample: 445, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:50,368 semantic_segmentation INFO: Sample: 446, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:50,417 semantic_segmentation INFO: Sample: 447, Validation pixAcc: 0.793, mIoU: 0.203
+2026-06-29 20:12:50,468 semantic_segmentation INFO: Sample: 448, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:50,519 semantic_segmentation INFO: Sample: 449, Validation pixAcc: 0.791, mIoU: 0.203
+2026-06-29 20:12:50,569 semantic_segmentation INFO: Sample: 450, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:50,618 semantic_segmentation INFO: Sample: 451, Validation pixAcc: 0.792, mIoU: 0.202
+2026-06-29 20:12:50,670 semantic_segmentation INFO: Sample: 452, Validation pixAcc: 0.792, mIoU: 0.202
+2026-06-29 20:12:50,719 semantic_segmentation INFO: Sample: 453, Validation pixAcc: 0.792, mIoU: 0.202
+2026-06-29 20:12:50,768 semantic_segmentation INFO: Sample: 454, Validation pixAcc: 0.791, mIoU: 0.202
+2026-06-29 20:12:50,813 semantic_segmentation INFO: Sample: 455, Validation pixAcc: 0.791, mIoU: 0.202
+2026-06-29 20:12:50,862 semantic_segmentation INFO: Sample: 456, Validation pixAcc: 0.791, mIoU: 0.202
+2026-06-29 20:12:50,911 semantic_segmentation INFO: Sample: 457, Validation pixAcc: 0.792, mIoU: 0.202
+2026-06-29 20:12:50,960 semantic_segmentation INFO: Sample: 458, Validation pixAcc: 0.792, mIoU: 0.202
+2026-06-29 20:12:51,009 semantic_segmentation INFO: Sample: 459, Validation pixAcc: 0.792, mIoU: 0.201
+2026-06-29 20:12:51,063 semantic_segmentation INFO: Sample: 460, Validation pixAcc: 0.792, mIoU: 0.202
+2026-06-29 20:12:51,112 semantic_segmentation INFO: Sample: 461, Validation pixAcc: 0.791, mIoU: 0.201
+2026-06-29 20:12:51,159 semantic_segmentation INFO: Sample: 462, Validation pixAcc: 0.791, mIoU: 0.201
+2026-06-29 20:12:51,203 semantic_segmentation INFO: Sample: 463, Validation pixAcc: 0.791, mIoU: 0.201
+2026-06-29 20:12:51,248 semantic_segmentation INFO: Sample: 464, Validation pixAcc: 0.791, mIoU: 0.201
+2026-06-29 20:12:51,295 semantic_segmentation INFO: Sample: 465, Validation pixAcc: 0.791, mIoU: 0.201
+2026-06-29 20:12:51,343 semantic_segmentation INFO: Sample: 466, Validation pixAcc: 0.791, mIoU: 0.201
+2026-06-29 20:12:51,394 semantic_segmentation INFO: Sample: 467, Validation pixAcc: 0.792, mIoU: 0.201
+2026-06-29 20:12:51,441 semantic_segmentation INFO: Sample: 468, Validation pixAcc: 0.791, mIoU: 0.202
+2026-06-29 20:12:51,490 semantic_segmentation INFO: Sample: 469, Validation pixAcc: 0.791, mIoU: 0.202
+2026-06-29 20:12:51,539 semantic_segmentation INFO: Sample: 470, Validation pixAcc: 0.791, mIoU: 0.202
+2026-06-29 20:12:51,588 semantic_segmentation INFO: Sample: 471, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:51,637 semantic_segmentation INFO: Sample: 472, Validation pixAcc: 0.791, mIoU: 0.203
+2026-06-29 20:12:51,686 semantic_segmentation INFO: Sample: 473, Validation pixAcc: 0.791, mIoU: 0.203
+2026-06-29 20:12:51,735 semantic_segmentation INFO: Sample: 474, Validation pixAcc: 0.792, mIoU: 0.203
+2026-06-29 20:12:51,783 semantic_segmentation INFO: Sample: 475, Validation pixAcc: 0.792, mIoU: 0.205
+2026-06-29 20:12:51,832 semantic_segmentation INFO: Sample: 476, Validation pixAcc: 0.792, mIoU: 0.205
+2026-06-29 20:12:51,883 semantic_segmentation INFO: Sample: 477, Validation pixAcc: 0.792, mIoU: 0.205
+2026-06-29 20:12:51,933 semantic_segmentation INFO: Sample: 478, Validation pixAcc: 0.792, mIoU: 0.206
+2026-06-29 20:12:51,978 semantic_segmentation INFO: Sample: 479, Validation pixAcc: 0.792, mIoU: 0.205
+2026-06-29 20:12:52,026 semantic_segmentation INFO: Sample: 480, Validation pixAcc: 0.792, mIoU: 0.205
+2026-06-29 20:12:52,075 semantic_segmentation INFO: Sample: 481, Validation pixAcc: 0.792, mIoU: 0.204
+2026-06-29 20:12:52,124 semantic_segmentation INFO: Sample: 482, Validation pixAcc: 0.792, mIoU: 0.205
+2026-06-29 20:12:52,173 semantic_segmentation INFO: Sample: 483, Validation pixAcc: 0.792, mIoU: 0.205
+2026-06-29 20:12:52,221 semantic_segmentation INFO: Sample: 484, Validation pixAcc: 0.792, mIoU: 0.204
+2026-06-29 20:12:52,270 semantic_segmentation INFO: Sample: 485, Validation pixAcc: 0.792, mIoU: 0.205
+2026-06-29 20:12:52,318 semantic_segmentation INFO: Sample: 486, Validation pixAcc: 0.792, mIoU: 0.205
+2026-06-29 20:12:52,366 semantic_segmentation INFO: Sample: 487, Validation pixAcc: 0.792, mIoU: 0.206
+2026-06-29 20:12:52,415 semantic_segmentation INFO: Sample: 488, Validation pixAcc: 0.792, mIoU: 0.206
+2026-06-29 20:12:52,463 semantic_segmentation INFO: Sample: 489, Validation pixAcc: 0.793, mIoU: 0.206
+2026-06-29 20:12:52,511 semantic_segmentation INFO: Sample: 490, Validation pixAcc: 0.793, mIoU: 0.206
+2026-06-29 20:12:52,558 semantic_segmentation INFO: Sample: 491, Validation pixAcc: 0.793, mIoU: 0.207
+2026-06-29 20:12:52,606 semantic_segmentation INFO: Sample: 492, Validation pixAcc: 0.793, mIoU: 0.207
+2026-06-29 20:12:52,657 semantic_segmentation INFO: Sample: 493, Validation pixAcc: 0.793, mIoU: 0.207
+2026-06-29 20:12:52,707 semantic_segmentation INFO: Sample: 494, Validation pixAcc: 0.793, mIoU: 0.207
+2026-06-29 20:12:52,752 semantic_segmentation INFO: Sample: 495, Validation pixAcc: 0.793, mIoU: 0.207
+2026-06-29 20:12:52,800 semantic_segmentation INFO: Sample: 496, Validation pixAcc: 0.793, mIoU: 0.207
+2026-06-29 20:12:52,848 semantic_segmentation INFO: Sample: 497, Validation pixAcc: 0.793, mIoU: 0.208
+2026-06-29 20:12:52,896 semantic_segmentation INFO: Sample: 498, Validation pixAcc: 0.794, mIoU: 0.208
+2026-06-29 20:12:52,945 semantic_segmentation INFO: Sample: 499, Validation pixAcc: 0.794, mIoU: 0.209
+2026-06-29 20:12:52,993 semantic_segmentation INFO: Sample: 500, Validation pixAcc: 0.794, mIoU: 0.210
+2026-06-29 20:12:53,040 semantic_segmentation INFO: Sample: 501, Validation pixAcc: 0.794, mIoU: 0.210
+2026-06-29 20:12:53,090 semantic_segmentation INFO: Sample: 502, Validation pixAcc: 0.794, mIoU: 0.211
+2026-06-29 20:12:53,141 semantic_segmentation INFO: Sample: 503, Validation pixAcc: 0.794, mIoU: 0.211
+2026-06-29 20:12:53,191 semantic_segmentation INFO: Sample: 504, Validation pixAcc: 0.793, mIoU: 0.210
+2026-06-29 20:12:53,241 semantic_segmentation INFO: Sample: 505, Validation pixAcc: 0.794, mIoU: 0.210
+2026-06-29 20:12:53,291 semantic_segmentation INFO: Sample: 506, Validation pixAcc: 0.794, mIoU: 0.211
+2026-06-29 20:12:53,340 semantic_segmentation INFO: Sample: 507, Validation pixAcc: 0.794, mIoU: 0.210
+2026-06-29 20:12:53,388 semantic_segmentation INFO: Sample: 508, Validation pixAcc: 0.793, mIoU: 0.210
+2026-06-29 20:12:53,436 semantic_segmentation INFO: Sample: 509, Validation pixAcc: 0.793, mIoU: 0.211
+2026-06-29 20:12:53,484 semantic_segmentation INFO: Sample: 510, Validation pixAcc: 0.793, mIoU: 0.211
+2026-06-29 20:12:53,535 semantic_segmentation INFO: Sample: 511, Validation pixAcc: 0.793, mIoU: 0.210
+2026-06-29 20:12:53,583 semantic_segmentation INFO: Sample: 512, Validation pixAcc: 0.793, mIoU: 0.210
+2026-06-29 20:12:53,632 semantic_segmentation INFO: Sample: 513, Validation pixAcc: 0.794, mIoU: 0.210
+2026-06-29 20:12:53,681 semantic_segmentation INFO: Sample: 514, Validation pixAcc: 0.793, mIoU: 0.209
+2026-06-29 20:12:53,731 semantic_segmentation INFO: Sample: 515, Validation pixAcc: 0.794, mIoU: 0.209
+2026-06-29 20:12:53,779 semantic_segmentation INFO: Sample: 516, Validation pixAcc: 0.793, mIoU: 0.209
+2026-06-29 20:12:53,826 semantic_segmentation INFO: Sample: 517, Validation pixAcc: 0.793, mIoU: 0.208
+2026-06-29 20:12:53,874 semantic_segmentation INFO: Sample: 518, Validation pixAcc: 0.793, mIoU: 0.208
+2026-06-29 20:12:53,922 semantic_segmentation INFO: Sample: 519, Validation pixAcc: 0.793, mIoU: 0.209
+2026-06-29 20:12:53,969 semantic_segmentation INFO: Sample: 520, Validation pixAcc: 0.793, mIoU: 0.209
+2026-06-29 20:12:54,017 semantic_segmentation INFO: Sample: 521, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:54,064 semantic_segmentation INFO: Sample: 522, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:54,112 semantic_segmentation INFO: Sample: 523, Validation pixAcc: 0.793, mIoU: 0.210
+2026-06-29 20:12:54,161 semantic_segmentation INFO: Sample: 524, Validation pixAcc: 0.793, mIoU: 0.210
+2026-06-29 20:12:54,210 semantic_segmentation INFO: Sample: 525, Validation pixAcc: 0.793, mIoU: 0.210
+2026-06-29 20:12:54,259 semantic_segmentation INFO: Sample: 526, Validation pixAcc: 0.792, mIoU: 0.209
+2026-06-29 20:12:54,308 semantic_segmentation INFO: Sample: 527, Validation pixAcc: 0.792, mIoU: 0.209
+2026-06-29 20:12:54,357 semantic_segmentation INFO: Sample: 528, Validation pixAcc: 0.791, mIoU: 0.209
+2026-06-29 20:12:54,406 semantic_segmentation INFO: Sample: 529, Validation pixAcc: 0.791, mIoU: 0.209
+2026-06-29 20:12:54,462 semantic_segmentation INFO: Sample: 530, Validation pixAcc: 0.791, mIoU: 0.209
+2026-06-29 20:12:54,517 semantic_segmentation INFO: Sample: 531, Validation pixAcc: 0.791, mIoU: 0.209
+2026-06-29 20:12:54,571 semantic_segmentation INFO: Sample: 532, Validation pixAcc: 0.791, mIoU: 0.209
+2026-06-29 20:12:54,627 semantic_segmentation INFO: Sample: 533, Validation pixAcc: 0.791, mIoU: 0.210
+2026-06-29 20:12:54,683 semantic_segmentation INFO: Sample: 534, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:54,734 semantic_segmentation INFO: Sample: 535, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:54,785 semantic_segmentation INFO: Sample: 536, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:54,833 semantic_segmentation INFO: Sample: 537, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:54,883 semantic_segmentation INFO: Sample: 538, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:54,936 semantic_segmentation INFO: Sample: 539, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:54,987 semantic_segmentation INFO: Sample: 540, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:55,036 semantic_segmentation INFO: Sample: 541, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:55,085 semantic_segmentation INFO: Sample: 542, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:55,133 semantic_segmentation INFO: Sample: 543, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:55,182 semantic_segmentation INFO: Sample: 544, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:55,231 semantic_segmentation INFO: Sample: 545, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:55,279 semantic_segmentation INFO: Sample: 546, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:55,330 semantic_segmentation INFO: Sample: 547, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:55,379 semantic_segmentation INFO: Sample: 548, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:55,426 semantic_segmentation INFO: Sample: 549, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:55,475 semantic_segmentation INFO: Sample: 550, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:55,524 semantic_segmentation INFO: Sample: 551, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:55,572 semantic_segmentation INFO: Sample: 552, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:55,620 semantic_segmentation INFO: Sample: 553, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:55,668 semantic_segmentation INFO: Sample: 554, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:55,718 semantic_segmentation INFO: Sample: 555, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:55,767 semantic_segmentation INFO: Sample: 556, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:55,814 semantic_segmentation INFO: Sample: 557, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:55,863 semantic_segmentation INFO: Sample: 558, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:55,910 semantic_segmentation INFO: Sample: 559, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:55,958 semantic_segmentation INFO: Sample: 560, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:56,006 semantic_segmentation INFO: Sample: 561, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:56,055 semantic_segmentation INFO: Sample: 562, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:56,103 semantic_segmentation INFO: Sample: 563, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:56,152 semantic_segmentation INFO: Sample: 564, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:56,200 semantic_segmentation INFO: Sample: 565, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:56,249 semantic_segmentation INFO: Sample: 566, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:56,297 semantic_segmentation INFO: Sample: 567, Validation pixAcc: 0.793, mIoU: 0.212
+2026-06-29 20:12:56,348 semantic_segmentation INFO: Sample: 568, Validation pixAcc: 0.794, mIoU: 0.213
+2026-06-29 20:12:56,393 semantic_segmentation INFO: Sample: 569, Validation pixAcc: 0.793, mIoU: 0.213
+2026-06-29 20:12:56,440 semantic_segmentation INFO: Sample: 570, Validation pixAcc: 0.793, mIoU: 0.213
+2026-06-29 20:12:56,489 semantic_segmentation INFO: Sample: 571, Validation pixAcc: 0.793, mIoU: 0.213
+2026-06-29 20:12:56,539 semantic_segmentation INFO: Sample: 572, Validation pixAcc: 0.792, mIoU: 0.212
+2026-06-29 20:12:56,586 semantic_segmentation INFO: Sample: 573, Validation pixAcc: 0.791, mIoU: 0.210
+2026-06-29 20:12:56,634 semantic_segmentation INFO: Sample: 574, Validation pixAcc: 0.791, mIoU: 0.210
+2026-06-29 20:12:56,681 semantic_segmentation INFO: Sample: 575, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:56,728 semantic_segmentation INFO: Sample: 576, Validation pixAcc: 0.791, mIoU: 0.210
+2026-06-29 20:12:56,774 semantic_segmentation INFO: Sample: 577, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:56,820 semantic_segmentation INFO: Sample: 578, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:56,866 semantic_segmentation INFO: Sample: 579, Validation pixAcc: 0.791, mIoU: 0.210
+2026-06-29 20:12:56,919 semantic_segmentation INFO: Sample: 580, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:56,977 semantic_segmentation INFO: Sample: 581, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,033 semantic_segmentation INFO: Sample: 582, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,088 semantic_segmentation INFO: Sample: 583, Validation pixAcc: 0.792, mIoU: 0.209
+2026-06-29 20:12:57,143 semantic_segmentation INFO: Sample: 584, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,199 semantic_segmentation INFO: Sample: 585, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,253 semantic_segmentation INFO: Sample: 586, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,310 semantic_segmentation INFO: Sample: 587, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,357 semantic_segmentation INFO: Sample: 588, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,403 semantic_segmentation INFO: Sample: 589, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,449 semantic_segmentation INFO: Sample: 590, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,494 semantic_segmentation INFO: Sample: 591, Validation pixAcc: 0.793, mIoU: 0.210
+2026-06-29 20:12:57,539 semantic_segmentation INFO: Sample: 592, Validation pixAcc: 0.793, mIoU: 0.210
+2026-06-29 20:12:57,621 semantic_segmentation INFO: Sample: 593, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,671 semantic_segmentation INFO: Sample: 594, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,719 semantic_segmentation INFO: Sample: 595, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:57,768 semantic_segmentation INFO: Sample: 596, Validation pixAcc: 0.792, mIoU: 0.209
+2026-06-29 20:12:57,818 semantic_segmentation INFO: Sample: 597, Validation pixAcc: 0.792, mIoU: 0.209
+2026-06-29 20:12:57,867 semantic_segmentation INFO: Sample: 598, Validation pixAcc: 0.792, mIoU: 0.209
+2026-06-29 20:12:57,915 semantic_segmentation INFO: Sample: 599, Validation pixAcc: 0.793, mIoU: 0.209
+2026-06-29 20:12:57,966 semantic_segmentation INFO: Sample: 600, Validation pixAcc: 0.793, mIoU: 0.209
+2026-06-29 20:12:58,012 semantic_segmentation INFO: Sample: 601, Validation pixAcc: 0.793, mIoU: 0.209
+2026-06-29 20:12:58,061 semantic_segmentation INFO: Sample: 602, Validation pixAcc: 0.793, mIoU: 0.209
+2026-06-29 20:12:58,109 semantic_segmentation INFO: Sample: 603, Validation pixAcc: 0.793, mIoU: 0.209
+2026-06-29 20:12:58,158 semantic_segmentation INFO: Sample: 604, Validation pixAcc: 0.793, mIoU: 0.209
+2026-06-29 20:12:58,207 semantic_segmentation INFO: Sample: 605, Validation pixAcc: 0.794, mIoU: 0.209
+2026-06-29 20:12:58,257 semantic_segmentation INFO: Sample: 606, Validation pixAcc: 0.794, mIoU: 0.209
+2026-06-29 20:12:58,306 semantic_segmentation INFO: Sample: 607, Validation pixAcc: 0.794, mIoU: 0.209
+2026-06-29 20:12:58,357 semantic_segmentation INFO: Sample: 608, Validation pixAcc: 0.794, mIoU: 0.211
+2026-06-29 20:12:58,406 semantic_segmentation INFO: Sample: 609, Validation pixAcc: 0.794, mIoU: 0.211
+2026-06-29 20:12:58,456 semantic_segmentation INFO: Sample: 610, Validation pixAcc: 0.794, mIoU: 0.210
+2026-06-29 20:12:58,505 semantic_segmentation INFO: Sample: 611, Validation pixAcc: 0.794, mIoU: 0.210
+2026-06-29 20:12:58,554 semantic_segmentation INFO: Sample: 612, Validation pixAcc: 0.793, mIoU: 0.210
+2026-06-29 20:12:58,603 semantic_segmentation INFO: Sample: 613, Validation pixAcc: 0.794, mIoU: 0.210
+2026-06-29 20:12:58,652 semantic_segmentation INFO: Sample: 614, Validation pixAcc: 0.794, mIoU: 0.211
+2026-06-29 20:12:58,701 semantic_segmentation INFO: Sample: 615, Validation pixAcc: 0.793, mIoU: 0.210
+2026-06-29 20:12:58,749 semantic_segmentation INFO: Sample: 616, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:58,797 semantic_segmentation INFO: Sample: 617, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:58,848 semantic_segmentation INFO: Sample: 618, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:58,898 semantic_segmentation INFO: Sample: 619, Validation pixAcc: 0.792, mIoU: 0.210
+2026-06-29 20:12:58,948 semantic_segmentation INFO: Sample: 620, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:58,997 semantic_segmentation INFO: Sample: 621, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:59,046 semantic_segmentation INFO: Sample: 622, Validation pixAcc: 0.793, mIoU: 0.211
+2026-06-29 20:12:59,098 semantic_segmentation INFO: Sample: 623, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:59,148 semantic_segmentation INFO: Sample: 624, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:59,197 semantic_segmentation INFO: Sample: 625, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:59,247 semantic_segmentation INFO: Sample: 626, Validation pixAcc: 0.792, mIoU: 0.211
+2026-06-29 20:12:59,296 semantic_segmentation INFO: Sample: 627, Validation pixAcc: 0.792, mIoU: 0.213
+2026-06-29 20:12:59,345 semantic_segmentation INFO: Sample: 628, Validation pixAcc: 0.792, mIoU: 0.214
+2026-06-29 20:12:59,393 semantic_segmentation INFO: Sample: 629, Validation pixAcc: 0.791, mIoU: 0.213
+2026-06-29 20:12:59,443 semantic_segmentation INFO: Sample: 630, Validation pixAcc: 0.791, mIoU: 0.214
+2026-06-29 20:12:59,492 semantic_segmentation INFO: Sample: 631, Validation pixAcc: 0.791, mIoU: 0.214
+2026-06-29 20:12:59,544 semantic_segmentation INFO: Sample: 632, Validation pixAcc: 0.791, mIoU: 0.214
+2026-06-29 20:12:59,592 semantic_segmentation INFO: Sample: 633, Validation pixAcc: 0.791, mIoU: 0.214
+2026-06-29 20:12:59,640 semantic_segmentation INFO: Sample: 634, Validation pixAcc: 0.791, mIoU: 0.215
+2026-06-29 20:12:59,686 semantic_segmentation INFO: Sample: 635, Validation pixAcc: 0.791, mIoU: 0.215
+2026-06-29 20:12:59,735 semantic_segmentation INFO: Sample: 636, Validation pixAcc: 0.791, mIoU: 0.214
+2026-06-29 20:12:59,783 semantic_segmentation INFO: Sample: 637, Validation pixAcc: 0.792, mIoU: 0.214
+2026-06-29 20:12:59,833 semantic_segmentation INFO: Sample: 638, Validation pixAcc: 0.792, mIoU: 0.214
+2026-06-29 20:12:59,882 semantic_segmentation INFO: Sample: 639, Validation pixAcc: 0.792, mIoU: 0.214
+2026-06-29 20:12:59,932 semantic_segmentation INFO: Sample: 640, Validation pixAcc: 0.792, mIoU: 0.214
+2026-06-29 20:12:59,982 semantic_segmentation INFO: Sample: 641, Validation pixAcc: 0.792, mIoU: 0.215
+2026-06-29 20:13:00,031 semantic_segmentation INFO: Sample: 642, Validation pixAcc: 0.793, mIoU: 0.215
+2026-06-29 20:13:00,081 semantic_segmentation INFO: Sample: 643, Validation pixAcc: 0.793, mIoU: 0.215
+2026-06-29 20:13:00,130 semantic_segmentation INFO: Sample: 644, Validation pixAcc: 0.793, mIoU: 0.215
+2026-06-29 20:13:00,182 semantic_segmentation INFO: Sample: 645, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:00,233 semantic_segmentation INFO: Sample: 646, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:00,281 semantic_segmentation INFO: Sample: 647, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:00,329 semantic_segmentation INFO: Sample: 648, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:00,377 semantic_segmentation INFO: Sample: 649, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:00,448 semantic_segmentation INFO: Sample: 650, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:00,497 semantic_segmentation INFO: Sample: 651, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:00,546 semantic_segmentation INFO: Sample: 652, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:00,596 semantic_segmentation INFO: Sample: 653, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:00,646 semantic_segmentation INFO: Sample: 654, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:00,695 semantic_segmentation INFO: Sample: 655, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:00,745 semantic_segmentation INFO: Sample: 656, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:00,795 semantic_segmentation INFO: Sample: 657, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:00,846 semantic_segmentation INFO: Sample: 658, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:00,895 semantic_segmentation INFO: Sample: 659, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:00,943 semantic_segmentation INFO: Sample: 660, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:00,993 semantic_segmentation INFO: Sample: 661, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:01,041 semantic_segmentation INFO: Sample: 662, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:01,088 semantic_segmentation INFO: Sample: 663, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:01,135 semantic_segmentation INFO: Sample: 664, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:01,186 semantic_segmentation INFO: Sample: 665, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:01,237 semantic_segmentation INFO: Sample: 666, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:01,285 semantic_segmentation INFO: Sample: 667, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:01,332 semantic_segmentation INFO: Sample: 668, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:01,375 semantic_segmentation INFO: Sample: 669, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:01,422 semantic_segmentation INFO: Sample: 670, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:01,471 semantic_segmentation INFO: Sample: 671, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:01,518 semantic_segmentation INFO: Sample: 672, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:01,568 semantic_segmentation INFO: Sample: 673, Validation pixAcc: 0.793, mIoU: 0.219
+2026-06-29 20:13:01,616 semantic_segmentation INFO: Sample: 674, Validation pixAcc: 0.794, mIoU: 0.219
+2026-06-29 20:13:01,664 semantic_segmentation INFO: Sample: 675, Validation pixAcc: 0.794, mIoU: 0.219
+2026-06-29 20:13:01,714 semantic_segmentation INFO: Sample: 676, Validation pixAcc: 0.794, mIoU: 0.219
+2026-06-29 20:13:01,763 semantic_segmentation INFO: Sample: 677, Validation pixAcc: 0.794, mIoU: 0.219
+2026-06-29 20:13:01,812 semantic_segmentation INFO: Sample: 678, Validation pixAcc: 0.794, mIoU: 0.219
+2026-06-29 20:13:01,862 semantic_segmentation INFO: Sample: 679, Validation pixAcc: 0.794, mIoU: 0.219
+2026-06-29 20:13:01,909 semantic_segmentation INFO: Sample: 680, Validation pixAcc: 0.794, mIoU: 0.218
+2026-06-29 20:13:01,957 semantic_segmentation INFO: Sample: 681, Validation pixAcc: 0.794, mIoU: 0.218
+2026-06-29 20:13:02,005 semantic_segmentation INFO: Sample: 682, Validation pixAcc: 0.794, mIoU: 0.217
+2026-06-29 20:13:02,051 semantic_segmentation INFO: Sample: 683, Validation pixAcc: 0.794, mIoU: 0.217
+2026-06-29 20:13:02,100 semantic_segmentation INFO: Sample: 684, Validation pixAcc: 0.794, mIoU: 0.218
+2026-06-29 20:13:02,152 semantic_segmentation INFO: Sample: 685, Validation pixAcc: 0.794, mIoU: 0.217
+2026-06-29 20:13:02,199 semantic_segmentation INFO: Sample: 686, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:02,248 semantic_segmentation INFO: Sample: 687, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:02,296 semantic_segmentation INFO: Sample: 688, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:02,342 semantic_segmentation INFO: Sample: 689, Validation pixAcc: 0.793, mIoU: 0.217
+2026-06-29 20:13:02,390 semantic_segmentation INFO: Sample: 690, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:02,438 semantic_segmentation INFO: Sample: 691, Validation pixAcc: 0.793, mIoU: 0.218
+2026-06-29 20:13:02,485 semantic_segmentation INFO: Sample: 692, Validation pixAcc: 0.794, mIoU: 0.218
+2026-06-29 20:13:02,535 semantic_segmentation INFO: Sample: 693, Validation pixAcc: 0.794, mIoU: 0.218
+2026-06-29 20:13:02,582 semantic_segmentation INFO: Sample: 694, Validation pixAcc: 0.794, mIoU: 0.218
+2026-06-29 20:13:02,627 semantic_segmentation INFO: Sample: 695, Validation pixAcc: 0.794, mIoU: 0.218
+2026-06-29 20:13:02,674 semantic_segmentation INFO: Sample: 696, Validation pixAcc: 0.794, mIoU: 0.218
+2026-06-29 20:13:02,722 semantic_segmentation INFO: Sample: 697, Validation pixAcc: 0.795, mIoU: 0.218
+2026-06-29 20:13:02,770 semantic_segmentation INFO: Sample: 698, Validation pixAcc: 0.795, mIoU: 0.218
+2026-06-29 20:13:02,819 semantic_segmentation INFO: Sample: 699, Validation pixAcc: 0.795, mIoU: 0.218
+2026-06-29 20:13:02,867 semantic_segmentation INFO: Sample: 700, Validation pixAcc: 0.795, mIoU: 0.218
+2026-06-29 20:13:02,915 semantic_segmentation INFO: Sample: 701, Validation pixAcc: 0.795, mIoU: 0.218
+2026-06-29 20:13:02,964 semantic_segmentation INFO: Sample: 702, Validation pixAcc: 0.796, mIoU: 0.218
+2026-06-29 20:13:03,015 semantic_segmentation INFO: Sample: 703, Validation pixAcc: 0.796, mIoU: 0.219
+2026-06-29 20:13:03,062 semantic_segmentation INFO: Sample: 704, Validation pixAcc: 0.796, mIoU: 0.220
+2026-06-29 20:13:03,114 semantic_segmentation INFO: Sample: 705, Validation pixAcc: 0.796, mIoU: 0.220
+2026-06-29 20:13:03,163 semantic_segmentation INFO: Sample: 706, Validation pixAcc: 0.796, mIoU: 0.220
+2026-06-29 20:13:03,211 semantic_segmentation INFO: Sample: 707, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,262 semantic_segmentation INFO: Sample: 708, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,310 semantic_segmentation INFO: Sample: 709, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,359 semantic_segmentation INFO: Sample: 710, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,407 semantic_segmentation INFO: Sample: 711, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,455 semantic_segmentation INFO: Sample: 712, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,505 semantic_segmentation INFO: Sample: 713, Validation pixAcc: 0.796, mIoU: 0.219
+2026-06-29 20:13:03,553 semantic_segmentation INFO: Sample: 714, Validation pixAcc: 0.796, mIoU: 0.219
+2026-06-29 20:13:03,600 semantic_segmentation INFO: Sample: 715, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,649 semantic_segmentation INFO: Sample: 716, Validation pixAcc: 0.795, mIoU: 0.218
+2026-06-29 20:13:03,698 semantic_segmentation INFO: Sample: 717, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,747 semantic_segmentation INFO: Sample: 718, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,795 semantic_segmentation INFO: Sample: 719, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,844 semantic_segmentation INFO: Sample: 720, Validation pixAcc: 0.795, mIoU: 0.219
+/home/ma-user/work/ljs/train_cirkdv2.py:2241: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  sum_total_inter = torch.tensor(self.metric.total_inter).to(self.device)
+/home/ma-user/work/ljs/train_cirkdv2.py:2242: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  sum_total_union = torch.tensor(self.metric.total_union).to(self.device)
+2026-06-29 20:13:03,894 semantic_segmentation INFO: Sample: 721, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,942 semantic_segmentation INFO: Sample: 722, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:03,991 semantic_segmentation INFO: Sample: 723, Validation pixAcc: 0.795, mIoU: 0.219
+2026-06-29 20:13:04,038 semantic_segmentation INFO: Sample: 724, Validation pixAcc: 0.796, mIoU: 0.219
+2026-06-29 20:13:04,087 semantic_segmentation INFO: Sample: 725, Validation pixAcc: 0.796, mIoU: 0.219
+/home/ma-user/work/ljs/train_cirkdv2.py:2241: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  sum_total_inter = torch.tensor(self.metric.total_inter).to(self.device)
+/home/ma-user/work/ljs/train_cirkdv2.py:2242: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.detach().clone() or sourceTensor.detach().clone().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  sum_total_union = torch.tensor(self.metric.total_union).to(self.device)
+2026-06-29 20:13:04,244 semantic_segmentation INFO: Overall validation pixAcc: 79.470, mIoU: 22.479
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/distributed_c10d.py:4807: UserWarning: No device id is provided via `init_process_group` or `barrier `. Using the current device set by the user. 
+  warnings.warn(  # warn only once
+W0629 20:13:05.746000 297981 site-packages/torch/distributed/elastic/agent/server/api.py:723] Received 15 death signal, shutting down workers
+Terminated
+W0629 20:13:05.748000 297981 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 298114 closing signal SIGTERM
+W0629 20:13:05.753000 297981 site-packages/torch/distributed/elastic/multiprocessing/api.py:900] Sending process 298115 closing signal SIGTERM
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 30 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 30 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/run.py", line 905, in <module>
+    main()
+  File "/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 143, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 268, in launch_agent
+    result = agent.run()
+             ^^^^^^^^^^^
+  File "/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+    result = f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^
+  File "/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 715, in run
+    result = self._invoke_run(role)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/elastic/agent/server/api.py", line 879, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/home/ma-user/anaconda3/envs/PyTorch-2.6.0/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 297981 got signal: 15
+[ERROR] 2026-06-29-20:13:10 (PID:297981, Device:-1, RankID:-1) ERR99999 UNKNOWN applicaiton exception
