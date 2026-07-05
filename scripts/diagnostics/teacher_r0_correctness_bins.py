@@ -119,6 +119,17 @@ def collect(args):
 
     if args.device == 'cuda' and not torch.cuda.is_available():
         device = torch.device('cpu')
+    elif args.device.startswith('npu'):
+        try:
+            import torch_npu  # noqa: F401
+            device = torch.device(args.device)
+            try:
+                torch.npu.set_device(device)
+            except Exception:
+                pass
+        except Exception as exc:
+            print(f'Warning: NPU device requested but torch_npu is unavailable ({exc}); falling back to CPU.')
+            device = torch.device('cpu')
     else:
         device = torch.device(args.device)
 
