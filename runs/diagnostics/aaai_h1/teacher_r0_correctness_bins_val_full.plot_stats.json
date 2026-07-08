@@ -1,9 +1,0 @@
-{
-  "bins": 10,
-  "corr_r_wrong": 0.9599293535609944,
-  "corr_r_acc": -0.95992932960568,
-  "slope_wrong": 0.14271579924946892,
-  "first_wrong_rate": 0.00010362377361161634,
-  "last_wrong_rate": 0.29557666182518005,
-  "wrong_rate_ratio_last_first": 2852.4020263246384
-}

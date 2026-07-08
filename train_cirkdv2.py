@@ -230,6 +230,10 @@ def parse_args():
                         help='number of gradient iterations for dynamic temperature updates')
     parser.add_argument('--covar-a', type=float, default=None,
                         help='constant CoVar coefficient a in r=-log(mc)+a*v/(1-mc); defaults to (K-1)^2/2')
+    parser.add_argument('--covar-reliability-mode', type=str, default='full',
+                        choices=['full', 'confidence', 'variance'],
+                        help='CoVar reliability term used to build dynamic temperature: '
+                             'full=-log(mc)+a*v/(1-mc), confidence=-log(mc), variance=a*v/(1-mc)')
     parser.add_argument('--covar-newton-hessian-eps', type=float, default=1e-5,
                         help='minimum |d2r/dT2| required by Newton updates before fallback to gradient descent')
     parser.add_argument('--covar-newton-max-step', type=float, default=0.25,
@@ -643,6 +647,21 @@ class Trainer(object):
 
         return torch.full_like(like, a_value)
 
+    def _get_covar_reliability_mode(self):
+        mode = getattr(self.args, 'covar_reliability_mode', 'full')
+        if mode not in ('full', 'confidence', 'variance'):
+            raise ValueError(f"Unsupported covar reliability mode: {mode}")
+        return mode
+
+    def _combine_covar_reliability(self, confidence, variance_term, epsilon=1e-8, mode=None):
+        mode = self._get_covar_reliability_mode() if mode is None else mode
+        confidence_term = -torch.log(confidence.clamp(min=epsilon, max=1.0 - epsilon))
+        if mode == 'confidence':
+            return confidence_term
+        if mode == 'variance':
+            return variance_term
+        return confidence_term + variance_term
+
     def _sync_cuda_if_needed(self):
         synchronize_accelerator(self.device)
 
@@ -782,11 +801,12 @@ class Trainer(object):
         final = stats['final']
         avg_time_ms = self.covar_grad_time_total_ms / max(self.covar_grad_time_steps, 1)
         update_method = stats.get('update_method')
+        reliability_mode = stats.get('reliability_mode', 'full')
         if update_method == 'calib_conf':
             calib_mode = stats.get('calib_mode', 'original')
             mode_tag = 'CalibCtrT' if calib_mode == 'centered' else 'CalibT'
             msg = (
-                f" || {mode_tag}: {stats['time_ms']:.1f}ms(avg {avg_time_ms:.1f}, inner {stats['inner_iter_time_ms']:.1f})"
+                f" || {mode_tag}[{reliability_mode}]: {stats['time_ms']:.1f}ms(avg {avg_time_ms:.1f}, inner {stats['inner_iter_time_ms']:.1f})"
                 f" || err(logc): {final['calib_err_mean']:.2e}/{final['active_calib_err_mean']:.2e}"
                 f" || c0/tgt/cf: {final['c0_mean']:.4f}/{final['c_target_mean']:.4f}/{final['c_final_mean']:.4f}"
                 f" || Tq10/50/90: {final['t_q10']:.3f}/{final['t_q50']:.3f}/{final['t_q90']:.3f}"
@@ -798,7 +818,7 @@ class Trainer(object):
 
         label = 'NewtonT' if update_method == 'newton' else 'GradT'
         return (
-            f" || {label}: {stats['time_ms']:.1f}ms(avg {avg_time_ms:.1f}, inner {stats['inner_iter_time_ms']:.1f})"
+            f" || {label}[{reliability_mode}]: {stats['time_ms']:.1f}ms(avg {avg_time_ms:.1f}, inner {stats['inner_iter_time_ms']:.1f})"
             f" || |dr/dT|: {final['grad_abs_mean']:.2e}"
             f" || conv<{stats['threshold']:.0e}: {final['grad_small_ratio'] * 100:.1f}%"
             f" || |T-T0|: {final['total_delta_abs_mean']:.3f}"
@@ -811,9 +831,11 @@ class Trainer(object):
             return
 
         final = stats['final']
+        reliability_mode = stats.get('reliability_mode', 'full')
         if stats.get('update_method') == 'calib_conf':
             calib_mode = stats.get('calib_mode', 'original')
             mode_label = 'CalibConfCenteredTemp' if calib_mode == 'centered' else 'CalibConfTemp'
+            mode_label = f"{mode_label}[{reliability_mode}]"
             sharpen_info = ""
             if 'target_sharpen_active_ratio' in final:
                 sharpen_info = (
@@ -872,6 +894,7 @@ class Trainer(object):
             return
 
         label = 'NewtonTemp' if stats.get('update_method') == 'newton' else 'GradTemp'
+        label = f"{label}[{reliability_mode}]"
         logger.info(
             "{} Detail @ {:d} || time: {:.2f}ms || inner: {:.2f}ms x {:d} || a: {:.3f} || "
             "|dr/dT| mean/p95/max: {:.3e}/{:.3e}/{:.3e} || conv<{:.0e}: {:.2f}% || "
@@ -942,7 +965,8 @@ class Trainer(object):
             v = torch.mean((nonmax_prob - mu) ** 2, dim=-1)
 
         s = (1.0 - c).clamp_min(epsilon)
-        r = -torch.log(c) + a * v / s
+        variance_term = a * v / s
+        r = self._combine_covar_reliability(c, variance_term, epsilon=epsilon)
         return prob, c, v, r
 
     @torch.no_grad()
@@ -990,19 +1014,26 @@ class Trainer(object):
             dim=-1,
         ) - 2.0 * (mu_prime ** 2 + mu * mu_double_prime)
 
-        coeff_c = -1.0 / c + a * v / (s ** 2)
-        dr_dT = coeff_c * dc_dT + (a / s) * dv_dT
+        confidence_dr_dT = -dc_dT / c
+        confidence_d2r_dT2 = (dc_dT ** 2) / (c ** 2) - d2c_dT2 / c
 
-        d2r_dT2 = (
-            (dc_dT ** 2) / (c ** 2)
-            - d2c_dT2 / c
-            + a * (
-                d2v_dT2 / s
-                + v * d2c_dT2 / (s ** 2)
-                + 2.0 * dc_dT * dv_dT / (s ** 2)
-                + 2.0 * v * (dc_dT ** 2) / (s ** 3)
-            )
+        variance_dr_dT = a * (v * dc_dT / (s ** 2) + dv_dT / s)
+        variance_d2r_dT2 = a * (
+            d2v_dT2 / s
+            + v * d2c_dT2 / (s ** 2)
+            + 2.0 * dc_dT * dv_dT / (s ** 2)
+            + 2.0 * v * (dc_dT ** 2) / (s ** 3)
         )
+        reliability_mode = self._get_covar_reliability_mode()
+        if reliability_mode == 'confidence':
+            dr_dT = confidence_dr_dT
+            d2r_dT2 = confidence_d2r_dT2
+        elif reliability_mode == 'variance':
+            dr_dT = variance_dr_dT
+            d2r_dT2 = variance_d2r_dT2
+        else:
+            dr_dT = confidence_dr_dT + variance_dr_dT
+            d2r_dT2 = confidence_d2r_dT2 + variance_d2r_dT2
         return dr_dT, d2r_dT2, r, c, v
 
     @torch.no_grad()
@@ -1290,6 +1321,7 @@ class Trainer(object):
                 'min': a_stats['min'],
                 'max': a_stats['max'],
             },
+            'reliability_mode': self._get_covar_reliability_mode(),
             'threshold': calib_tol,
             'time_ms': calib_time_ms,
             'inner_iter_time_ms': calib_time_ms / max(max_iter, 1),
@@ -1429,6 +1461,7 @@ class Trainer(object):
                 'min': a_stats['min'],
                 'max': a_stats['max'],
             },
+            'reliability_mode': self._get_covar_reliability_mode(),
             'threshold': threshold,
             'time_ms': grad_time_ms,
             'inner_iter_time_ms': grad_time_ms / max(max_iter, 1),
@@ -1467,7 +1500,11 @@ class Trainer(object):
                 prob, valid_mask_resized, num_classes=num_classes, epsilon=epsilon, a=a_value
             )
 
-        reliability = -torch.log(max_confidence.clamp(min=epsilon, max=1.0 - epsilon)) + scaled_residual_variance
+        reliability = self._combine_covar_reliability(
+            max_confidence,
+            scaled_residual_variance,
+            epsilon=epsilon,
+        )
 
         max_conf_stats = self._collect_value_stats(
             self._flatten_valid_values(max_confidence, valid_mask_resized), include_quantile=False
@@ -1522,8 +1559,12 @@ class Trainer(object):
                 'max': a_map_stats['max'],
             }
 
-            r = -torch.log(max_confidence.clamp(min=epsilon, max=1.0 - epsilon)) + \
-                a_map * residual_variance / (1.0 - max_confidence).clamp_min(epsilon)
+            variance_term = a_map * residual_variance / (1.0 - max_confidence).clamp_min(epsilon)
+            r = self._combine_covar_reliability(
+                max_confidence,
+                variance_term,
+                epsilon=epsilon,
+            )
 
             sqrt_r = torch.sqrt(r + epsilon)
             if valid_mask_resized.any():
@@ -1557,6 +1598,7 @@ class Trainer(object):
                 'max': reliability_stats['max'],
             },
             'a': a_stats,
+            'reliability_mode': self._get_covar_reliability_mode(),
         }
 
         # ---- logging ----
@@ -1681,7 +1723,11 @@ class Trainer(object):
         confidence, _, scaled_residual_variance = get_max_confidence_and_residual_variance_components(
             prob, valid_mask, num_classes=num_classes, epsilon=epsilon, a=a_value
         )
-        r_map = -torch.log(confidence.clamp(min=epsilon, max=1.0 - epsilon)) + scaled_residual_variance
+        r_map = self._combine_covar_reliability(
+            confidence,
+            scaled_residual_variance,
+            epsilon=epsilon,
+        )
 
         # =========================
         # z_star

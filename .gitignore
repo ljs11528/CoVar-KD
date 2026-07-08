@@ -25,3 +25,6 @@ __pycache__/
 
 # VSCode
 .vscode/
+kernel_meta/
+runs/
+data/winycg/checkpoints/
