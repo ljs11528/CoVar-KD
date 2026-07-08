@@ -28,3 +28,42 @@ __pycache__/
 kernel_meta/
 runs/
 data/winycg/checkpoints/
+
+# Python cache
+__pycache__/
+.venv/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Logs & outputs
+*.log
+*.csv
+*.json
+*.pid
+kernel_meta/
+runs/
+
+# Datasets & large assets
+*.zip
+*.tar
+*.tar.gz
+datasets/
+data/winycg/checkpoints/
+
+# Model weights & artifacts
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.npz
+*.npy
+*.jpg
+*.png
+
+# VSCode
+.vscode/
