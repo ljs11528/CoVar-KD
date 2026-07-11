@@ -4,6 +4,7 @@ import datetime
 import os
 import shutil
 import sys
+import random
 import numpy as np
 
 cur_path = os.path.abspath(os.path.dirname(__file__))
@@ -17,6 +18,12 @@ import torch.backends.cudnn as cudnn
 import torch.distributed as dist
 import torch.nn.functional as F
 
+try:
+    import torch_npu  # noqa: F401
+    HAS_TORCH_NPU = True
+except Exception:
+    HAS_TORCH_NPU = False
+
 from PCOS import get_max_confidence_and_residual_variance
 
 from losses import *
@@ -27,8 +34,57 @@ from utils.distributed import *
 from utils.logger import setup_logger
 from utils.score import SegmentationMetric
 from utils.flops import cal_multi_adds, cal_param_size
+from utils.covar_temperature import (
+    NewtonCoVarConfig,
+    covar_temperature_kd_loss,
+    newton_covar_temperature_map,
+)
 
 # Lazy import datasets inside Trainer to avoid unnecessary deps
+
+
+def npu_is_available():
+    return HAS_TORCH_NPU and hasattr(torch, "npu") and torch.npu.is_available()
+
+
+def resolve_device_type(requested):
+    requested = str(requested).lower()
+    if requested != 'auto':
+        if requested == 'cuda' and not torch.cuda.is_available():
+            raise RuntimeError('Requested --device-type cuda, but CUDA is not available.')
+        if requested == 'npu' and not npu_is_available():
+            raise RuntimeError('Requested --device-type npu, but torch_npu/NPU is not available.')
+        return requested
+    if torch.cuda.is_available():
+        return 'cuda'
+    if npu_is_available():
+        return 'npu'
+    return 'cpu'
+
+
+def set_accelerator_device(device_type, local_rank):
+    if device_type == 'cuda':
+        torch.cuda.set_device(local_rank)
+    elif device_type == 'npu':
+        torch.npu.set_device(local_rank)
+
+
+def empty_accelerator_cache(device):
+    if device.type == 'cuda':
+        torch.cuda.empty_cache()
+    elif device.type == 'npu':
+        torch.npu.empty_cache()
+
+
+def seed_everything(seed, rank=0):
+    seed = int(seed) + int(rank)
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+    if npu_is_available():
+        torch.npu.manual_seed_all(seed)
 
 
 def parse_args():
@@ -83,12 +139,42 @@ def parse_args():
     parser.add_argument("--lambda-psd", type=float, default=0., help="lambda pixel similarity KD")
     parser.add_argument("--lambda-csd", type=float, default=0., help="lambda category similarity KD")
     parser.add_argument('--use-covar', action='store_true', default=False,
-                        help='enable CoVar weighting on teacher outputs')
+                        help='enable CoVar in the logit KD path')
+    parser.add_argument('--covar-temp-mode', type=str, default='newton',
+                        choices=['newton', 'legacy_weight'],
+                        help='paper Newton temperature or the earlier Gaussian weighting implementation')
     parser.add_argument('--covar-alpha', type=float, default=2.0,
-                        help='alpha used for CoVar gaussian weighting')
+                        help='alpha used only by legacy_weight mode')
+    parser.add_argument('--teacher-output-temp', type=float, default=1.0,
+                        help='soften teacher logits in the logit KD path only')
+    parser.add_argument('--covar-temp-base', type=float, default=1.0,
+                        help='initial temperature for Newton CoVar')
+    parser.add_argument('--covar-temp-min', type=float, default=0.5,
+                        help='minimum pixel temperature for Newton CoVar')
+    parser.add_argument('--covar-temp-max', type=float, default=8.0,
+                        help='maximum pixel temperature for Newton CoVar')
+    parser.add_argument('--covar-kd-temp-power', type=float, default=2.0,
+                        help='gamma in KL(student/T, teacher/T) * T^gamma')
+    parser.add_argument('--covar-grad-eta', type=float, default=0.6,
+                        help='damping factor for Newton temperature updates')
+    parser.add_argument('--covar-grad-max-iter', type=int, default=8,
+                        help='number of Newton temperature updates')
+    parser.add_argument('--covar-a', type=float, default=None,
+                        help='reliability variance coefficient; default is (K-1)^2/2')
+    parser.add_argument('--covar-reliability-mode', type=str, default='full',
+                        choices=['full', 'confidence', 'variance'],
+                        help='reliability terms used by Newton CoVar')
+    parser.add_argument('--covar-newton-hessian-eps', type=float, default=1e-5,
+                        help='minimum positive Hessian magnitude for a Newton step')
+    parser.add_argument('--covar-newton-max-step', type=float, default=0.25,
+                        help='maximum absolute Newton step; <=0 disables clipping')
                
 
-    # cuda setting
+    # accelerator setting
+    parser.add_argument('--device-type', type=str, default='auto', choices=['auto', 'cuda', 'npu', 'cpu'],
+                        help='accelerator backend; auto prefers CUDA, then Ascend NPU, then CPU')
+    parser.add_argument('--seed', type=int, default=1234,
+                        help='base random seed for reproducible training')
     parser.add_argument('--no-cuda', action='store_true', default=False,
                         help='disables CUDA training')
     parser.add_argument('--local-rank', type=int, default=0)
@@ -123,6 +209,10 @@ def parse_args():
     parser.add_argument('--skip-val', action='store_true', default=False,
                         help='skip validation during training')
     args = parser.parse_args()
+    if args.teacher_output_temp <= 0:
+        parser.error('--teacher-output-temp must be positive')
+    if 'LOCAL_RANK' in os.environ:
+        args.local_rank = int(os.environ['LOCAL_RANK'])
 
     num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
     if num_gpus > 1 and args.local_rank == 0:
@@ -144,8 +234,26 @@ def parse_args():
 class Trainer(object):
     def __init__(self, args):
         self.args = args
-        self.device = torch.device(args.device)
+        if args.distributed and args.device in ("cuda", "npu"):
+            self.device = torch.device(f"{args.device}:{args.local_rank}")
+        else:
+            self.device = torch.device(args.device)
         self.num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
+        self.covar_newton_config = None
+        if args.use_covar and args.covar_temp_mode == 'newton':
+            self.covar_newton_config = NewtonCoVarConfig(
+                base_temperature=args.covar_temp_base,
+                min_temperature=args.covar_temp_min,
+                max_temperature=args.covar_temp_max,
+                kd_temperature_power=args.covar_kd_temp_power,
+                eta=args.covar_grad_eta,
+                max_iterations=args.covar_grad_max_iter,
+                hessian_epsilon=args.covar_newton_hessian_eps,
+                max_step=args.covar_newton_max_step,
+                coefficient_a=args.covar_a,
+                reliability_mode=args.covar_reliability_mode,
+            )
+            self.covar_newton_config.validate()
 
 
         # Lazy dataset imports to avoid importing unused backends
@@ -211,7 +319,7 @@ class Trainer(object):
                                             pretrained=args.teacher_pretrained,
                                             aux=True, 
                                             norm_layer=nn.BatchNorm2d,
-                                            num_class=train_dataset.num_class).to(self.args.local_rank)
+                                            num_class=train_dataset.num_class).to(self.device)
 
         self.s_model = get_segmentation_model(model=args.student_model, 
                                             backbone=args.student_backbone,
@@ -227,7 +335,14 @@ class Trainer(object):
         self.t_model.eval()
         self.s_model.eval()
 
-        self.D_model = Discriminator(preprocess_GAN_mode=1, input_channel=train_dataset.num_class, distributed=args.distributed).cuda()
+        self.use_adv = args.lambda_adv != 0. or args.lambda_d != 0.
+        self.D_model = None
+        if self.use_adv:
+            self.D_model = Discriminator(
+                preprocess_GAN_mode=1,
+                input_channel=train_dataset.num_class,
+                distributed=args.distributed,
+            ).to(self.device)
 
         # resume checkpoint if needed
         if args.resume:
@@ -238,7 +353,7 @@ class Trainer(object):
                 self.s_model.load_state_dict(torch.load(args.resume, map_location=lambda storage, loc: storage))
 
         # create criterion
-        x = torch.randn(1,3,512,512).cuda()
+        x = torch.randn(1, 3, args.crop_size[0], args.crop_size[1]).to(self.device)
         t_y = self.t_model(x)
         s_y = self.s_model(x)
         t_channels = t_y[-1].size(1)
@@ -267,22 +382,21 @@ class Trainer(object):
                                          momentum=args.momentum,
                                          weight_decay=args.weight_decay)
 
-        self.D_optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad,
-                                            self.D_model.parameters()), 
-                                            4e-4, [0.9, 0.99])
+        self.D_optimizer = None
+        if self.use_adv:
+            self.D_optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad,
+                                                self.D_model.parameters()),
+                                                4e-4, [0.9, 0.99])
         
         if args.distributed:
-            self.s_model = nn.parallel.DistributedDataParallel(self.s_model, 
-                                                                device_ids=[args.local_rank],
-                                                                output_device=args.local_rank)
-            self.D_model = nn.parallel.DistributedDataParallel(self.D_model, device_ids=[args.local_rank],
-                                                                output_device=args.local_rank)
-            self.criterion_cwd = nn.parallel.DistributedDataParallel(self.criterion_cwd, 
-                                                                device_ids=[args.local_rank],
-                                                                output_device=args.local_rank)
-            self.criterion_fitnet = nn.parallel.DistributedDataParallel(self.criterion_fitnet, 
-                                                                device_ids=[args.local_rank],
-                                                                output_device=args.local_rank)
+            ddp_kwargs = {}
+            if self.device.type in ('cuda', 'npu'):
+                ddp_kwargs = {'device_ids': [args.local_rank], 'output_device': args.local_rank}
+            self.s_model = nn.parallel.DistributedDataParallel(self.s_model, **ddp_kwargs)
+            if self.use_adv:
+                self.D_model = nn.parallel.DistributedDataParallel(self.D_model, **ddp_kwargs)
+            self.criterion_cwd = nn.parallel.DistributedDataParallel(self.criterion_cwd, **ddp_kwargs)
+            self.criterion_fitnet = nn.parallel.DistributedDataParallel(self.criterion_fitnet, **ddp_kwargs)
             
         # evaluation metrics
         self.metric = SegmentationMetric(train_dataset.num_class)
@@ -405,40 +519,70 @@ class Trainer(object):
 
             s_outputs = self.s_model(images)
 
+            teacher_kd_logits = t_outputs[0]
+            if self.args.teacher_output_temp != 1.0:
+                teacher_kd_logits = teacher_kd_logits / self.args.teacher_output_temp
+
             covar_weight = None
+            temperature_map = None
+            reliability_map = None
+            covar_valid_mask = None
             if self.args.use_covar and self.args.lambda_kd != 0.:
                 with torch.no_grad():
                     valid_mask = (targets != self.args.ignore_label)
-                    covar_weight = self.get_covar_weight(F.softmax(t_outputs[0], dim=1), valid_mask)
+                    if self.args.covar_temp_mode == 'newton':
+                        temperature_map, reliability_map, covar_valid_mask, _, _ = \
+                            newton_covar_temperature_map(
+                                teacher_kd_logits,
+                                valid_mask,
+                                self.covar_newton_config,
+                            )
+                    else:
+                        covar_weight = self.get_covar_weight(
+                            F.softmax(teacher_kd_logits, dim=1),
+                            valid_mask,
+                        )
             
             if self.args.aux:
                 task_loss = self.criterion(s_outputs[0], targets) + 0.4 * self.criterion(s_outputs[1], targets)
             else:
                 task_loss = self.criterion(s_outputs[0], targets)
             
-            kd_loss = torch.tensor(0.).cuda()
-            adv_G_loss = torch.tensor(0.).cuda()
-            adv_D_loss = torch.tensor(0.).cuda()
-            skd_loss = torch.tensor(0.).cuda()
-            cwd_fea_loss = torch.tensor(0.).cuda()
-            cwd_logit_loss = torch.tensor(0.).cuda()
-            ifv_loss = torch.tensor(0.).cuda()
-            fitnet_loss = torch.tensor(0.).cuda()
-            at_loss = torch.tensor(0.).cuda()
-            psd_loss = torch.tensor(0.).cuda()
-            csd_loss = torch.tensor(0.).cuda()
+            kd_loss = torch.tensor(0.).to(self.device)
+            adv_G_loss = torch.tensor(0.).to(self.device)
+            adv_D_loss = torch.tensor(0.).to(self.device)
+            skd_loss = torch.tensor(0.).to(self.device)
+            cwd_fea_loss = torch.tensor(0.).to(self.device)
+            cwd_logit_loss = torch.tensor(0.).to(self.device)
+            ifv_loss = torch.tensor(0.).to(self.device)
+            fitnet_loss = torch.tensor(0.).to(self.device)
+            at_loss = torch.tensor(0.).to(self.device)
+            psd_loss = torch.tensor(0.).to(self.device)
+            csd_loss = torch.tensor(0.).to(self.device)
             
 
-            adv_G_loss = self.args.lambda_adv*self.criterion_adv_for_G(self.D_model(s_outputs[0]))
+            if self.args.lambda_adv != 0.:
+                adv_G_loss = self.args.lambda_adv * self.criterion_adv_for_G(self.D_model(s_outputs[0]))
 
-            adv_D_loss = self.args.lambda_d*(self.criterion_adv(self.D_model(s_outputs[0].detach()), 
-                                            self.D_model(t_outputs[0].detach())))
+            if self.args.lambda_d != 0.:
+                adv_D_loss = self.args.lambda_d * (self.criterion_adv(
+                    self.D_model(s_outputs[0].detach()),
+                    self.D_model(t_outputs[0].detach())))
             
             if self.args.lambda_kd != 0.:
-                if self.args.use_covar and covar_weight is not None:
-                    kd_loss = self.args.lambda_kd * self.covar_weighted_kd_loss(s_outputs[0], t_outputs[0], covar_weight)
+                if self.args.use_covar and temperature_map is not None:
+                    kd_loss = self.args.lambda_kd * covar_temperature_kd_loss(
+                        s_outputs[0],
+                        teacher_kd_logits,
+                        temperature_map,
+                        covar_valid_mask,
+                        temperature_power=self.covar_newton_config.kd_temperature_power,
+                    )
+                elif self.args.use_covar and covar_weight is not None:
+                    kd_loss = self.args.lambda_kd * self.covar_weighted_kd_loss(
+                        s_outputs[0], teacher_kd_logits, covar_weight)
                 else:
-                    kd_loss = self.args.lambda_kd * self.criterion_kd(s_outputs[0], t_outputs[0])
+                    kd_loss = self.args.lambda_kd * self.criterion_kd(s_outputs[0], teacher_kd_logits)
             if self.args.lambda_skd != 0:
                 skd_loss = self.args.lambda_skd * self.criterion_skd(s_outputs[-1], t_outputs[-1])
             if self.args.lambda_cwd_fea != 0:
@@ -469,9 +613,10 @@ class Trainer(object):
             losses.backward()
             self.optimizer.step()
 
-            self.D_optimizer.zero_grad()
-            D_losses.backward()
-            self.D_optimizer.step()
+            if self.use_adv:
+                self.D_optimizer.zero_grad()
+                D_losses.backward()
+                self.D_optimizer.step()
 
             task_loss_reduced = self.reduce_mean_tensor(task_loss)
             kd_loss_reduced = self.reduce_mean_tensor(kd_loss)
@@ -491,7 +636,7 @@ class Trainer(object):
             eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
 
             if iteration % log_per_iters == 0 and save_to_disk:
-                logger.info(
+                log_message = (
                     "Iters: {:d}/{:d} || Lr: {:.6f} || Task Loss: {:.4f} || KD Loss: {:.4f}" \
                     "|| Adv_G Loss: {:.4f} || Adv_D Loss: {:.4f}" \
                     "|| skd_loss: {:.4f} || cwd_fea_loss: {:.4f} || cwd_logit_loss: {:.4f} " \
@@ -513,6 +658,21 @@ class Trainer(object):
                         csd_loss_reduced.item(),
                         str(datetime.timedelta(seconds=int(time.time() - start_time))), 
                         eta_string))
+                if temperature_map is not None:
+                    valid_temperatures = temperature_map[covar_valid_mask]
+                    valid_reliability = reliability_map[covar_valid_mask]
+                    if valid_temperatures.numel() > 0:
+                        log_message += (
+                            " || CoVar T mean/min/max: {:.4f}/{:.4f}/{:.4f} || r_mean: {:.4f}".format(
+                                valid_temperatures.mean().item(),
+                                valid_temperatures.min().item(),
+                                valid_temperatures.max().item(),
+                                valid_reliability.mean().item(),
+                            )
+                        )
+                elif self.args.teacher_output_temp != 1.0:
+                    log_message += " || Teacher output T: {:.4f}".format(self.args.teacher_output_temp)
+                logger.info(log_message)
 
             if iteration % save_per_iters == 0 and save_to_disk:
                 save_checkpoint(self.s_model, self.args, is_best=False)
@@ -536,7 +696,7 @@ class Trainer(object):
             model = self.s_model.module
         else:
             model = self.s_model
-        torch.cuda.empty_cache()  # TODO check if it helps
+        empty_accelerator_cache(self.device)  # TODO check if it helps
         model.eval()
         logger.info("Start validation, Total sample: {:d}".format(len(self.val_loader)))
         for i, (image, target, filename) in enumerate(self.val_loader):
@@ -554,10 +714,10 @@ class Trainer(object):
             logger.info("Sample: {:d}, Validation pixAcc: {:.3f}, mIoU: {:.3f}".format(i + 1, pixAcc, mIoU))
         
         if self.num_gpus > 1:
-            sum_total_correct = torch.tensor(self.metric.total_correct).cuda().to(args.local_rank)
-            sum_total_label = torch.tensor(self.metric.total_label).cuda().to(args.local_rank)
-            sum_total_inter = torch.tensor(self.metric.total_inter).cuda().to(args.local_rank)
-            sum_total_union = torch.tensor(self.metric.total_union).cuda().to(args.local_rank)
+            sum_total_correct = torch.tensor(self.metric.total_correct).to(self.device)
+            sum_total_label = torch.tensor(self.metric.total_label).to(self.device)
+            sum_total_inter = torch.tensor(self.metric.total_inter).to(self.device)
+            sum_total_union = torch.tensor(self.metric.total_union).to(self.device)
             sum_total_correct = self.reduce_tensor(sum_total_correct)
             sum_total_label = self.reduce_tensor(sum_total_label)
             sum_total_inter = self.reduce_tensor(sum_total_inter)
@@ -611,22 +771,28 @@ if __name__ == '__main__':
     num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
     args.num_gpus = num_gpus
     args.distributed = num_gpus > 1
-    if not args.no_cuda and torch.cuda.is_available():
+    if args.no_cuda:
+        args.device_type = 'cpu'
+    args.device = resolve_device_type(args.device_type)
+    seed_everything(args.seed, rank=int(os.environ.get("RANK", 0)))
+    if args.device == "cuda":
         cudnn.benchmark = False
-        args.device = "cuda"
+        set_accelerator_device(args.device, args.local_rank)
+    elif args.device == "npu":
+        set_accelerator_device(args.device, args.local_rank)
     else:
         args.distributed = False
         args.device = "cpu"
     if args.distributed:
-        torch.cuda.set_device(args.local_rank)
-        torch.distributed.init_process_group(backend="nccl", init_method="env://")
+        backend = "hccl" if args.device == "npu" else "nccl"
+        torch.distributed.init_process_group(backend=backend, init_method="env://")
         synchronize()
 
     logger = setup_logger("semantic_segmentation", args.log_dir, get_rank(), filename='{}_{}_{}_log.txt'.format(
         args.student_model, args.teacher_backbone, args.student_backbone, args.dataset))
-    logger.info("Using {} GPUs".format(num_gpus))
+    logger.info("Using {} process(es) on device {}".format(num_gpus, args.device))
     logger.info(args)
 
     trainer = Trainer(args)
     trainer.train()
-    torch.cuda.empty_cache()
+    empty_accelerator_cache(torch.device(args.device))

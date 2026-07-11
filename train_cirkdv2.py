@@ -2436,8 +2436,12 @@ if __name__ == '__main__':
         torch.distributed.init_process_group(backend=backend, init_method='env://')
         synchronize()
 
+    resume_state_for_log = resolve_resume_state_path(args)
+    log_mode = 'a' if resume_state_for_log else 'w'
     logger = setup_logger("semantic_segmentation", args.save_dir, get_rank(), filename='{}_{}_{}_log.txt'.format(
-        args.student_model, args.teacher_backbone, args.student_backbone, args.dataset))
+        args.student_model, args.teacher_backbone, args.student_backbone, args.dataset), mode=log_mode)
+    if resume_state_for_log:
+        logger.info(f"Appending to existing training log for resume state: {resume_state_for_log}")
     logger.info("Using {} process(es) on device {}".format(num_gpus, args.device))
     logger.info(args)
 
