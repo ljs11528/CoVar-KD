@@ -4,6 +4,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.orig
+*.rej
 *.egg-info/
 
 # Notebooks

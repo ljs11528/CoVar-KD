@@ -1,8 +1,8 @@
 # CoVar-KD Paper Experiment Record
 
-- Updated: 2026-07-11 08:00 CST
+- Updated: 2026-07-12
 - Repository: `/home/ma-user/work/ljs`
-- Hardware: 2 x Ascend 910, CANN 8.5.0, PyTorch 2.6.0 NPU
+- Hardware/runtime verified 2026-07-12: 2 x Ascend 910, CANN 8.5.0, Python 3.11.10, PyTorch 2.8.0+cpu with torch_npu 2.8.0.post2
 - Dataset: Pascal VOC / VOCAug, 21 classes, VOC val with 1,449 images
 - Main teacher: DeepLabV3-ResNet101
 - Main student: DeepLabV3-MobileNetV3-Small
@@ -188,30 +188,43 @@ The solver mainly sharpens reliable pixels and smooths a small unreliable tail. 
 
 The paper can report approximately 10% training-time overhead. Inference is unchanged because CoVar is used only during distillation training.
 
-## 9. Active experiments and required next evidence
+## 9. Latest experiments and required next evidence
 
 ### 9.1 Phase L: CWD seed stability
 
-Started 2026-07-11 08:00 CST.
+Status: completed on 2026-07-11. Source: `reports/2026-07-11_phaseL_cwd_seed_stability.md`.
 
-| Seed | Device | PID | Variant | Status |
-|---:|---:|---:|---|---|
-| 2025 | NPU0 | 4030859 | `cwd_80k_seed2025` | running |
-| 3407 | NPU1 | 4030861 | `cwd_80k_seed3407` | running |
+| Seed | Best mIoU | Best iter | Final mIoU | Status |
+|---:|---:|---:|---:|---|
+| 1234 | 0.6640 | 79200 | 0.6610 | complete |
+| 2025 | 0.6600 | 73600 | 0.6580 | complete |
+| 3407 | 0.6650 | 75200 | 0.6640 | complete |
 
-The existing seed-1234 CWD result is 0.664 best / 0.661 final. Once Phase L completes, report the three-seed mean, SD, and paired comparison against the existing three-seed CoVar table.
+The completed three-seed aggregate is `0.6630 +/- 0.0022` best and `0.6610 +/- 0.0024` final using the current summary script's population SD. For paper reporting with sample SD (`ddof=1`), the corresponding values are approximately `0.6630 +/- 0.0026` best and `0.6610 +/- 0.0030` final. Method-level comparisons against the existing three-seed CoVar/CIRKD table remain non-causal because the base recipes differ.
 
 ### 9.2 CWD + CoVar
 
-Required design:
+Status: smoke and 20k triage completed on 2026-07-11. Source: `reports/2026-07-11_phaseM_cwd_covar_triage.md`.
 
-- Keep the official CWD task, KD, adversarial, feature-CWD, and logit-CWD recipe unchanged.
-- Replace only the scalar-temperature logit KD term with the paper's Newton CoVar pixel-temperature KD term.
-- Use `Tout=3.0`, gamma=2, `T in [0.5,8.0]`, eta 0.6, eight Newton steps, max step 0.25, and seed 1234.
-- First run a short smoke test, then a 20k triage against the completed CWD-20k value 0.639.
-- Promote to 80k only if the 20k result is competitive or mechanism diagnostics are healthy.
+| Variant | Teacher output temp | Logit KD temperature | Best mIoU | Best iter | Final mIoU | Sec/iter |
+|---|---:|---|---:|---:|---:|---:|
+| Historical CWD | 1.0 | scalar `T=1.0` | 0.6390 | 18400 | 0.6360 | 0.4392 |
+| CWD fixed | 3.0 | scalar `T=1.0` | 0.6430 | 19200 | 0.6420 | 0.4350 |
+| CWD + Newton CoVar | 3.0 | pixel-wise `T(x)` | **0.6460** | 20000 | **0.6460** | 0.4537 |
 
-This experiment is the clean test of whether CoVar is a portable improvement rather than a CIRKD-specific modification.
+- Against the controlled `Tout=3.0`, scalar-`T=1.0` row, CoVar improves best mIoU by `+0.0030` and final mIoU by `+0.0040`.
+- Training time rises from `0.4350` to `0.4537` sec/iter, a `+4.3%` overhead in this CWD integration.
+- Only the logit KD temperature mechanism changes in the controlled pair; the official CWD task, KD, adversarial, feature-CWD, and logit-CWD recipe remains fixed.
+- This is positive preliminary portability evidence, but it does not yet isolate spatial adaptation from the global low-temperature sharpening effect.
+
+### 9.3 Phase M2: matched scalar-temperature controls
+
+Status: experiment design and record are ready. See the [Phase M2 preregistration and run record](2026-07-12_phaseM2_scalar_temperature_plan.md).
+
+- The new 20k, seed-1234 controls use scalar KD temperatures `T=0.5` and `T=0.6`, with `Tout=3.0` and the Phase M CWD recipe unchanged.
+- `T=0.5` matches the CoVar temperature distribution's lower-bound mode/median; `T=0.6` approximately matches its mean (`0.5815`).
+- Final mIoU is preregistered as the primary metric; best mIoU and the last-10-validation mean are secondary metrics.
+- Launch commands, PID files, logs, completion checks, result tables, and promotion rules are reserved in the linked record for synchronized updates.
 
 ## 10. Paper-ready claims and prohibited overclaims
 
@@ -229,7 +242,7 @@ Not yet supported:
 2. Variance alone improves performance: the isolated variance row is negative.
 3. Cross-dataset generalization: only VOC data and a VOC teacher are locally available.
 4. Cross-student statistical stability: the PSPNet result is one seed.
-5. CWD+CoVar compatibility: implementation and experiments are in progress.
+5. 80k multi-seed CWD+CoVar superiority: only positive single-seed 20k evidence exists.
 
 ## 11. Recommended paper placement
 

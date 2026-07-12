@@ -87,6 +87,115 @@ def seed_everything(seed, rank=0):
         torch.npu.manual_seed_all(seed)
 
 
+def unwrap_module(module):
+    return module.module if isinstance(module, nn.parallel.DistributedDataParallel) else module
+
+
+def load_state_dict_compatible(module, state_dict, strict=True):
+    """Load state dicts saved with or without a DistributedDataParallel prefix."""
+    if state_dict is None:
+        return
+    cleaned = {
+        key[7:] if key.startswith('module.') else key: value
+        for key, value in state_dict.items()
+    }
+    unwrap_module(module).load_state_dict(cleaned, strict=strict)
+
+
+def _move_value_to_device(value, device):
+    if torch.is_tensor(value):
+        return value.to(device)
+    if isinstance(value, dict):
+        return {key: _move_value_to_device(item, device) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_move_value_to_device(item, device) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_move_value_to_device(item, device) for item in value)
+    return value
+
+
+def move_optimizer_state_to_device(optimizer, device):
+    if optimizer is None:
+        return
+    for state_id, state in optimizer.state.items():
+        optimizer.state[state_id] = _move_value_to_device(state, device)
+
+
+def capture_rng_state():
+    """Capture RNGs that can affect training after a checkpoint boundary."""
+    state = {
+        'python': random.getstate(),
+        'numpy': np.random.get_state(),
+        'torch': torch.get_rng_state(),
+    }
+    if torch.cuda.is_available():
+        state['cuda'] = torch.cuda.get_rng_state()
+    if npu_is_available() and hasattr(torch.npu, 'get_rng_state'):
+        state['npu'] = torch.npu.get_rng_state()
+    return state
+
+
+def restore_rng_state(state):
+    """Restore a state produced by capture_rng_state."""
+    if not state:
+        return
+    if 'python' in state:
+        random.setstate(state['python'])
+    if 'numpy' in state:
+        np.random.set_state(state['numpy'])
+    if 'torch' in state:
+        torch.set_rng_state(state['torch'].cpu())
+    if 'cuda' in state and torch.cuda.is_available():
+        torch.cuda.set_rng_state(state['cuda'])
+    if (
+        'npu' in state
+        and npu_is_available()
+        and hasattr(torch.npu, 'set_rng_state')
+    ):
+        torch.npu.set_rng_state(state['npu'])
+
+
+def load_checkpoint_file(path):
+    """Load trusted local checkpoints across torch versions."""
+    try:
+        return torch.load(path, map_location='cpu', weights_only=False)
+    except TypeError:  # torch < 2.0 has no weights_only argument
+        return torch.load(path, map_location='cpu')
+
+
+def is_training_state_checkpoint(checkpoint):
+    if not isinstance(checkpoint, dict):
+        return False
+    return (
+        checkpoint.get('checkpoint_type') == 'train_kd_training_state'
+        or (
+            ('student' in checkpoint or 'state_dict' in checkpoint)
+            and any(key in checkpoint for key in ('optimizer', 'iteration', 'rng_state'))
+        )
+    )
+
+
+def extract_student_state_dict(checkpoint):
+    if is_training_state_checkpoint(checkpoint):
+        return checkpoint.get('student', checkpoint.get('state_dict'))
+    if isinstance(checkpoint, dict) and 'state_dict' in checkpoint:
+        return checkpoint['state_dict']
+    if isinstance(checkpoint, dict) and 'student' in checkpoint:
+        return checkpoint['student']
+    return checkpoint
+
+
+def format_sample_validation_log(sample, pix_acc, miou):
+    return "Sample: {:d}, Validation pixAcc: {:.6f}, mIoU: {:.6f}".format(
+        int(sample), float(pix_acc), float(miou)
+    )
+
+
+def format_overall_validation_log(pix_acc, miou):
+    return "Overall validation pixAcc: {:.6f}, mIoU: {:.6f}".format(
+        float(pix_acc), float(miou)
+    )
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Semantic Segmentation Training With Pytorch')
     # model and dataset
@@ -239,6 +348,28 @@ class Trainer(object):
         else:
             self.device = torch.device(args.device)
         self.num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
+        self.rank = get_rank()
+        self.resume_checkpoint = None
+        self.resume_is_full_state = False
+        self.start_iteration = 0
+        if args.resume:
+            if not os.path.isfile(args.resume):
+                raise FileNotFoundError('Resume checkpoint not found: {}'.format(args.resume))
+            extension = os.path.splitext(args.resume)[1].lower()
+            if extension not in ('.pth', '.pkl'):
+                raise ValueError('Only .pth and .pkl checkpoints are supported.')
+            print('Resuming training, loading {}...'.format(args.resume))
+            self.resume_checkpoint = load_checkpoint_file(args.resume)
+            self.resume_is_full_state = is_training_state_checkpoint(self.resume_checkpoint)
+            if self.resume_is_full_state:
+                self.start_iteration = int(self.resume_checkpoint.get('iteration', 0))
+                if self.start_iteration > args.max_iterations:
+                    raise ValueError(
+                        'Checkpoint iteration {} exceeds --max-iterations {}'.format(
+                            self.start_iteration, args.max_iterations
+                        )
+                    )
+
         self.covar_newton_config = None
         if args.use_covar and args.covar_temp_mode == 'newton':
             self.covar_newton_config = NewtonCoVarConfig(
@@ -293,9 +424,14 @@ class Trainer(object):
             raise ValueError('dataset unfind')
 
     
-        args.batch_size = args.batch_size // num_gpus
+        args.batch_size = args.batch_size // self.num_gpus
         train_sampler = make_data_sampler(train_dataset, shuffle=True, distributed=args.distributed)
-        train_batch_sampler = make_batch_data_sampler(train_sampler, args.batch_size, args.max_iterations)
+        train_batch_sampler = make_batch_data_sampler(
+            train_sampler,
+            args.batch_size,
+            args.max_iterations,
+            start_iter=self.start_iteration,
+        )
         val_sampler = make_data_sampler(val_dataset, False, args.distributed)
         val_batch_sampler = make_batch_data_sampler(val_sampler, images_per_batch=1)
 
@@ -343,14 +479,6 @@ class Trainer(object):
                 input_channel=train_dataset.num_class,
                 distributed=args.distributed,
             ).to(self.device)
-
-        # resume checkpoint if needed
-        if args.resume:
-            if os.path.isfile(args.resume):
-                name, ext = os.path.splitext(args.resume)
-                assert ext == '.pkl' or '.pth', 'Sorry only .pth and .pkl files supported.'
-                print('Resuming training, loading {}...'.format(args.resume))
-                self.s_model.load_state_dict(torch.load(args.resume, map_location=lambda storage, loc: storage))
 
         # create criterion
         x = torch.randn(1, 3, args.crop_size[0], args.crop_size[1]).to(self.device)
@@ -401,6 +529,83 @@ class Trainer(object):
         # evaluation metrics
         self.metric = SegmentationMetric(train_dataset.num_class)
         self.best_pred = 0.0
+        self.current_iteration = self.start_iteration
+        if self.resume_checkpoint is not None:
+            self._load_resume_checkpoint(self.resume_checkpoint, args.resume)
+
+    def _load_resume_checkpoint(self, checkpoint, path):
+        student_state = extract_student_state_dict(checkpoint)
+        load_state_dict_compatible(self.s_model, student_state, strict=True)
+        if not self.resume_is_full_state:
+            logger.info(
+                'Loaded legacy student-only checkpoint from {}; training starts at iteration 0'.format(path)
+            )
+            return
+
+        module_states = (
+            ('criterion_cwd', self.criterion_cwd),
+            ('criterion_fitnet', self.criterion_fitnet),
+            ('D', self.D_model),
+        )
+        for key, module in module_states:
+            if module is not None and checkpoint.get(key) is not None:
+                load_state_dict_compatible(module, checkpoint[key], strict=True)
+
+        if checkpoint.get('optimizer') is not None:
+            self.optimizer.load_state_dict(checkpoint['optimizer'])
+            move_optimizer_state_to_device(self.optimizer, self.device)
+        if self.D_optimizer is not None and checkpoint.get('D_optimizer') is not None:
+            self.D_optimizer.load_state_dict(checkpoint['D_optimizer'])
+            move_optimizer_state_to_device(self.D_optimizer, self.device)
+
+        self.start_iteration = int(checkpoint.get('iteration', self.start_iteration))
+        self.current_iteration = self.start_iteration
+        self.best_pred = float(checkpoint.get('best_pred', self.best_pred))
+        rng_state = checkpoint.get('rng_state')
+        rank_states = checkpoint.get('rng_state_by_rank')
+        if isinstance(rank_states, (list, tuple)) and self.rank < len(rank_states):
+            rng_state = rank_states[self.rank]
+        elif isinstance(rank_states, dict):
+            rng_state = rank_states.get(str(self.rank), rank_states.get(self.rank, rng_state))
+        restore_rng_state(rng_state)
+        logger.info(
+            'Resumed full training state from {}: iteration={}, best_mIoU={:.6f}'.format(
+                path, self.start_iteration, self.best_pred
+            )
+        )
+
+    def _training_state_dict(self, iteration, rng_states):
+        return {
+            'checkpoint_type': 'train_kd_training_state',
+            'checkpoint_version': 1,
+            'student': unwrap_module(self.s_model).state_dict(),
+            'criterion_cwd': unwrap_module(self.criterion_cwd).state_dict(),
+            'criterion_fitnet': unwrap_module(self.criterion_fitnet).state_dict(),
+            'D': None if self.D_model is None else unwrap_module(self.D_model).state_dict(),
+            'optimizer': self.optimizer.state_dict(),
+            'D_optimizer': None if self.D_optimizer is None else self.D_optimizer.state_dict(),
+            'iteration': int(iteration),
+            'best_pred': float(self.best_pred),
+            'rng_state': rng_states[0],
+            'rng_state_by_rank': rng_states,
+            'world_size': int(get_world_size()),
+            'args': dict(vars(self.args)),
+        }
+
+    def save_checkpoint(self, is_best=False, iteration=None, save_latest=True):
+        iteration = self.current_iteration if iteration is None else int(iteration)
+        local_rng_state = capture_rng_state()
+        rng_states = all_gather(local_rng_state)
+        if get_rank() != 0:
+            return
+        training_state = self._training_state_dict(iteration, rng_states)
+        save_checkpoint(
+            self.s_model,
+            self.args,
+            is_best=is_best,
+            training_state=training_state,
+            save_latest=save_latest,
+        )
 
     @staticmethod
     def _assert_voc_aug_paths(root):
@@ -505,12 +710,16 @@ class Trainer(object):
         log_per_iters, val_per_iters = self.args.log_iter, self.args.val_per_iters
         save_per_iters = self.args.save_per_iters
         start_time = time.time()
-        logger.info('Start training, Total Iterations {:d}'.format(args.max_iterations))
+        logger.info('Start training, Total Iterations {:d}'.format(self.args.max_iterations))
+        if self.start_iteration:
+            logger.info('Continuing training from iteration {:d}'.format(self.start_iteration))
 
         self.s_model.train()
-        for iteration, (images, targets, _) in enumerate(self.train_loader):
-            iteration = iteration + 1
-            
+        for iteration, (images, targets, _) in enumerate(
+            self.train_loader, start=self.start_iteration + 1
+        ):
+            self.current_iteration = iteration
+
             images = images.to(self.device)
             targets = targets.long().to(self.device)
             
@@ -608,7 +817,12 @@ class Trainer(object):
                         psd_loss + csd_loss 
             D_losses = adv_D_loss
 
-            lr = self.adjust_lr(base_lr=args.lr, iter=iteration-1, max_iter=args.max_iterations, power=0.9)
+            lr = self.adjust_lr(
+                base_lr=self.args.lr,
+                iter=iteration - 1,
+                max_iter=self.args.max_iterations,
+                power=0.9,
+            )
             self.optimizer.zero_grad()
             losses.backward()
             self.optimizer.step()
@@ -632,7 +846,10 @@ class Trainer(object):
             
             
             D_losses_reduced = self.reduce_mean_tensor(D_losses)
-            eta_seconds = ((time.time() - start_time) / iteration) * (args.max_iterations - iteration)
+            elapsed_iterations = max(iteration - self.start_iteration, 1)
+            eta_seconds = (
+                (time.time() - start_time) / elapsed_iterations
+            ) * (self.args.max_iterations - iteration)
             eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
 
             if iteration % log_per_iters == 0 and save_to_disk:
@@ -643,7 +860,7 @@ class Trainer(object):
                         "|| ifv_loss: {:.4f} || at_loss: {:.4f} || fitnet_loss: {:.4f} " \
                         "|| psd_loss: {:.4f} || csd_loss: {:.4f} " \
                         "|| Cost Time: {} || Estimated Time: {}".format(
-                        iteration, args.max_iterations, self.optimizer.param_groups[0]['lr'], 
+                        iteration, self.args.max_iterations, self.optimizer.param_groups[0]['lr'],
                         task_loss_reduced.item(),
                         kd_loss_reduced.item(), 
                         adv_G_loss_reduced.item(),
@@ -674,22 +891,23 @@ class Trainer(object):
                     log_message += " || Teacher output T: {:.4f}".format(self.args.teacher_output_temp)
                 logger.info(log_message)
 
-            if iteration % save_per_iters == 0 and save_to_disk:
-                save_checkpoint(self.s_model, self.args, is_best=False)
+            if iteration % save_per_iters == 0:
+                self.save_checkpoint(is_best=False, iteration=iteration)
 
             if not self.args.skip_val and iteration % val_per_iters == 0:
-                self.validation()
+                self.validation(step=iteration)
                 self.s_model.train()
 
-        save_checkpoint(self.s_model, self.args, is_best=False)
+        self.save_checkpoint(is_best=False, iteration=self.current_iteration)
         total_training_time = time.time() - start_time
         total_training_str = str(datetime.timedelta(seconds=total_training_time))
+        completed_iterations = max(self.current_iteration - self.start_iteration, 1)
         logger.info(
             "Total training time: {} ({:.4f}s / it)".format(
-                total_training_str, total_training_time / args.max_iterations))
+                total_training_str, total_training_time / completed_iterations))
 
 
-    def validation(self):
+    def validation(self, step=None):
         is_best = False
         self.metric.reset()
         if self.args.distributed:
@@ -711,7 +929,7 @@ class Trainer(object):
 
             self.metric.update(outputs[0], target)
             pixAcc, mIoU = self.metric.get()
-            logger.info("Sample: {:d}, Validation pixAcc: {:.3f}, mIoU: {:.3f}".format(i + 1, pixAcc, mIoU))
+            logger.info(format_sample_validation_log(i + 1, pixAcc, mIoU))
         
         if self.num_gpus > 1:
             sum_total_correct = torch.tensor(self.metric.total_correct).to(self.device)
@@ -727,15 +945,16 @@ class Trainer(object):
             IoU = 1.0 * sum_total_inter / (2.220446049250313e-16 + sum_total_union)
             mIoU = IoU.mean().item()
 
-            logger.info("Overall validation pixAcc: {:.3f}, mIoU: {:.3f}".format(
-            pixAcc.item() * 100, mIoU * 100))
+            logger.info(format_overall_validation_log(
+                pixAcc.item() * 100, mIoU * 100
+            ))
 
-        new_pred = mIoU
+        new_pred = float(mIoU)
         if new_pred > self.best_pred:
             is_best = True
             self.best_pred = new_pred
-        if (args.distributed is not True) or (args.distributed and args.local_rank == 0):
-            save_checkpoint(self.s_model, self.args, is_best)
+        if is_best:
+            self.save_checkpoint(is_best=True, iteration=step, save_latest=False)
         synchronize()
 
 
@@ -746,22 +965,35 @@ def save_npy(array, name):
         np.save(os.path.join(directory, name), array)
 
 
-def save_checkpoint(model, args, is_best=False):
-    """Save Checkpoint"""
+def save_checkpoint(
+    model,
+    args,
+    is_best=False,
+    training_state=None,
+    save_latest=True,
+):
+    """Save legacy model weights plus an optional complete training state."""
     directory = os.path.expanduser(args.save_dir)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    filename = 'kd_{}_{}_{}.pth'.format(args.student_model, args.student_backbone, args.dataset)
+    os.makedirs(directory, exist_ok=True)
+    filename = 'kd_{}_{}_{}.pth'.format(
+        args.student_model, args.student_backbone, args.dataset
+    )
     filename = os.path.join(directory, filename)
+    model_state = unwrap_module(model).state_dict()
 
-    if args.distributed:
-        model = model.module
-    
-    torch.save(model.state_dict(), filename)
+    if save_latest:
+        torch.save(model_state, filename)
+        if training_state is not None:
+            torch.save(training_state, os.path.join(directory, 'training_state_latest.pth'))
+
     if is_best:
-        best_filename = 'kd_{}_{}_{}_best_model.pth'.format(args.student_model, args.student_backbone, args.dataset)
+        best_filename = 'kd_{}_{}_{}_best_model.pth'.format(
+            args.student_model, args.student_backbone, args.dataset
+        )
         best_filename = os.path.join(directory, best_filename)
-        shutil.copyfile(filename, best_filename)
+        torch.save(model_state, best_filename)
+        if training_state is not None:
+            torch.save(training_state, os.path.join(directory, 'training_state_best.pth'))
 
 
 if __name__ == '__main__':
