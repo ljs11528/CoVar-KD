@@ -1,7 +1,7 @@
 # Phase M2：匹配标量温度因果对照预注册与运行记录
 
 - 文档创建时间：`2026-07-12`（Asia/Shanghai）
-- 当前状态：`已预注册，待启动`
+- 当前状态：`运行中`；双卡 smoke 已通过，20k pair 于 `2026-07-12T11:11:04+08:00` 启动
 - 实验目的：判断 Phase M 中 Newton CoVar 的增益来自像素级温度分配，还是主要来自整体降低 KD 温度造成的锐化。
 - 本阶段范围：VOC、CWD 配方、seed `1234`、`20000` iterations；新增标量 KD 温度 `T=0.5` 和 `T=0.6`，并与既有 `T=1.0` 和 Newton CoVar 结果比较。
 - 预注册约束：启动训练前冻结本页的配置、主次指标和决策规则。若必须修改，须先在“偏差与变更记录”中写明时间、原因和影响，不得根据结果事后改口径。
@@ -151,8 +151,8 @@
 
 | Run ID | 启动命令（完整或脚本 + 环境变量） | NPU | PID / PID 文件 | stdout/stderr | 指标日志 | 启动时间 | 结束时间 | 状态 |
 |---|---|---:|---|---|---|---|---|---|
-| `cwd_tout3_kdtemp0p5_20k_seed1234` | `待填写` | `0` | `待填写` | `待填写` | `runs/logs/kd_baselines_npu/phaseM2_scalar_temperature/triage_20k/cwd_tout3_kdtemp0p5_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `待填写` | `待填写` | `未启动` |
-| `cwd_tout3_kdtemp0p6_20k_seed1234` | `待填写` | `1` | `待填写` | `待填写` | `runs/logs/kd_baselines_npu/phaseM2_scalar_temperature/triage_20k/cwd_tout3_kdtemp0p6_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `待填写` | `待填写` | `未启动` |
+| `cwd_tout3_kdtemp0p5_20k_seed1234` | `bash scripts/experiments/kd_baselines_npu/launch_phaseM2_scalar_temperature.sh` | `0` | worker `122450`; queue `121226`; `data/winycg/checkpoints/kd_baselines_npu/phaseM2_scalar_temperature/phaseM2_scalar_temperature.pid` | `data/winycg/checkpoints/kd_baselines_npu/phaseM2_scalar_temperature/runtime/triage_20k/kdtemp0p5.nohup.log` | `runs/logs/kd_baselines_npu/phaseM2_scalar_temperature/triage_20k/cwd_tout3_kdtemp0p5_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `2026-07-12T11:11:04+08:00` | `待填写` | `运行中` |
+| `cwd_tout3_kdtemp0p6_20k_seed1234` | `bash scripts/experiments/kd_baselines_npu/launch_phaseM2_scalar_temperature.sh` | `1` | worker `122449`; queue `121226`; same PID file | `data/winycg/checkpoints/kd_baselines_npu/phaseM2_scalar_temperature/runtime/triage_20k/kdtemp0p6.nohup.log` | `runs/logs/kd_baselines_npu/phaseM2_scalar_temperature/triage_20k/cwd_tout3_kdtemp0p6_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `2026-07-12T11:11:04+08:00` | `待填写` | `运行中` |
 
 允许的状态值：`未启动`、`运行中`、`已完成`、`失败`、`已停止`、`配置无效待重跑`。
 
@@ -160,14 +160,14 @@
 
 | 项目 | 值 |
 |---|---|
-| Git commit | `待填写` |
-| `git status --short` 摘要 | `待填写` |
-| 启动脚本 | `待填写` |
-| Python / torch / torch_npu 版本 | `待填写` |
-| `npu-smi info` 摘要 | `待填写` |
-| 数据列表 checksum | `待填写` |
-| Teacher 权重 checksum | `待填写` |
-| Student 初始化权重 checksum | `待填写` |
+| Git commit | `865f485cb2d571d06421112e6eca320795db2d5e` |
+| `git status --short` 摘要 | 启动前工作树 clean；本地比 `origin/master` ahead 1，HTTPS 远端因缺少凭据尚未推送 |
+| 启动脚本 | `scripts/experiments/kd_baselines_npu/launch_phaseM2_scalar_temperature.sh` |
+| Python / torch / torch_npu 版本 | Python `3.11.10` / torch `2.8.0+cpu` / torch_npu `2.8.0.post2` |
+| `npu-smi info` 摘要 | 2 x Ascend 910，启动前 Health 均为 OK、无 NPU 训练进程 |
+| 数据列表 checksum | train_aug `d1326bd532648d73bc4b1bd275434eba81930982dc7401a65a8cecb26c028e24`; val `cdc1326d12f69ce5153aa5da04a4d8783e146868d42d19f82f44e74b97ac907d` |
+| Teacher 权重 checksum | `ac49b2c7720b21d565072e974e4404fcb009ba106288d95d1a4bb25f09c3fe58` |
+| Student 初始化权重 checksum | `47085aa164b2977003221458a2a5fdf5f46f434f5539b164dc71969b4dd4cd75` |
 
 ## 7. 结果回填表
 
@@ -194,9 +194,9 @@
 
 ## 8. 监控与同步清单
 
-- [ ] 启动前完成配置/权重/数据 checksum 和 Git 快照。
-- [ ] 两个运行启动后立即回填命令、设备、PID、stdout/stderr、启动时间和状态。
-- [ ] 运行中检查进程、NPU 利用率、最新 iteration、loss 是否有限、验证是否按 `800` iterations 出现。
+- [x] 启动前完成配置/权重/数据 checksum 和 Git 快照。
+- [x] 两个运行启动后立即回填命令、设备、PID、stdout/stderr、启动时间和状态。
+- [x] smoke 通过后确认两路 20k 进程、NPU 占用及日志开始写入；后续继续检查 validation。
 - [ ] 运行结束后核验 `20000/20000`、总训练时间、最后验证、checkpoint 和退出码。
 - [ ] 用同一个解析器计算 final、best、best iter、last-10 mean 和所有 delta。
 - [ ] 把结果、异常和决策回填本页；不得只在终端或聊天中留记录。
@@ -207,6 +207,7 @@
 
 | 时间 | 变更/异常 | 原因 | 对可比性的影响 | 处理 |
 |---|---|---|---|---|
-| `待填写` | `无` | `—` | `—` | `—` |
+| `2026-07-12T11:10:37+08:00` | 双卡 smoke 完成后自动进入 20k；完整 training state 已生成 | 预注册自动编排 | 无；训练配置未改变 | smoke 20/20 均完成，无 traceback/NaN |
+| `2026-07-12` | GitHub HTTPS 推送未完成 | 当前机器无 GitHub 凭据助手 | 不影响本地实验；远端暂未同步 commit | 已记录本地 commit，待提供凭据后推送 |
 
 若发生 OOM、NPU 故障、数据读取错误、日志截断、代码热修改或重启，必须逐项记录。任何改变 seed、训练预算、batch size、数据、权重、损失权重、验证频率或温度定义的操作都视为配置偏差，不能与既有 Phase M 直接合并比较。
