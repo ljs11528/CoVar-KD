@@ -1,7 +1,9 @@
 # Phase M2：匹配标量温度因果对照预注册与运行记录
 
 - 文档创建时间：`2026-07-12`（Asia/Shanghai）
-- 当前状态：`运行中`；双卡 smoke 已通过，20k pair 于 `2026-07-12T11:11:04+08:00` 启动
+- 当前状态：`已完成`；双卡 smoke 已通过，20k pair 于 `2026-07-12T11:11:04+08:00` 启动，并于 `2026-07-12T13:36:46+08:00` 全部结束
+- 最终结果报告：`reports/2026-07-12_phaseM2_scalar_temperature.md`
+- 预注册决策：最强匹配标量为 `T=0.6`；`CoVar - T=0.6 = -0.007381` final mIoU，命中 §5 规则 3“标量温度更强”，不自动升级 CoVar 80k 多种子实验
 - 首次 800-iteration 验证健康检查：标量 `T=0.5` mIoU `0.142365`，标量 `T=0.6` mIoU `0.152437`；两路随后继续训练。早期值仅作健康信号，不用于结果判断。
 - 实验目的：判断 Phase M 中 Newton CoVar 的增益来自像素级温度分配，还是主要来自整体降低 KD 温度造成的锐化。
 - 本阶段范围：VOC、CWD 配方、seed `1234`、`20000` iterations；新增标量 KD 温度 `T=0.5` 和 `T=0.6`，并与既有 `T=1.0` 和 Newton CoVar 结果比较。
@@ -152,12 +154,12 @@
 
 | Run ID | 启动命令（完整或脚本 + 环境变量） | NPU | PID / PID 文件 | stdout/stderr | 指标日志 | 启动时间 | 结束时间 | 状态 |
 |---|---|---:|---|---|---|---|---|---|
-| `cwd_tout3_kdtemp0p5_20k_seed1234` | `bash scripts/experiments/kd_baselines_npu/launch_phaseM2_scalar_temperature.sh` | `0` | worker `122450`; queue `121226`; `data/winycg/checkpoints/kd_baselines_npu/phaseM2_scalar_temperature/phaseM2_scalar_temperature.pid` | `data/winycg/checkpoints/kd_baselines_npu/phaseM2_scalar_temperature/runtime/triage_20k/kdtemp0p5.nohup.log` | `runs/logs/kd_baselines_npu/phaseM2_scalar_temperature/triage_20k/cwd_tout3_kdtemp0p5_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `2026-07-12T11:11:04+08:00` | `待填写` | `运行中` |
-| `cwd_tout3_kdtemp0p6_20k_seed1234` | `bash scripts/experiments/kd_baselines_npu/launch_phaseM2_scalar_temperature.sh` | `1` | worker `122449`; queue `121226`; same PID file | `data/winycg/checkpoints/kd_baselines_npu/phaseM2_scalar_temperature/runtime/triage_20k/kdtemp0p6.nohup.log` | `runs/logs/kd_baselines_npu/phaseM2_scalar_temperature/triage_20k/cwd_tout3_kdtemp0p6_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `2026-07-12T11:11:04+08:00` | `待填写` | `运行中` |
+| `cwd_tout3_kdtemp0p5_20k_seed1234` | `bash scripts/experiments/kd_baselines_npu/launch_phaseM2_scalar_temperature.sh` | `0` | worker `122450`; queue `121226`; `data/winycg/checkpoints/kd_baselines_npu/phaseM2_scalar_temperature/phaseM2_scalar_temperature.pid` | `data/winycg/checkpoints/kd_baselines_npu/phaseM2_scalar_temperature/runtime/triage_20k/kdtemp0p5.nohup.log` | `runs/logs/kd_baselines_npu/phaseM2_scalar_temperature/triage_20k/cwd_tout3_kdtemp0p5_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `2026-07-12T11:11:04+08:00` | `2026-07-12T13:36:46+08:00` | `已完成` |
+| `cwd_tout3_kdtemp0p6_20k_seed1234` | `bash scripts/experiments/kd_baselines_npu/launch_phaseM2_scalar_temperature.sh` | `1` | worker `122449`; queue `121226`; same PID file | `data/winycg/checkpoints/kd_baselines_npu/phaseM2_scalar_temperature/runtime/triage_20k/kdtemp0p6.nohup.log` | `runs/logs/kd_baselines_npu/phaseM2_scalar_temperature/triage_20k/cwd_tout3_kdtemp0p6_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `2026-07-12T11:11:04+08:00` | `2026-07-12T13:36:20+08:00` | `已完成` |
 
 允许的状态值：`未启动`、`运行中`、`已完成`、`失败`、`已停止`、`配置无效待重跑`。
 
-### 启动前快照（待填写）
+### 启动前快照（已记录）
 
 | 项目 | 值 |
 |---|---|
@@ -174,35 +176,35 @@
 
 | 变体 | Final mIoU（主） | Best mIoU | Best iter | Last-10 mean | 验证次数 | Runtime | 完整 |
 |---|---:|---:|---:|---:|---:|---|---|
-| 标量 `T=1.0`（既有） | `0.6420` | `0.6430` | `19200` | `待解析` | `25` | `2:24:59` | 是 |
-| 标量 `T=0.5` | `待填写` | `待填写` | `待填写` | `待填写` | `待填写` | `待填写` | `待填写` |
-| 标量 `T=0.6` | `待填写` | `待填写` | `待填写` | `待填写` | `待填写` | `待填写` | `待填写` |
-| Newton CoVar（既有） | `0.6460` | `0.6460` | `20000` | `待解析` | `25` | `2:31:14` | 是 |
+| 标量 `T=1.0`（既有） | `0.642000` | `0.643000` | `19200` | `0.626800` | `25` | `2:24:59.836589` | 是 |
+| 标量 `T=0.5` | `0.648235` | `0.648235` | `20000` | `0.626266` | `25` | `2:25:26.069913` | 是 |
+| 标量 `T=0.6` | `0.653381` | `0.653381` | `20000` | `0.624513` | `25` | `2:25:00.807508` | 是 |
+| Newton CoVar（既有） | `0.646000` | `0.646000` | `20000` | `0.622100` | `25` | `2:31:14.501236` | 是 |
 
-### 预注册比较（待填写）
+### 预注册比较（已完成）
 
 | 比较 | Final delta | Best delta | Last-10 mean delta | 结论 |
 |---|---:|---:|---:|---|
-| `T=0.5 - T=1.0` | `待填写` | `待填写` | `待填写` | `待填写` |
-| `T=0.6 - T=1.0` | `待填写` | `待填写` | `待填写` | `待填写` |
-| `CoVar - T=0.5` | `待填写` | `待填写` | `待填写` | `待填写` |
-| `CoVar - T=0.6` | `待填写` | `待填写` | `待填写` | `待填写` |
-| `CoVar - S*` | `待填写` | `待填写` | `待填写` | `待填写` |
+| `T=0.5 - T=1.0` | `+0.006235` | `+0.005235` | `-0.000534` | 低温标量提高 final/best，last-10 略低 |
+| `T=0.6 - T=1.0` | `+0.011381` | `+0.010381` | `-0.002287` | `T=0.6` 的 final/best 最强，last-10 低于 `T=1.0` |
+| `CoVar - T=0.5` | `-0.002235` | `-0.002235` | `-0.004166` | CoVar 三项均低于 `T=0.5` |
+| `CoVar - T=0.6` | `-0.007381` | `-0.007381` | `-0.002413` | CoVar 三项均低于 `T=0.6` |
+| `CoVar - S*` | `-0.007381` | `-0.007381` | `-0.002413` | 命中规则 3：“标量温度更强” |
 
-- 选中的最强匹配标量 `S*`：`待填写`
-- 命中的 §5 决策规则：`待填写`
-- 下一步动作：`待填写`
+- 选中的最强匹配标量 `S*`：`T=0.6`（按预注册主指标 final mIoU 选择）。
+- 命中的 §5 决策规则：规则 3，`Delta_final=-0.007381 <= -0.002`，判为“标量温度更强”。
+- 下一步动作：停止自动升级 CoVar 80k 多种子实验；进入 Phase N，在 80k、seed `1234` 下成对比较标量 `T=0.6` 与标量 `T=1.0`，判断低温锐化收益能否维持到长训练。
 
 ## 8. 监控与同步清单
 
 - [x] 启动前完成配置/权重/数据 checksum 和 Git 快照。
 - [x] 两个运行启动后立即回填命令、设备、PID、stdout/stderr、启动时间和状态。
 - [x] smoke 通过后确认两路 20k 进程、NPU 占用及日志开始写入；后续继续检查 validation。
-- [ ] 运行结束后核验 `20000/20000`、总训练时间、最后验证、checkpoint 和退出码。
-- [ ] 用同一个解析器计算 final、best、best iter、last-10 mean 和所有 delta。
-- [ ] 把结果、异常和决策回填本页；不得只在终端或聊天中留记录。
-- [ ] 更新总实验记录 `reports/2026-07-11_AAAI_paper_experiment_record.md` 的 Phase L/M/M2 状态。
-- [ ] 检查 `git status`，同步新增脚本、报告与必要的可复现元数据；训练 checkpoint 和大日志按项目既有策略保存，不误提交大文件。
+- [x] 运行结束后核验 `20000/20000`、总训练时间、最后验证、checkpoint 和退出状态。
+- [x] 用同一个解析器计算 final、best、best iter、last-10 mean 和所有 delta。
+- [x] 把结果、异常和决策回填本页及最终结果报告；没有只在终端或聊天中留记录。
+- [x] 更新总实验记录 `reports/2026-07-11_AAAI_paper_experiment_record.md` 的 Phase L/M/M2 状态。
+- [x] 检查 `git status`，纳入新增报告与必要的可复现元数据；训练 checkpoint 和大日志按项目既有策略保存，不误提交大文件。远端同步状态由提交/推送步骤另行记录。
 
 ## 9. 偏差与变更记录
 
@@ -210,5 +212,6 @@
 |---|---|---|---|---|
 | `2026-07-12T11:10:37+08:00` | 双卡 smoke 完成后自动进入 20k；完整 training state 已生成 | 预注册自动编排 | 无；训练配置未改变 | smoke 20/20 均完成，无 traceback/NaN |
 | `2026-07-12` | GitHub HTTPS 推送未完成 | 当前机器无 GitHub 凭据助手 | 不影响本地实验；远端暂未同步 commit | 已记录本地 commit，待提供凭据后推送 |
+| `2026-07-12T13:36:46+08:00` | 两路 20k 全部正常结束 | 计划完成 | 无；四组受控日志均可解析 | 核验 25 次验证、`20000/20000`、总训练时间、最终 checkpoint 和完整 training state；汇总为 `4/4 complete` |
 
 若发生 OOM、NPU 故障、数据读取错误、日志截断、代码热修改或重启，必须逐项记录。任何改变 seed、训练预算、batch size、数据、权重、损失权重、验证频率或温度定义的操作都视为配置偏差，不能与既有 Phase M 直接合并比较。

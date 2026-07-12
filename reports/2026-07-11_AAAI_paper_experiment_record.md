@@ -1,6 +1,6 @@
 # CoVar-KD Paper Experiment Record
 
-- Updated: 2026-07-12
+- Updated: 2026-07-13
 - Repository: `/home/ma-user/work/ljs`
 - Hardware/runtime verified 2026-07-12: 2 x Ascend 910, CANN 8.5.0, Python 3.11.10, PyTorch 2.8.0+cpu with torch_npu 2.8.0.post2
 - Dataset: Pascal VOC / VOCAug, 21 classes, VOC val with 1,449 images
@@ -219,12 +219,28 @@ Status: smoke and 20k triage completed on 2026-07-11. Source: `reports/2026-07-1
 
 ### 9.3 Phase M2: matched scalar-temperature controls
 
-Status: experiment design and record are ready. See the [Phase M2 preregistration and run record](2026-07-12_phaseM2_scalar_temperature_plan.md).
+Status: completed on 2026-07-12. Sources: [final result](2026-07-12_phaseM2_scalar_temperature.md) and [preregistration/run record](2026-07-12_phaseM2_scalar_temperature_plan.md).
 
-- The new 20k, seed-1234 controls use scalar KD temperatures `T=0.5` and `T=0.6`, with `Tout=3.0` and the Phase M CWD recipe unchanged.
-- `T=0.5` matches the CoVar temperature distribution's lower-bound mode/median; `T=0.6` approximately matches its mean (`0.5815`).
-- Final mIoU is preregistered as the primary metric; best mIoU and the last-10-validation mean are secondary metrics.
-- Launch commands, PID files, logs, completion checks, result tables, and promotion rules are reserved in the linked record for synchronized updates.
+| Variant | Best mIoU | Final mIoU | Last-10 mean | Runtime |
+|---|---:|---:|---:|---:|
+| Scalar `T=0.5` | 0.648235 | 0.648235 | 0.626266 | 2:25:26 |
+| Scalar `T=0.6` | **0.653381** | **0.653381** | 0.624513 | 2:25:01 |
+| Scalar `T=1.0` | 0.643000 | 0.642000 | **0.626800** | 2:25:00 |
+| Newton CoVar | 0.646000 | 0.646000 | 0.622100 | 2:31:15 |
+
+- `T=0.6` is the strongest matched scalar by the preregistered primary metric. Its final mIoU is `+0.011381` over `T=1.0` and `+0.007381` over CoVar.
+- `CoVar - T=0.6 = -0.007381` final mIoU, which hits the preregistered `<= -0.002` rule: **scalar temperature is stronger**. The automatic 80k multi-seed promotion of CoVar is stopped.
+- Both matched low-temperature controls outperform CoVar on final mIoU. Therefore the Phase M CoVar gain over `T=1.0` cannot be attributed to spatial adaptation without further evidence; global low-temperature sharpening is the more plausible explanation under this CWD setting.
+- The last-10 mean ranks `T=1.0` first, so the 20k endpoints and late-window average are not perfectly aligned. This is a single-seed triage result and must not be reported as statistical superiority.
+
+### 9.4 Phase N: 80k scalar-temperature confirmation
+
+Status: preregistered and ready to launch on 2026-07-13. Source: [Phase N plan](2026-07-13_phaseN_scalar_temperature_80k_plan.md).
+
+- Compare scalar `T=1.0` on NPU 0 against scalar `T=0.6` on NPU 1 under the same CWD recipe, `Tout=3.0`, seed `1234`, and 80k budget.
+- Primary metric: final mIoU. Secondary metrics: best mIoU/best iteration and last-10-validation mean.
+- This pair tests whether the Phase M2 low-temperature endpoint gain persists at the paper's full training budget. It does not test spatial adaptation.
+- Multi-seed promotion is conditional on the preregistered final-mIoU delta and late-window behavior; no multi-seed conclusion is authorized before the seed-1234 pair completes.
 
 ## 10. Paper-ready claims and prohibited overclaims
 
@@ -242,7 +258,8 @@ Not yet supported:
 2. Variance alone improves performance: the isolated variance row is negative.
 3. Cross-dataset generalization: only VOC data and a VOC teacher are locally available.
 4. Cross-student statistical stability: the PSPNet result is one seed.
-5. 80k multi-seed CWD+CoVar superiority: only positive single-seed 20k evidence exists.
+5. CWD+CoVar superiority over matched scalar temperatures: Phase M2 instead favors scalar `T=0.6` by `+0.007381` final mIoU at 20k.
+6. An 80k or multi-seed benefit from scalar `T=0.6`: Phase N is designed to test the first of these claims.
 
 ## 11. Recommended paper placement
 
@@ -250,4 +267,4 @@ Not yet supported:
 - Main ablation: `Tout=3.0` CoVar off/on, three-seed aggregate, and reliability components.
 - Main mechanism figure: H1 reliability/error curve plus H2 rank-3 qualitative map.
 - Supplement: `Tout=1.0` seeds, gamma triage, all 20k baseline rows, H3 full distributions, and additional H2 examples.
-- Limitations: single dataset, CWD currently stronger in absolute mIoU, and high `T_min` occupancy.
+- Limitations: single dataset, CWD currently stronger in absolute mIoU, high `T_min` occupancy, and the Phase M2 evidence that matched scalar low temperature can outperform CoVar.
