@@ -120,18 +120,18 @@ Phase M2 在相同 CWD、`Tout=3.0`、seed `1234`、20k 配方下得到：
 
 允许的状态：`ready`、`smoke_running`、`running`、`complete`、`failed`、`stopped`、`invalid_requires_rerun`。
 
-## 8. 启动前快照占位
+## 8. 启动前快照（`2026-07-13T08:07:46+08:00`）
 
 | 项目 | 值 |
 |---|---|
-| Git commit | `启动前填写` |
-| `git status --short` 摘要 | `启动前填写；必须区分已跟踪修改与预期新增文件` |
-| Python / torch / torch_npu | `启动前填写` |
-| `npu-smi info` 摘要 | `启动前填写；须核验两张 NPU 健康且无冲突训练进程` |
-| 数据列表 checksum | `启动前填写` |
-| Teacher 权重 checksum | `启动前填写` |
-| Student 初始化权重 checksum | `启动前填写` |
-| 启动器语法检查 | `启动前填写` |
+| Git commit | `5cfc1e8eae72d281a1604d560a055b33f405a432`（Phase N 预注册与脚本提交） |
+| `git status --short` 摘要 | 快照时为空；无已跟踪修改、无未跟踪文件 |
+| Python / torch / torch_npu | `3.11.10` / `2.8.0+cpu` / `2.8.0.post2`；解释器已在编排器中冻结为 `/home/ma-user/anaconda3/envs/PyTorch-2.6.0/bin/python` |
+| `npu-smi info` 摘要 | 2 x Ascend 910，均 `Health OK`、AICore `0%`；无运行中的 NPU process；可用磁盘约 `140 GB` |
+| 数据列表 checksum | `dataset/list/voc/train_aug.txt`: `d1326bd532648d73bc4b1bd275434eba81930982dc7401a65a8cecb26c028e24`; `dataset/list/voc/val.txt`: `cdc1326d12f69ce5153aa5da04a4d8783e146868d42d19f82f44e74b97ac907d` |
+| Teacher 权重 checksum | `ac49b2c7720b21d565072e974e4404fcb009ba106288d95d1a4bb25f09c3fe58` |
+| Student 初始化权重 checksum | `47085aa164b2977003221458a2a5fdf5f46f434f5539b164dc71969b4dd4cd75`；fresh ImageNet init |
+| 启动器/检查器验证 | Phase N shell `bash -n`: PASS；汇总器与 `train_kd.py` `py_compile`: PASS；strict helper 正例、错温度、数字前缀、旧完成+新 partial、NaN、checkpoint 缺失反例：PASS；当前环境未安装 `shellcheck` |
 
 ## 9. 结果占位
 
@@ -153,7 +153,7 @@ Phase M2 在相同 CWD、`Tout=3.0`、seed `1234`、20k 配方下得到：
 
 - [x] Phase M2 结果和因果警告已完成记录。
 - [x] Phase N 主次指标、配置、产物路径和多种子晋级规则已在启动前冻结。
-- [ ] 启动前回填 Git、环境、NPU、数据和权重快照。
+- [x] 启动前回填 Git、环境、NPU、数据和权重快照。
 - [ ] 双卡 smoke 均通过后，核验 80k pair 的实际 PID、设备、命令、日志和启动时间。
 - [ ] 运行中定期同步 iteration、最近验证、sec/iter、ETA 与健康状态。
 - [ ] 结束后核验 `80000/80000`、100 次验证、总训练时间、checkpoint/training state 和退出状态。
@@ -164,4 +164,4 @@ Phase M2 在相同 CWD、`Tout=3.0`、seed `1234`、20k 配方下得到：
 
 | 时间 | 变更/中断 | 原因 | 对可比性的影响 | 处理 |
 |---|---|---|---|---|
-| `待填写` | `无 / 待记录` | `待填写` | `待填写` | `待填写` |
+| `2026-07-13T08:07:46+08:00` | 启动前无配置偏差或中断 | 不适用 | 无 | 预注册、代码、环境、数据与权重快照均已冻结 |
