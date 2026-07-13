@@ -1,7 +1,7 @@
 # Phase N：标量温度 80k 成对确认实验预注册与运行记录
 
 - 文档创建时间：`2026-07-13`（Asia/Shanghai）
-- 启动前状态：`ready（未启动）`
+- 当前状态：`运行中`；双卡 smoke 已完整通过，80k pair 于 `2026-07-13T08:10:52+08:00` 启动
 - 实验目的：确认 Phase M2 中标量 `T=0.6` 相对 `T=1.0` 的 20k final mIoU 优势，能否在论文主预算 80k 下保持。
 - 本阶段不测试像素级空间自适应，也不包含 CoVar；唯一受控变量是标量 logit KD temperature。
 - 本页在启动训练前冻结主次指标、配置、路径、完整性要求和多种子晋级规则。若启动后必须修改，须先在“偏差与中断记录”中登记时间、原因和影响。
@@ -115,10 +115,19 @@ Phase M2 在相同 CWD、`Tout=3.0`、seed `1234`、20k 配方下得到：
 
 | Run ID | NPU | Worker PID / 文件 | stdout/stderr | 指标日志 | Checkpoint 目录 | 启动时间 | 结束时间 | 状态 |
 |---|---:|---|---|---|---|---|---|---|
-| `cwd_tout3_kdtemp1p0_80k_seed1234` | `0` | `待启动`; `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/runtime/main_80k/kdtemp1p0.pid` | `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/runtime/main_80k/kdtemp1p0.nohup.log` | `runs/logs/kd_baselines_npu/phaseN_scalar_temperature_80k/main_80k/cwd_tout3_kdtemp1p0_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/main_80k/cwd_tout3_kdtemp1p0_80k_seed1234/` | `待启动` | `待填写` | `ready` |
-| `cwd_tout3_kdtemp0p6_80k_seed1234` | `1` | `待启动`; `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/runtime/main_80k/kdtemp0p6.pid` | `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/runtime/main_80k/kdtemp0p6.nohup.log` | `runs/logs/kd_baselines_npu/phaseN_scalar_temperature_80k/main_80k/cwd_tout3_kdtemp0p6_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/main_80k/cwd_tout3_kdtemp0p6_80k_seed1234/` | `待启动` | `待填写` | `ready` |
+| `cwd_tout3_kdtemp1p0_80k_seed1234` | `0` | worker `1596563`; `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/runtime/main_80k/kdtemp1p0.pid` | `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/runtime/main_80k/kdtemp1p0.nohup.log` | `runs/logs/kd_baselines_npu/phaseN_scalar_temperature_80k/main_80k/cwd_tout3_kdtemp1p0_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/main_80k/cwd_tout3_kdtemp1p0_80k_seed1234/` | `2026-07-13T08:10:52+08:00` | `待填写` | `running` |
+| `cwd_tout3_kdtemp0p6_80k_seed1234` | `1` | worker `1596564`; `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/runtime/main_80k/kdtemp0p6.pid` | `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/runtime/main_80k/kdtemp0p6.nohup.log` | `runs/logs/kd_baselines_npu/phaseN_scalar_temperature_80k/main_80k/cwd_tout3_kdtemp0p6_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt` | `data/winycg/checkpoints/kd_baselines_npu/phaseN_scalar_temperature_80k/main_80k/cwd_tout3_kdtemp0p6_80k_seed1234/` | `2026-07-13T08:10:52+08:00` | `待填写` | `running` |
 
 允许的状态：`ready`、`smoke_running`、`running`、`complete`、`failed`、`stopped`、`invalid_requires_rerun`。
+
+### 启动与 smoke 实际记录
+
+- Controller：PID `1595416`；启动 `2026-07-13T08:10:22+08:00`。
+- Smoke `T=1.0` / NPU 0：worker PID `1595426`，`20/20`，runtime `0:00:11.528374`，final model 与 `training_state_latest.pth` 完整，strict check `complete=true`。
+- Smoke `T=0.6` / NPU 1：worker PID `1595427`，`20/20`，runtime `0:00:11.304320`，final model 与 `training_state_latest.pth` 完整，strict check `complete=true`。
+- 80k pair 于 `2026-07-13T08:10:52+08:00` 自动接棒；worker PID 为 `1596563`（`T=1.0`）和 `1596564`（`T=0.6`）。
+- 两路实际 Namespace 已核验为 fresh ImageNet init、`Tout=3.0`、对应 scalar KD 温度、seed `1234`、batch `16`、workers `8`、save/val `800`、无 CoVar；首批 `40/80000` 日志健康，无 traceback/NaN/OOM。
+
 
 ## 8. 启动前快照（`2026-07-13T08:07:46+08:00`）
 
@@ -154,7 +163,7 @@ Phase M2 在相同 CWD、`Tout=3.0`、seed `1234`、20k 配方下得到：
 - [x] Phase M2 结果和因果警告已完成记录。
 - [x] Phase N 主次指标、配置、产物路径和多种子晋级规则已在启动前冻结。
 - [x] 启动前回填 Git、环境、NPU、数据和权重快照。
-- [ ] 双卡 smoke 均通过后，核验 80k pair 的实际 PID、设备、命令、日志和启动时间。
+- [x] 双卡 smoke 均通过；已核验 80k pair 的实际 PID、设备、命令、Namespace、日志和启动时间。
 - [ ] 运行中定期同步 iteration、最近验证、sec/iter、ETA 与健康状态。
 - [ ] 结束后核验 `80000/80000`、100 次验证、总训练时间、checkpoint/training state 和退出状态。
 - [ ] 使用冻结汇总器生成 `reports/2026-07-13_phaseN_scalar_temperature_80k.md`，回填本页和总实验记录。
@@ -165,3 +174,5 @@ Phase M2 在相同 CWD、`Tout=3.0`、seed `1234`、20k 配方下得到：
 | 时间 | 变更/中断 | 原因 | 对可比性的影响 | 处理 |
 |---|---|---|---|---|
 | `2026-07-13T08:07:46+08:00` | 启动前无配置偏差或中断 | 不适用 | 无 | 预注册、代码、环境、数据与权重快照均已冻结 |
+| `2026-07-13T08:09:28+08:00` | 远端 Git push 未执行 | 环境外发安全策略要求先显式确认远端可信 | 不影响本地训练或可复现快照；仅远端尚未同步 | 本地提交完整保留；不得绕过策略，待用户确认远端后再推送 |
+| `2026-07-13T08:10:22+08:00` | smoke 启动并于 `08:10:52` 放行 80k pair | 预注册自动编排 | 无配置偏差 | 两路 smoke strict complete；80k Namespace 与预注册一致 |
