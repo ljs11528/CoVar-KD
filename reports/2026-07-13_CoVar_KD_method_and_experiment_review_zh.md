@@ -6,7 +6,7 @@
 - 事实口径：方法以当前代码和冻结 shell 为准；实验以 `reports/` 中的阶段报告及已核验日志为准；README 中的上游发布结果不计为本项目本地完成实验。
 - 状态标记：`已完成` 表示训练预算、最终验证和日志完整性已经核验；`进行中` 和 `计划中` 不进入结果结论。
 
-> 执行方向更新（2026-07-13）：Phase N 已停止，本页继续作为 Newton/历史实验的审查快照；新的目标置信度主线、可靠/不可靠分支公式与实验预注册见 [Phase O RTC-KD 重构计划](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)。
+> 执行方向更新（2026-07-13）：本页继续作为 Newton/历史实验的审查快照。O1.1 confidence-only 风险门禁已通过，但大面积强锐化仍构成主要混淆；当前唯一未来规范是 [O1.2 高风险优先预算路由预注册](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)。O1/O1.1 历史、正式结果和来源契约见 [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)。尚未启动 O1.2 学生训练。
 
 ## 0. 先给结论
 

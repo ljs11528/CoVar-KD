@@ -246,6 +246,19 @@ Status: stopped by user at approximately `2026-07-13T10:36:45+08:00` to prioriti
 - The pair is incomplete, no preregistered promotion rule applies, and no performance conclusion is authorized. It must not auto-resume while Phase O is being designed.
 - The new method direction and experiment gates are recorded in [Phase O RTC-KD reconstruction](2026-07-13_phaseO_rtc_method_reconstruction_plan.md).
 
+### 9.5 Phase O1.1 result and O1.2 frozen reconstruction
+
+Status: O1.1 diagnostics completed and O1.2 plan frozen on 2026-07-13; no O1.2 student training has started.
+
+- O1.1 replaced the active risk score with confidence-only r=-log(c), rebuilt an independent CDF, and passed the independent train/val joint gate.
+- The high-risk side covers 19.84%/21.09% of train/val pixels and recalls 98.70%/82.63% of teacher errors.
+- The O1.1 temperature median remains approximately 0.5 and the harmonic mean approximately 0.6, so broad low-temperature sharpening remains a strong alternative explanation.
+- O1.2 freezes a separate dead-zone routing rule, mean/harmonic temperature budgets, and teacher-target-only spatial calibration.
+- O1.2 is exploratory because its thresholds were chosen after inspecting the same VOC train/val diagnostics; confirmation requires a new teacher or dataset.
+- The next authorized action is implementation plus a no-student mechanism gate. Student training is not auto-authorized.
+
+Sources: [O1.1 diagnostic report](2026-07-13_phaseO_rtc_o11_diagnostic_report.md) and [O1.2 frozen plan](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md).
+
 ## 10. Paper-ready claims and prohibited overclaims
 
 Supported:

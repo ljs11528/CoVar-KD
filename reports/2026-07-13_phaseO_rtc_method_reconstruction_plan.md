@@ -2,11 +2,37 @@
 
 - 创建日期：2026-07-13
 - 方法名称：可靠性目标置信度蒸馏（Reliability-Targeted Confidence Distillation，RTC-KD）
-- 当前状态：方案草案 v2，尚未实现，尚未启动新训练
+- 当前状态：O1/O1.1 实现与诊断完成；O1.1 联合门禁通过；O1.2 新方案已冻结，尚未实现，尚未启动学生训练
 - 上一阶段：Phase N 已停止，不自动恢复
 - 文档格式：为兼容不同 Markdown 渲染器，公式统一写成纯文本代码块
+- 阅读规则：第 1 至 18 节保留 O1/O1.1 的历史方法与正式结果；O1.2 以第 19 节及其独立预注册文档为唯一规范
 
 ## 0. 一页结论
+
+### 当前 O1.2 主线
+
+Phase O 已完成两次风险定义诊断：
+
+1. O1 保留 confidence+variance 历史定义并正式失败；
+2. O1.1 改用 confidence-only 风险，正式联合门禁通过；
+3. O1.1 同时暴露出旧单阈值温度映射造成大面积强锐化，不能直接进入学生实验。
+
+当前唯一主线是 O1.2：
+
+1. 精确复用 O1.1 confidence-only CDF，不重新选择风险分数；
+2. bottom 60% 只做逐渐减弱的轻微锐化；
+3. middle 20% 保持严格中性；
+4. top 20% 随风险连续增强平滑；
+5. 将温度算术均值约束在 0.995，并要求调和均值不低于 0.98；
+6. 空间温度只校准教师目标，学生端温度固定为 1；
+7. 首个学生比较只运行 neutral 与 unreliable_only；
+8. matched scalar 与 within-image shuffle 完成前，不声称空间风险位置具有独立贡献。
+
+O1.2 的完整公式、来源契约、门禁和停止规则见：
+
+- [O1.2 高风险优先预算路由预注册](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)
+
+### O1/O1.1 历史首轮定义（仅记录）
 
 RTC-KD 不再直接最小化随温度变化的不可靠度，而采用以下流程：
 
@@ -790,3 +816,301 @@ CDF 固定相对比例，不能保证不同教师和数据集上的绝对错误�
 - 实现后先通过单元测试和 20-iteration smoke；
 - 只有 O1/O2 门槛通过，才启动 20k 核心矩阵；
 - 所有参数变化、失败和中断必须先写入本文档。
+
+## 16. 2026-07-13 正式执行回填
+
+### 16.1 执行边界
+
+- O0、O0b、正式 CDF 构建和正式 O1 联合诊断均已完成；
+- 没有恢复 Phase N，没有启动 O2，也没有运行任何 20k/80k 学生训练；
+- 当前没有 Phase O 训练或诊断进程；
+- O1 未通过预注册门槛，因此 O2/O3 继续锁定。
+
+### 16.2 正式冻结 CDF
+
+正式 CDF 完整扫描 VOC train_aug 的 10,582 张图像。原生教师网格有效像素数为
+32,298,651，有限像素数同为 32,298,651，非有限像素数为 0。
+
+| 项目 | 正式值 |
+|---|---|
+| Artifact | `runs/diagnostics/phaseO/voc_train_rtc_cdf.pt` |
+| CDF SHA256 | `40b4454fc919422899e512fed4ece4a428d12544e7ce828a89dc731d12529e39` |
+| 图像进度 | 10,582 / 10,582 |
+| CDF 样本数 | 32,298,651 |
+| `r0` 最小值 | 2.8937583440580283e-09 |
+| `r0` 均值 | 0.20497506856918335 |
+| `r0` 最大值 | 5.4413299560546875 |
+| 构建脚本 SHA256 | `7c9f6d5de606ce0a2e2d4de0af9b728b372e0d2ef6c0121fcd79af3753d8e7c2` |
+| RTC 核心 SHA256 | `4986b545536bb9d0417b60f1b57855a4ca1bdbe982364e09224db53a68628224` |
+
+### 16.3 正式 O1 结果
+
+train 和 val 均为完整扫描，且使用同一份冻结训练集 CDF。标签只用于离线验证
+路由质量，不进入 CDF、温度生成或训练时路由。
+
+| 指标 | train_aug | val |
+|---|---:|---:|
+| 完整图像数 | 10,582 / 10,582 | 1,449 / 1,449 |
+| 原生有效像素 | 32,246,990 | 3,878,674 |
+| 教师错误率 | 0.0294596 | 0.0622352 |
+| 高风险覆盖率 | 0.1984741 | 0.2093762 |
+| 高风险侧错误 precision | 0.1466368 | 0.2439632 |
+| 教师错误 recall | 0.9879156 | 0.8207589 |
+| 相对全局错误率富集倍数 | 4.9776 | 3.9200 |
+| 低风险侧错误率 | 0.0004442 | 0.0141092 |
+| Full AP | 0.3855771 | 0.3698922 |
+| Confidence-only AP | 0.3943625 | 0.3856800 |
+| Variance-only AP | 0.3840141 | 0.3676450 |
+| Full − Confidence-only AP | -0.0087854 | -0.0157878 |
+| Full AUC | 0.9634619 | 0.9017147 |
+| 温度方向违规数 | 0 | 0 |
+| fallback / tie / nonfinite | 0 / 0 / 0 | 0 / 0 / 0 |
+| 目标残差 p95 | 7.58171e-05 | 7.53403e-05 |
+
+风险十分位与错误率具有明显单调关系。train 最高风险十分位错误率为 0.2611881，
+val 为 0.3514240；最低风险十分位分别为 0 和 0.0001780。这说明当前无标签风险
+排序确实能区分相对可靠侧和不可靠侧，并非随机路由。
+
+### 16.4 O1 门禁结论
+
+正式联合门禁结论为 `joint_gate_pass=false`。实现完整性、有限性、温度方向、
+路由覆盖、风险富集、双 `T_out` 路由一致性、CDF 来源与配置指纹检查均通过。
+唯一失败项是预注册判据：
+
+```text
+AP_full >= AP_confidence_only - 0.005
+```
+
+train 的差值为 -0.0087854，val 的差值为 -0.0157878，二者都越过了允许下界。
+因此不能声称非主类方差项为置信度路由提供了有效增量；相反，它在两个 split
+上都降低了教师错误排序 AP。
+
+这个失败不等同于“可靠/不可靠分路无效”。现有结果支持置信度主导的相对风险
+路由，但不支持当前 Full 分数中方差项的必要性。不得通过事后放宽 0.005 阈值
+追认 O1，也不得带着当前评分进入学生性能实验。
+
+正式门禁产物：
+
+- `runs/diagnostics/phaseO/o1_joint_gate.json`；
+- `runs/diagnostics/phaseO/rtc_routing_train.json`；
+- `runs/diagnostics/phaseO/rtc_routing_val.json`。
+
+### 16.5 下一步预注册建议：O1.1
+
+建议把下一版训练时风险分数改为 confidence-only：
+
+```text
+r_conf(i) = -log(c_i)
+u_i = F_train,conf(r_conf(i))
+```
+
+其中 `F_train,conf` 仍只由目标训练集的无标签教师输出建立。可靠侧继续向低温
+强锐化目标校准，不可靠侧继续向高温平滑目标校准；温度反解、两侧端点、`q`、
+KD mask/reduction 和数值机制检查保持不变。评分改变后必须使用新文件名重建
+CDF，重新完成完整 train/val 路由诊断，不能覆盖或复用本次 Full-score artifact。
+
+原 `AP_full >= AP_confidence_only - 0.005` 已经产生否定结论并永久保留。O1.1
+主分数若定义为 confidence-only，就不能继续用该分数与自身比较作为晋级条件；
+这种门禁必然通过，不具可证伪性。O1.1 必须在运行前另行冻结以下非同义门禁：
+
+1. train/val 高风险覆盖率均位于 `[0.15, 0.25]`；
+2. 高风险错误率均至少为各 split 全局错误率的 2 倍；
+3. 高风险侧教师错误 recall 均不低于 0.70，低风险错误率均低于全局错误率；
+4. 45 个有序十分位对中，错误率不发生逆序的 pairwise 单调一致率均不低于 0.90；相等错误率视为一致；
+5. nonfinite、fallback、tie、方向违规和双 `T_out` 路由 mismatch 均为 0；
+6. 目标残差 p95 小于 `1e-3`，CDF 完整性、来源 SHA 和配置指纹全部通过。
+
+这些阈值是在看过 O1 后为探索性 O1.1 设定的，不能把同一 VOC 上的通过写成独立
+确认。真正的确认性证据必须来自未参与此次评分选择的新教师或新数据集，并在
+评估前冻结 confidence-only、CDF 策略、`q`、gate 宽度和温度端点。
+
+备选方案是只在训练集内部预注册并选择方差系数，再对 val 做一次确认；但当前
+两个 split 都显示 confidence-only 更优，额外系数会增加选择自由度和审稿风险，
+因此不作为首选。
+
+O1.1 属于方法定义变化，必须先更新预注册配置并获得确认。在此之前保持：
+
+- O2/O3 锁定；
+- 不启动学生训练；
+- 保留本次失败产物和阈值，不覆盖、不删除、不改判。
+
+## 17. O1.1：confidence-only 路由正式预注册
+
+冻结状态：本节在任何 O1.1 正式 CDF 构建或路由诊断运行前写入。O1.1 尚未启动；本节只固定假设、配置、产物路径和判据，不包含结果。
+
+### 17.1 假设与证据定位
+
+O1.1 只检验以下缩减假设：教师最大类别置信度定义的相对风险排序，能否在标签不参与路由的前提下，把教师错误稳定富集到相对高风险侧，并驱动可靠侧锐化、不可靠侧平滑。
+
+confidence-only 是查看同一 VOC 上 O1 的 full、confidence-only 和 variance-only 结果后选出的，因此 O1.1 明确属于探索性、非独立确认实验。即使通过，也只能说明该定义在当前教师与 VOC 设置上值得进入后续机制验证，不能写成独立确认、跨数据集泛化证据或“方差项从未有用”。确认性结论必须来自预先冻结方法后的新教师或新数据集。
+
+### 17.2 唯一主风险分数
+
+对原始教师 logits `z_t(i,k)`，固定：
+
+```text
+p_assess(i,k) = softmax(z_t(i,k) / T_assess)
+c_i           = max_k p_assess(i,k)
+r_conf(i)     = -log(clamp(c_i, epsilon, 1-epsilon))
+
+T_assess         = 1.0
+reliability_mode = confidence
+coefficient_a    = 0.0
+```
+
+`coefficient_a=0.0` 必须显式写入配置和产物元数据。它在 confidence 主路由中不参与计算，用 0 是为了消除是否仍隐式保留 O1 方差项的歧义。诊断可以离线报告旧 full/variance 分数作为非活动参考，但不得将其混入 CDF、gate 或温度目标。
+
+冻结训练集 CDF 后：
+
+```text
+u_i = F_train,confidence(r_conf(i))
+```
+
+`r_conf` 的数值与 CDF 排序不使用类别值、教师正确性或学生信息；但构建器沿用监督分割数据的 GT `ignore-valid` 空间掩码，以排除 ignore/void 与 padding 像素。因此本实现严格说不是完全 label-free，论文中只能表述为“标签类别和正确性不参与风险定义或排序拟合，仅使用训练协议既有的有效像素掩码”。
+
+O1.1 不复用 O1 的 full-score CDF。
+
+### 17.3 冻结路由、温度与随机性
+
+除风险分数和独立产物命名外，其余主配置保持不变：
+
+| 参数 | O1.1 冻结值 |
+|---|---:|
+| `q` / `w` | 0.8 / 0.05 |
+| `T_R` / `T_0` / `T_U` | 0.5 / 1.0 / 2.0 |
+| `alpha_R` / `alpha_U` | 1.0 / 1.0 |
+| `T_out` | 3.0 |
+| 二分次数 | 16 |
+| CDF 构建 seed | 1234 |
+| train 正式诊断增强 seed | 2025 |
+| AP/AUC 排名采样 seed | 3407 |
+
+gate 固定为：
+
+```text
+gate_R(i) = max(tanh((q - u_i) / w), 0)
+gate_U(i) = max(-tanh((q - u_i) / w), 0)
+```
+
+可靠侧只允许 `T_i` 落在 `[T_R,T_0]`，不可靠侧只允许落在 `[T_0,T_U]`。`T_out=3.0` 只进入实际 KD 教师 logits 和目标置信度，不得进入风险 CDF 或路由。train 诊断 seed `2025` 必须与 CDF seed `1234` 独立。
+
+train/val 均须完整扫描。AP/AUC 继续采用每图最多 1,024 个 native-valid 像素、seed `3407` 和 tie-aware 分组阈值实现；覆盖、错误率、precision、recall 与十分位错误率使用全 native-valid 像素 micro 统计。
+
+### 17.4 独立目录、phase 与强制产物
+
+O1.1 统一使用独立目录：
+
+```text
+runs/diagnostics/phaseO_o11/
+```
+
+所有正式 JSON 的 phase 字段必须精确为 `O1.1`。四个主产物冻结为：
+
+```text
+runs/diagnostics/phaseO_o11/voc_train_rtc_confidence_cdf.pt
+runs/diagnostics/phaseO_o11/rtc_confidence_routing_train.json
+runs/diagnostics/phaseO_o11/rtc_confidence_routing_val.json
+runs/diagnostics/phaseO_o11/o11_confidence_gate.json
+```
+
+CDF summary、十等分 CSV 等 sidecar 如由脚本生成，也必须留在 `runs/diagnostics/phaseO_o11/`，并采用 confidence 前缀或与主 CDF 同名的 sidecar 命名。禁止覆盖、改写、移动或删除以下 O1 产物：
+
+```text
+runs/diagnostics/phaseO/voc_train_rtc_cdf.pt
+runs/diagnostics/phaseO/rtc_routing_train.json
+runs/diagnostics/phaseO/rtc_routing_val.json
+runs/diagnostics/phaseO/o1_joint_gate.json
+```
+
+联合门禁必须核对 O1.1 的实际 CDF SHA256、train/val 报告所记录 CDF SHA、teacher/list/source/config 指纹、完整扫描状态及 phase 字段；任一不一致均为结构性失败，不能手工放行。
+
+### 17.5 非同义联合门禁
+
+O1 的 `AP_full >= AP_confidence_only - 0.005` 已永久保留为 O1 的失败结论。O1.1 主分数就是 confidence-only，禁止用 confidence-only 与自身比较作为门禁。O1.1 的 train 与 val 必须分别满足以下全部条件，联合门禁才可为真：
+
+1. 高风险覆盖率位于闭区间 `[0.15, 0.25]`；
+2. 高风险侧错误率不低于该 split 全局教师错误率的 2 倍；
+3. 高风险侧教师错误 recall 不低于 `0.70`；
+4. 低风险侧教师错误率严格低于该 split 全局教师错误率；
+5. 从低风险到高风险排列的十个风险十分位组成 45 个 `i<j` 有序对；若 `error_rate[i] <= error_rate[j]` 则该对一致（相等视为通过），pairwise 单调一致率不低于 `0.90`；
+6. native-valid 像素数为正；nonfinite、fallback、tie、两侧方向违规、`T_out=1` 与 `T_out=3` 的路由字段 mismatch、正温度缩放后的 argmax mismatch 均严格为 0；
+7. 固定 ranking sample 中 active solved nonfallback 像素的目标 log-odds 残差 p95 小于 `1e-3`；
+8. train/val 和 CDF 均为完整数据集扫描；CDF 来源、实际文件 SHA256、teacher/list SHA、类别数、`T_assess=1.0`、`reliability_mode=confidence`、`coefficient_a=0.0`、随机种子及关键配置指纹全部一致。
+
+十分位 Spearman 仍须报告，但不作为门禁。原因是低风险多个十分位可能都为零错误；平均秩 Spearman 会惩罚这种理想平台，而 pairwise 一致率把相等视为不违背单调性。本口径在正式 CDF 和正式 train/val 运行前，由 8 图链路 smoke 暴露并完成修订。
+
+AP、AUC、错误 precision、温度分布和十分位明细仍须报告，但 AP/AUC 不作为上述门禁的同义替代。任一阈值失败都必须令 `o11_confidence_gate.json` 中的 `joint_gate_pass=false`；不得事后改阈值、删 split 或挑 seed。
+
+风险富集、召回率与低风险错误率必须由全量 native-valid 的整数 `risk_routing_counts` 独立重算：高风险为 `u>q`，低风险为 `u<q`，边界为 `u==q`。风险十分位逐 bin 保存精确 `teacher_wrong_count`，用于核对人口、错误总数与单调性，不再用十分位浮点率反推路由两侧指标。
+
+联合门禁还必须逐项锁定完整 RTC 配置、CDF/train/ranking seed、每图 ranking cap、batch/workers、train/val 完整规模及 canonical list SHA，并核对预注册 teacher SHA；仅“train 与 val 彼此相同”不足以通过。
+
+O1.1 checker 本身纳入 CDF 的 source SHA 映射；checker 运行时必须核对该 SHA 与当前文件，并在门禁产物中记录自身 SHA。上述内容是在正式 CDF 和正式 train/val 结果产生前的 schema 完整性修正，不改变任何效果门槛。
+
+### 17.6 执行禁令与晋级边界
+
+在 `o11_confidence_gate.json` 正式生成且 `joint_gate_pass=true` 之前：
+
+- 禁止启动 O2/O3；
+- 禁止运行任何 RTC 学生 20-iteration、20k 或 80k 训练；
+- 禁止生成或宣称 O1.1 student mIoU、checkpoint 或性能结论；
+- 禁止覆盖 O1 失败记录，禁止把 O1.1 的探索性通过改写成 O1 通过；
+- 实现变更、失败运行和偏离预注册的事项必须先记录在 `2026-07-13_phaseO_rtc_o11_execution_record.md`。
+
+只有 O1.1 的结构检查、train 门禁和 val 门禁全部通过，才允许另行讨论是否开启 O2；该放行也不自动授权任何学生训练。
+## 18. O1.1 正式结果与当前决策
+
+状态：2026-07-13 正式完成，独立联合门禁通过；未启动任何学生训练。
+
+| 指标 | Train | Val | 门槛 |
+|---|---:|---:|---:|
+| 高风险覆盖率 | 0.198395 | 0.210878 | [0.15, 0.25] |
+| 高风险错误富集 | 4.9748x | 3.9183x | >=2x |
+| 高风险错误 recall | 0.986971 | 0.826277 | >=0.70 |
+| 低风险错误率 | 0.000479 | 0.013701 | < 全局 |
+| 十分位 pairwise 一致率 | 1.000000 | 1.000000 | >=0.90 |
+| 残差 p95 | 7.58e-5 | 7.53e-5 | <1e-3 |
+
+正式 CDF 扫描 10,582 张 train_aug 图像、32,298,651 个 finite native-valid 像素，nonfinite 为 0。train 与 val 的十分位错误率均严格单调上升，所有 fallback、tie、方向违规、路由 mismatch 和正温度 argmax mismatch 均为 0。独立 checker 给出：
+
+```text
+joint_gate_pass = true
+train_pass      = true
+val_pass        = true
+```
+
+因此，当前证据支持：confidence-only 风险在本教师与 VOC 上足以稳定建立相对可靠性排序，旧方差项不是该排序成立的必要条件。
+
+仍需保留两项限制：
+
+1. O1.1 是查看 O1 后提出的探索性实验，不能作为跨数据集或跨教师的独立确认；
+2. train/val 温度中位数均约为 0.500004，调和均值约为 0.594/0.601。大量像素受到强锐化，后续学生收益仍可能由广泛低温而非空间风险选择解释。
+
+O1.1 的通过只解除风险定义诊断门槛，不自动启动 O2/O3。若后续获批，可靠侧、非可靠侧、强标量低温以及空间/温度分布匹配对照必须分别验证。
+
+详细结果与指纹见：
+
+- [O1.1 正式诊断报告](2026-07-13_phaseO_rtc_o11_diagnostic_report.md)
+- [O1.1 执行记录](2026-07-13_phaseO_rtc_o11_execution_record.md)
+
+## 19. O1.2：高风险优先预算路由的当前决策
+
+状态：2026-07-13 已完成方法重构与预注册；尚未实现 O1.2，尚未运行机制诊断或学生训练。
+
+O1.2 保留 O1.1 confidence-only 风险和冻结 CDF，但废止未来训练中的旧单阈值 tanh gate、0.5/2.0 强端点、全像素激活和学生共享空间温度。新的唯一主方案为：
+
+- qR=0.6、qU=0.8，形成 bottom 60% 轻锐化、middle 20% 中性、top 20% 连续平滑；
+- 对数温度 logT=-a*gR+b*gU；
+- 0.9<=T<=1.5，train 算术均值目标 0.995，调和均值不低于 0.98；
+- 在满足预算的可行解中最大化高风险平滑参数 b；
+- 空间温度只生成教师校准目标，学生温度固定为 1；
+- 第一项学生性能实验只比较 neutral 与 unreliable_only；
+- matched scalar 和 within-image shuffle 未完成前，不允许声称空间风险位置具有独立贡献。
+
+工程上必须保持 O1.1 core、CDF builder、diagnose 和 checker 字节不变，新增独立 O1.2 module、diagnose、checker 和 tests。O1.2 复用 O1.1 CDF 的实际 SHA，但使用独立 phaseO_o12 产物目录和来源清单。
+
+由于 qR、qU 和预算是在查看同一 VOC train/val 结果后冻结，O1.2 在 VOC 上明确定位为探索性筛查；跨教师或跨数据集才承担确认性结论。
+
+完整且唯一的 O1.2 规范见：
+
+- [O1.2 高风险优先预算路由预注册](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)

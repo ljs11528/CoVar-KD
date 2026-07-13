@@ -3,9 +3,9 @@
 - 生成时间：2026-06-30
 - 项目路径：`/home/ma-user/work/ljs`
 - 当前硬件：2 x Ascend 910 NPU，CANN 8.5.0，PyTorch 2.6.0 NPU 环境
-- 当前状态：核心方法和训练代码已迁移到 NPU；20k triage 已完成；两个关键 80k 实验正在运行
+- 当前状态：Phase N 已停止；O1.1 confidence-only 诊断与联合门禁已完成；O1.2 预注册已冻结，尚未实现或启动学生训练
 
-> 2026-07-13 重构说明：本页保留为项目历史快照。Phase N 已停止，当前执行主线转为“可靠性目标置信度蒸馏（RTC-KD）”；新公式、分支消融与实验门槛见 [Phase O 重构预注册](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)。
+> 2026-07-13 主线同步：Phase N 已停止；O1.1 confidence-only 风险联合门禁已通过，但旧温度映射的中位数约为 0.5、调和均值约为 0.6。当前冻结主线转为“高风险优先、预算约束、教师目标单侧校准”的 O1.2；总览见 [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)，唯一规范见 [O1.2 预注册](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)。尚未启动 O1.2 学生训练。
 
 ## 1. 一句话总结
 
