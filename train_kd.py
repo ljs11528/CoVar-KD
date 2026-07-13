@@ -3,6 +3,7 @@ import time
 import datetime
 import os
 import shutil
+import math
 import sys
 import random
 import numpy as np
@@ -38,6 +39,14 @@ from utils.covar_temperature import (
     NewtonCoVarConfig,
     covar_temperature_kd_loss,
     newton_covar_temperature_map,
+)
+from utils.rtc_temperature import (
+    RTCConfig,
+    build_rtc_temperature_map,
+    collect_rtc_diagnostics,
+    file_sha256,
+    load_frozen_reliability_cdf,
+    masked_temperature_kd_loss,
 )
 
 # Lazy import datasets inside Trainer to avoid unnecessary deps
@@ -236,6 +245,9 @@ def parse_args():
 
 
     parser.add_argument("--kd-temperature", type=float, default=1.0, help="logits KD temperature")
+    parser.add_argument('--kd-loss-mode', type=str, default='legacy',
+                        choices=['legacy', 'masked'],
+                        help='legacy unmasked scalar KD or fair masked pixel KD')
     parser.add_argument("--lambda-kd", type=float, default=0., help="lambda_kd")
     parser.add_argument("--lambda-adv", type=float, default=0., help="lambda adversarial loss")
     parser.add_argument("--lambda-d", type=float, default=0., help="lambda discriminator loss")
@@ -250,7 +262,7 @@ def parse_args():
     parser.add_argument('--use-covar', action='store_true', default=False,
                         help='enable CoVar in the logit KD path')
     parser.add_argument('--covar-temp-mode', type=str, default='newton',
-                        choices=['newton', 'legacy_weight'],
+                        choices=['newton', 'legacy_weight', 'rtc'],
                         help='paper Newton temperature or the earlier Gaussian weighting implementation')
     parser.add_argument('--covar-alpha', type=float, default=2.0,
                         help='alpha used only by legacy_weight mode')
@@ -277,6 +289,42 @@ def parse_args():
                         help='minimum positive Hessian magnitude for a Newton step')
     parser.add_argument('--covar-newton-max-step', type=float, default=0.25,
                         help='maximum absolute Newton step; <=0 disables clipping')
+    parser.add_argument('--rtc-cdf-path', type=str, default=None,
+                        help='frozen training-set reliability CDF artifact')
+    parser.add_argument('--rtc-assess-temperature', type=float, default=1.0,
+                        help='fixed temperature used only for raw-teacher reliability')
+    parser.add_argument('--rtc-route-quantile', type=float, default=0.80,
+                        help='high-risk route starts above this frozen-CDF quantile')
+    parser.add_argument('--rtc-route-width', type=float, default=0.05,
+                        help='continuous route transition width')
+    parser.add_argument('--rtc-temp-reliable', type=float, default=0.5,
+                        help='strong-sharpening endpoint temperature')
+    parser.add_argument('--rtc-temp-neutral', type=float, default=1.0,
+                        help='neutral pixel temperature')
+    parser.add_argument('--rtc-temp-unreliable', type=float, default=2.0,
+                        help='smoothing endpoint temperature')
+    parser.add_argument('--rtc-alpha-reliable', type=float, default=1.0,
+                        help='fraction of the reliable endpoint target')
+    parser.add_argument('--rtc-alpha-unreliable', type=float, default=1.0,
+                        help='fraction of the unreliable endpoint target')
+    parser.add_argument(
+        '--rtc-enable-reliable',
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help='explicitly enable/disable the low-risk sharpening branch',
+    )
+    parser.add_argument(
+        '--rtc-enable-unreliable',
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help='explicitly enable/disable the high-risk smoothing branch',
+    )
+    parser.add_argument('--rtc-bisection-iters', type=int, default=16,
+                        help='fixed target-temperature bisection iterations')
+    parser.add_argument('--rtc-shuffle', action=argparse.BooleanOptionalAction, default=None,
+                        help='explicitly enable/disable within-image temperature shuffling')
+    parser.add_argument('--rtc-reverse-routing', action=argparse.BooleanOptionalAction, default=None,
+                        help='explicitly enable/disable swapping reliable and unreliable gates')
                
 
     # accelerator setting
@@ -320,6 +368,32 @@ def parse_args():
     args = parser.parse_args()
     if args.teacher_output_temp <= 0:
         parser.error('--teacher-output-temp must be positive')
+    if args.kd_temperature <= 0:
+        parser.error('--kd-temperature must be positive')
+    if args.use_covar and args.covar_temp_mode == 'rtc':
+        explicit_rtc_flags = {
+            '--rtc-enable-reliable': args.rtc_enable_reliable,
+            '--rtc-enable-unreliable': args.rtc_enable_unreliable,
+            '--rtc-shuffle': args.rtc_shuffle,
+            '--rtc-reverse-routing': args.rtc_reverse_routing,
+        }
+        missing_flags = [
+            name for name, value in explicit_rtc_flags.items() if value is None
+        ]
+        if missing_flags:
+            parser.error(
+                'RTC requires explicit Boolean choices: {}'.format(
+                    ', '.join(missing_flags)
+                )
+            )
+        if args.kd_loss_mode != 'masked':
+            parser.error('RTC requires --kd-loss-mode masked')
+        if not args.rtc_cdf_path:
+            parser.error('RTC requires --rtc-cdf-path')
+        if args.dataset != 'voc':
+            parser.error('Phase O RTC currently supports only VOC with a matching frozen CDF')
+        if args.resume:
+            parser.error('Phase O RTC formal runs forbid --resume; start a fresh run directory')
     if 'LOCAL_RANK' in os.environ:
         args.local_rank = int(os.environ['LOCAL_RANK'])
 
@@ -386,6 +460,27 @@ class Trainer(object):
             )
             self.covar_newton_config.validate()
 
+        self.rtc_config = None
+        self.rtc_cdf = None
+        if args.use_covar and args.covar_temp_mode == 'rtc':
+            self.rtc_config = RTCConfig(
+                assess_temperature=args.rtc_assess_temperature,
+                route_quantile=args.rtc_route_quantile,
+                route_width=args.rtc_route_width,
+                reliable_temperature=args.rtc_temp_reliable,
+                neutral_temperature=args.rtc_temp_neutral,
+                unreliable_temperature=args.rtc_temp_unreliable,
+                alpha_reliable=args.rtc_alpha_reliable,
+                alpha_unreliable=args.rtc_alpha_unreliable,
+                enable_reliable=args.rtc_enable_reliable,
+                enable_unreliable=args.rtc_enable_unreliable,
+                bisection_iterations=args.rtc_bisection_iters,
+                kd_temperature_power=args.covar_kd_temp_power,
+                coefficient_a=args.covar_a,
+                reliability_mode=args.covar_reliability_mode,
+            )
+            self.rtc_config.validate()
+
 
         # Lazy dataset imports to avoid importing unused backends
         if args.dataset == 'citys':
@@ -422,6 +517,26 @@ class Trainer(object):
             val_dataset = CocoStuff164kValSet(args.data, './dataset/list/coco_stuff_164k/coco_stuff_164k_val.txt')
         else:
             raise ValueError('dataset unfind')
+
+        if self.rtc_config is not None:
+            self.rtc_cdf = load_frozen_reliability_cdf(
+                args.rtc_cdf_path,
+                device=self.device,
+            )
+            self._validate_rtc_cdf_metadata(self.rtc_cdf, train_dataset.num_class)
+            cdf_checksums = all_gather(self.rtc_cdf.checksum_sha256)
+            if len(set(cdf_checksums)) != 1:
+                raise RuntimeError(
+                    'RTC CDF checksum differs across ranks: {}'.format(cdf_checksums)
+                )
+            args.rtc_cdf_path = self.rtc_cdf.path
+            args.rtc_cdf_sha256 = self.rtc_cdf.checksum_sha256
+            logger.info(
+                'Loaded frozen RTC CDF: path={} sha256={} metadata={}'.format(
+                    self.rtc_cdf.path, self.rtc_cdf.checksum_sha256,
+                    dict(self.rtc_cdf.metadata),
+                )
+            )
 
     
         args.batch_size = args.batch_size // self.num_gpus
@@ -533,7 +648,138 @@ class Trainer(object):
         if self.resume_checkpoint is not None:
             self._load_resume_checkpoint(self.resume_checkpoint, args.resume)
 
+    def _validate_rtc_cdf_metadata(self, cdf, num_classes):
+        metadata = dict(cdf.metadata)
+        required = (
+            'num_classes',
+            'assess_temperature',
+            'coefficient_a',
+            'reliability_mode',
+            'teacher_sha256',
+            'train_list_sha256',
+            'dataset',
+            'split',
+            'processed_images',
+            'dataset_size',
+            'max_images',
+            'full_dataset_scan',
+            'batch_size',
+            'workers',
+            'valid_native_pixels',
+            'finite_valid_pixels',
+            'nonfinite_valid_pixels',
+            'sample_count',
+            'num_quantiles',
+            'max_pixels_per_image',
+            'crop_size',
+            'scale',
+            'mirror',
+            'seed',
+            'teacher_output_grid',
+            'valid_mask_resize',
+            'source_sha256',
+        )
+        missing = [key for key in required if key not in metadata]
+        if missing:
+            raise ValueError('RTC CDF metadata missing fields: {}'.format(missing))
+        if metadata['dataset'] != 'voc':
+            raise ValueError('Phase O RTC requires a VOC training-set CDF')
+        if int(metadata['processed_images']) != int(metadata['dataset_size']):
+            raise ValueError('RTC CDF was not built from a complete dataset scan')
+        if int(metadata['num_classes']) != int(num_classes):
+            raise ValueError('RTC CDF num_classes does not match the dataset')
+        pre_registered_metadata = {
+            'split': 'train_aug',
+            'max_images': 0,
+            'full_dataset_scan': True,
+            'batch_size': 4,
+            'workers': 0,
+            'max_pixels_per_image': 4096,
+            'num_quantiles': 4097,
+            'crop_size': [512, 512],
+            'scale': True,
+            'mirror': True,
+            'seed': 1234,
+            'teacher_output_grid': 'native',
+            'valid_mask_resize': 'nearest',
+        }
+        for key, expected_value in pre_registered_metadata.items():
+            if metadata[key] != expected_value:
+                raise ValueError(
+                    'RTC CDF metadata drift for {}: expected={} observed={}'.format(
+                        key, expected_value, metadata[key]
+                    )
+                )
+        for boolean_key in ('full_dataset_scan', 'scale', 'mirror'):
+            if metadata[boolean_key] is not True:
+                raise ValueError(
+                    'RTC CDF metadata {} must be the Boolean true'.format(
+                        boolean_key
+                    )
+                )
+        processed_images = int(metadata['processed_images'])
+        dataset_size = int(metadata['dataset_size'])
+        valid_native_pixels = int(metadata['valid_native_pixels'])
+        finite_valid_pixels = int(metadata['finite_valid_pixels'])
+        nonfinite_valid_pixels = int(metadata['nonfinite_valid_pixels'])
+        sampled_pixels = int(metadata['sample_count'])
+        if processed_images <= 0 or dataset_size <= 0:
+            raise ValueError('RTC CDF dataset counters must be positive')
+        if valid_native_pixels != finite_valid_pixels + nonfinite_valid_pixels:
+            raise ValueError('RTC CDF valid-pixel counters are inconsistent')
+        if nonfinite_valid_pixels != 0:
+            raise ValueError('RTC CDF formal scan contains non-finite valid pixels')
+        if sampled_pixels <= 0 or sampled_pixels > finite_valid_pixels:
+            raise ValueError('RTC CDF sampled-pixel count is invalid')
+        source_sha256 = metadata['source_sha256']
+        if not isinstance(source_sha256, dict):
+            raise ValueError('RTC CDF source_sha256 must be a dictionary')
+        expected_rtc_sha256 = file_sha256(
+            os.path.join(cur_path, 'utils', 'rtc_temperature.py')
+        )
+        if source_sha256.get('rtc_temperature') != expected_rtc_sha256:
+            raise ValueError(
+                'RTC CDF was built with a different RTC reliability implementation'
+            )
+        if not math.isclose(
+            float(metadata['assess_temperature']),
+            float(self.rtc_config.assess_temperature),
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        ):
+            raise ValueError('RTC CDF assess_temperature does not match the run')
+        expected_a = self.rtc_config.coefficient_a
+        if expected_a is None:
+            expected_a = float((int(num_classes) - 1) ** 2) / 2.0
+        if not math.isclose(
+            float(metadata['coefficient_a']), float(expected_a),
+            rel_tol=0.0, abs_tol=1e-12,
+        ):
+            raise ValueError('RTC CDF coefficient_a does not match the run')
+        if metadata['reliability_mode'] != self.rtc_config.reliability_mode:
+            raise ValueError('RTC CDF reliability_mode does not match the run')
+        if file_sha256(self.args.teacher_pretrained) != metadata['teacher_sha256']:
+            raise ValueError('RTC CDF teacher checksum does not match the run')
+        train_list_path = './dataset/list/voc/train_aug.txt'
+        if self.args.dataset == 'voc' and file_sha256(train_list_path) != metadata['train_list_sha256']:
+            raise ValueError('RTC CDF train-list checksum does not match the run')
+
     def _load_resume_checkpoint(self, checkpoint, path):
+        if self.rtc_config is not None:
+            saved_rtc = checkpoint.get('rtc') if isinstance(checkpoint, dict) else None
+            if not saved_rtc:
+                raise ValueError('RTC resume checkpoint has no frozen RTC metadata')
+            expected = self._rtc_checkpoint_metadata()
+            for key in (
+                'config', 'cdf_sha256', 'kd_loss_mode',
+                'teacher_output_temp', 'shuffle', 'reverse_routing', 'world_size',
+            ):
+                if saved_rtc.get(key) != expected.get(key):
+                    raise ValueError(
+                        'RTC resume configuration drift for {}: saved={} current={}'.format(
+                            key, saved_rtc.get(key), expected.get(key)
+                        )
+                    )
         student_state = extract_student_state_dict(checkpoint)
         load_state_dict_compatible(self.s_model, student_state, strict=True)
         if not self.resume_is_full_state:
@@ -574,10 +820,25 @@ class Trainer(object):
             )
         )
 
+    def _rtc_checkpoint_metadata(self):
+        if self.rtc_config is None:
+            return None
+        return {
+            'config': self.rtc_config.to_dict(),
+            'cdf_path': self.rtc_cdf.path,
+            'cdf_sha256': self.rtc_cdf.checksum_sha256,
+            'cdf_metadata': dict(self.rtc_cdf.metadata),
+            'kd_loss_mode': self.args.kd_loss_mode,
+            'teacher_output_temp': float(self.args.teacher_output_temp),
+            'shuffle': bool(self.args.rtc_shuffle),
+            'reverse_routing': bool(self.args.rtc_reverse_routing),
+            'world_size': int(get_world_size()),
+        }
+
     def _training_state_dict(self, iteration, rng_states):
         return {
             'checkpoint_type': 'train_kd_training_state',
-            'checkpoint_version': 1,
+            'checkpoint_version': 3,
             'student': unwrap_module(self.s_model).state_dict(),
             'criterion_cwd': unwrap_module(self.criterion_cwd).state_dict(),
             'criterion_fitnet': unwrap_module(self.criterion_fitnet).state_dict(),
@@ -590,6 +851,7 @@ class Trainer(object):
             'rng_state_by_rank': rng_states,
             'world_size': int(get_world_size()),
             'args': dict(vars(self.args)),
+            'rtc': self._rtc_checkpoint_metadata(),
         }
 
     def save_checkpoint(self, is_best=False, iteration=None, save_latest=True):
@@ -655,6 +917,131 @@ class Trainer(object):
         rt /= self.num_gpus
         return rt
 
+    def aggregate_rtc_diagnostics(self, maps):
+        """Compute exact global batch diagnostics instead of averaging rank quantiles."""
+        valid = maps.valid_mask
+        active = (
+            ((maps.gate_reliable > 0) & (self.rtc_config.alpha_reliable > 0))
+            | ((maps.gate_unreliable > 0) & (self.rtc_config.alpha_unreliable > 0))
+        )
+        active = (
+            valid
+            & active
+            & ~maps.fallback_mask
+            & ~maps.tie_mask
+            & maps.finite_mask
+        )
+        local_payload = {
+            'temperature': maps.temperature[valid].detach().float().cpu(),
+            'reliability': maps.reliability[valid].detach().float().cpu(),
+            'quantile': maps.reliability_quantile[valid].detach().float().cpu(),
+            'gate_reliable': maps.gate_reliable[valid].detach().float().cpu(),
+            'gate_unreliable': maps.gate_unreliable[valid].detach().float().cpu(),
+            'residual_active': maps.target_residual[active].detach().float().cpu(),
+            'fallback': maps.fallback_mask[valid].detach().float().cpu(),
+            'tie': maps.tie_mask[valid].detach().float().cpu(),
+            'finite': maps.finite_mask[valid].detach().float().cpu(),
+            'shuffled': bool(maps.shuffled),
+        }
+        gathered = all_gather(local_payload)
+
+        def concatenate(key):
+            values = [item[key] for item in gathered if item[key].numel() > 0]
+            return torch.cat(values) if values else torch.empty(0, dtype=torch.float32)
+
+        temperature = concatenate('temperature')
+        if temperature.numel() == 0:
+            diagnostics = collect_rtc_diagnostics(
+                maps,
+                self.rtc_config,
+                teacher_output_temperature=self.args.teacher_output_temp,
+            )
+            diagnostics['target_residual_active_count'] = 0.0
+            return diagnostics
+        reliability = concatenate('reliability')
+        quantile = concatenate('quantile')
+        gate_reliable = concatenate('gate_reliable')
+        gate_unreliable = concatenate('gate_unreliable')
+        residual = concatenate('residual_active')
+        fallback = concatenate('fallback')
+        tie = concatenate('tie')
+        finite = concatenate('finite')
+        shuffled = any(item['shuffled'] for item in gathered)
+        temperature_quantiles = torch.quantile(
+            temperature, torch.tensor([0.10, 0.50, 0.90, 0.95])
+        )
+        bisection_scale = math.ldexp(
+            1.0, -(self.rtc_config.bisection_iterations + 1)
+        )
+        floating_tolerance = (
+            4.0
+            * torch.finfo(temperature.dtype).eps
+            * max(1.0, self.rtc_config.unreliable_temperature)
+        )
+        reliable_tolerance = (
+            (self.rtc_config.neutral_temperature
+             - self.rtc_config.reliable_temperature)
+            * bisection_scale
+            + floating_tolerance
+        )
+        unreliable_tolerance = (
+            (self.rtc_config.unreliable_temperature
+             - self.rtc_config.neutral_temperature)
+            * bisection_scale
+            + floating_tolerance
+        )
+        neutral_tolerance = max(
+            reliable_tolerance, unreliable_tolerance
+        )
+        residual_is_applicable = not shuffled
+        if residual.numel() > 0 and residual_is_applicable:
+            residual_p95 = float(torch.quantile(residual, 0.95))
+            residual_mean = float(residual.mean())
+            residual_max = float(residual.max())
+        else:
+            residual_p95 = 0.0
+            residual_mean = 0.0
+            residual_max = 0.0
+        return {
+            'valid_count': float(temperature.numel()),
+            'reliability_mean': float(reliability.mean()),
+            'quantile_mean': float(quantile.mean()),
+            'reliable_coverage': float((gate_reliable > 0).float().mean()),
+            'unreliable_coverage': float((gate_unreliable > 0).float().mean()),
+            'reliable_gate_mean': float(gate_reliable.mean()),
+            'unreliable_gate_mean': float(gate_unreliable.mean()),
+            'temperature_mean': float(temperature.mean()),
+            'temperature_harmonic_mean': float(1.0 / (1.0 / temperature).mean()),
+            'temperature_q10': float(temperature_quantiles[0]),
+            'temperature_q50': float(temperature_quantiles[1]),
+            'temperature_q90': float(temperature_quantiles[2]),
+            'temperature_p95': float(temperature_quantiles[3]),
+            'temperature_reliable_endpoint_rate': float(
+                (torch.abs(temperature - self.rtc_config.reliable_temperature)
+                 <= reliable_tolerance).float().mean()
+            ),
+            'temperature_neutral_rate': float(
+                (torch.abs(temperature - self.rtc_config.neutral_temperature)
+                 <= neutral_tolerance).float().mean()
+            ),
+            'temperature_unreliable_endpoint_rate': float(
+                (torch.abs(temperature - self.rtc_config.unreliable_temperature)
+                 <= unreliable_tolerance).float().mean()
+            ),
+            'effective_teacher_temperature_mean': float(
+                temperature.mean() * self.args.teacher_output_temp
+            ),
+            'target_residual_active_count': float(residual.numel()),
+            'target_residual_mean': residual_mean,
+            'target_residual_p95': residual_p95,
+            'target_residual_max': residual_max,
+            'residual_is_applicable': float(residual_is_applicable),
+            'fallback_rate': float(fallback.mean()),
+            'tie_rate': float(tie.mean()),
+            'finite_rate': float(finite.mean()),
+            'shuffled': float(shuffled),
+        }
+
     @staticmethod
     def batch_class_stats(max_confidence, residual_variance, valid_mask, epsilon=1e-8):
         valid = valid_mask.float()
@@ -715,7 +1102,7 @@ class Trainer(object):
             logger.info('Continuing training from iteration {:d}'.format(self.start_iteration))
 
         self.s_model.train()
-        for iteration, (images, targets, _) in enumerate(
+        for iteration, (images, targets, sample_names) in enumerate(
             self.train_loader, start=self.start_iteration + 1
         ):
             self.current_iteration = iteration
@@ -728,7 +1115,8 @@ class Trainer(object):
 
             s_outputs = self.s_model(images)
 
-            teacher_kd_logits = t_outputs[0]
+            raw_teacher_logits = t_outputs[0]
+            teacher_kd_logits = raw_teacher_logits
             if self.args.teacher_output_temp != 1.0:
                 teacher_kd_logits = teacher_kd_logits / self.args.teacher_output_temp
 
@@ -736,20 +1124,47 @@ class Trainer(object):
             temperature_map = None
             reliability_map = None
             covar_valid_mask = None
-            if self.args.use_covar and self.args.lambda_kd != 0.:
+            rtc_maps = None
+            needs_masked_kd = self.args.kd_loss_mode == 'masked' or self.args.use_covar
+            if needs_masked_kd and self.args.lambda_kd != 0.:
                 with torch.no_grad():
                     valid_mask = (targets != self.args.ignore_label)
-                    if self.args.covar_temp_mode == 'newton':
+                    if self.args.use_covar and self.args.covar_temp_mode == 'rtc':
+                        rtc_maps = build_rtc_temperature_map(
+                            raw_teacher_logits,
+                            teacher_kd_logits,
+                            valid_mask,
+                            self.rtc_cdf,
+                            self.rtc_config,
+                            shuffle=self.args.rtc_shuffle,
+                            reverse_routing=self.args.rtc_reverse_routing,
+                        )
+                        temperature_map = rtc_maps.temperature
+                        reliability_map = rtc_maps.reliability
+                        covar_valid_mask = rtc_maps.valid_mask
+                    elif self.args.use_covar and self.args.covar_temp_mode == 'newton':
                         temperature_map, reliability_map, covar_valid_mask, _, _ = \
                             newton_covar_temperature_map(
                                 teacher_kd_logits,
                                 valid_mask,
                                 self.covar_newton_config,
                             )
-                    else:
+                    elif self.args.use_covar:
                         covar_weight = self.get_covar_weight(
                             F.softmax(teacher_kd_logits, dim=1),
                             valid_mask,
+                        )
+                    else:
+                        covar_valid_mask = F.interpolate(
+                            valid_mask.float().unsqueeze(1),
+                            size=s_outputs[0].shape[-2:],
+                            mode='nearest',
+                        ).squeeze(1) > 0.5
+                        temperature_map = torch.full(
+                            covar_valid_mask.shape,
+                            float(self.args.kd_temperature),
+                            device=s_outputs[0].device,
+                            dtype=s_outputs[0].dtype,
                         )
             
             if self.args.aux:
@@ -779,7 +1194,23 @@ class Trainer(object):
                     self.D_model(t_outputs[0].detach())))
             
             if self.args.lambda_kd != 0.:
-                if self.args.use_covar and temperature_map is not None:
+                if rtc_maps is not None:
+                    kd_loss = self.args.lambda_kd * masked_temperature_kd_loss(
+                        s_outputs[0],
+                        teacher_kd_logits,
+                        temperature_map,
+                        covar_valid_mask,
+                        temperature_power=self.rtc_config.kd_temperature_power,
+                    )
+                elif self.args.kd_loss_mode == 'masked' and not self.args.use_covar:
+                    kd_loss = self.args.lambda_kd * masked_temperature_kd_loss(
+                        s_outputs[0],
+                        teacher_kd_logits,
+                        temperature_map,
+                        covar_valid_mask,
+                        temperature_power=self.args.covar_kd_temp_power,
+                    )
+                elif self.args.use_covar and temperature_map is not None:
                     kd_loss = self.args.lambda_kd * covar_temperature_kd_loss(
                         s_outputs[0],
                         teacher_kd_logits,
@@ -816,6 +1247,55 @@ class Trainer(object):
                         ifv_loss + at_loss + fitnet_loss +\
                         psd_loss + csd_loss 
             D_losses = adv_D_loss
+            if rtc_maps is not None or self.args.kd_loss_mode == 'masked':
+                local_nonfinite = not bool(torch.isfinite(losses).item())
+                if self.use_adv:
+                    local_nonfinite = (
+                        local_nonfinite
+                        or not bool(torch.isfinite(D_losses).item())
+                    )
+                failure_flags = torch.zeros(3, device=self.device)
+                failure_flags[0] = float(local_nonfinite)
+                if rtc_maps is not None and not rtc_maps.shuffled:
+                    reliable_active = (
+                        rtc_maps.valid_mask & (rtc_maps.gate_reliable > 0)
+                    )
+                    unreliable_active = (
+                        rtc_maps.valid_mask & (rtc_maps.gate_unreliable > 0)
+                    )
+                    failure_flags[1] = float(
+                        bool(reliable_active.any().item())
+                        and bool(
+                            (rtc_maps.temperature[reliable_active]
+                             > self.rtc_config.neutral_temperature + 1e-5)
+                            .any()
+                            .item()
+                        )
+                    )
+                    failure_flags[2] = float(
+                        bool(unreliable_active.any().item())
+                        and bool(
+                            (rtc_maps.temperature[unreliable_active]
+                             < self.rtc_config.neutral_temperature - 1e-5)
+                            .any()
+                            .item()
+                        )
+                    )
+                if get_world_size() > 1:
+                    dist.all_reduce(failure_flags, op=dist.ReduceOp.MAX)
+                if bool((failure_flags[0] > 0).item()):
+                    raise FloatingPointError(
+                        'Non-finite generator or discriminator loss in '
+                        'RTC/masked KD path on at least one rank'
+                    )
+                if bool((failure_flags[1] > 0).item()):
+                    raise AssertionError(
+                        'RTC reliable branch produced T > T0 on at least one rank'
+                    )
+                if bool((failure_flags[2] > 0).item()):
+                    raise AssertionError(
+                        'RTC unreliable branch produced T < T0 on at least one rank'
+                    )
 
             lr = self.adjust_lr(
                 base_lr=self.args.lr,
@@ -852,6 +1332,10 @@ class Trainer(object):
             ) * (self.args.max_iterations - iteration)
             eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
 
+            rtc_diagnostics = None
+            if iteration % log_per_iters == 0 and rtc_maps is not None:
+                rtc_diagnostics = self.aggregate_rtc_diagnostics(rtc_maps)
+
             if iteration % log_per_iters == 0 and save_to_disk:
                 log_message = (
                     "Iters: {:d}/{:d} || Lr: {:.6f} || Task Loss: {:.4f} || KD Loss: {:.4f}" \
@@ -875,7 +1359,40 @@ class Trainer(object):
                         csd_loss_reduced.item(),
                         str(datetime.timedelta(seconds=int(time.time() - start_time))), 
                         eta_string))
-                if temperature_map is not None:
+                if rtc_diagnostics is not None:
+                    log_message += (
+                        " || RTC T mean/hmean/q10/q50/q90/p95: "
+                        "{temperature_mean:.4f}/{temperature_harmonic_mean:.4f}/"
+                        "{temperature_q10:.4f}/{temperature_q50:.4f}/"
+                        "{temperature_q90:.4f}/{temperature_p95:.4f}"
+                        " || RTC endpoints R/T0/U: "
+                        "{temperature_reliable_endpoint_rate:.4f}/"
+                        "{temperature_neutral_rate:.4f}/"
+                        "{temperature_unreliable_endpoint_rate:.4f}"
+                        " || RTC R/U cov: {reliable_coverage:.4f}/{unreliable_coverage:.4f}"
+                        " || RTC gate R/U: {reliable_gate_mean:.4f}/{unreliable_gate_mean:.4f}"
+                        " || RTC residual applicable/shuffled: "
+                        "{residual_is_applicable:.0f}/{shuffled:.0f}"
+                        " || RTC finite/fallback/tie: "
+                        "{finite_rate:.6f}/{fallback_rate:.6f}/{tie_rate:.6f}"
+                        " || RTC effective teacher T mean: "
+                        "{effective_teacher_temperature_mean:.4f}"
+                        " || RTC valid pixels: {valid_count:.0f}"
+                        " || CDF sha256: {cdf}".format(
+                            cdf=self.rtc_cdf.checksum_sha256[:12],
+                            **rtc_diagnostics,
+                        )
+                    )
+                    if rtc_diagnostics['residual_is_applicable'] >= 0.5:
+                        log_message += (
+                            " || RTC residual active/mean/p95/max: "
+                            "{target_residual_active_count:.0f}/"
+                            "{target_residual_mean:.6f}/{target_residual_p95:.6f}/"
+                            "{target_residual_max:.6f}".format(**rtc_diagnostics)
+                        )
+                    else:
+                        log_message += " || RTC residual: N/A (shuffled map)"
+                elif temperature_map is not None and reliability_map is not None:
                     valid_temperatures = temperature_map[covar_valid_mask]
                     valid_reliability = reliability_map[covar_valid_mask]
                     if valid_temperatures.numel() > 0:
@@ -885,6 +1402,17 @@ class Trainer(object):
                                 valid_temperatures.min().item(),
                                 valid_temperatures.max().item(),
                                 valid_reliability.mean().item(),
+                            )
+                        )
+                elif temperature_map is not None:
+                    valid_temperatures = temperature_map[covar_valid_mask]
+                    if valid_temperatures.numel() > 0:
+                        log_message += (
+                            " || Masked KD T mean/min/max: {:.4f}/{:.4f}/{:.4f} || gamma: {:.1f}".format(
+                                valid_temperatures.mean().item(),
+                                valid_temperatures.min().item(),
+                                valid_temperatures.max().item(),
+                                self.args.covar_kd_temp_power,
                             )
                         )
                 elif self.args.teacher_output_temp != 1.0:
