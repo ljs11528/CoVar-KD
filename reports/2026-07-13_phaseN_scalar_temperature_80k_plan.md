@@ -127,6 +127,8 @@ Phase M2 在相同 CWD、`Tout=3.0`、seed `1234`、20k 配方下得到：
 - Smoke `T=0.6` / NPU 1：worker PID `1595427`，`20/20`，runtime `0:00:11.304320`，final model 与 `training_state_latest.pth` 完整，strict check `complete=true`。
 - 80k pair 于 `2026-07-13T08:10:52+08:00` 自动接棒；worker PID 为 `1596563`（`T=1.0`）和 `1596564`（`T=0.6`）。
 - 两路实际 Namespace 已核验为 fresh ImageNet init、`Tout=3.0`、对应 scalar KD 温度、seed `1234`、batch `16`、workers `8`、save/val `800`、无 CoVar；首批 `40/80000` 日志健康，无 traceback/NaN/OOM。
+- 首次 iteration-800 验证于 `2026-07-13T08:16:56+08:00` 完成：`T=1.0` mIoU `0.158601`，`T=0.6` mIoU `0.136381`。该点仅作健康信号，不用于最终优劣判断。
+- 两路 final/best model checkpoint 与 latest/best training state 均在首次验证后写盘；`08:17:20` 已继续到 `860/80000`，无 traceback/NaN/OOM，当前 ETA 约 `17:50–18:05`。
 
 
 ## 8. 启动前快照（`2026-07-13T08:07:46+08:00`）
