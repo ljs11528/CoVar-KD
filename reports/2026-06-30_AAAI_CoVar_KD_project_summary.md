@@ -3,9 +3,11 @@
 - 生成时间：2026-06-30
 - 项目路径：`/home/ma-user/work/ljs`
 - 当前硬件：2 x Ascend 910 NPU，CANN 8.5.0，PyTorch 2.6.0 NPU 环境
-- 当前状态：Phase N 已停止；O1.1 confidence-only 诊断与联合门禁已完成；O1.2 预注册已冻结，尚未实现或启动学生训练
+- 当前状态：Phase N 已停止；O1.2-A 独立实现、全量机制诊断与联合门禁已完成并通过；尚未启动 O1.2 学生训练
 
-> 2026-07-13 主线同步：Phase N 已停止；O1.1 confidence-only 风险联合门禁已通过，但旧温度映射的中位数约为 0.5、调和均值约为 0.6。当前冻结主线转为“高风险优先、预算约束、教师目标单侧校准”的 O1.2；总览见 [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)，唯一规范见 [O1.2 预注册](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)。尚未启动 O1.2 学生训练。
+> 2026-07-13 主线同步：O1.1 confidence-only 风险联合门禁已通过；O1.2-A 已把温度中位数从约 0.5 调整到 train/val 约 0.982/0.979，调和均值约 0.988/0.988，并通过独立联合门禁。该结果只证明预算路由与教师目标机制正确，尚无学生 mIoU 或空间因果结论。总览见 [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)，唯一规范见 [O1.2 预注册与结果](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)。
+
+> 历史口径说明：本文第 1 至 16 节是 2026-06-30 形成并随后补记的 Newton/Phase C 历史快照，其中“当前”“下一步”等措辞均只表示当时状态，不代表 2026-07-13 主线。现行方法、证据边界和停止线只以第 17 节及上述 Phase O/O1.2 文档为准。
 
 ## 1. 一句话总结
 
@@ -230,7 +232,9 @@ CoVar provides additional but modest gains.
 - 不同 teacher confidence 场景。
 - 至少 2-3 个 seed 或者报告最后若干验证点均值/方差。
 
-## 12. 下一步实验计划
+## 12. 2026-06-30 原始下一步实验计划（历史）
+
+> 本节保留生成本文时的历史计划，现已被 Phase O1.2 的分阶段门禁取代，不再构成自动执行授权。
 
 ### 12.1 最高优先级
 
@@ -309,15 +313,46 @@ It gives modest improvement over a strong softened-teacher baseline and provides
 Knowledge distillation for semantic segmentation commonly applies a global temperature to all pixels, despite the fact that teacher reliability varies substantially across dense predictions. We propose CoVar-KD, a confidence-variance guided adaptive temperature distillation method. CoVar-KD estimates pixel-level teacher reliability from the maximum confidence and the residual variance over non-dominant classes, and converts this reliability into a temperature map that sharpens reliable teacher predictions while smoothing uncertain ones. The method can be integrated into relational distillation frameworks such as CIRKD. Experiments on Pascal VOC with DeepLabV3-ResNet101 as teacher and DeepLabV3-MobileNetV3-Small as student show that reliability-aware temperature modulation improves distillation and provides interpretable control over pixel-level supervision.
 ```
 
-## 15. 当前操作记录
+## 15. 2026-06-30 操作记录（历史）
 
 - 已完成 NPU 训练代码迁移和断点续训。
 - 已完成 NPU 20k triage，并生成 `reports/2026-06-30_phaseC_npu_triage.md`。
 - 已启动 80k pair：`phaseC_lc_newton_gamma2_repro` 与 `phaseC_lc_no_covar_tout3`。
 - GitHub 同步曾因 HTTPS 凭据缺失、SSH 22 端口超时失败；当前本地代码和结果仍在服务器上。
 
-## 16. 结论
+## 16. 2026-06-30 结论（历史）
 
 项目已有一个相对完整的技术故事：像素级教师可靠性估计、可靠性感知温度调节、与 CIRKD 的集成、以及围绕 Newton、centered calibration、gamma 和 teacher softening 的系统消融。AAAI 摘要阶段可以先采用保守但有力的表述，强调固定温度 KD 的缺陷和 CoVar-KD 的可靠性感知机制。
 
 真正决定论文主结论强弱的是当前 80k pair。如果 CoVar Newton 拉开 no-covar control，论文可以主打 CoVar 的性能贡献；如果差距仍小，论文需要转向“teacher softening 是主贡献，CoVar 提供可解释的微弱增益和分析框架”这一更稳健的定位。
+
+## 17. 2026-07-13 当前主线：Phase O1.2-A
+
+O1.2-A 已完成独立实现、103 项单元测试、全量 train/val 机制诊断和独立联合门禁。没有启动学生训练，也没有产生 O1.2 mIoU 或 checkpoint。
+
+| 指标 | Train | Val |
+|---|---:|---:|
+| mean(T) | 0.995000 | 0.996092 |
+| harmonic(T) | 0.988069 | 0.988161 |
+| median(T) | 0.982425 | 0.979061 |
+| T>1 覆盖率 | 19.82% | 21.06% |
+| T>1.25 覆盖率 | 3.96% | 4.64% |
+| 高风险错误富集 | 4.9748x | 3.9183x |
+| 高风险错误 recall | 98.70% | 82.63% |
+
+正式预算解为 a*=0.1053605157、b*=0.3476499170；train mean(T) 对 0.995 目标的残差为 2.79e-10。所有方向、温度范围、中性区、教师 argmax、学生固定温度、teacher-target-only、熵方向和有限性检查通过，joint_gate_pass=true。
+
+当前正确结论是：
+
+- confidence-only 风险在 VOC train/val 上能稳定富集教师错误；
+- 预算映射避免了 O1.1 接近全局 T=0.6 的强锐化行为；
+- 高风险侧仍有大量正确教师预测，不能视为错误标签；
+- O1.2-A 只验证教师目标机制，不证明学生性能、空间因果、跨数据集泛化或统计显著性；
+- 下一步仍需人工审查；若明确授权，只先运行 neutral 与 unreliable_only 的 20-step smoke。
+
+详细记录：
+
+- [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)
+- [O1.2 规范与结果](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)
+- [O1.2 执行记录](2026-07-13_phaseO_rtc_o12_execution_record.md)
+- [O1.2 机制诊断报告](2026-07-13_phaseO_rtc_o12_diagnostic_report.md)

@@ -6,7 +6,7 @@
 - 事实口径：方法以当前代码和冻结 shell 为准；实验以 `reports/` 中的阶段报告及已核验日志为准；README 中的上游发布结果不计为本项目本地完成实验。
 - 状态标记：`已完成` 表示训练预算、最终验证和日志完整性已经核验；`进行中` 和 `计划中` 不进入结果结论。
 
-> 执行方向更新（2026-07-13）：本页继续作为 Newton/历史实验的审查快照。O1.1 confidence-only 风险门禁已通过，但大面积强锐化仍构成主要混淆；当前唯一未来规范是 [O1.2 高风险优先预算路由预注册](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)。O1/O1.1 历史、正式结果和来源契约见 [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)。尚未启动 O1.2 学生训练。
+> 执行方向更新（2026-07-13）：第 0 至 12 节继续保留 Newton/历史实验审查快照；当前主线已转为 O1.2。O1.2-A 独立实现、全量 train/val 机制诊断和联合门禁已完成并通过，温度中位数约为 0.982/0.979、调和均值约为 0.988/0.988；尚未启动学生训练。当前结论与停止线见第 13 节、[O1.2 预注册与结果](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)及 [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)。
 
 ## 0. 先给结论
 
@@ -617,7 +617,7 @@ variance-only 的 20k 结果为负，而 full 最好。这支持互补，不支�
 
 ### 9.1 Phase N：CWD 标量温度 80k 确认
 
-状态：`进行中`。比较 CWD、`Tout=3.0` 下 scalar `T=0.6` vs `T=1.0`，seed 1234、80k。两路已通过 smoke；截至本次审计的动态日志快照约为 `10.5k/80k`。早期验证只用于健康检查，不能作为结论。
+状态：`已停止且结果不完整`。用户于 2026-07-13 约 10:36:45（Asia/Shanghai）暂停两路训练以重构方法；两路到达 20,000/80,000 时正处于验证中，均没有完整的 20k final 测量，因此不能形成性能结论，也不得自动恢复。
 
 Phase N 回答的是“CWD 中 20k 的全局低温 endpoint 增益能否延续到 80k”，不回答“CoVar 空间分配是否优于 matched scalar”。
 
@@ -630,7 +630,7 @@ Phase N 回答的是“CWD 中 20k 的全局低温 endpoint 增益能否延续�
 - 部分历史 full/calibration 计划找不到完整日志，不能凭脚本存在推定完成；
 - smoke/debug 只证明代码可运行，不计性能实验。
 
-## 10. 建议的最小下一步顺序
+## 10. Newton 审查时的下一步建议（历史，已被 O1.2 预注册取代）
 
 1. **先修 masked KD 公平性。** 让所有 fixed/CoVar 路径使用同一 mask 和归一化，做单元测试和 20k 复核。
 2. **在 CIRKD 内做 matched scalar + shuffled-map 对照。** 这是当前空间自适应主张的决定性实验。
@@ -639,7 +639,7 @@ Phase N 回答的是“CWD 中 20k 的全局低温 endpoint 增益能否延续�
 5. **再扩展数据集和学生。** 至少一个不同数据集、一个不同 backbone，并为关键比较使用 paired seeds。
 6. **统一实现与环境。** 消除四份公式实现，固化运行 manifest、依赖和 checkpoint checksum。
 
-## 11. 当前允许与禁止的论文表述
+## 11. Newton 历史证据允许与禁止的论文表述
 
 ### 可以说
 
@@ -658,7 +658,7 @@ Phase N 回答的是“CWD 中 20k 的全局低温 endpoint 增益能否延续�
 - 当前方法是 VOC 最强或 SOTA；
 - 已证明跨数据集泛化或跨学生统计稳定性；
 - Newton 已收敛到最优温度；
-- Phase N 或其他进行中实验已经支持某个结论。
+- Phase N 或其他未完整结束的实验已经支持某个结论。
 
 ## 12. 关键代码与证据索引
 
@@ -668,6 +668,9 @@ Phase N 回答的是“CWD 中 20k 的全局低温 endpoint 增益能否延续�
 | 复用版 Newton 与 masked KD | `utils/covar_temperature.py` |
 | 原始 confidence/variance 统计 | `PCOS.py` |
 | 通用 KD/CWD 与 CoVar 接入 | `train_kd.py` |
+| O1.2 预算映射核心 | `utils/rtc_o12_calibration.py` |
+| O1.2 正式 diagnose/checker | `scripts/diagnostics/diagnose_rtc_o12_budget.py`、`scripts/diagnostics/check_rtc_o12_gate.py` |
+| O1.2 正式产物 | `runs/diagnostics/phaseO_o12/` |
 | 普通未 masked KD | `losses/kd.py` |
 | CWD | `losses/cwd.py` |
 | CIRKD memory/mini-batch/channel | `losses/cirkd_memory.py`、`losses/cirkd_mini_batch.py`、`losses/cirkd_channel.py` |
@@ -678,7 +681,60 @@ Phase N 回答的是“CWD 中 20k 的全局低温 endpoint 增益能否延续�
 | 主表/三种子/跨学生/组件 | `reports/2026-07-02_phaseD_npu_main_table.md`、`2026-07-07_phaseE_tout3_seed_stability.md`、`2026-07-08_phaseF_psp_mbv3small_cross_student.md`、`2026-07-09_phaseG_component_ablation_triage.md` |
 | 机制诊断 | `reports/2026-07-07_phaseH_h3_rt_distribution.md`、`runs/diagnostics/aaai_h1/`、`aaai_h2/`、`aaai_h3/` |
 | CWD/标量温度反证 | `reports/2026-07-11_phaseL_cwd_seed_stability.md`、`2026-07-11_phaseM_cwd_covar_triage.md`、`2026-07-12_phaseM2_scalar_temperature.md` |
-| Phase N 进行中记录 | `reports/2026-07-13_phaseN_scalar_temperature_80k_plan.md` |
+| Phase N 已停止的不完整记录 | `reports/2026-07-13_phaseN_scalar_temperature_80k_plan.md` |
+
+## 13. Phase O1.2 当前方法与正式机制结果
+
+### 13.1 当前方法
+
+O1.2 不再使用 Newton 或 confidence+variance 风险。对冻结教师原始参考分布计算 c=max softmax(z_t)，采用 confidence-only 风险 r=-log(c)，再用冻结训练集 CDF 得到相对分位 u=F_train(r)。qR=0.6、qU=0.8 将像素分为轻锐化侧、中性区和高风险平滑侧：
+
+~~~text
+gR(u) = ((qR-u)/qR)^1,       u<qR
+gR(u) = 0,                   u>=qR
+
+gU(u) = ((u-qU)/(1-qU))^2,   u>qU
+gU(u) = 0,                   u<=qU
+
+log T(u) = -a*gR(u) + b*gU(u)
+~~~
+
+正式 train 预算求得 a*=0.1053605157、b*=0.3476499170。空间温度只生成 detached teacher target；学生 softmax 温度固定为 1，不乘 T 的幂。教师已有 Tout=3，因此实际教师 softmax 分母是 3*T；这里的“锐化”是相对 Tout=3 的中性目标锐化，不是相对 raw teacher 使用绝对低温。
+
+### 13.2 正式结果
+
+| 指标 | Train | Val |
+|---|---:|---:|
+| mean(T) | 0.995000 | 0.996092 |
+| harmonic(T) | 0.988069 | 0.988161 |
+| median(T) | 0.982425 | 0.979061 |
+| top-risk decile mean(T) | 1.228580 | 1.233375 |
+| T>1.25 覆盖率 | 3.955% | 4.643% |
+| 高风险错误率 | 14.656% | 24.385% |
+| 高风险错误 recall | 98.697% | 82.628% |
+| 高风险错误富集 | 4.9748x | 3.9183x |
+
+独立联合门禁给出 joint_gate_pass=true。所有方向、范围、中性区、置信度/熵、教师 argmax、学生固定温度、teacher-target-only、来源和有限值检查通过；train 求解与 train 复算缓存字节一致。可靠侧目标置信度上升且熵下降，高风险侧目标置信度下降且熵上升，中性区与学生分布的最大数值变化均为 0。
+
+### 13.3 审查结论与限制
+
+O1.2-A 已排除“新映射仍事实上等价于全局 T=0.6”这一主要数值隐患，但仍应保留以下限制：
+
+- 约 60% 像素处于轻锐化侧，均值接近 1 不等于大多数像素没有变化；
+- 高风险区 train/val 仍约有 85.34%/75.61% 教师预测正确，平滑可能同时削弱有用监督；
+- 正温度缩放不改变教师 argmax，只降低高风险目标的 top-class 集中度，不能修正错误类别；
+- mean(T) 与 harmonic(T) 预算不等价于保持平均 KL、梯度或监督强度；
+- 当前没有学生 mIoU、matched scalar、within-image shuffle、跨数据集、跨教师或多 seed 证据；
+- VOC-val 参与了方法设计，只能作为探索性机制验证，不能称为独立确认。
+
+当前停止在 O1.2-A 人工审查线。只有再次明确授权，才可先运行 neutral 与 unreliable_only 各 20-step smoke；不得自动启动 20k 或恢复 Phase N。
+
+详细证据：
+
+- [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)
+- [O1.2 预注册与结果](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)
+- [O1.2 执行记录](2026-07-13_phaseO_rtc_o12_execution_record.md)
+- [O1.2 正式机制诊断](2026-07-13_phaseO_rtc_o12_diagnostic_report.md)
 
 ---
 

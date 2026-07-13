@@ -246,18 +246,20 @@ Status: stopped by user at approximately `2026-07-13T10:36:45+08:00` to prioriti
 - The pair is incomplete, no preregistered promotion rule applies, and no performance conclusion is authorized. It must not auto-resume while Phase O is being designed.
 - The new method direction and experiment gates are recorded in [Phase O RTC-KD reconstruction](2026-07-13_phaseO_rtc_method_reconstruction_plan.md).
 
-### 9.5 Phase O1.1 result and O1.2 frozen reconstruction
+### 9.5 Phase O1.1 result and O1.2-A formal mechanism gate
 
-Status: O1.1 diagnostics completed and O1.2 plan frozen on 2026-07-13; no O1.2 student training has started.
+Status: O1.2-A implementation, full train/val diagnostics, and the independent joint gate completed on 2026-07-13; the joint gate passed. No O1.2 student training has started.
 
-- O1.1 replaced the active risk score with confidence-only r=-log(c), rebuilt an independent CDF, and passed the independent train/val joint gate.
-- The high-risk side covers 19.84%/21.09% of train/val pixels and recalls 98.70%/82.63% of teacher errors.
-- The O1.1 temperature median remains approximately 0.5 and the harmonic mean approximately 0.6, so broad low-temperature sharpening remains a strong alternative explanation.
-- O1.2 freezes a separate dead-zone routing rule, mean/harmonic temperature budgets, and teacher-target-only spatial calibration.
-- O1.2 is exploratory because its thresholds were chosen after inspecting the same VOC train/val diagnostics; confirmation requires a new teacher or dataset.
-- The next authorized action is implementation plus a no-student mechanism gate. Student training is not auto-authorized.
+- O1.1 replaced the active risk score with confidence-only r=-log(c), rebuilt an independent CDF, and passed the independent train/val risk gate.
+- O1.2 reuses that frozen ranking but replaces the broad low-temperature map with a dead zone, a mild reliable-side branch, a convex high-risk smoothing branch, and teacher-target-only spatial calibration.
+- The frozen train-budget solution is a*=0.1053605157 and b*=0.3476499170, with an arithmetic-mean residual of 2.79e-10.
+- Train/val temperature means are 0.995000/0.996092, harmonic means are 0.988069/0.988161, and medians are 0.982425/0.979061. This is no longer behavior close to a global T=0.6.
+- Only 3.96%/4.64% of train/val pixels exceed T=1.25. The high-risk side still recalls 98.70%/82.63% of teacher errors and enriches errors by 4.9748x/3.9183x.
+- All preregistered direction, range, neutral-zone, entropy, argmax, student-fixed, teacher-target-only, source, and finite-value checks passed; the independent train solve/evaluate caches are byte-identical.
+- This establishes the routing and target-transformation mechanism only. It does not establish student mIoU gains, spatial-position causality, matched-scalar superiority, cross-dataset generalization, or statistical significance.
+- O1.2 remains exploratory because its thresholds were selected after inspecting the same VOC diagnostics. The run is stopped at the O1.2-A review line; student training is not auto-authorized.
 
-Sources: [O1.1 diagnostic report](2026-07-13_phaseO_rtc_o11_diagnostic_report.md) and [O1.2 frozen plan](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md).
+Sources: [O1.1 diagnostic report](2026-07-13_phaseO_rtc_o11_diagnostic_report.md), [O1.2 plan/result](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md), [O1.2 execution record](2026-07-13_phaseO_rtc_o12_execution_record.md), and [O1.2 diagnostic report](2026-07-13_phaseO_rtc_o12_diagnostic_report.md).
 
 ## 10. Paper-ready claims and prohibited overclaims
 
@@ -268,6 +270,8 @@ Supported:
 3. On the same CIRKD base, CoVar improves all three `Tout=3.0` seeds and a second student head.
 4. The full confidence+variance score outperforms either isolated component in 20k ablation.
 5. CoVar adds about 10% training overhead and no inference-time module.
+6. The O1.1 confidence-only ranking enriches teacher errors monotonically on the exploratory VOC train/val diagnostics.
+7. O1.2-A satisfies the frozen temperature budgets and teacher-target-only numerical mechanism checks on both splits.
 
 Not yet supported:
 
@@ -277,6 +281,8 @@ Not yet supported:
 4. Cross-student statistical stability: the PSPNet result is one seed.
 5. CWD+CoVar superiority over matched scalar temperatures: Phase M2 instead favors scalar `T=0.6` by `+0.007381` final mIoU at 20k.
 6. An 80k or multi-seed benefit from scalar `T=0.6`: Phase N stopped during the 20k validation of an 80k-schedule run, so it provides no completed evidence for either claim.
+7. Any O1.2 student-performance or spatial-position benefit: no O1.2 student run, matched scalar, or shuffled-map result exists yet.
+8. Standard probabilistic calibration improvement: O1.2-A does not report ECE, NLL, or an equivalent calibration metric.
 
 ## 11. Recommended paper placement
 
@@ -285,3 +291,4 @@ Not yet supported:
 - Main mechanism figure: H1 reliability/error curve plus H2 rank-3 qualitative map.
 - Supplement: `Tout=1.0` seeds, gamma triage, all 20k baseline rows, H3 full distributions, and additional H2 examples.
 - Limitations: single dataset, CWD currently stronger in absolute mIoU, high `T_min` occupancy, and the Phase M2 evidence that matched scalar low temperature can outperform CoVar.
+- O1.2-A can currently appear only as exploratory mechanism evidence; promote it to a performance claim only after its preregistered student controls are complete.
