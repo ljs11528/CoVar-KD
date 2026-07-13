@@ -235,13 +235,16 @@ Status: completed on 2026-07-12. Sources: [final result](2026-07-12_phaseM2_scal
 
 ### 9.4 Phase N: 80k scalar-temperature confirmation
 
-Status: running since `2026-07-13T08:10:52+08:00`; paired smoke completed first. Source: [Phase N plan and live run record](2026-07-13_phaseN_scalar_temperature_80k_plan.md).
+Status: stopped by user at approximately `2026-07-13T10:36:45+08:00` to prioritize method reconstruction. Source: [Phase N plan and run record](2026-07-13_phaseN_scalar_temperature_80k_plan.md).
 
 - Compare scalar `T=1.0` on NPU 0 against scalar `T=0.6` on NPU 1 under the same CWD recipe, `Tout=3.0`, seed `1234`, and 80k budget.
-- Both runs passed the strict 20-iteration smoke, reached the first 800-iteration validation, produced all model/training-state artifacts, and continued without traceback/NaN/OOM. The first validation is a health check, not a result claim.
+- Both runs passed the strict 20-iteration smoke and reached `20000/80000` without traceback/NaN/OOM.
+- The stop occurred during the iteration-20000 validation (`730/1449` samples for `T=0.6`, `785/1449` for `T=1.0`), so neither run has a valid 20k final measurement or total runtime.
+- The last complete validation was iteration 19200 (`0.582472` for `T=0.6`, `0.579790` for `T=1.0`), but these are intermediate points under an 80k learning-rate schedule and are not comparable with Phase M2's completed 20k runs.
 - Primary metric: final mIoU. Secondary metrics: best mIoU/best iteration and last-10-validation mean.
 - This pair tests whether the Phase M2 low-temperature endpoint gain persists at the paper's full training budget. It does not test spatial adaptation.
-- Multi-seed promotion is conditional on the preregistered final-mIoU delta and late-window behavior; no multi-seed conclusion is authorized before the seed-1234 pair completes.
+- The pair is incomplete, no preregistered promotion rule applies, and no performance conclusion is authorized. It must not auto-resume while Phase O is being designed.
+- The new method direction and experiment gates are recorded in [Phase O RTC-KD reconstruction](2026-07-13_phaseO_rtc_method_reconstruction_plan.md).
 
 ## 10. Paper-ready claims and prohibited overclaims
 
@@ -260,7 +263,7 @@ Not yet supported:
 3. Cross-dataset generalization: only VOC data and a VOC teacher are locally available.
 4. Cross-student statistical stability: the PSPNet result is one seed.
 5. CWD+CoVar superiority over matched scalar temperatures: Phase M2 instead favors scalar `T=0.6` by `+0.007381` final mIoU at 20k.
-6. An 80k or multi-seed benefit from scalar `T=0.6`: Phase N is designed to test the first of these claims.
+6. An 80k or multi-seed benefit from scalar `T=0.6`: Phase N stopped during the 20k validation of an 80k-schedule run, so it provides no completed evidence for either claim.
 
 ## 11. Recommended paper placement
 
