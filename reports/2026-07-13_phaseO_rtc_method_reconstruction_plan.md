@@ -2,7 +2,7 @@
 
 - 创建日期：2026-07-13
 - 方法名称：可靠性目标置信度蒸馏（Reliability-Targeted Confidence Distillation，RTC-KD）
-- 当前状态：O1/O1.1 历史诊断完成；O1.2-A 独立实现和全量机制联合门禁通过；尚未启动 O1.2 学生训练
+- 当前状态：O1/O1.1 历史诊断完成；O1.2-A 独立实现和全量机制联合门禁通过；O1.2-B 的 `neutral` 与 `unreliable_only` 20-step fresh 及终点零步恢复审计均通过；后续实验未启动
 - 上一阶段：Phase N 已停止，不自动恢复
 - 文档格式：为兼容不同 Markdown 渲染器，公式统一写成纯文本代码块
 - 阅读规则：第 1 至 18 节保留 O1/O1.1 的历史方法与正式结果；O1.2 以第 19 节及其独立预注册文档为唯一规范
@@ -32,7 +32,7 @@ O1.2 的完整公式、来源契约、门禁和停止规则见：
 
 - [O1.2 高风险优先预算路由预注册](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)
 
-O1.2-A 已完成全量机制诊断并通过联合门禁；这一结果不自动授权学生训练，当前仍停在人工审查线。
+O1.2-A 已完成全量机制诊断并通过联合门禁。经单独授权后，O1.2-B 仅运行了 `neutral` 与 `unreliable_only` 的 20-step fresh 学生链路 smoke，两路及各自的终点零步恢复审计均通过。A 的机制联合门禁与 B 的学生链路 smoke 是两条独立证据链：B 不并入、也不改写 A 的 gate 结论。B 使用 `--skip-val`，没有 validation、mIoU、性能或泛化结论；当前重新停在人工审查线，不自动启动后续 smoke、20k、C2、C3 或 80k。
 
 ### O1/O1.1 历史首轮定义（仅记录）
 
@@ -1097,7 +1097,7 @@ O1.1 的通过只解除风险定义诊断门槛，不自动启动 O2/O3。若后
 
 ## 19. O1.2：高风险优先预算路由的当前决策
 
-状态：2026-07-13 已完成方法重构、独立实现、全量 train/val 机制诊断与联合门禁；联合门禁通过；尚未运行学生训练。
+状态：2026-07-13 已完成方法重构、独立实现、全量 train/val 机制诊断与联合门禁；O1.2-A 联合门禁通过。同日已完成获批范围内的 O1.2-B `neutral` 与 `unreliable_only` 20-step fresh 和终点零步恢复审计；后续实验未启动。
 
 O1.2 保留 O1.1 confidence-only 风险和冻结 CDF，但废止未来训练中的旧单阈值 tanh gate、0.5/2.0 强端点、全像素激活和学生共享空间温度。新的唯一主方案为：
 
@@ -1133,9 +1133,21 @@ O1.2 保留 O1.1 confidence-only 风险和冻结 CDF，但废止未来训练中�
 
 独立 checker 的 joint_gate_pass、train_pass 和 val_pass 均为 true。方向、范围、中性区、熵、argmax、student-fixed、teacher-target-only 和 nonfinite 检查全部通过，train 求解缓存与 train 独立复算缓存字节一致。
 
-因此 O1.2-A 已解决“映射事实上接近全局 T=0.6”这一数值机制隐患，但当前仍只有教师目标层面的证据。没有学生 mIoU、checkpoint 或空间因果结论；高风险也只能解释为教师错误富集区。当前停止在人工审查线，只有明确授权后才允许执行 O1.2-B 的 20-step neutral 与 unreliable_only smoke。
+因此 O1.2-A 已解决“映射事实上接近全局 T=0.6”这一数值机制隐患，但 A 仍只有教师目标层面的证据。O1.2-B 的后续链路 smoke 单独记录在第 19.2 节，不能回填为 A 的机制 gate 证据。
 
 详细记录：
 
 - [O1.2 执行记录](2026-07-13_phaseO_rtc_o12_execution_record.md)
 - [O1.2 机制诊断报告](2026-07-13_phaseO_rtc_o12_diagnostic_report.md)
+
+### 19.2 O1.2-B 正式学生链路 smoke
+
+在明确授权的边界内，`neutral` 与 `unreliable_only` 各自完成 20 个 optimizer step 的 fresh smoke，独立 fail-closed checker 均给出 `pass=true`。两路都保存了 iteration 20 的完整训练状态，loss 与 KD 学生-logit 梯度有限且观察到非零梯度，冻结配置、输入指纹和样本顺序契约通过检查。
+
+随后两路分别从各自 iteration-20 终点执行 `resume_audit`：均成功加载完整训练状态，执行 optimizer step 数严格为 0，并通过终点状态一致性检查。该恢复审计只证明终点 checkpoint 可被严格加载，不把 20-step 预算延长为第 21 步。
+
+O1.2-B 只证明这两个变体的学生训练、保存和恢复链路可运行。fresh 使用 `--skip-val`，因此没有 validation、mIoU、效果比较、空间因果、统计显著性或跨数据集泛化结论。O1.2-A 的联合门禁保持原结论，不把 B 的通过混入 A。当前不自动启动 `reliable_only`、`full_budgeted`、scalar、shuffle 等后续 smoke，也不自动启动 20k、C2、C3 或 80k。
+
+详细记录：
+
+- [O1.2-B neutral 与 unreliable_only 20-step smoke 报告](2026-07-13_phaseO_rtc_o12b_smoke_report.md)

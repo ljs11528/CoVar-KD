@@ -1,7 +1,7 @@
 # Phase O1.2：高风险优先的预算约束教师置信度校准计划
 
 - 制定日期：2026-07-13
-- 当前状态：O1.2-A 已完成独立实现、全量 train/val 机制诊断与联合门禁；联合门禁通过；尚未启动学生训练
+- 当前状态：O1.2-A 联合门禁通过；O1.2-B 的 `neutral` 与 `unreliable_only` 各 20-step fresh smoke 及 iteration=20 端点 resume=0 审计均通过；停在 B 后人工审查线
 - 方法定位：探索性的空间机制因果筛查，不是独立确认实验
 - 风险定义：confidence-only，保持 O1.1 不变
 - 第一开发底座：CWD，VOC，教师 Tout=3.0
@@ -29,7 +29,7 @@ O1.1 已证明 confidence-only 风险能把教师错误稳定富集到相对高�
 6. 空间温度只校准教师目标，学生端温度固定；
 7. 第一项学生实验只比较 neutral 与 unreliable_only。
 
-预注册冻结时不授权 O1.2 学生训练，要求先完成独立实现、单元测试、全量 train/val 机制诊断和联合门禁。该 O1.2-A 前置阶段现已完成并通过，但本文仍停在人工审查线，不自动授权学生训练。
+预注册冻结时不授权 O1.2 学生训练，要求先完成独立实现、单元测试、全量 train/val 机制诊断和联合门禁。该 O1.2-A 前置阶段已完成并通过；随后在 2026-07-13 获得明确授权并完成 O1.2-B 的两条 20-step 正式训练链路 smoke。该授权只覆盖 `neutral`、`unreliable_only` 及各自的端点恢复审计，不自动授权 20k、其他变体或性能结论。
 
 ## 1. O1.1 证据与正确解读
 
@@ -684,6 +684,21 @@ tau_formula_monotonic = 1e-12
 
 两者通过后，才允许 smoke reliable_only 和 full_budgeted。
 
+#### 11.1.1 2026-07-13 执行回填
+
+`neutral` 与 `unreliable_only` 已按本节执行，四份 final acceptance 均为 `pass=true`：
+
+| 变体 | fresh 20-step acceptance SHA256 | iteration=20 端点 resume=0 acceptance SHA256 | 设备 |
+|---|---|---|---|
+| neutral | `90eb89fe7a7dff773845152d5d59a7efcc3d61299976137223be6cf7d2615e1c` | `30fe00fa72b2f20293db2cfca3da7f0f9d960649fef8d153629b3d2b2f496677` | NPU:0 |
+| unreliable_only | `d8a3363724c7c5d93c7629ba0ebf365a7f73d1c25c53138633e179e21fe623cd` | `af540bf53a0b1646227eb9024a6eb9f5d7bf1af250773c62d1074b77aaa82488` | NPU:1 |
+
+两次 fresh run 都完成 20 次 optimizer step、保存 iteration=20 checkpoint，并在 step 20 记录有限且非零的 KD-only student-logit 梯度；两个端点恢复审计都严格加载 fresh checkpoint，核对关键状态后以 `optimizer_steps=0` 结束。端点恢复只证明终点 checkpoint 可严格加载及关键状态一致，不等价于已执行恢复后的下一个训练 step。
+
+四条链路的 canonical order SHA256 均为 `99326472a2e5e2bd42428d4709ff9f8049d2c906c7a6b9e8fa3068cb0439d564`。这证明相同 seed 的 canonical 样本索引顺序一致；它不证明 8-worker 随机增强可以按位重放。梯度证据覆盖总 generator/discriminator loss 的有限性硬门禁、step 20 的 KD-only student-logit 梯度，以及更新后 checkpoint 张量有限性；没有逐参数扫描并证明每个参数梯度都有限。
+
+本 smoke 设置 `skip-val`，没有生成预测、mIoU、rescue、error imitation 或 teacher-correct retention。两条 fresh run 的单点 loss/KL 也不能用作变体效果比较，因为教师目标不同且只有一个记录点。完整命令、产物路径、运行身份、显存/吞吐、环境告警和证据边界见 [O1.2-B 20-step 正式链路 smoke 报告](2026-07-13_phaseO_rtc_o12b_smoke_report.md)。
+
 ### 11.2 O1.2-C1：高风险分支信号筛查
 
 首个 20k 比较严格限定为 neutral versus unreliable_only。
@@ -826,6 +841,14 @@ O1.2-A 通过后只允许说：
 - 高风险侧获得单调增强的教师目标平滑；
 - O1.2 pixel-KL 分支中的学生温度已与空间教师目标校准解耦；其他固定 CWD 分支保持共同不变。
 
+O1.2-B 的两条 20-step smoke 通过后只允许补充说：
+
+- `neutral` 与 `unreliable_only` 的 fresh 20-step 正式训练链路均可完成，loss/指定梯度与 checkpoint 数值门禁通过；
+- 两个 iteration=20 端点 checkpoint 均可严格加载并完成 resume=0 状态审计；
+- 同 seed 的 canonical 样本索引顺序哈希一致。
+
+这些结论仍不是 mIoU、收敛、机制收益、空间因果或泛化结论。
+
 C1 通过后只允许说：
 
 - 高风险平滑在当前单 seed、20k 探索设置下具有或不具有机制信号。
@@ -862,9 +885,9 @@ C1 通过后只允许说：
 | checkpoint / metrics | 仅完整运行后填写 |
 | deviations / failures | 必填，不得删除失败记录 |
 
-## 16. O1.2-A 正式结果与当前停止线
+## 16. O1.2-A 正式结果与当时停止线
 
-状态：2026-07-13 已完成；全量 train/val 机制诊断和独立联合门禁通过；没有启动学生训练。
+状态：2026-07-13 已完成；全量 train/val 机制诊断和独立联合门禁通过；在 O1.2-A 结束时尚未启动学生训练。以下停止线是 O1.2-A 当时的历史记录，已由第 17 节更新。
 
 预算求解固定得到：
 
@@ -906,7 +929,7 @@ val_pass        = true
 - [O1.2 执行记录](2026-07-13_phaseO_rtc_o12_execution_record.md)
 - [O1.2 机制诊断报告](2026-07-13_phaseO_rtc_o12_diagnostic_report.md)
 
-当前停止线：
+O1.2-A 当时停止线：
 
 - O1.1 四份冻结源码和正式产物保持不变；
 - O1.2-A 已完成，联合门禁通过；
@@ -914,3 +937,31 @@ val_pass        = true
 - Phase N 不自动恢复；
 - 不允许使用旧 Phase O 启动脚本运行 O1.2；
 - 只有人工审查 O1.2-A 后明确授权，才可进入 O1.2-B 的 20-step neutral 与 unreliable_only smoke；不得自动启动 20k、C2、C3 或 80k。
+
+## 17. O1.2-B 正式结果与当前停止线
+
+状态：2026-07-13 已完成；`neutral` 与 `unreliable_only` 各自的 fresh 20-step smoke 和 iteration=20 端点 resume=0 审计全部通过。详细记录见：
+
+- [O1.2-B 20-step 正式链路 smoke 报告](2026-07-13_phaseO_rtc_o12b_smoke_report.md)
+- [O1.2 执行记录](2026-07-13_phaseO_rtc_o12_execution_record.md)
+- [O1.2 机制诊断报告](2026-07-13_phaseO_rtc_o12_diagnostic_report.md)
+
+共同执行证据：
+
+- Git commit：`5c93c1eeebfdf58ca4a9c82aca9852cb8a661330`；
+- seed：`1234`；batch size：`16`；每条 fresh run：`20` optimizer steps；
+- canonical order：320 个索引，SHA256=`99326472a2e5e2bd42428d4709ff9f8049d2c906c7a6b9e8fa3068cb0439d564`；
+- neutral fresh checkpoint SHA256=`6309cba985d8831586a610c45a4f463ba15d71381924b7093ca9f9fa91a982a9`；
+- unreliable_only fresh checkpoint SHA256=`b9426976a45ab1ec6396bb68d85f2f43fe80f176d94fde8c5395580a41ea0ed4`；
+- fresh acceptance 的 finite scan 均覆盖 847 个 tensor、19,711,341 个 tensor element 与 7 个 float scalar，errors/warnings 数组均为空；
+- neutral/unreliable_only 的 step-20 KD-only student-logit gradient L2 分别为 `0.00273925`/`0.00282540`，均有限且非零。
+
+运行控制台保留了 CANN 安装目录 owner mismatch 告警；fresh run 还出现内部格式被禁用后回退到 base format 的告警，resume audit 出现旧权重文件格式/兼容性告警。四份 final acceptance 的 `errors=[]`、`warnings=[]`，这些原始环境/序列化告警没有触发接受失败，但必须保留，不能解释为方法效果证据或从记录中删除。
+
+当前停止线：
+
+- O1.2-B 的授权范围已经执行完毕；不自动启动 `reliable_only`、`full_budgeted`、scalar、shuffle、20k、C2、C3 或 80k；
+- 不把 20-step 单点 loss、KL、运行速度或显存差异写成变体优劣；
+- 不宣称已验证 mIoU、收敛、错误救援、错误模仿、正确教师保留、空间因果或跨数据集泛化；
+- 不把端点 resume=0 写成已执行恢复后下一 step，也不把 canonical order hash 写成 worker 随机增强的按位复现；
+- 正式参数、CDF、配置、核心源码与 O1.2-A artifact SHA 保持冻结；后续如获新授权，必须继续使用 fail-closed 入口并另行记录，不覆盖 A/B 历史证据。

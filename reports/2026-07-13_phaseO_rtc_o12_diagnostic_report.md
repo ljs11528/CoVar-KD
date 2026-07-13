@@ -4,9 +4,9 @@
 - phase：O1.2
 - 风险定义：confidence-only，r=-log(c)
 - 正式联合门禁：通过
-- 当前完成阶段：O1.2-A 无学生全量机制诊断
-- 学生训练：未启动
-- 人工审查并明确授权后的唯一下一动作：O1.2-B 的 neutral 与 unreliable_only 各 20 iteration 链路 smoke；当前未自动授权，本轮未启动
+- 当前完成阶段：O1.2-A 无学生全量机制诊断，以及 O1.2-B 两条 20-step 训练链路 smoke
+- 学生训练：仅完成 `neutral` 与 `unreliable_only` 各 20-step；未运行 validation 或 20k
+- 当前边界：O1.2-B 两条 fresh smoke 与端点 resume=0 审计已通过；停在 B 后人工审查线，不自动启动其他变体或 20k
 - 证据性质：同一 VOC 设置上的探索性机制开发，不是独立确认或跨数据集泛化证据
 
 ## 1. 结论先行
@@ -19,7 +19,7 @@ O1.2-A 的正式 parameters、train、val 和 joint gate 四份产物均通过�
 4. train/val 的温度方向、目标置信度方向、目标熵方向、教师 argmax、学生 softmax 不变性、数值范围和人口闭合违规均为 0；
 5. O1.1 中“算术均值看似尚可、调和均值却约为 0.6，可能等价于广泛强锐化”的数值隐患，在 O1.2 空间教师目标分支上已经被预算约束解决。
 
-这仍然不能证明学生 mIoU 会提高，也不能证明收益来自正确的空间位置。当前没有学生训练结果、matched scalar 对照或 within-image shuffle 对照。
+这仍然不能证明学生 mIoU 会提高，也不能证明收益来自正确的空间位置。O1.2-B 只有两条 20-step 链路与终点 checkpoint 加载证据，没有 validation、学生预测、matched scalar 或 within-image shuffle 对照。
 
 | 正式部分 | 结果 | 关键说明 |
 |---|---|---|
@@ -27,7 +27,7 @@ O1.2-A 的正式 parameters、train、val 和 joint gate 四份产物均通过�
 | Train 机制诊断 | 通过 | 10,582 张，32,246,990 个 native-valid 像素 |
 | Val 无重拟合诊断 | 通过 | 1,449 张，3,878,674 个 native-valid 像素 |
 | 独立联合 checker | 通过 | joint_gate_pass=true |
-| 学生训练 | 未启动 | 不能给出效果结论 |
+| 学生训练 | 仅 2×20-step smoke 通过 | 无 validation/mIoU，不能给出效果结论 |
 
 ## 2. 方法与口径
 
@@ -368,7 +368,7 @@ O1.2 的 mean(1/T)=1/H 约为 1.0121（train）和 1.0120（val），不再存�
 ## 10. 局限与审查风险
 
 1. q_R=0.6、q_U=0.8、幂次和预算是在查看 O1.1 的 VOC 结果后提出的；同一 VOC-val 只能作为探索性开发集。
-2. 当前只有教师侧机制诊断，没有学生 rescue、error imitation、teacher-correct retention 或 mIoU 结果。
+2. 当前虽有两个 20-step 学生 checkpoint，但没有 validation、学生预测、rescue、error imitation、teacher-correct retention 或 mIoU 结果。
 3. 风险排序与边界、小目标和前景难例高度相关。平滑错误教师监督可能有益，但也可能削弱正确且有价值的细粒度监督。
 4. pixel micro 统计受背景、大区域和像素相关性影响；数百万像素不能替代图像级 bootstrap、seed 级重复或类别平衡指标。
 5. 风险定义使用 GT valid mask 限定人口，不应宣传为完全 label-free。
@@ -377,9 +377,9 @@ O1.2 的 mean(1/T)=1/H 约为 1.0121（train）和 1.0120（val），不再存�
 8. 正式产物记录了 dirty worktree；复现必须依赖产物中的 commit、完整 argv、配置指纹和源码/输入 SHA，不能只依赖 commit 名。
 9. 当前尚无 matched scalar 和 within-image shuffle，不能声称空间风险位置具有独立贡献。
 
-## 11. 下一步边界
+## 11. O1.2-A 当时的下一步边界
 
-O1.2-A joint gate 已通过，但当前仍停在人工审查线，不自动授权学生运行。只有人工审查并再次明确授权后，下一项且唯一允许的动作才是 O1.2-B 20-iteration 链路 smoke，第一批只包含：
+本节保留 O1.2-A 结束时的历史授权边界；该授权随后已于 2026-07-13 给出并执行，当前状态见第 13 节。O1.2-A joint gate 通过后，第一批只允许：
 
 1. neutral；
 2. unreliable_only。
@@ -393,7 +393,7 @@ O1.2-A joint gate 已通过，但当前仍停在人工审查线，不自动授�
 - 同 seed 样本顺序及 1-based shuffle 恢复一致；
 - 20 iteration 链路完整性。
 
-20 iteration 不产生也不得宣称 mIoU 效果结论。当前不允许启动 reliable_only、full_budgeted、scalar、shuffle、20k 或 80k 实验。上述 neutral/unreliable_only smoke 在本轮没有启动。
+20 iteration 不产生也不得宣称 mIoU 效果结论。在 O1.2-A 当时，不允许启动 reliable_only、full_budgeted、scalar、shuffle、20k 或 80k。上述 neutral/unreliable_only smoke 后续已按授权完成；本节不改写其预注册前置边界。
 
 ## 12. 正式产物与指纹
 
@@ -413,4 +413,47 @@ O1.2-A joint gate 已通过，但当前仍停在人工审查线，不自动授�
 | scripts/diagnostics/check_rtc_o12_gate.py | 805a19625d496d3c3864d529e314a49d75584afad69fedf69e28cadc431ce085 |
 | train_kd.py | f50a130c17ca3b5f368f848b96c59fd58c408952e75bda447c051589505b316d |
 
-本报告只解释上述正式 JSON 中已经生成的 O1.2-A 证据，不新增实验结果，也不改变预注册门槛。
+第 1 至 12 节解释上述正式 JSON 中已经生成的 O1.2-A 证据；以下第 13 节追加 O1.2-B 的链路审计结果。追加内容不改变预注册门槛，也不把 smoke 升格为性能实验。
+
+## 13. O1.2-B 20-step 链路诊断追加
+
+### 13.1 接受结果
+
+2026-07-13，`neutral` 与 `unreliable_only` 的 fresh 20-step run，以及各自从 iteration=20 checkpoint 执行的端点 resume=0 审计，四份 final acceptance 均为 `pass=true`：
+
+| 变体/模式 | Acceptance SHA256 | Checkpoint SHA256 | 结果 |
+|---|---|---|---|
+| neutral fresh | `90eb89fe7a7dff773845152d5d59a7efcc3d61299976137223be6cf7d2615e1c` | `6309cba985d8831586a610c45a4f463ba15d71381924b7093ca9f9fa91a982a9` | 20 optimizer steps，pass |
+| neutral endpoint resume=0 | `30fe00fa72b2f20293db2cfca3da7f0f9d960649fef8d153629b3d2b2f496677` | `6b0032efd44202181cb2bf4248209b788ea9573b92541ffe339562804d7d3e44` | 0 optimizer steps，pass |
+| unreliable_only fresh | `d8a3363724c7c5d93c7629ba0ebf365a7f73d1c25c53138633e179e21fe623cd` | `b9426976a45ab1ec6396bb68d85f2f43fe80f176d94fde8c5395580a41ea0ed4` | 20 optimizer steps，pass |
+| unreliable_only endpoint resume=0 | `af540bf53a0b1646227eb9024a6eb9f5d7bf1af250773c62d1074b77aaa82488` | `8760408718353c0e8123d4a4a5965eb63e8db504e23724d9b57c19ce77362aca` | 0 optimizer steps，pass |
+
+两条 fresh run 的 finite scan 都覆盖 847 个 tensor、19,711,341 个 tensor element 和 7 个 float scalar，结构化 `errors=[]`、`warnings=[]`。step 20 的 KD-only student-logit gradient L2 分别为 neutral `0.00273925`、unreliable_only `0.00282540`，均有限且非零。该证据说明指定 KD 路径具有梯度信号；它不是每个模型参数梯度的逐张量扫描。
+
+### 13.2 路由诊断能说什么
+
+fresh step-20 诊断为：
+
+| 指标 | neutral | unreliable_only |
+|---|---:|---:|
+| O1.2 KD KL | 0.95004142 | 1.00187660 |
+| teacher target entropy | 1.22812260 | 1.26829381 |
+| KD-only student-logit gradient L2 | 0.00273925 | 0.00282540 |
+| teacher output temperature | 3.0 | 3.0 |
+| valid pixel | 43,209 | 43,209 |
+
+这些数字只用于验证两个冻结变体确实走通各自教师目标链路、数值有限且 KD 梯度非零。因为教师目标不同、只有一个 step-20 记录点且未验证，它们不能支持“unreliable_only 更好/更差”、收敛更快或机制有效的结论。
+
+### 13.3 顺序与恢复边界
+
+四份 acceptance 的 canonical order 都是 320 个 dataset index，seed=`1234`，SHA256=`99326472a2e5e2bd42428d4709ff9f8049d2c906c7a6b9e8fa3068cb0439d564`。这证明 canonical 索引顺序一致；没有实际 `sample_names` 序列证据，也没有证明 8-worker 随机增强按位复现。
+
+两个 resume audit 均从对应 fresh iteration=20 checkpoint 严格加载，关键状态与 student-weight SHA 相等，并以 `optimizer_steps=0` 结束。这是终点 checkpoint 的加载审计，不是恢复后 next batch/next step 的实跑证据；不能用单元测试中的 sampler slicing 代替实际 continuation。
+
+### 13.4 环境告警与证据级别
+
+控制台原始日志保留了 CANN owner mismatch 告警；fresh run 保留内部格式禁用后回退 base format 的告警；resume audit 保留旧权重文件格式/torch 兼容性及未来弃用告警。这些没有触发 final checker 的结构化 error/warning，但不得从记录中删除，也不属于方法表现。
+
+本阶段使用 `skip-val`，未生成 validation、预测或 mIoU，也没有 rescue、error imitation、teacher-correct retention。故新增的唯一结论是训练/数值/checkpoint/终点严格加载链路通过；不是性能、收敛、空间位置因果或泛化结论。
+
+当前停在 O1.2-B 后人工审查线，不自动启动 `reliable_only`、`full_budgeted`、scalar、shuffle、20k、C2、C3 或 80k。完整证据见 [O1.2-B 20-step 正式链路 smoke 报告](2026-07-13_phaseO_rtc_o12b_smoke_report.md) 与 [O1.2 执行记录](2026-07-13_phaseO_rtc_o12_execution_record.md)。

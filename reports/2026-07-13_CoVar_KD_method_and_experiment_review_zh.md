@@ -6,7 +6,7 @@
 - 事实口径：方法以当前代码和冻结 shell 为准；实验以 `reports/` 中的阶段报告及已核验日志为准；README 中的上游发布结果不计为本项目本地完成实验。
 - 状态标记：`已完成` 表示训练预算、最终验证和日志完整性已经核验；`进行中` 和 `计划中` 不进入结果结论。
 
-> 执行方向更新（2026-07-13）：第 0 至 12 节继续保留 Newton/历史实验审查快照；当前主线已转为 O1.2。O1.2-A 独立实现、全量 train/val 机制诊断和联合门禁已完成并通过，温度中位数约为 0.982/0.979、调和均值约为 0.988/0.988；尚未启动学生训练。当前结论与停止线见第 13 节、[O1.2 预注册与结果](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)及 [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)。
+> 执行方向更新（2026-07-13）：第 0 至 12 节继续保留 Newton/历史实验审查快照；当前主线已转为 O1.2。O1.2-A 独立实现、全量 train/val 机制诊断和联合门禁已完成并通过，温度中位数约为 0.982/0.979、调和均值约为 0.988/0.988。另行授权的 O1.2-B `neutral` 与 `unreliable_only` 20-step fresh 及各自终点零步恢复审计也均通过，但只构成学生训练链路 smoke；B 不并入 A 的机制 gate，且没有 validation、mIoU、性能或泛化结论。当前结论与停止线见第 13 节、[O1.2 预注册与结果](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)、[O1.2-B smoke 报告](2026-07-13_phaseO_rtc_o12b_smoke_report.md)及 [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)。
 
 ## 0. 先给结论
 
@@ -724,10 +724,10 @@ O1.2-A 已排除“新映射仍事实上等价于全局 T=0.6”这一主要数�
 - 高风险区 train/val 仍约有 85.34%/75.61% 教师预测正确，平滑可能同时削弱有用监督；
 - 正温度缩放不改变教师 argmax，只降低高风险目标的 top-class 集中度，不能修正错误类别；
 - mean(T) 与 harmonic(T) 预算不等价于保持平均 KL、梯度或监督强度；
-- 当前没有学生 mIoU、matched scalar、within-image shuffle、跨数据集、跨教师或多 seed 证据；
+- 当前只有 O1.2-B 的 20-step 学生链路 smoke，没有学生 validation/mIoU、matched scalar、within-image shuffle、跨数据集、跨教师或多 seed 证据；
 - VOC-val 参与了方法设计，只能作为探索性机制验证，不能称为独立确认。
 
-当前停止在 O1.2-A 人工审查线。只有再次明确授权，才可先运行 neutral 与 unreliable_only 各 20-step smoke；不得自动启动 20k 或恢复 Phase N。
+O1.2-A 与 O1.2-B 的证据边界必须分开：A 的联合门禁只证明教师目标机制，B 只证明两条学生训练链路可运行。获批的 B smoke 已完成，当前重新停在人工审查线；不得自动启动后续 smoke、20k、C2、C3、80k 或恢复 Phase N。
 
 详细证据：
 
@@ -735,6 +735,13 @@ O1.2-A 已排除“新映射仍事实上等价于全局 T=0.6”这一主要数�
 - [O1.2 预注册与结果](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)
 - [O1.2 执行记录](2026-07-13_phaseO_rtc_o12_execution_record.md)
 - [O1.2 正式机制诊断](2026-07-13_phaseO_rtc_o12_diagnostic_report.md)
+- [O1.2-B neutral 与 unreliable_only 20-step smoke 报告](2026-07-13_phaseO_rtc_o12b_smoke_report.md)
+
+### 13.4 O1.2-B 学生链路 smoke
+
+`neutral` 与 `unreliable_only` 的 fresh 运行各完成 20 个 optimizer step，独立 fail-closed 验收均为 `pass=true`。两路均产生 iteration-20 完整训练状态；随后各自的 `resume_audit` 从该终点成功加载，严格执行 0 个 optimizer step，并通过终点状态一致性验收。
+
+本阶段只检查冻结配方下的学生训练、有限 loss、非零有限 KD 学生-logit 梯度、checkpoint 保存、样本顺序契约和终点恢复。fresh 使用 `--skip-val`，没有 validation 或 mIoU，因此不能比较 `neutral` 与 `unreliable_only` 的效果，不能推出高风险平滑有效、空间位置有因果贡献、方法有统计优势或能跨数据集泛化。后续任何 smoke、20k、C2、C3 或 80k 都需要再次明确授权，不能由本次通过自动接棒。
 
 ---
 

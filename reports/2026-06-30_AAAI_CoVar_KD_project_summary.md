@@ -2,10 +2,10 @@
 
 - 生成时间：2026-06-30
 - 项目路径：`/home/ma-user/work/ljs`
-- 当前硬件：2 x Ascend 910 NPU，CANN 8.5.0，PyTorch 2.6.0 NPU 环境
-- 当前状态：Phase N 已停止；O1.2-A 独立实现、全量机制诊断与联合门禁已完成并通过；尚未启动 O1.2 学生训练
+- 当前硬件/运行时：2 x Ascend 910 NPU，CANN 8.5.0；正式 smoke 使用 Python 3.11.10、PyTorch 2.8.0+cpu、torch_npu 2.8.0.post2（环境目录名保留为 `PyTorch-2.6.0`）
+- 当前状态：Phase N 已停止；O1.2-A 独立实现、全量机制诊断与联合门禁已完成并通过；O1.2-B 的 `neutral` 与 `unreliable_only` 20-step fresh 及终点零步恢复审计均通过；后续实验未启动
 
-> 2026-07-13 主线同步：O1.1 confidence-only 风险联合门禁已通过；O1.2-A 已把温度中位数从约 0.5 调整到 train/val 约 0.982/0.979，调和均值约 0.988/0.988，并通过独立联合门禁。该结果只证明预算路由与教师目标机制正确，尚无学生 mIoU 或空间因果结论。总览见 [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)，唯一规范见 [O1.2 预注册与结果](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)。
+> 2026-07-13 主线同步：O1.1 confidence-only 风险联合门禁已通过；O1.2-A 已把温度中位数从约 0.5 调整到 train/val 约 0.982/0.979，调和均值约 0.988/0.988，并通过独立联合门禁。另行授权的 O1.2-B `neutral` 与 `unreliable_only` 20-step fresh 及各自终点零步恢复审计也均通过，但它们只证明学生训练、保存与恢复链路可运行。B 不并入 A 的机制 gate；本轮没有 validation、mIoU、性能或泛化结论，也不自动启动后续 smoke、20k、C2、C3 或 80k。总览见 [Phase O 主记录](2026-07-13_phaseO_rtc_method_reconstruction_plan.md)，唯一规范见 [O1.2 预注册与结果](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)，链路验收见 [O1.2-B smoke 报告](2026-07-13_phaseO_rtc_o12b_smoke_report.md)。
 
 > 历史口径说明：本文第 1 至 16 节是 2026-06-30 形成并随后补记的 Newton/Phase C 历史快照，其中“当前”“下一步”等措辞均只表示当时状态，不代表 2026-07-13 主线。现行方法、证据边界和停止线只以第 17 节及上述 Phase O/O1.2 文档为准。
 
@@ -326,9 +326,9 @@ Knowledge distillation for semantic segmentation commonly applies a global tempe
 
 真正决定论文主结论强弱的是当前 80k pair。如果 CoVar Newton 拉开 no-covar control，论文可以主打 CoVar 的性能贡献；如果差距仍小，论文需要转向“teacher softening 是主贡献，CoVar 提供可解释的微弱增益和分析框架”这一更稳健的定位。
 
-## 17. 2026-07-13 当前主线：Phase O1.2-A
+## 17. 2026-07-13 当前主线：Phase O1.2-A 与 O1.2-B
 
-O1.2-A 已完成独立实现、103 项单元测试、全量 train/val 机制诊断和独立联合门禁。没有启动学生训练，也没有产生 O1.2 mIoU 或 checkpoint。
+O1.2-A 已完成独立实现、103 项单元测试、全量 train/val 机制诊断和独立联合门禁。A 本身没有启动学生训练，也没有产生学生 mIoU 或 checkpoint；其后单独获批并执行的 O1.2-B 链路 smoke 见本节末尾，两阶段证据不得混用。
 
 | 指标 | Train | Val |
 |---|---:|---:|
@@ -348,7 +348,8 @@ O1.2-A 已完成独立实现、103 项单元测试、全量 train/val 机制诊�
 - 预算映射避免了 O1.1 接近全局 T=0.6 的强锐化行为；
 - 高风险侧仍有大量正确教师预测，不能视为错误标签；
 - O1.2-A 只验证教师目标机制，不证明学生性能、空间因果、跨数据集泛化或统计显著性；
-- 下一步仍需人工审查；若明确授权，只先运行 neutral 与 unreliable_only 的 20-step smoke。
+- O1.2-B 已完成获批的两路 20-step 学生链路 smoke，但没有 validation 或 mIoU，不能升级为效果证据；
+- 当前再次停在人工审查线，不自动启动后续 smoke、20k、C2、C3 或 80k。
 
 详细记录：
 
@@ -356,3 +357,10 @@ O1.2-A 已完成独立实现、103 项单元测试、全量 train/val 机制诊�
 - [O1.2 规范与结果](2026-07-13_phaseO_rtc_o12_budgeted_routing_plan.md)
 - [O1.2 执行记录](2026-07-13_phaseO_rtc_o12_execution_record.md)
 - [O1.2 机制诊断报告](2026-07-13_phaseO_rtc_o12_diagnostic_report.md)
+- [O1.2-B neutral 与 unreliable_only 20-step smoke 报告](2026-07-13_phaseO_rtc_o12b_smoke_report.md)
+
+### 17.1 O1.2-B 链路验收边界
+
+`neutral` 与 `unreliable_only` 的 fresh 运行各完成 20 个 optimizer step，独立验收均为 `pass=true`；两路终点 `resume_audit` 均从 iteration 20 完整加载状态、执行 0 个 optimizer step，并再次通过验收。这说明冻结配方下的学生训练、checkpoint 保存和终点恢复链路可用。
+
+该阶段启用了 `--skip-val`，因此没有 validation、mIoU、两变体性能优劣、空间位置因果或泛化证据。它不改变 O1.2-A 的联合门禁含义，也不授权任何后续实验自动接棒。
