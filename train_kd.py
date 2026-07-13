@@ -4,6 +4,8 @@ import datetime
 import os
 import shutil
 import math
+import json
+import hashlib
 import sys
 import random
 import numpy as np
@@ -44,10 +46,20 @@ from utils.rtc_temperature import (
     RTCConfig,
     build_rtc_temperature_map,
     collect_rtc_diagnostics,
+    compute_reference_reliability,
     file_sha256,
     load_frozen_reliability_cdf,
     masked_temperature_kd_loss,
 )
+from utils.rtc_o12_calibration import (
+    O12CalibrationConfig,
+    build_o12_teacher_target,
+    build_o12_temperature_map,
+    compute_o12_masked_kl_terms,
+    normalize_o12_ddp_loss,
+    shuffle_o12_temperature_within_images,
+)
+
 
 # Lazy import datasets inside Trainer to avoid unnecessary deps
 
@@ -205,6 +217,772 @@ def format_overall_validation_log(pix_acc, miou):
         float(pix_acc), float(miou)
     )
 
+RTC_O12_KD_LOSS_MODE = 'rtc_o12_teacher_target'
+RTC_O12_VARIANTS = (
+    'neutral',
+    'reliable_only',
+    'unreliable_only',
+    'full_budgeted',
+    'unreliable_arithmetic_scalar',
+    'unreliable_harmonic_scalar',
+    'unreliable_shuffled',
+    'full_arithmetic_scalar',
+    'full_harmonic_scalar',
+    'full_shuffled',
+)
+
+RTC_O12_CDF_SHA256 = '8ba8376a03c2f93835339d98670fa357b381b23a22cbf2a7fc48b0c2441d7e69'
+RTC_O12_TEACHER_SHA256 = 'ac49b2c7720b21d565072e974e4404fcb009ba106288d95d1a4bb25f09c3fe58'
+RTC_O12_STUDENT_INIT_SHA256 = '47085aa164b2977003221458a2a5fdf5f46f434f5539b164dc71969b4dd4cd75'
+RTC_O12_TRAIN_LIST_SHA256 = 'd1326bd532648d73bc4b1bd275434eba81930982dc7401a65a8cecb26c028e24'
+RTC_O12_TRAIN_DATASET_SIZE = 10582
+RTC_O12_TRAIN_NATIVE_VALID = 32246990
+RTC_O12_GATE_PROFILE = 'o12_budgeted_teacher_target_non_synonymous_v1'
+RTC_O12_FROZEN_O11_SOURCES = {
+    'rtc_temperature': '01b7b6e6aa0d513561332510347b52ea9411330dfb0f2da54abdc36f2375fe59',
+    'build_rtc_cdf': 'c88bdfcb885cde01cbf437e2e7751c8eab510067aacf530b469df808ae6604dd',
+    'diagnose_rtc_routing': 'f838f25b70b8eadfc982873057e5fb68c54c81089a32e9121fd664e02916f9ef',
+    'check_rtc_o11_gate': '55553ec523ac2c2a979470b8542f31878462bbe5a919e0c52132edfbba4eb256',
+}
+
+
+def rtc_o12_canonical_paths():
+    diagnostics = os.path.join(cur_path, 'runs', 'diagnostics')
+    return {
+        'cdf': os.path.realpath(os.path.join(
+            diagnostics, 'phaseO_o11', 'voc_train_rtc_confidence_cdf.pt'
+        )),
+        'o11_gate': os.path.realpath(os.path.join(
+            diagnostics, 'phaseO_o11', 'o11_confidence_gate.json'
+        )),
+        'parameters': os.path.realpath(os.path.join(
+            diagnostics, 'phaseO_o12', 'o12_budget_parameters.json'
+        )),
+        'gate': os.path.realpath(os.path.join(
+            diagnostics, 'phaseO_o12', 'o12_joint_gate.json'
+        )),
+        'train_list': os.path.realpath(os.path.join(
+            cur_path, 'dataset', 'list', 'voc', 'train_aug.txt'
+        )),
+    }
+
+
+def rtc_o12_expected_configuration():
+    config = O12CalibrationConfig()
+    config.validate()
+    return {
+        'phase': 'O1.2',
+        'reliability_mode': 'confidence',
+        'reliability_definition_id': 'neg_log_top1_confidence_v1',
+        'assess_temperature': 1.0,
+        'epsilon': 1e-8,
+        'q_reliable': config.q_reliable,
+        'q_unreliable': config.q_unreliable,
+        'p_reliable': config.p_reliable,
+        'p_unreliable': config.p_unreliable,
+        'a': config.a_star,
+        'b_min': 0.0,
+        'b_max': config.b_max,
+        'target_arithmetic_mean': config.target_mean,
+        'minimum_harmonic_mean': config.min_harmonic_mean,
+        'bisection_iterations': config.bisection_iterations,
+        'teacher_output_temperature': config.teacher_output_temperature,
+        'temperature_map_dtype': 'float32',
+        'budget_accumulator_dtype': 'float64',
+        'temperature_minimum': config.temperature_min,
+        'temperature_maximum': config.temperature_max,
+        'tau_temperature': 1e-6,
+        'tau_probability': 1e-6,
+        'tau_entropy': 1e-6,
+        'tau_student': 1e-7,
+        'tau_formula_monotonic': 1e-12,
+    }
+
+
+def _rtc_o12_resolve(path):
+    return os.path.realpath(os.path.abspath(os.path.expanduser(str(path))))
+
+
+def _rtc_o12_require(condition, message):
+    if not condition:
+        raise ValueError('O1.2 contract violation: {}'.format(message))
+
+
+def _rtc_o12_read_json(path, label):
+    if not os.path.isfile(path):
+        raise FileNotFoundError('O1.2 {} not found: {}'.format(label, path))
+    with open(path, 'r', encoding='utf-8') as handle:
+        payload = json.load(handle)
+    _rtc_o12_require(isinstance(payload, dict), '{} root is not an object'.format(label))
+    return payload
+
+
+def _rtc_o12_all_true(payload):
+    return (
+        isinstance(payload, dict)
+        and bool(payload)
+        and all(value is True for value in payload.values())
+    )
+
+
+def rtc_o12_current_source_sha256():
+    paths = {
+        'rtc_o12_calibration': os.path.join(cur_path, 'utils', 'rtc_o12_calibration.py'),
+        'diagnose_rtc_o12_budget': os.path.join(
+            cur_path, 'scripts', 'diagnostics', 'diagnose_rtc_o12_budget.py'
+        ),
+        'check_rtc_o12_gate': os.path.join(
+            cur_path, 'scripts', 'diagnostics', 'check_rtc_o12_gate.py'
+        ),
+        'train_entry': os.path.join(cur_path, 'train_kd.py'),
+    }
+    for path in paths.values():
+        if not os.path.isfile(path):
+            raise FileNotFoundError('O1.2 source not found: {}'.format(path))
+    return {name: file_sha256(path) for name, path in paths.items()}
+
+
+def validate_rtc_o12_cdf_contract(cdf, num_classes):
+    _rtc_o12_require(cdf.checksum_sha256 == RTC_O12_CDF_SHA256, 'CDF SHA mismatch')
+    metadata = dict(cdf.metadata)
+    expected = {
+        'phase': 'O1.1',
+        'dataset': 'voc',
+        'split': 'train_aug',
+        'num_classes': 21,
+        'processed_images': RTC_O12_TRAIN_DATASET_SIZE,
+        'dataset_size': RTC_O12_TRAIN_DATASET_SIZE,
+        'full_dataset_scan': True,
+        'batch_size': 4,
+        'workers': 0,
+        'max_images': 0,
+        'max_pixels_per_image': 4096,
+        'num_quantiles': 4097,
+        'crop_size': [512, 512],
+        'scale': True,
+        'mirror': True,
+        'seed': 1234,
+        'teacher_output_grid': 'native',
+        'valid_mask_resize': 'nearest',
+        'assess_temperature': 1.0,
+        'coefficient_a': 0.0,
+        'coefficient_a_active': False,
+        'reliability_mode': 'confidence',
+        'reliability_definition_id': 'neg_log_top1_confidence_v1',
+        'reliability_epsilon': 1e-8,
+        'active_terms': ['confidence'],
+        'teacher_sha256': RTC_O12_TEACHER_SHA256,
+        'train_list_sha256': RTC_O12_TRAIN_LIST_SHA256,
+        'nonfinite_valid_pixels': 0,
+    }
+    for key, value in expected.items():
+        _rtc_o12_require(metadata.get(key) == value, 'CDF metadata {} drift'.format(key))
+    _rtc_o12_require(int(num_classes) == 21, 'dataset class count must be 21')
+    _rtc_o12_require(
+        metadata.get('source_sha256') == RTC_O12_FROZEN_O11_SOURCES,
+        'CDF O1.1 source mapping mismatch',
+    )
+    _rtc_o12_require(
+        int(metadata.get('valid_native_pixels', -1))
+        == int(metadata.get('finite_valid_pixels', -2)) > 0,
+        'CDF finite population mismatch',
+    )
+
+
+def load_rtc_o12_artifact_contract(args):
+    """Hard-fail unless all frozen O1.2 inputs and sources agree."""
+    paths = rtc_o12_canonical_paths()
+    requested = {
+        'cdf': _rtc_o12_resolve(args.rtc_o12_cdf_path),
+        'parameters': _rtc_o12_resolve(args.rtc_o12_parameters_path),
+        'gate': _rtc_o12_resolve(args.rtc_o12_gate_path),
+    }
+    for name, path in requested.items():
+        _rtc_o12_require(path == paths[name], '{} path is not canonical'.format(name))
+        if not os.path.isfile(path):
+            raise FileNotFoundError('O1.2 {} not found: {}'.format(name, path))
+    _rtc_o12_require(
+        file_sha256(paths['cdf']) == RTC_O12_CDF_SHA256, 'CDF SHA mismatch'
+    )
+
+    o11_source_paths = {
+        'rtc_temperature': os.path.join(cur_path, 'utils', 'rtc_temperature.py'),
+        'build_rtc_cdf': os.path.join(
+            cur_path, 'scripts', 'diagnostics', 'build_rtc_cdf.py'
+        ),
+        'diagnose_rtc_routing': os.path.join(
+            cur_path, 'scripts', 'diagnostics', 'diagnose_rtc_routing.py'
+        ),
+        'check_rtc_o11_gate': os.path.join(
+            cur_path, 'scripts', 'diagnostics', 'check_rtc_o11_gate.py'
+        ),
+    }
+    for name, path in o11_source_paths.items():
+        _rtc_o12_require(
+            file_sha256(path) == RTC_O12_FROZEN_O11_SOURCES[name],
+            'frozen O1.1 source changed: {}'.format(name),
+        )
+    for label, path, expected_sha in (
+        ('teacher', args.teacher_pretrained, RTC_O12_TEACHER_SHA256),
+        ('student init', args.student_pretrained_base, RTC_O12_STUDENT_INIT_SHA256),
+        ('train list', paths['train_list'], RTC_O12_TRAIN_LIST_SHA256),
+    ):
+        if not os.path.isfile(path):
+            raise FileNotFoundError('O1.2 {} not found: {}'.format(label, path))
+        _rtc_o12_require(file_sha256(path) == expected_sha, '{} SHA mismatch'.format(label))
+
+    parameters = _rtc_o12_read_json(paths['parameters'], 'parameters')
+    gate = _rtc_o12_read_json(paths['gate'], 'joint gate')
+    o11_gate = _rtc_o12_read_json(paths['o11_gate'], 'O1.1 gate')
+    sources = rtc_o12_current_source_sha256()
+    configuration = rtc_o12_expected_configuration()
+    parameters_sha = file_sha256(paths['parameters'])
+    _rtc_o12_require(o11_gate.get('joint_gate_pass') is True, 'O1.1 gate is false')
+    _rtc_o12_require(
+        o11_gate.get('actual_cdf_sha256') == RTC_O12_CDF_SHA256,
+        'O1.1 gate CDF mismatch',
+    )
+
+    parameter_expected = {
+        'schema_version': 1,
+        'phase': 'O1.2',
+        'artifact_kind': 'o12_budget_parameters',
+        'split': 'train',
+        'stage': 'solve',
+        'formal_full_run': True,
+        'configuration': configuration,
+        'source_sha256': sources,
+        'cdf_sha256': RTC_O12_CDF_SHA256,
+        'teacher_sha256': RTC_O12_TEACHER_SHA256,
+        'list_sha256': RTC_O12_TRAIN_LIST_SHA256,
+        'dataset_size': RTC_O12_TRAIN_DATASET_SIZE,
+        'processed_images': RTC_O12_TRAIN_DATASET_SIZE,
+        'valid_native_pixels': RTC_O12_TRAIN_NATIVE_VALID,
+        'finite_native_pixels': RTC_O12_TRAIN_NATIVE_VALID,
+        'nonfinite_native_pixels': 0,
+        'o11_joint_gate_pass': True,
+        'all_checks_pass': True,
+    }
+    for key, value in parameter_expected.items():
+        _rtc_o12_require(
+            parameters.get(key) == value, 'parameters {} mismatch'.format(key)
+        )
+    _rtc_o12_require(_rtc_o12_all_true(parameters.get('checks')), 'parameter checks failed')
+    _rtc_o12_require(
+        _rtc_o12_resolve(parameters.get('cdf_path', '')) == paths['cdf'],
+        'parameter CDF path mismatch',
+    )
+
+    gate_expected = {
+        'schema_version': 1,
+        'phase': 'O1.2',
+        'gate_profile': RTC_O12_GATE_PROFILE,
+        'joint_gate_pass': True,
+        'configuration': configuration,
+        'source_sha256': sources,
+        'parameters_sha256': parameters_sha,
+        'cdf_sha256': RTC_O12_CDF_SHA256,
+    }
+    for key, value in gate_expected.items():
+        _rtc_o12_require(gate.get(key) == value, 'joint gate {} mismatch'.format(key))
+    _rtc_o12_require(_rtc_o12_all_true(gate.get('joint_checks')), 'joint checks failed')
+    _rtc_o12_require(
+        _rtc_o12_resolve(gate.get('parameters_path', '')) == paths['parameters'],
+        'joint gate parameter path mismatch',
+    )
+    _rtc_o12_require(
+        _rtc_o12_resolve(gate.get('cdf_path', '')) == paths['cdf'],
+        'joint gate CDF path mismatch',
+    )
+    for key in ('parameters_evaluation', 'train_evaluation', 'val_evaluation'):
+        row = gate.get(key)
+        _rtc_o12_require(isinstance(row, dict) and row.get('pass') is True,
+                         '{} did not pass'.format(key))
+        _rtc_o12_require(_rtc_o12_all_true(row.get('checks')),
+                         '{} checks failed'.format(key))
+
+    solution = parameters.get('solution')
+    _rtc_o12_require(isinstance(solution, dict), 'solution missing')
+    b_value = solution.get('b')
+    _rtc_o12_require(
+        solution.get('feasible') is True
+        and isinstance(b_value, (int, float))
+        and not isinstance(b_value, bool)
+        and math.isfinite(float(b_value))
+        and 0.0 <= float(b_value) <= configuration['b_max'],
+        'solution b invalid',
+    )
+    _rtc_o12_require(solution.get('iterations') == 64, 'solution iterations mismatch')
+    _rtc_o12_require(
+        solution.get('population') == RTC_O12_TRAIN_NATIVE_VALID,
+        'solution population mismatch',
+    )
+    _rtc_o12_require(
+        _rtc_o12_float_matches(solution.get('a'), configuration['a']),
+        'solution a mismatch',
+    )
+    _rtc_o12_require(abs(float(solution.get('mean')) - .995) <= 1e-4,
+                     'solution mean misses budget')
+    _rtc_o12_require(float(solution.get('harmonic_mean')) >= .98,
+                     'solution harmonic mean misses budget')
+    _rtc_o12_require(float(solution.get('theoretical_high_risk_endpoint')) >= 1.25,
+                     'solution high-risk endpoint misses gate')
+
+    scalar_table = parameters.get('branch_scalar_temperatures')
+    _rtc_o12_require(isinstance(scalar_table, dict), 'branch scalar table missing')
+    scalars = {}
+    for branch in ('unreliable_only', 'full_budgeted'):
+        row = scalar_table.get(branch)
+        _rtc_o12_require(isinstance(row, dict), '{} scalar row missing'.format(branch))
+        scalars[branch] = {}
+        for moment in ('arithmetic', 'harmonic'):
+            value = row.get(moment)
+            _rtc_o12_require(
+                isinstance(value, (int, float))
+                and not isinstance(value, bool)
+                and math.isfinite(float(value))
+                and .9 <= float(value) <= 1.5,
+                '{} {} scalar invalid'.format(branch, moment),
+            )
+            scalars[branch][moment] = float(value)
+    return {
+        'configuration': configuration,
+        'b': float(b_value),
+        'branch_scalar_temperatures': scalars,
+        'cdf_path': paths['cdf'],
+        'cdf_sha256': RTC_O12_CDF_SHA256,
+        'parameters_path': paths['parameters'],
+        'parameters_sha256': parameters_sha,
+        'gate_path': paths['gate'],
+        'gate_sha256': file_sha256(paths['gate']),
+        'o11_gate_path': paths['o11_gate'],
+        'o11_gate_sha256': file_sha256(paths['o11_gate']),
+        'train_list_path': paths['train_list'],
+        'train_list_sha256': RTC_O12_TRAIN_LIST_SHA256,
+        'teacher_sha256': RTC_O12_TEACHER_SHA256,
+        'student_init_sha256': RTC_O12_STUDENT_INIT_SHA256,
+        'source_sha256': sources,
+    }
+
+
+def rtc_o12_is_enabled(args):
+    return getattr(args, 'kd_loss_mode', None) == RTC_O12_KD_LOSS_MODE
+
+
+def _rtc_o12_float_matches(observed, expected, tolerance=1e-12):
+    try:
+        return math.isclose(
+            float(observed), float(expected), rel_tol=0.0, abs_tol=tolerance
+        )
+    except (TypeError, ValueError):
+        return False
+
+
+def validate_rtc_o12_cli_contract(args, world_size=None):
+    """Reject ambiguous O1.2 launches before datasets or models are created."""
+    if not rtc_o12_is_enabled(args):
+        return
+
+    if world_size is None:
+        world_size = int(os.environ.get('WORLD_SIZE', '1'))
+    errors = []
+
+    def require(condition, message):
+        if not condition:
+            errors.append(message)
+
+    require(not args.use_covar, 'O1.2 forbids --use-covar')
+    require(args.rtc_o12_variant in RTC_O12_VARIANTS,
+            'O1.2 requires an explicit supported --rtc-o12-variant')
+    for option, value in (
+        ('--rtc-o12-cdf-path', args.rtc_o12_cdf_path),
+        ('--rtc-o12-parameters-path', args.rtc_o12_parameters_path),
+        ('--rtc-o12-gate-path', args.rtc_o12_gate_path),
+    ):
+        require(isinstance(value, str) and bool(value.strip()),
+                'O1.2 requires {}'.format(option))
+
+    exact_values = (
+        ('--dataset', args.dataset, 'voc'),
+        ('--teacher-model', args.teacher_model, 'deeplabv3'),
+        ('--teacher-backbone', args.teacher_backbone, 'resnet101'),
+        ('--student-model', args.student_model, 'deeplabv3_mobilenet_ssseg'),
+        ('--student-backbone', args.student_backbone, 'mobilenetv3_small'),
+        ('--ignore-label', args.ignore_label, -1),
+        ('--batch-size', args.batch_size, 16),
+        ('--workers', args.workers, 8),
+        ('--seed', args.seed, 1234),
+        ('--log-iter', args.log_iter, 20),
+        ('--save-per-iters', args.save_per_iters, 800),
+        ('--val-per-iters', args.val_per_iters, 800),
+        ('--device-type', args.device_type, 'npu'),
+        ('--start_epoch', args.start_epoch, 0),
+        ('--local-rank', args.local_rank, 0),
+        ('--teacher-pretrained-base', args.teacher_pretrained_base, 'None'),
+        ('--student-pretrained', args.student_pretrained, 'None'),
+    )
+    for option, observed, expected in exact_values:
+        require(observed == expected,
+                'O1.2 requires {}={} (observed {})'.format(
+                    option, expected, observed
+                ))
+    require(list(args.crop_size) == [512, 512],
+            'O1.2 requires --crop-size 512 512')
+    require(int(world_size) == 1,
+            'O1.2 requires exactly one process/NPU')
+    require(args.max_iterations in (20, 20000),
+            'O1.2 --max-iterations must be 20 or 20000')
+    require(not args.no_cuda, 'O1.2 forbids --no-cuda')
+    require(
+        args.skip_val is (args.max_iterations == 20),
+        'O1.2 requires --skip-val for 20-step smoke and validation for 20k',
+    )
+    require(
+        isinstance(args.teacher_pretrained, str)
+        and args.teacher_pretrained != 'None',
+        'O1.2 requires an explicit teacher checkpoint',
+    )
+    require(
+        isinstance(args.student_pretrained_base, str)
+        and args.student_pretrained_base != 'None',
+        'O1.2 requires an explicit student ImageNet initialization',
+    )
+
+    float_values = (
+        ('--teacher-output-temp', args.teacher_output_temp, 3.0),
+        ('--kd-temperature', args.kd_temperature, 1.0),
+        ('--lambda-kd', args.lambda_kd, 1.0),
+        ('--lambda-adv', args.lambda_adv, 0.001),
+        ('--lambda-d', args.lambda_d, 0.1),
+        ('--lambda-cwd-fea', args.lambda_cwd_fea, 50.0),
+        ('--lambda-cwd-logit', args.lambda_cwd_logit, 3.0),
+        ('--lr', args.lr, 0.02),
+        ('--momentum', args.momentum, 0.9),
+        ('--weight-decay', args.weight_decay, 1e-4),
+        ('--lambda-skd', args.lambda_skd, 0.0),
+        ('--lambda-ifv', args.lambda_ifv, 0.0),
+        ('--lambda-fitnet', args.lambda_fitnet, 0.0),
+        ('--lambda-at', args.lambda_at, 0.0),
+        ('--lambda-psd', args.lambda_psd, 0.0),
+        ('--lambda-csd', args.lambda_csd, 0.0),
+    )
+    for option, observed, expected in float_values:
+        require(
+            _rtc_o12_float_matches(observed, expected),
+            'O1.2 requires {}={} (observed {})'.format(
+                option, expected, observed
+            ),
+        )
+
+    legacy_rtc_values = (
+        args.rtc_enable_reliable,
+        args.rtc_enable_unreliable,
+        args.rtc_shuffle,
+        args.rtc_reverse_routing,
+    )
+    require(all(value is None for value in legacy_rtc_values),
+            'O1.2 forbids legacy RTC branch/shuffle flags')
+    if errors:
+        raise ValueError('; '.join(errors))
+
+
+def validate_rtc_o12_logit_shapes(student_logits, teacher_logits):
+    if not torch.is_tensor(student_logits) or not torch.is_tensor(teacher_logits):
+        raise TypeError('O1.2 student and teacher logits must be tensors')
+    if student_logits.ndim != 4 or teacher_logits.ndim != 4:
+        raise ValueError('O1.2 logits must both have shape [B, C, H, W]')
+    if student_logits.shape != teacher_logits.shape:
+        raise ValueError(
+            'O1.2 forbids implicit logit interpolation: student shape {} != '
+            'teacher shape {}'.format(
+                tuple(student_logits.shape), tuple(teacher_logits.shape)
+            )
+        )
+
+
+def build_rtc_o12_dataset_index(list_path):
+    with open(list_path, 'r', encoding='utf-8') as handle:
+        names = [line.strip() for line in handle if line.strip()]
+    if not names:
+        raise ValueError('O1.2 canonical train list is empty')
+    if len(set(names)) != len(names):
+        raise ValueError('O1.2 canonical train list contains duplicate sample names')
+    return {name: index for index, name in enumerate(names)}
+
+
+def resolve_rtc_o12_dataset_indices(sample_names, index_by_name):
+    if isinstance(sample_names, str):
+        sample_names = [sample_names]
+    indices = []
+    for name in sample_names:
+        if not isinstance(name, str) or name not in index_by_name:
+            raise ValueError(
+                'O1.2 sample name cannot be mapped uniquely to canonical train '
+                'list: {!r}'.format(name)
+            )
+        indices.append(index_by_name[name])
+    return indices
+
+
+RTC_O12_SAMPLE_ORDER_ALGORITHM = 'rtc_o12_canonical_order_v1'
+RTC_O12_SAMPLE_ORDER_SEED = 1234
+
+
+def rtc_o12_sample_epoch_seed(epoch, seed=RTC_O12_SAMPLE_ORDER_SEED):
+    if isinstance(epoch, bool) or not isinstance(epoch, int) or epoch < 0:
+        raise ValueError('O1.2 sampling epoch must be a non-negative integer')
+    if isinstance(seed, bool) or not isinstance(seed, int) or seed < 0:
+        raise ValueError('O1.2 sample-order seed must be non-negative')
+    payload = '{}|{}|{}'.format(
+        RTC_O12_SAMPLE_ORDER_ALGORITHM, seed, epoch
+    ).encode('ascii')
+    seed64 = int.from_bytes(
+        hashlib.sha256(payload).digest()[:8],
+        byteorder='big',
+        signed=False,
+    )
+    return seed64 % ((1 << 63) - 1)
+
+
+class RTCO12CanonicalBatchSampler(data.Sampler):
+    """Stateless canonical-ID order with exact completed-iteration slicing."""
+
+    def __init__(
+        self,
+        canonical_population,
+        batch_size,
+        num_iterations,
+        start_iteration=0,
+        seed=RTC_O12_SAMPLE_ORDER_SEED,
+    ):
+        integers = {
+            'canonical_population': canonical_population,
+            'batch_size': batch_size,
+            'num_iterations': num_iterations,
+            'start_iteration': start_iteration,
+            'seed': seed,
+        }
+        for name, value in integers.items():
+            if isinstance(value, bool) or not isinstance(value, int):
+                raise TypeError('O1.2 {} must be an integer'.format(name))
+        if canonical_population <= 0 or batch_size <= 0 or num_iterations <= 0:
+            raise ValueError('O1.2 sampler sizes must be positive')
+        if not 0 <= start_iteration <= num_iterations:
+            raise ValueError('O1.2 start_iteration is outside the run')
+        if seed < 0:
+            raise ValueError('O1.2 sampler seed must be non-negative')
+        self.canonical_population = canonical_population
+        self.batch_size = batch_size
+        self.num_iterations = num_iterations
+        self.start_iteration = start_iteration
+        self.seed = seed
+        self._order = self._build_complete_order()
+        order_bytes = (
+            self._order.numpy()
+            .astype('<i8', copy=False)
+            .tobytes(order='C')
+        )
+        self.order_sha256 = hashlib.sha256(order_bytes).hexdigest()
+
+    def _build_complete_order(self):
+        required = self.num_iterations * self.batch_size
+        chunks = []
+        collected = 0
+        sampling_epoch = 0
+        while collected < required:
+            generator = torch.Generator()
+            generator.manual_seed(
+                rtc_o12_sample_epoch_seed(sampling_epoch, self.seed)
+            )
+            permutation = torch.randperm(
+                self.canonical_population,
+                generator=generator,
+                dtype=torch.int64,
+                device='cpu',
+            )
+            chunks.append(permutation)
+            collected += self.canonical_population
+            sampling_epoch += 1
+        return torch.cat(chunks, dim=0)[:required].contiguous()
+
+    def __iter__(self):
+        for global_iteration in range(
+            self.start_iteration + 1, self.num_iterations + 1
+        ):
+            start = (global_iteration - 1) * self.batch_size
+            end = start + self.batch_size
+            yield self._order[start:end].tolist()
+
+    def __len__(self):
+        return self.num_iterations - self.start_iteration
+
+    def contract(self):
+        return {
+            'schema_version': 1,
+            'algorithm': RTC_O12_SAMPLE_ORDER_ALGORITHM,
+            'seed': self.seed,
+            'seed_derivation': (
+                'seed63=SHA256(ASCII(algorithm|seed|sampling_epoch))[:8] '
+                'big-endian mod (2^63-1)'
+            ),
+            'permutation': 'torch.randperm(canonical_population, CPU generator)',
+            'canonical_population': self.canonical_population,
+            'batch_size': self.batch_size,
+            'max_iterations': self.num_iterations,
+            'total_canonical_indices': int(self._order.numel()),
+            'complete_order_sha256': self.order_sha256,
+            'complete_order_sha256_scope': (
+                'full canonical-index sequence for current max_iterations'
+            ),
+            'resume_offset': 'completed_iteration * batch_size',
+        }
+
+
+def rtc_o12_variant_spec(variant):
+    specs = {
+        'neutral': ('neutral', None, False),
+        'reliable_only': ('reliable_only', None, False),
+        'unreliable_only': ('unreliable_only', None, False),
+        'full_budgeted': ('full_budgeted', None, False),
+        'unreliable_arithmetic_scalar': ('unreliable_only', 'arithmetic', False),
+        'unreliable_harmonic_scalar': ('unreliable_only', 'harmonic', False),
+        'unreliable_shuffled': ('unreliable_only', None, True),
+        'full_arithmetic_scalar': ('full_budgeted', 'arithmetic', False),
+        'full_harmonic_scalar': ('full_budgeted', 'harmonic', False),
+        'full_shuffled': ('full_budgeted', None, True),
+    }
+    if variant not in specs:
+        raise ValueError('unsupported O1.2 variant: {!r}'.format(variant))
+    branch, scalar_moment, shuffled = specs[variant]
+    return {
+        'variant': variant,
+        'branch': branch,
+        'scalar_moment': scalar_moment,
+        'shuffled': shuffled,
+    }
+
+
+def validate_rtc_o12_temperature_contract(
+    temperature,
+    reliability_quantile,
+    valid_mask,
+    variant_spec,
+    config,
+):
+    if temperature.shape != reliability_quantile.shape:
+        raise ValueError('O1.2 temperature and quantile shapes must match')
+    if valid_mask.dtype != torch.bool or valid_mask.shape != temperature.shape:
+        raise ValueError('O1.2 native valid mask must be Boolean [B, H, W]')
+    if temperature.dtype != torch.float32:
+        raise TypeError('O1.2 temperature map must be float32')
+    selected = temperature[valid_mask]
+    if selected.numel() and not bool(torch.isfinite(selected).all().item()):
+        raise FloatingPointError('O1.2 temperature contains non-finite valid values')
+    tolerance = 1e-6
+    if selected.numel() and bool(
+        (
+            (selected < config.temperature_min - tolerance)
+            | (selected > config.temperature_max + tolerance)
+        ).any().item()
+    ):
+        raise AssertionError('O1.2 temperature violates frozen bounds')
+    invalid = ~valid_mask
+    if bool(invalid.any().item()) and not torch.equal(
+        temperature[invalid], torch.ones_like(temperature[invalid])
+    ):
+        raise AssertionError('O1.2 invalid pixels must have exactly T=1')
+    if variant_spec['shuffled'] or variant_spec['scalar_moment'] is not None:
+        return
+
+    branch = variant_spec['branch']
+    quantile = reliability_quantile.to(device=temperature.device)
+    if branch == 'neutral':
+        if not torch.equal(selected, torch.ones_like(selected)):
+            raise AssertionError('O1.2 neutral branch must have exactly T=1')
+        return
+    if branch == 'reliable_only':
+        active = valid_mask & (quantile < config.q_reliable)
+        inactive = valid_mask & ~active
+        if bool(active.any().item()) and bool(
+            (temperature[active] > 1.0 + tolerance).any().item()
+        ):
+            raise AssertionError('O1.2 reliable branch produced T>1')
+    elif branch == 'unreliable_only':
+        active = valid_mask & (quantile > config.q_unreliable)
+        inactive = valid_mask & ~active
+        if bool(active.any().item()) and bool(
+            (temperature[active] < 1.0 - tolerance).any().item()
+        ):
+            raise AssertionError('O1.2 unreliable branch produced T<1')
+    else:
+        active = None
+        inactive = (
+            valid_mask
+            & (quantile >= config.q_reliable)
+            & (quantile <= config.q_unreliable)
+        )
+        reliable = valid_mask & (quantile < config.q_reliable)
+        unreliable = valid_mask & (quantile > config.q_unreliable)
+        if bool(reliable.any().item()) and bool(
+            (temperature[reliable] > 1.0 + tolerance).any().item()
+        ):
+            raise AssertionError('O1.2 full reliable pixels produced T>1')
+        if bool(unreliable.any().item()) and bool(
+            (temperature[unreliable] < 1.0 - tolerance).any().item()
+        ):
+            raise AssertionError('O1.2 full unreliable pixels produced T<1')
+    if bool(inactive.any().item()) and not torch.equal(
+        temperature[inactive], torch.ones_like(temperature[inactive])
+    ):
+        raise AssertionError('O1.2 inactive/neutral pixels must have exactly T=1')
+
+
+def build_rtc_o12_temperature_for_variant(
+    reliability_quantile,
+    valid_mask,
+    variant,
+    artifact_contract,
+    config,
+    dataset_indices=None,
+    global_iteration=None,
+):
+    spec = rtc_o12_variant_spec(variant)
+    if spec['scalar_moment'] is not None:
+        scalar = artifact_contract['branch_scalar_temperatures'][
+            spec['branch']
+        ][spec['scalar_moment']]
+        base = torch.full_like(
+            reliability_quantile, float(scalar), dtype=torch.float32
+        )
+        temperature = torch.where(valid_mask, base, torch.ones_like(base))
+    else:
+        coefficient_b = (
+            artifact_contract['b']
+            if spec['branch'] in ('unreliable_only', 'full_budgeted')
+            else None
+        )
+        temperature = build_o12_temperature_map(
+            reliability_quantile,
+            valid_mask,
+            b=coefficient_b,
+            branch=spec['branch'],
+            config=config,
+        )
+        if spec['shuffled']:
+            if dataset_indices is None or global_iteration is None:
+                raise ValueError('O1.2 shuffled variant requires index and iteration')
+            temperature = shuffle_o12_temperature_within_images(
+                temperature,
+                valid_mask,
+                dataset_indices,
+                int(global_iteration),
+            )
+    validate_rtc_o12_temperature_contract(
+        temperature, reliability_quantile, valid_mask, spec, config
+    )
+    return temperature, spec
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Semantic Segmentation Training With Pytorch')
     # model and dataset
@@ -246,8 +1024,8 @@ def parse_args():
 
     parser.add_argument("--kd-temperature", type=float, default=1.0, help="logits KD temperature")
     parser.add_argument('--kd-loss-mode', type=str, default='legacy',
-                        choices=['legacy', 'masked'],
-                        help='legacy unmasked scalar KD or fair masked pixel KD')
+                        choices=['legacy', 'masked', RTC_O12_KD_LOSS_MODE],
+                        help='legacy, fair masked, or strict O1.2 teacher-target-only pixel KD')
     parser.add_argument("--lambda-kd", type=float, default=0., help="lambda_kd")
     parser.add_argument("--lambda-adv", type=float, default=0., help="lambda adversarial loss")
     parser.add_argument("--lambda-d", type=float, default=0., help="lambda discriminator loss")
@@ -327,6 +1105,15 @@ def parse_args():
                         help='explicitly enable/disable swapping reliable and unreliable gates')
                
 
+    parser.add_argument('--rtc-o12-variant', type=str, default=None,
+                        choices=RTC_O12_VARIANTS,
+                        help='explicit O1.2 teacher-target calibration/control variant')
+    parser.add_argument('--rtc-o12-cdf-path', type=str, default=None,
+                        help='frozen O1.1 confidence CDF required by O1.2')
+    parser.add_argument('--rtc-o12-parameters-path', type=str, default=None,
+                        help='frozen O1.2 train budget parameter artifact')
+    parser.add_argument('--rtc-o12-gate-path', type=str, default=None,
+                        help='passing O1.2-A joint gate artifact')
     # accelerator setting
     parser.add_argument('--device-type', type=str, default='auto', choices=['auto', 'cuda', 'npu', 'cpu'],
                         help='accelerator backend; auto prefers CUDA, then Ascend NPU, then CPU')
@@ -370,6 +1157,10 @@ def parse_args():
         parser.error('--teacher-output-temp must be positive')
     if args.kd_temperature <= 0:
         parser.error('--kd-temperature must be positive')
+    try:
+        validate_rtc_o12_cli_contract(args)
+    except ValueError as error:
+        parser.error(str(error))
     if args.use_covar and args.covar_temp_mode == 'rtc':
         explicit_rtc_flags = {
             '--rtc-enable-reliable': args.rtc_enable_reliable,
@@ -423,6 +1214,8 @@ class Trainer(object):
             self.device = torch.device(args.device)
         self.num_gpus = int(os.environ["WORLD_SIZE"]) if "WORLD_SIZE" in os.environ else 1
         self.rank = get_rank()
+        if rtc_o12_is_enabled(args):
+            validate_rtc_o12_cli_contract(args, world_size=self.num_gpus)
         self.resume_checkpoint = None
         self.resume_is_full_state = False
         self.start_iteration = 0
@@ -443,6 +1236,21 @@ class Trainer(object):
                             self.start_iteration, args.max_iterations
                         )
                     )
+
+        self.rtc_o12_config = None
+        self.rtc_o12_contract = None
+        self.rtc_o12_cdf = None
+        self.rtc_o12_dataset_index_by_name = None
+        self.rtc_o12_batch_sampler = None
+        self.rtc_o12_data_order_contract = None
+        if rtc_o12_is_enabled(args):
+            if self.resume_checkpoint is not None and not self.resume_is_full_state:
+                raise ValueError(
+                    'O1.2 resume requires a complete O1.2 training-state checkpoint'
+                )
+            self.rtc_o12_config = O12CalibrationConfig()
+            self.rtc_o12_config.validate()
+            self.rtc_o12_contract = load_rtc_o12_artifact_contract(args)
 
         self.covar_newton_config = None
         if args.use_covar and args.covar_temp_mode == 'newton':
@@ -518,6 +1326,48 @@ class Trainer(object):
         else:
             raise ValueError('dataset unfind')
 
+        if self.rtc_o12_config is not None:
+            self.rtc_o12_cdf = load_frozen_reliability_cdf(
+                self.rtc_o12_contract['cdf_path'],
+                device=self.device,
+            )
+            validate_rtc_o12_cdf_contract(
+                self.rtc_o12_cdf, train_dataset.num_class
+            )
+            self.rtc_o12_dataset_index_by_name = build_rtc_o12_dataset_index(
+                self.rtc_o12_contract['train_list_path']
+            )
+            if len(self.rtc_o12_dataset_index_by_name) != RTC_O12_TRAIN_DATASET_SIZE:
+                raise ValueError('O1.2 canonical train list population mismatch')
+            canonical_names = list(
+                self.rtc_o12_dataset_index_by_name.keys()
+            )
+            dataset_names = list(
+                getattr(train_dataset, 'img_ids', [])
+            )[:RTC_O12_TRAIN_DATASET_SIZE]
+            if dataset_names != canonical_names:
+                raise ValueError(
+                    'O1.2 sampler indices do not match canonical sample names'
+                )
+            args.rtc_o12_cdf_path = self.rtc_o12_cdf.path
+            args.rtc_o12_cdf_sha256 = self.rtc_o12_cdf.checksum_sha256
+            args.rtc_o12_parameters_path = self.rtc_o12_contract['parameters_path']
+            args.rtc_o12_parameters_sha256 = self.rtc_o12_contract[
+                'parameters_sha256'
+            ]
+            args.rtc_o12_gate_path = self.rtc_o12_contract['gate_path']
+            args.rtc_o12_gate_sha256 = self.rtc_o12_contract['gate_sha256']
+            logger.info(
+                'Loaded O1.2 frozen inputs: variant={} b={:.12g} cdf={} '
+                'parameters={} gate={}'.format(
+                    args.rtc_o12_variant,
+                    self.rtc_o12_contract['b'],
+                    self.rtc_o12_contract['cdf_sha256'][:12],
+                    self.rtc_o12_contract['parameters_sha256'][:12],
+                    self.rtc_o12_contract['gate_sha256'][:12],
+                )
+            )
+
         if self.rtc_config is not None:
             self.rtc_cdf = load_frozen_reliability_cdf(
                 args.rtc_cdf_path,
@@ -540,13 +1390,41 @@ class Trainer(object):
 
     
         args.batch_size = args.batch_size // self.num_gpus
-        train_sampler = make_data_sampler(train_dataset, shuffle=True, distributed=args.distributed)
-        train_batch_sampler = make_batch_data_sampler(
-            train_sampler,
-            args.batch_size,
-            args.max_iterations,
-            start_iter=self.start_iteration,
-        )
+        if self.rtc_o12_config is not None:
+            self.rtc_o12_batch_sampler = RTCO12CanonicalBatchSampler(
+                canonical_population=RTC_O12_TRAIN_DATASET_SIZE,
+                batch_size=args.batch_size,
+                num_iterations=args.max_iterations,
+                start_iteration=self.start_iteration,
+                seed=args.seed,
+            )
+            self.rtc_o12_data_order_contract = (
+                self.rtc_o12_batch_sampler.contract()
+            )
+            args.rtc_o12_complete_order_sha256 = (
+                self.rtc_o12_data_order_contract[
+                    'complete_order_sha256'
+                ]
+            )
+            train_batch_sampler = self.rtc_o12_batch_sampler
+            logger.info(
+                'O1.2 canonical sample order: algorithm={} '
+                'completed_iteration={} full_order_sha256={}'.format(
+                    self.rtc_o12_data_order_contract['algorithm'],
+                    self.start_iteration,
+                    args.rtc_o12_complete_order_sha256,
+                )
+            )
+        else:
+            train_sampler = make_data_sampler(
+                train_dataset, shuffle=True, distributed=args.distributed
+            )
+            train_batch_sampler = make_batch_data_sampler(
+                train_sampler,
+                args.batch_size,
+                args.max_iterations,
+                start_iter=self.start_iteration,
+            )
         val_sampler = make_data_sampler(val_dataset, False, args.distributed)
         val_batch_sampler = make_batch_data_sampler(val_sampler, images_per_batch=1)
 
@@ -765,6 +1643,42 @@ class Trainer(object):
             raise ValueError('RTC CDF train-list checksum does not match the run')
 
     def _load_resume_checkpoint(self, checkpoint, path):
+        if self.rtc_o12_config is not None:
+            required = (
+                'student',
+                'criterion_cwd',
+                'criterion_fitnet',
+                'D',
+                'optimizer',
+                'D_optimizer',
+                'iteration',
+                'rng_state_by_rank',
+                'rtc_o12_data_order',
+            )
+            missing = [
+                key for key in required
+                if key not in checkpoint or checkpoint.get(key) is None
+            ]
+            if (
+                checkpoint.get('checkpoint_type') != 'train_kd_training_state'
+                or checkpoint.get('checkpoint_version') != 4
+                or missing
+            ):
+                raise ValueError(
+                    'O1.2 resume requires checkpoint v4 complete state; '
+                    'missing={}'.format(missing)
+                )
+            saved_o12 = checkpoint.get('rtc_o12')
+            expected_o12 = self._rtc_o12_checkpoint_metadata()
+            if saved_o12 != expected_o12:
+                raise ValueError('O1.2 resume metadata/source/configuration drift')
+            expected_order_state = self._rtc_o12_data_order_state(
+                int(checkpoint['iteration'])
+            )
+            if checkpoint.get('rtc_o12_data_order') != expected_order_state:
+                raise ValueError(
+                    'O1.2 resume canonical sample-order state drift'
+                )
         if self.rtc_config is not None:
             saved_rtc = checkpoint.get('rtc') if isinstance(checkpoint, dict) else None
             if not saved_rtc:
@@ -835,8 +1749,58 @@ class Trainer(object):
             'world_size': int(get_world_size()),
         }
 
-    def _training_state_dict(self, iteration, rng_states):
+    def _rtc_o12_checkpoint_metadata(self):
+        if self.rtc_o12_config is None:
+            return None
+        spec = rtc_o12_variant_spec(self.args.rtc_o12_variant)
+        scalar_temperature = None
+        if spec['scalar_moment'] is not None:
+            scalar_temperature = self.rtc_o12_contract[
+                'branch_scalar_temperatures'
+            ][spec['branch']][spec['scalar_moment']]
         return {
+            'phase': 'O1.2',
+            'variant': self.args.rtc_o12_variant,
+            'variant_spec': spec,
+            'calibration_config': self.rtc_o12_config.to_dict(),
+            'artifact_contract': dict(self.rtc_o12_contract),
+            'teacher_target_contract': {
+                'formula': 'softmax(raw_teacher/(teacher_output_temperature*T_pixel))',
+                'teacher_output_temperature': 3.0,
+                'student_temperature': 1.0,
+                'teacher_target_detached': True,
+                'temperature_loss_power': None,
+            },
+            'scalar_temperature': scalar_temperature,
+            'data_order_contract': dict(
+                self.rtc_o12_data_order_contract
+            ),
+            'world_size': int(get_world_size()),
+            'max_iterations': int(self.args.max_iterations),
+            'skip_val': bool(self.args.skip_val),
+        }
+
+    def _rtc_o12_data_order_state(self, completed_iteration):
+        completed_iteration = int(completed_iteration)
+        if not 0 <= completed_iteration <= self.args.max_iterations:
+            raise ValueError('O1.2 completed iteration is outside the run')
+        next_iteration = (
+            completed_iteration + 1
+            if completed_iteration < self.args.max_iterations
+            else None
+        )
+        return {
+            'contract': dict(self.rtc_o12_data_order_contract),
+            'completed_iteration': completed_iteration,
+            'next_global_iteration': next_iteration,
+            'next_canonical_index_offset': (
+                completed_iteration
+                * self.rtc_o12_data_order_contract['batch_size']
+            ),
+        }
+
+    def _training_state_dict(self, iteration, rng_states):
+        state = {
             'checkpoint_type': 'train_kd_training_state',
             'checkpoint_version': 3,
             'student': unwrap_module(self.s_model).state_dict(),
@@ -853,6 +1817,13 @@ class Trainer(object):
             'args': dict(vars(self.args)),
             'rtc': self._rtc_checkpoint_metadata(),
         }
+        if self.rtc_o12_config is not None:
+            state['checkpoint_version'] = 4
+            state['rtc_o12'] = self._rtc_o12_checkpoint_metadata()
+            state['rtc_o12_data_order'] = (
+                self._rtc_o12_data_order_state(iteration)
+            )
+        return state
 
     def save_checkpoint(self, is_best=False, iteration=None, save_latest=True):
         iteration = self.current_iteration if iteration is None else int(iteration)
@@ -1117,7 +2088,10 @@ class Trainer(object):
 
             raw_teacher_logits = t_outputs[0]
             teacher_kd_logits = raw_teacher_logits
-            if self.args.teacher_output_temp != 1.0:
+            if (
+                self.rtc_o12_config is None
+                and self.args.teacher_output_temp != 1.0
+            ):
                 teacher_kd_logits = teacher_kd_logits / self.args.teacher_output_temp
 
             covar_weight = None
@@ -1125,6 +2099,61 @@ class Trainer(object):
             reliability_map = None
             covar_valid_mask = None
             rtc_maps = None
+            o12_temperature_map = None
+            o12_valid_mask = None
+            o12_reliability_quantile = None
+            o12_teacher_target = None
+            o12_terms = None
+            o12_global_valid_count = None
+            if self.rtc_o12_config is not None and self.args.lambda_kd != 0.:
+                validate_rtc_o12_logit_shapes(
+                    s_outputs[0], raw_teacher_logits
+                )
+                with torch.no_grad():
+                    reference = compute_reference_reliability(
+                        raw_teacher_logits,
+                        targets != self.args.ignore_label,
+                        assess_temperature=1.0,
+                        coefficient_a=0.0,
+                        reliability_mode='confidence',
+                        epsilon=1e-8,
+                    )
+                    o12_valid_mask = reference.valid_mask
+                    nonfinite_valid = o12_valid_mask & ~reference.finite_mask
+                    if bool(nonfinite_valid.any().item()):
+                        raise FloatingPointError(
+                            'O1.2 teacher has non-finite native-valid pixels'
+                        )
+                    o12_reliability_quantile = self.rtc_o12_cdf.query(
+                        reference.reliability
+                    )
+                    if not bool(
+                        torch.isfinite(
+                            o12_reliability_quantile[o12_valid_mask]
+                        ).all().item()
+                    ):
+                        raise FloatingPointError(
+                            'O1.2 CDF query produced non-finite quantiles'
+                        )
+                    dataset_indices = resolve_rtc_o12_dataset_indices(
+                        sample_names, self.rtc_o12_dataset_index_by_name
+                    )
+                    o12_temperature_map, _ = (
+                        build_rtc_o12_temperature_for_variant(
+                            o12_reliability_quantile,
+                            o12_valid_mask,
+                            self.args.rtc_o12_variant,
+                            self.rtc_o12_contract,
+                            self.rtc_o12_config,
+                            dataset_indices=dataset_indices,
+                            global_iteration=iteration,
+                        )
+                    )
+                    o12_teacher_target = build_o12_teacher_target(
+                        raw_teacher_logits,
+                        o12_temperature_map,
+                        teacher_output_temperature=3.0,
+                    )
             needs_masked_kd = self.args.kd_loss_mode == 'masked' or self.args.use_covar
             if needs_masked_kd and self.args.lambda_kd != 0.:
                 with torch.no_grad():
@@ -1194,7 +2223,23 @@ class Trainer(object):
                     self.D_model(t_outputs[0].detach())))
             
             if self.args.lambda_kd != 0.:
-                if rtc_maps is not None:
+                if self.rtc_o12_config is not None:
+                    o12_terms = compute_o12_masked_kl_terms(
+                        s_outputs[0],
+                        o12_teacher_target,
+                        o12_valid_mask,
+                    )
+                    o12_global_valid_count = o12_terms.valid_count.clone()
+                    if get_world_size() > 1:
+                        dist.all_reduce(
+                            o12_global_valid_count, op=dist.ReduceOp.SUM
+                        )
+                    kd_loss = self.args.lambda_kd * normalize_o12_ddp_loss(
+                        o12_terms.kl_sum,
+                        o12_global_valid_count,
+                        get_world_size(),
+                    )
+                elif rtc_maps is not None:
                     kd_loss = self.args.lambda_kd * masked_temperature_kd_loss(
                         s_outputs[0],
                         teacher_kd_logits,
@@ -1247,7 +2292,11 @@ class Trainer(object):
                         ifv_loss + at_loss + fitnet_loss +\
                         psd_loss + csd_loss 
             D_losses = adv_D_loss
-            if rtc_maps is not None or self.args.kd_loss_mode == 'masked':
+            if (
+                self.rtc_o12_config is not None
+                or rtc_maps is not None
+                or self.args.kd_loss_mode == 'masked'
+            ):
                 local_nonfinite = not bool(torch.isfinite(losses).item())
                 if self.use_adv:
                     local_nonfinite = (
@@ -1296,6 +2345,51 @@ class Trainer(object):
                     raise AssertionError(
                         'RTC unreliable branch produced T < T0 on at least one rank'
                     )
+
+            o12_diagnostics = None
+            if (
+                self.rtc_o12_config is not None
+                and iteration % log_per_iters == 0
+            ):
+                valid_count = int(o12_global_valid_count.item())
+                denominator = float(max(valid_count, 1))
+                kl_mean = float(o12_terms.kl_sum.detach().item()) / denominator
+                cross_entropy_mean = (
+                    float(o12_terms.cross_entropy_sum.detach().item())
+                    / denominator
+                )
+                teacher_entropy_mean = (
+                    float(o12_terms.teacher_entropy_sum.detach().item())
+                    / denominator
+                )
+                if abs(
+                    kl_mean
+                    - (cross_entropy_mean - teacher_entropy_mean)
+                ) > 1e-5:
+                    raise AssertionError(
+                        'O1.2 KL != cross_entropy - teacher_entropy'
+                    )
+                o12_kd_gradient = torch.autograd.grad(
+                    kd_loss,
+                    s_outputs[0],
+                    retain_graph=True,
+                    allow_unused=False,
+                )[0]
+                if not bool(torch.isfinite(o12_kd_gradient).all().item()):
+                    raise FloatingPointError(
+                        'O1.2 KD-only student-logit gradient is non-finite'
+                    )
+                o12_diagnostics = {
+                    'valid_count': valid_count,
+                    'kl_mean': kl_mean,
+                    'cross_entropy_mean': cross_entropy_mean,
+                    'teacher_entropy_mean': teacher_entropy_mean,
+                    'student_logit_grad_l2': float(
+                        torch.linalg.vector_norm(
+                            o12_kd_gradient.detach().float()
+                        ).item()
+                    ),
+                }
 
             lr = self.adjust_lr(
                 base_lr=self.args.lr,
@@ -1359,6 +2453,19 @@ class Trainer(object):
                         csd_loss_reduced.item(),
                         str(datetime.timedelta(seconds=int(time.time() - start_time))), 
                         eta_string))
+                if o12_diagnostics is not None:
+                    log_message += (
+                        ' || O1.2 variant: {variant}'
+                        ' || O1.2 branch KL mean: {kl_mean:.8f}'
+                        ' || O1.2 cross-entropy mean: {cross_entropy_mean:.8f}'
+                        ' || O1.2 teacher entropy mean: {teacher_entropy_mean:.8f}'
+                        ' || O1.2 KD-only student-logit grad L2: '
+                        '{student_logit_grad_l2:.8f}'
+                        ' || O1.2 valid pixels: {valid_count:d}'.format(
+                            variant=self.args.rtc_o12_variant,
+                            **o12_diagnostics,
+                        )
+                    )
                 if rtc_diagnostics is not None:
                     log_message += (
                         " || RTC T mean/hmean/q10/q50/q90/p95: "
