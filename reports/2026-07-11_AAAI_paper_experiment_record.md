@@ -235,9 +235,10 @@ Status: completed on 2026-07-12. Sources: [final result](2026-07-12_phaseM2_scal
 
 ### 9.4 Phase N: 80k scalar-temperature confirmation
 
-Status: preregistered and ready to launch on 2026-07-13. Source: [Phase N plan](2026-07-13_phaseN_scalar_temperature_80k_plan.md).
+Status: running since `2026-07-13T08:10:52+08:00`; paired smoke completed first. Source: [Phase N plan and live run record](2026-07-13_phaseN_scalar_temperature_80k_plan.md).
 
 - Compare scalar `T=1.0` on NPU 0 against scalar `T=0.6` on NPU 1 under the same CWD recipe, `Tout=3.0`, seed `1234`, and 80k budget.
+- Both runs passed the strict 20-iteration smoke, reached the first 800-iteration validation, produced all model/training-state artifacts, and continued without traceback/NaN/OOM. The first validation is a health check, not a result claim.
 - Primary metric: final mIoU. Secondary metrics: best mIoU/best iteration and last-10-validation mean.
 - This pair tests whether the Phase M2 low-temperature endpoint gain persists at the paper's full training budget. It does not test spatial adaptation.
 - Multi-seed promotion is conditional on the preregistered final-mIoU delta and late-window behavior; no multi-seed conclusion is authorized before the seed-1234 pair completes.
