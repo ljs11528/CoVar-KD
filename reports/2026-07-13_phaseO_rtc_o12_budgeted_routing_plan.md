@@ -712,18 +712,48 @@ tau_formula_monotonic = 1e-12
 - iteration 20,000 final mIoU 为唯一主性能指标；
 - last-10 mean、best mIoU 和 runtime 为次指标，best checkpoint 不进入机制门禁。
 
-唯一主机制指标在 final checkpoint、native KD grid 上定义为：
+唯一主机制指标在 final checkpoint、native KD grid 上定义。为避免看到结果后再解释指标，C1 在首次 20k 启动前冻结以下操作定义。
+
+对 canonical VOC val list 的 1,449 张图按既有 `VOCDataValSet` 顺序、无随机增强逐张推理。学生固定加载该变体 iteration 20,000 的 `training_state_latest.pth` 中 `student` 状态；教师固定加载正式 teacher checkpoint。不得使用 best checkpoint。学生与教师 raw logits 必须具有完全相同的 native grid；若不同则结构失败，禁止插值 logits。GT 只允许用 nearest resize 到该 native grid，ignore label `-1` 不进入人口。
+
+对每个 native-valid 像素定义：
 
 ~~~text
-student_rescue_U =
-P(student=ground_truth | teacher_wrong, u>0.8)
+g = nearest-resized ground-truth
+s = argmax(raw_student_logits)
+t = argmax(raw_teacher_logits)
+c = clamp(max(softmax(raw_teacher_logits)), 1e-8, 1-1e-8)
+r = -log(c)
+u = frozen_train_CDF(r)
+V = (g != -1)
+U = V and (u > 0.8)
+W = U and (t != g)
+C = U and (t == g)
 ~~~
 
-error_imitation_U 和 teacher_correct_retention_U 为次级机制指标。
+`softmax` 的 assess temperature 固定为 1.0；CDF 必须是 O1.1/O1.2 已冻结的 train CDF。学生 logits、教师 logits、c、r 和 u 在 V 上必须全部有限，任一非有限值都使结构失败，不得通过排除该像素继续计算。`argmax` 使用框架默认的最低类别索引 tie-break，不增加随机或容差规则。
 
-所有差值统一定义为 delta_X(A-B)=X(A)-X(B)，括号中的前者减后者。final checkpoint 固定为 iteration 20,000；所有变体按 canonical val list 顺序缓存预测、GT、teacher prediction 和 u，并保存缓存 SHA。
+三个指标及逐图分子/分母精确定义为：
 
-每张 val 图保存三个指标的 numerator 和 denominator。bootstrap 使用 numpy.random.Generator(PCG64(3407)) 固定生成 10,000 组 index；每组有放回抽取 1,449 张图，再汇总 numerator/denominator 后计算 paired delta。零分母图仍参与图像抽样但不增加汇总分母；若任一完整 bootstrap 样本的汇总 denominator 为 0，则门禁结构失败。95% CI 使用 bootstrap delta 的 2.5%/97.5% percentile 区间，numpy.quantile(method='linear')。所有变体必须使用相同的 bootstrap index 矩阵。
+~~~text
+student_rescue_U = sum(1[W and s == g]) / sum(1[W])
+error_imitation_U = sum(1[W and s == t]) / sum(1[W])
+teacher_correct_retention_U = sum(1[C and s == g]) / sum(1[C])
+~~~
+
+其中 `student_rescue_U` 是唯一主机制指标；另外两项为次级机制指标。错误教师条件下，学生预测为既非 GT 也非 teacher label 的第三类错误既不计 rescue、也不计 imitation，但仍保留在共同分母中。
+
+每张图以 int64 保存三个 numerator 和 denominator，同时按 canonical val 顺序缓存 sample name、native-grid shape、student prediction、teacher prediction、nearest GT、valid mask 和 float32 `u`；每个变体保存单独 cache SHA。若 sample name、顺序、shape、teacher prediction、GT、valid mask、u 或三个 denominator 在两变体间不一致，则配对结构失败。
+
+所有差值统一定义为 `delta_X(A-B)=X(A)-X(B)`，括号中的前者减后者；C1 中所有机制与性能差值固定为 `unreliable_only-neutral`。final checkpoint 固定为 iteration 20,000。
+
+bootstrap 使用 `numpy.random.Generator(PCG64(3407))` 一次性生成 shape=`(10000,1449)`、dtype=`int32`、取值范围 `[0,1449)` 的共享图像 index 矩阵，并保存矩阵 SHA。每组有放回抽取 1,449 张图；对每个变体先汇总被抽中图像的 numerator/denominator、再计算比例，最后做 paired delta。零分母图仍参与图像抽样但不增加汇总分母；若任一完整 bootstrap 样本在任一待比较指标/变体上的汇总 denominator 为 0，则门禁结构失败。95% CI 使用 bootstrap delta 的 2.5%/97.5% percentile，固定 `numpy.quantile(method='linear')`。
+首次启动前已在正式 Python/NumPy 环境按上述规则生成共享矩阵，NPY SHA256 固定为 `de2b18873dcd9f05f2d1d7acd9c0d94088680fb009441a501b8ba31ee8ce10b5`。gate 必须重建并匹配该 SHA，不得在看到结果后更换 seed、dtype、shape 或抽样算法。
+
+
+20k 性能日志按每 800 iteration 一次 validation，共应有 25 个完整 block。单 NPU 的每个 block 以最后一条 `Sample: 1449` 累积统计作为该 iteration 的 pixAcc/mIoU；所有 pixAcc/mIoU 固定使用有限的 `[0,1]` 比例，不做百分数缩放。final mIoU 固定取 iteration 20,000 block，best mIoU 是 25 个 block 的最大值，last-10 mean 固定取 iteration 12,800、13,600、14,400、15,200、16,000、16,800、17,600、18,400、19,200、20,000 的算术均值。缺失、重复、次序错误或不完整 validation block 均为结构失败。
+
+两条 C1 训练必须从共同 ImageNet student init fresh 启动，不得 resume O1.2-B 的 20-step checkpoint；原因是 B 使用 `max_iterations=20` 的不同学习率轨迹。20k canonical order 固定覆盖 320,000 个索引，SHA256 为 `10e600fd87537bba4329a7a90473bd71931e5fe2c775345af4dc483c3b9f8c5c`。
 
 C1 继续条件全部满足才通过：
 
