@@ -1,0 +1,189 @@
+{
+  "stage": "P3",
+  "hypothesis": "distance between teacher and current student CoVar coordinates predicts regional teachability",
+  "generated_at": "2026-08-26T08:41:29.849957+00:00",
+  "input": {
+    "candidate_cache": "runs/covar_match/P2_region_candidate_teachability.csv.gz",
+    "candidate_cache_sha256": "d170dcbd67130fa8a72a6c2bd2d464e8579d678992848bf2bd88b1dbdbd2cf84",
+    "p2_json": "reports/covar_match/P2_region_teachability.json",
+    "p2_json_sha256": "3b6febf6ab4d2062e9e9f0b98e14f4237f26f1385d8a1b70a7b211c8fd2fa40a",
+    "candidate_rows": 166950,
+    "region_state_groups": 27825
+  },
+  "score_semantics": {
+    "teacher_min_r": "teacher r(T)",
+    "scalar_r_gap": "absolute teacher r(T) minus student r(1)",
+    "vector_covar_gap": "Euclidean distance in standardized r_c/r_v coordinates",
+    "teacher_student_kl": "KL(teacher(T) || student(1))",
+    "selection": "minimum score",
+    "component_population_standard_deviation": {
+      "r_c": 0.17518351852566527,
+      "r_v": 0.6517060315499618
+    },
+    "scale_source": "same unlabeled P2 candidate cache; exploratory normalization"
+  },
+  "metrics": {
+    "early": {
+      "teacher_min_r": {
+        "region_count": 9275,
+        "top1_accuracy": 0.5416711590296496,
+        "adjacent_accuracy": 0.7246361185983827,
+        "mean_regret": 0.004216969997582871,
+        "median_regret": 0.0,
+        "mean_spearman": 0.6048326639525635,
+        "median_spearman": 0.9428571428571428
+      },
+      "scalar_r_gap": {
+        "region_count": 9275,
+        "top1_accuracy": 0.11504043126684636,
+        "adjacent_accuracy": 0.20463611859838274,
+        "mean_regret": 0.003329953254270439,
+        "median_regret": 0.0006016113329678774,
+        "mean_spearman": -0.2808207439460642,
+        "median_spearman": -0.6571428571428571
+      },
+      "vector_covar_gap": {
+        "region_count": 9275,
+        "top1_accuracy": 0.1232345013477089,
+        "adjacent_accuracy": 0.2155256064690027,
+        "mean_regret": 0.0030393251466908655,
+        "median_regret": 0.0003627254336606711,
+        "mean_spearman": -0.19143834110114227,
+        "median_spearman": -0.14285714285714285
+      },
+      "teacher_student_kl": {
+        "region_count": 9275,
+        "top1_accuracy": 0.13444743935309972,
+        "adjacent_accuracy": 0.30641509433962266,
+        "mean_regret": 0.0026852133669653996,
+        "median_regret": 4.4094398617744446e-05,
+        "mean_spearman": 0.07678451240698057,
+        "median_spearman": 0.08571428571428572
+      }
+    },
+    "middle": {
+      "teacher_min_r": {
+        "region_count": 9275,
+        "top1_accuracy": 0.595256064690027,
+        "adjacent_accuracy": 0.783611859838275,
+        "mean_regret": 0.0023902231301545234,
+        "median_regret": 0.0,
+        "mean_spearman": 0.6768601855907,
+        "median_spearman": 0.9856107606091623
+      },
+      "scalar_r_gap": {
+        "region_count": 9275,
+        "top1_accuracy": 0.11956873315363882,
+        "adjacent_accuracy": 0.22587601078167116,
+        "mean_regret": 0.0022516406926140708,
+        "median_regret": 0.0004952264243911486,
+        "mean_spearman": -0.20179872188903591,
+        "median_spearman": -0.14285714285714285
+      },
+      "vector_covar_gap": {
+        "region_count": 9275,
+        "top1_accuracy": 0.12064690026954178,
+        "adjacent_accuracy": 0.24549865229110512,
+        "mean_regret": 0.0020375480346300325,
+        "median_regret": 0.0002922871499322355,
+        "mean_spearman": -0.08340229078120683,
+        "median_spearman": -0.08571428571428572
+      },
+      "teacher_student_kl": {
+        "region_count": 9275,
+        "top1_accuracy": 0.14684636118598382,
+        "adjacent_accuracy": 0.3721832884097035,
+        "mean_regret": 0.00179119275443066,
+        "median_regret": 2.4168100026145112e-05,
+        "mean_spearman": 0.2257478298573241,
+        "median_spearman": 0.42857142857142855
+      }
+    },
+    "late": {
+      "teacher_min_r": {
+        "region_count": 9275,
+        "top1_accuracy": 0.6155256064690027,
+        "adjacent_accuracy": 0.7900808625336927,
+        "mean_regret": 0.002596178307640527,
+        "median_regret": 0.0,
+        "mean_spearman": 0.6717250719011646,
+        "median_spearman": 0.9856107606091623
+      },
+      "scalar_r_gap": {
+        "region_count": 9275,
+        "top1_accuracy": 0.12291105121293801,
+        "adjacent_accuracy": 0.24819407008086253,
+        "mean_regret": 0.002298987787681811,
+        "median_regret": 0.00040111891030392144,
+        "mean_spearman": -0.11672753937154587,
+        "median_spearman": -0.11595420713048969
+      },
+      "vector_covar_gap": {
+        "region_count": 9275,
+        "top1_accuracy": 0.1198921832884097,
+        "adjacent_accuracy": 0.2734231805929919,
+        "mean_regret": 0.002121860590897506,
+        "median_regret": 0.0002455081707921636,
+        "mean_spearman": 0.007423988105120891,
+        "median_spearman": 0.02857142857142857
+      },
+      "teacher_student_kl": {
+        "region_count": 9275,
+        "top1_accuracy": 0.15514824797843665,
+        "adjacent_accuracy": 0.4125067385444744,
+        "mean_regret": 0.001855460005447759,
+        "median_regret": 1.6161465152565876e-05,
+        "mean_spearman": 0.31699571277109384,
+        "median_spearman": 0.4857142857142857
+      }
+    },
+    "overall": {
+      "teacher_min_r": {
+        "region_count": 27825,
+        "top1_accuracy": 0.5841509433962264,
+        "adjacent_accuracy": 0.7661096136567834,
+        "mean_regret": 0.0030677904784593073,
+        "median_regret": 0.0,
+        "mean_spearman": 0.6511393071481425,
+        "median_spearman": 0.9856107606091623
+      },
+      "scalar_r_gap": {
+        "region_count": 27825,
+        "top1_accuracy": 0.11917340521114106,
+        "adjacent_accuracy": 0.2262353998203055,
+        "mean_regret": 0.0026268605781887737,
+        "median_regret": 0.0004960981605108827,
+        "mean_spearman": -0.199782335068882,
+        "median_spearman": -0.14285714285714285
+      },
+      "vector_covar_gap": {
+        "region_count": 27825,
+        "top1_accuracy": 0.12125786163522012,
+        "adjacent_accuracy": 0.2448158131176999,
+        "mean_regret": 0.002399577924072801,
+        "median_regret": 0.0002983672839036444,
+        "mean_spearman": -0.08913888125907608,
+        "median_spearman": -0.08571428571428572
+      },
+      "teacher_student_kl": {
+        "region_count": 27825,
+        "top1_accuracy": 0.1454806828391734,
+        "adjacent_accuracy": 0.36370170709793354,
+        "mean_regret": 0.0021106220422812735,
+        "median_regret": 2.738810144364834e-05,
+        "mean_spearman": 0.20650935167846615,
+        "median_spearman": 0.42857142857142855
+      }
+    }
+  },
+  "observation": {
+    "random_top1": 0.16666666666666666,
+    "best_top1_score": "teacher_min_r",
+    "best_regret_score": "teacher_student_kl",
+    "vector_gap_predictive": false,
+    "vector_outperforms_scalar_gap": true,
+    "vector_minus_scalar_top1": 0.002084456424079062,
+    "vector_minus_scalar_mean_regret": -0.00022728265411597285
+  },
+  "execution_gate_pass": true
+}

@@ -24,6 +24,11 @@ try:
 except Exception:
     HAS_TORCH_NPU = False
 from PCOS import get_max_confidence_and_residual_variance_components, _class_assignment, _compute_class_centers
+from utils.covar_metrics import (
+    covar_coefficient,
+    covar_components_from_sorted_logits,
+    covar_derivatives_from_sorted_logits,
+)
 
 from losses import *
 from losses import SegCrossEntropyLoss, CriterionKD, CriterionMiniBatchCrossImagePair
@@ -637,11 +642,7 @@ class Trainer(object):
 
     @staticmethod
     def _get_covar_constant_a(num_classes, like=None, configured_a=None):
-        if configured_a is None:
-            a_value = float((max(num_classes, 1) - 1) ** 2) / 2.0
-        else:
-            a_value = float(configured_a)
-
+        a_value = covar_coefficient(num_classes, configured_a)
         if like is None:
             return a_value
 
@@ -953,21 +954,25 @@ class Trainer(object):
 
     @torch.no_grad()
     def _compute_reliability_terms(self, sorted_logits, temperature_map, a, epsilon=1e-8):
-        temp = temperature_map.clamp_min(epsilon)
-        prob = F.softmax(sorted_logits / temp.unsqueeze(-1), dim=-1)
-
-        c = prob[..., 0].clamp(min=epsilon, max=1.0 - epsilon)
-        nonmax_prob = prob[..., 1:]
-        if nonmax_prob.shape[-1] == 0:
-            v = torch.zeros_like(c)
+        components = covar_components_from_sorted_logits(
+            sorted_logits,
+            temperature_map,
+            coefficient_a=a,
+            epsilon=epsilon,
+        )
+        reliability_mode = self._get_covar_reliability_mode()
+        if reliability_mode == 'confidence':
+            reliability = components['r_c']
+        elif reliability_mode == 'variance':
+            reliability = components['r_v']
         else:
-            mu = nonmax_prob.mean(dim=-1, keepdim=True)
-            v = torch.mean((nonmax_prob - mu) ** 2, dim=-1)
-
-        s = (1.0 - c).clamp_min(epsilon)
-        variance_term = a * v / s
-        r = self._combine_covar_reliability(c, variance_term, epsilon=epsilon)
-        return prob, c, v, r
+            reliability = components['r']
+        return (
+            components['probability'],
+            components['confidence'],
+            components['residual_variance'],
+            reliability,
+        )
 
     @torch.no_grad()
     def compute_dr_dT(self, sorted_logits, temperature_map, a, epsilon=1e-8):
@@ -976,66 +981,27 @@ class Trainer(object):
 
     @torch.no_grad()
     def compute_r_derivatives(self, sorted_logits, temperature_map, a, epsilon=1e-8):
-        temp = temperature_map.clamp_min(epsilon)
-        prob, c, v, r = self._compute_reliability_terms(sorted_logits, temp, a, epsilon=epsilon)
-
-        nonmax_prob = prob[..., 1:]
-        if nonmax_prob.shape[-1] == 0:
-            zeros = torch.zeros_like(temp)
-            return zeros, zeros, r, c, v
-
-        bar_z = torch.sum(prob * sorted_logits, dim=-1)
-        centered_logits = bar_z.unsqueeze(-1) - sorted_logits
-        temp_sq = temp ** 2
-        temp_cu = temp_sq * temp
-        temp_qd = temp_sq * temp_sq
-        prob_prime = prob * centered_logits / temp_sq.unsqueeze(-1)
-        logit_var = torch.sum(prob * centered_logits ** 2, dim=-1)
-        prob_double_prime = prob * (
-            (centered_logits ** 2 - logit_var.unsqueeze(-1)) / temp_qd.unsqueeze(-1)
-            - 2.0 * centered_logits / temp_cu.unsqueeze(-1)
-        )
-
-        s = (1.0 - c).clamp_min(epsilon)
-        num_nonmax = nonmax_prob.shape[-1]
-        mu = s / num_nonmax
-
-        dc_dT = prob_prime[..., 0]
-        d2c_dT2 = prob_double_prime[..., 0]
-
-        nonmax_prob_prime = prob_prime[..., 1:]
-        nonmax_prob_double_prime = prob_double_prime[..., 1:]
-        mu_prime = -dc_dT / num_nonmax
-        mu_double_prime = -d2c_dT2 / num_nonmax
-
-        dv_dT = (2.0 / num_nonmax) * torch.sum(nonmax_prob * nonmax_prob_prime, dim=-1) - 2.0 * mu * mu_prime
-        d2v_dT2 = (2.0 / num_nonmax) * torch.sum(
-            nonmax_prob_prime ** 2 + nonmax_prob * nonmax_prob_double_prime,
-            dim=-1,
-        ) - 2.0 * (mu_prime ** 2 + mu * mu_double_prime)
-
-        confidence_dr_dT = -dc_dT / c
-        confidence_d2r_dT2 = (dc_dT ** 2) / (c ** 2) - d2c_dT2 / c
-
-        variance_dr_dT = a * (v * dc_dT / (s ** 2) + dv_dT / s)
-        variance_d2r_dT2 = a * (
-            d2v_dT2 / s
-            + v * d2c_dT2 / (s ** 2)
-            + 2.0 * dc_dT * dv_dT / (s ** 2)
-            + 2.0 * v * (dc_dT ** 2) / (s ** 3)
-        )
         reliability_mode = self._get_covar_reliability_mode()
+        closed = covar_derivatives_from_sorted_logits(
+            sorted_logits,
+            temperature_map,
+            coefficient_a=a,
+            reliability_mode=reliability_mode,
+            epsilon=epsilon,
+        )
         if reliability_mode == 'confidence':
-            dr_dT = confidence_dr_dT
-            d2r_dT2 = confidence_d2r_dT2
+            reliability = closed['r_c']
         elif reliability_mode == 'variance':
-            dr_dT = variance_dr_dT
-            d2r_dT2 = variance_d2r_dT2
+            reliability = closed['r_v']
         else:
-            dr_dT = confidence_dr_dT + variance_dr_dT
-            d2r_dT2 = confidence_d2r_dT2 + variance_d2r_dT2
-        return dr_dT, d2r_dT2, r, c, v
-
+            reliability = closed['r']
+        return (
+            closed['dr_dT'],
+            closed['d2r_dT2'],
+            reliability,
+            closed['confidence'],
+            closed['residual_variance'],
+        )
     @torch.no_grad()
     def _compute_log_confidence_and_derivative(self, sorted_logits, temperature_map, epsilon=1e-8):
         temp = temperature_map.clamp_min(epsilon)

@@ -1,0 +1,64 @@
+{
+  "scope": {
+    "dataset": "Pascal VOC val",
+    "dataset_size": 1449,
+    "processed_images": 1449,
+    "sampled_trajectory_pixels": 5935104
+  },
+  "config": {
+    "device": "cuda:0",
+    "temperatures": [
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5,
+      2.0
+    ],
+    "num_classes": 21,
+    "coefficient_a": 200.0,
+    "teacher_output_temperature": 1.0,
+    "seed": 1234
+  },
+  "derivative_audit": {
+    "num_vectors": 4096,
+    "dtype": "float64",
+    "closed_vs_autograd_first": {
+      "max_abs": 1.4654943925052066e-14,
+      "mean_abs": 3.5352783526142184e-16,
+      "p95_relative": 3.75451306899528e-15,
+      "max_relative": 4.654187295031602e-13
+    },
+    "closed_vs_autograd_second": {
+      "max_abs": 1.1812772982011666e-13,
+      "mean_abs": 1.7703158004204328e-15,
+      "p95_relative": 8.845606698827935e-15,
+      "max_relative": 8.062445595831274e-12
+    },
+    "closed_vs_finite_first": {
+      "max_abs": 3.206682190892707e-07,
+      "mean_abs": 7.060129891712244e-09,
+      "p95_relative": 1.0559261881604312e-07,
+      "max_relative": 2.007976730386208e-05
+    },
+    "closed_vs_finite_second": {
+      "max_abs": 2.330318862764358e-06,
+      "mean_abs": 5.239054448526615e-08,
+      "p95_relative": 6.983849099749105e-07,
+      "max_relative": 0.0005491966518936342
+    },
+    "allclose": {
+      "autograd_first": true,
+      "autograd_second": true,
+      "finite_first": true,
+      "finite_second": true
+    }
+  },
+  "empirical": {
+    "temperature_min_mean_r": 0.5,
+    "mean_r_strictly_increasing": true,
+    "sampled_pixel_any_decrease_fraction": 0.048933599141649416,
+    "sampled_pixel_turn_fraction": 0.047587034700655624
+  },
+  "gate_pass": true
+}

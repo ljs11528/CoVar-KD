@@ -1,0 +1,794 @@
+{
+  "generated_at": "2026-08-26T08:43:41.177824+00:00",
+  "base_commit": "f102a71",
+  "execution_gates": {
+    "P0": true,
+    "P1": true,
+    "P2": true,
+    "P3": true
+  },
+  "all_execution_gates_pass": true,
+  "verification": {
+    "focused_passed": 17,
+    "full_passed": 132,
+    "full_failed": 1,
+    "missing_artifact": "runs/diagnostics/phaseO_o11/voc_train_rtc_confidence_cdf.pt"
+  },
+  "evidence_chain": {
+    "r_theory_implementation_consistent": true,
+    "temperature_changes_complexity": true,
+    "mean_r_min": 0.10337210139490154,
+    "mean_r_max": 0.3533859760365425,
+    "minimum_complexity_temperature": 0.5,
+    "best_miou_temperature": 1.5,
+    "minimum_complexity_not_best": true,
+    "early_late_oracle_change_fraction": 0.4299730458221024,
+    "teachability_is_state_dependent": true,
+    "vector_gap_top1": 0.12125786163522012,
+    "vector_gap_mean_spearman": -0.08913888125907608,
+    "covar_gap_predictive": false,
+    "adaptive_distillation_gain_demonstrated": false
+  },
+  "stages": {
+    "P0": {
+      "scope": {
+        "dataset": "Pascal VOC val",
+        "dataset_size": 1449,
+        "processed_images": 1449,
+        "sampled_trajectory_pixels": 5935104
+      },
+      "config": {
+        "device": "cuda:0",
+        "temperatures": [
+          0.5,
+          0.75,
+          1.0,
+          1.25,
+          1.5,
+          2.0
+        ],
+        "num_classes": 21,
+        "coefficient_a": 200.0,
+        "teacher_output_temperature": 1.0,
+        "seed": 1234
+      },
+      "derivative_audit": {
+        "num_vectors": 4096,
+        "dtype": "float64",
+        "closed_vs_autograd_first": {
+          "max_abs": 1.4654943925052066e-14,
+          "mean_abs": 3.5352783526142184e-16,
+          "p95_relative": 3.75451306899528e-15,
+          "max_relative": 4.654187295031602e-13
+        },
+        "closed_vs_autograd_second": {
+          "max_abs": 1.1812772982011666e-13,
+          "mean_abs": 1.7703158004204328e-15,
+          "p95_relative": 8.845606698827935e-15,
+          "max_relative": 8.062445595831274e-12
+        },
+        "closed_vs_finite_first": {
+          "max_abs": 3.206682190892707e-07,
+          "mean_abs": 7.060129891712244e-09,
+          "p95_relative": 1.0559261881604312e-07,
+          "max_relative": 2.007976730386208e-05
+        },
+        "closed_vs_finite_second": {
+          "max_abs": 2.330318862764358e-06,
+          "mean_abs": 5.239054448526615e-08,
+          "p95_relative": 6.983849099749105e-07,
+          "max_relative": 0.0005491966518936342
+        },
+        "allclose": {
+          "autograd_first": true,
+          "autograd_second": true,
+          "finite_first": true,
+          "finite_second": true
+        }
+      },
+      "empirical": {
+        "temperature_min_mean_r": 0.5,
+        "mean_r_strictly_increasing": true,
+        "sampled_pixel_any_decrease_fraction": 0.048933599141649416,
+        "sampled_pixel_turn_fraction": 0.047587034700655624
+      },
+      "gate_pass": true,
+      "trajectory": [
+        {
+          "temperature": 0.5,
+          "valid_pixels": 244886857,
+          "finite_fraction": 1.0,
+          "confidence_mean": 0.9898172109510808,
+          "r_c_mean": 0.012145203743161114,
+          "r_v_mean": 0.09122689765097029,
+          "r_mean": 0.10337210139490154,
+          "entropy_mean": 0.025015941549996302,
+          "residual_variance_mean": 0.00012819746599300862,
+          "normalized_residual_variance_mean": 0.058233621834934274,
+          "dr_dT_mean": 0.20677871476680287,
+          "dr_negative_fraction": 0.0007752314776125368,
+          "d2r_negative_fraction": 0.32668738118518137,
+          "max_decomposition_abs": 4.76837158203125e-07,
+          "max_stable_legacy_rv_abs": 1.9073486328125e-06,
+          "max_variance_identity_abs": 4.6566128730773926e-09
+        },
+        {
+          "temperature": 0.75,
+          "valid_pixels": 244886857,
+          "finite_fraction": 1.0,
+          "confidence_mean": 0.9841755728669652,
+          "r_c_mean": 0.018892370032768873,
+          "r_v_mean": 0.13638318901726643,
+          "r_mean": 0.1552755590475256,
+          "entropy_mean": 0.040284569151821055,
+          "residual_variance_mean": 0.00019130646950453042,
+          "normalized_residual_variance_mean": 0.04971493900720582,
+          "dr_dT_mean": 0.20791204340995378,
+          "dr_negative_fraction": 0.002184429195397775,
+          "d2r_negative_fraction": 0.1002699299619824,
+          "max_decomposition_abs": 4.76837158203125e-07,
+          "max_stable_legacy_rv_abs": 2.384185791015625e-06,
+          "max_variance_identity_abs": 4.6566128730773926e-09
+        },
+        {
+          "temperature": 1.0,
+          "valid_pixels": 244886857,
+          "finite_fraction": 1.0,
+          "confidence_mean": 0.9776787651447314,
+          "r_c_mean": 0.026652497880057753,
+          "r_v_mean": 0.17995524995361412,
+          "r_mean": 0.20660774783141622,
+          "entropy_mean": 0.0609767167548119,
+          "residual_variance_mean": 0.00025306992094231733,
+          "normalized_residual_variance_mean": 0.019927290683514547,
+          "dr_dT_mean": 0.20037223779392746,
+          "dr_negative_fraction": 0.005828071042620307,
+          "d2r_negative_fraction": 0.08128554240867243,
+          "max_decomposition_abs": 4.76837158203125e-07,
+          "max_stable_legacy_rv_abs": 1.9073486328125e-06,
+          "max_variance_identity_abs": 4.6566128730773926e-09
+        },
+        {
+          "temperature": 1.25,
+          "valid_pixels": 244886857,
+          "finite_fraction": 1.0,
+          "confidence_mean": 0.9692967859656499,
+          "r_c_mean": 0.03660421712880038,
+          "r_v_mean": 0.21742773428982543,
+          "r_mean": 0.2540319514199887,
+          "entropy_mean": 0.09499482401760877,
+          "residual_variance_mean": 0.0003107421587493223,
+          "normalized_residual_variance_mean": 0.015313123212011986,
+          "dr_dT_mean": 0.17628178165232702,
+          "dr_negative_fraction": 0.014140044273588762,
+          "d2r_negative_fraction": 0.12122658750934927,
+          "max_decomposition_abs": 4.76837158203125e-07,
+          "max_stable_legacy_rv_abs": 1.9073486328125e-06,
+          "max_variance_identity_abs": 4.6566128730773926e-09
+        },
+        {
+          "temperature": 1.5,
+          "valid_pixels": 244886857,
+          "finite_fraction": 1.0,
+          "confidence_mean": 0.9572081817938983,
+          "r_c_mean": 0.05083644645187705,
+          "r_v_mean": 0.24305592402825457,
+          "r_mean": 0.2938923704797309,
+          "entropy_mean": 0.15423655562157682,
+          "residual_variance_mean": 0.00036020259594236534,
+          "normalized_residual_variance_mean": 0.011681507157052752,
+          "dr_dT_mean": 0.1423166615983403,
+          "dr_negative_fraction": 0.02840498295913039,
+          "d2r_negative_fraction": 0.1664264815975812,
+          "max_decomposition_abs": 4.76837158203125e-07,
+          "max_stable_legacy_rv_abs": 2.1457672119140625e-06,
+          "max_variance_identity_abs": 4.6566128730773926e-09
+        },
+        {
+          "temperature": 2.0,
+          "valid_pixels": 244886857,
+          "finite_fraction": 1.0,
+          "confidence_mean": 0.913622342837652,
+          "r_c_mean": 0.10225264746011026,
+          "r_v_mean": 0.25113332857493886,
+          "r_mean": 0.3533859760365425,
+          "entropy_mean": 0.3860032706141019,
+          "residual_variance_mean": 0.00042175563918511776,
+          "normalized_residual_variance_mean": 0.006713613607086858,
+          "dr_dT_mean": 0.10856048310858875,
+          "dr_negative_fraction": 0.06587924398082336,
+          "d2r_negative_fraction": 0.20258758517203723,
+          "max_decomposition_abs": 4.76837158203125e-07,
+          "max_stable_legacy_rv_abs": 1.9073486328125e-06,
+          "max_variance_identity_abs": 4.6566128730773926e-09
+        }
+      ]
+    },
+    "P1": {
+      "stage": "P1",
+      "hypothesis": "global teacher-only temperature changes distillation quality; minimum output complexity need not be optimal",
+      "generated_at": "2026-08-26T08:36:58.942964+00:00",
+      "config": {
+        "dataset": "Pascal VOC",
+        "iterations": 20000,
+        "global_batch": 16,
+        "world_size": 2,
+        "seed": 1234,
+        "temperatures": [
+          0.5,
+          0.75,
+          1.0,
+          1.5,
+          2.0
+        ],
+        "student_temperature": 1.0,
+        "temperature_squared_compensation": false,
+        "outer_teacher_temperature": 1.0
+      },
+      "rows": [
+        {
+          "variant": "T0p5_20k_seed1234",
+          "temperature": 0.5,
+          "mean_r": 0.10337210139490154,
+          "mean_r_c": 0.012145203743161114,
+          "mean_r_v": 0.09122689765097029,
+          "pixacc_percent": 89.774579,
+          "miou_percent": 59.49921,
+          "training_time": "1:07:09.723796",
+          "log_path": "runs/covar_match/P1_teacher_only_temperature/logs/T0p5_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P1_teacher_only_temperature/checkpoints/T0p5_20k_seed1234/training_state_latest.pth",
+          "checks": {
+            "iteration": true,
+            "logged_iteration": true,
+            "world_size": true,
+            "seed": true,
+            "global_batch": true,
+            "kd_mode": true,
+            "teacher_temperature": true,
+            "student_temperature": true,
+            "no_t_squared": true,
+            "outer_teacher_temperature": true,
+            "lambda_kd": true,
+            "no_covar": true,
+            "other_kd_branches_off": true,
+            "finite_log": true,
+            "temperature_logged": true
+          },
+          "contract_pass": true
+        },
+        {
+          "variant": "T0p75_20k_seed1234",
+          "temperature": 0.75,
+          "mean_r": 0.1552755590475256,
+          "mean_r_c": 0.018892370032768873,
+          "mean_r_v": 0.13638318901726643,
+          "pixacc_percent": 89.903975,
+          "miou_percent": 60.375696,
+          "training_time": "1:07:05.964186",
+          "log_path": "runs/covar_match/P1_teacher_only_temperature/logs/T0p75_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P1_teacher_only_temperature/checkpoints/T0p75_20k_seed1234/training_state_latest.pth",
+          "checks": {
+            "iteration": true,
+            "logged_iteration": true,
+            "world_size": true,
+            "seed": true,
+            "global_batch": true,
+            "kd_mode": true,
+            "teacher_temperature": true,
+            "student_temperature": true,
+            "no_t_squared": true,
+            "outer_teacher_temperature": true,
+            "lambda_kd": true,
+            "no_covar": true,
+            "other_kd_branches_off": true,
+            "finite_log": true,
+            "temperature_logged": true
+          },
+          "contract_pass": true
+        },
+        {
+          "variant": "T1p0_20k_seed1234",
+          "temperature": 1.0,
+          "mean_r": 0.20660774783141622,
+          "mean_r_c": 0.026652497880057753,
+          "mean_r_v": 0.17995524995361412,
+          "pixacc_percent": 89.687377,
+          "miou_percent": 59.38493,
+          "training_time": "1:07:04.185177",
+          "log_path": "runs/covar_match/P1_teacher_only_temperature/logs/T1p0_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/training_state_latest.pth",
+          "checks": {
+            "iteration": true,
+            "logged_iteration": true,
+            "world_size": true,
+            "seed": true,
+            "global_batch": true,
+            "kd_mode": true,
+            "teacher_temperature": true,
+            "student_temperature": true,
+            "no_t_squared": true,
+            "outer_teacher_temperature": true,
+            "lambda_kd": true,
+            "no_covar": true,
+            "other_kd_branches_off": true,
+            "finite_log": true,
+            "temperature_logged": true,
+            "p2_snapshots": true
+          },
+          "contract_pass": true
+        },
+        {
+          "variant": "T1p5_20k_seed1234",
+          "temperature": 1.5,
+          "mean_r": 0.2938923704797309,
+          "mean_r_c": 0.05083644645187705,
+          "mean_r_v": 0.24305592402825457,
+          "pixacc_percent": 90.041566,
+          "miou_percent": 60.861409,
+          "training_time": "1:07:05.689746",
+          "log_path": "runs/covar_match/P1_teacher_only_temperature/logs/T1p5_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p5_20k_seed1234/training_state_latest.pth",
+          "checks": {
+            "iteration": true,
+            "logged_iteration": true,
+            "world_size": true,
+            "seed": true,
+            "global_batch": true,
+            "kd_mode": true,
+            "teacher_temperature": true,
+            "student_temperature": true,
+            "no_t_squared": true,
+            "outer_teacher_temperature": true,
+            "lambda_kd": true,
+            "no_covar": true,
+            "other_kd_branches_off": true,
+            "finite_log": true,
+            "temperature_logged": true
+          },
+          "contract_pass": true
+        },
+        {
+          "variant": "T2p0_20k_seed1234",
+          "temperature": 2.0,
+          "mean_r": 0.3533859760365425,
+          "mean_r_c": 0.10225264746011026,
+          "mean_r_v": 0.25113332857493886,
+          "pixacc_percent": 90.048164,
+          "miou_percent": 60.368663,
+          "training_time": "1:07:06.288971",
+          "log_path": "runs/covar_match/P1_teacher_only_temperature/logs/T2p0_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P1_teacher_only_temperature/checkpoints/T2p0_20k_seed1234/training_state_latest.pth",
+          "checks": {
+            "iteration": true,
+            "logged_iteration": true,
+            "world_size": true,
+            "seed": true,
+            "global_batch": true,
+            "kd_mode": true,
+            "teacher_temperature": true,
+            "student_temperature": true,
+            "no_t_squared": true,
+            "outer_teacher_temperature": true,
+            "lambda_kd": true,
+            "no_covar": true,
+            "other_kd_branches_off": true,
+            "finite_log": true,
+            "temperature_logged": true
+          },
+          "contract_pass": true
+        }
+      ],
+      "observation": {
+        "minimum_complexity_temperature": 0.5,
+        "best_miou_temperature": 1.5,
+        "best_minus_min_complexity_pp": 1.362199000000004,
+        "minimum_complexity_not_best": true,
+        "miou_has_turn": true
+      },
+      "execution_gate_pass": true
+    },
+    "P2": {
+      "stage": "P2",
+      "hypothesis": "regional teachability depends on teacher target temperature and the current student state",
+      "generated_at": "2026-08-26T08:39:48.390891+00:00",
+      "config": {
+        "temperatures": [
+          0.5,
+          0.75,
+          1.0,
+          1.25,
+          1.5,
+          2.0
+        ],
+        "region_size": 8,
+        "min_valid_pixels": 16,
+        "step_size": 0.1,
+        "normalization": "per-pixel KD gradient L2 normalization",
+        "oracle": "maximum regional mean supervised CE decrease after one normalized logit step",
+        "seed": 1234
+      },
+      "scope": {
+        "dataset": "Pascal VOC val",
+        "dataset_size": 1449,
+        "processed_images": 200,
+        "selected_image_ids_sha256": "23cf73fa23a536a66ac5dda8c306cffcc67043097cd8364a9114a8fcc82f8777",
+        "candidate_rows": 166950,
+        "candidate_cache": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P2_region_candidate_teachability.csv.gz",
+        "oracle_cache": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P2_region_oracle_summary.csv.gz"
+      },
+      "checkpoints": {
+        "early": {
+          "iteration": 4000,
+          "student_checkpoint": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/kd_deeplabv3_mobilenet_ssseg_mobilenetv3_small_voc_iter004000.pth",
+          "student_checkpoint_sha256": "9bfb3cd00dba32566a16634ed6a2ad83fe3758e6eb5d7243bb9a08569dcaff79",
+          "training_state": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/training_state_iter004000.pth",
+          "training_state_sha256": "9c6aeb2c39eb6f91f73ad151395739574ac5155b1aa3cdba5269e01e18c175a7",
+          "contract": {
+            "iteration": true,
+            "seed": true,
+            "kd_mode": true,
+            "temperature": true,
+            "student_temperature": true,
+            "no_temperature_squared_compensation": true,
+            "outer_teacher_temperature": true
+          }
+        },
+        "middle": {
+          "iteration": 12000,
+          "student_checkpoint": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/kd_deeplabv3_mobilenet_ssseg_mobilenetv3_small_voc_iter012000.pth",
+          "student_checkpoint_sha256": "3bce13420727817e157d1af51709bad2c90eec0349dcf1ee3076a64c4e2e8e32",
+          "training_state": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/training_state_iter012000.pth",
+          "training_state_sha256": "aa6e5242e7f2d5926f82ab33c572101ea836a2533ceda6401e3358e817f16271",
+          "contract": {
+            "iteration": true,
+            "seed": true,
+            "kd_mode": true,
+            "temperature": true,
+            "student_temperature": true,
+            "no_temperature_squared_compensation": true,
+            "outer_teacher_temperature": true
+          }
+        },
+        "late": {
+          "iteration": 20000,
+          "student_checkpoint": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/kd_deeplabv3_mobilenet_ssseg_mobilenetv3_small_voc_iter020000.pth",
+          "student_checkpoint_sha256": "0b4d7db76213bdca1a3ebc2b4cb00132ccefa517cb242774935992e15a96e2c2",
+          "training_state": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/training_state_iter020000.pth",
+          "training_state_sha256": "3916b260621877d792be5ff7dcdd779654a24e5658c4959aba7f8e1a775896da",
+          "contract": {
+            "iteration": true,
+            "seed": true,
+            "kd_mode": true,
+            "temperature": true,
+            "student_temperature": true,
+            "no_temperature_squared_compensation": true,
+            "outer_teacher_temperature": true
+          }
+        }
+      },
+      "stage_summaries": {
+        "early": {
+          "region_count": 9275,
+          "mean_oracle_gain": 0.02066373267542284,
+          "median_oracle_gain": 0.0062495742233530166,
+          "mean_oracle_margin": 0.0013176036410247395,
+          "positive_oracle_gain_fraction": 0.976388140161725,
+          "gain_cosine_oracle_agreement": 0.6035579514824798,
+          "oracle_temperature_distribution": {
+            "0.5": {
+              "count": 5024,
+              "fraction": 0.5416711590296496
+            },
+            "0.75": {
+              "count": 1696,
+              "fraction": 0.18285714285714286
+            },
+            "1.0": {
+              "count": 729,
+              "fraction": 0.07859838274932615
+            },
+            "1.25": {
+              "count": 325,
+              "fraction": 0.03504043126684636
+            },
+            "1.5": {
+              "count": 446,
+              "fraction": 0.04808625336927224
+            },
+            "2.0": {
+              "count": 1055,
+              "fraction": 0.11374663072776281
+            }
+          }
+        },
+        "middle": {
+          "region_count": 9275,
+          "mean_oracle_gain": 0.014002257709231492,
+          "median_oracle_gain": 0.003167463140562177,
+          "mean_oracle_margin": 0.0009196222945643512,
+          "positive_oracle_gain_fraction": 0.9437196765498652,
+          "gain_cosine_oracle_agreement": 0.6267385444743935,
+          "oracle_temperature_distribution": {
+            "0.5": {
+              "count": 5521,
+              "fraction": 0.595256064690027
+            },
+            "0.75": {
+              "count": 1747,
+              "fraction": 0.188355795148248
+            },
+            "1.0": {
+              "count": 525,
+              "fraction": 0.05660377358490566
+            },
+            "1.25": {
+              "count": 244,
+              "fraction": 0.026307277628032345
+            },
+            "1.5": {
+              "count": 342,
+              "fraction": 0.0368733153638814
+            },
+            "2.0": {
+              "count": 896,
+              "fraction": 0.09660377358490566
+            }
+          }
+        },
+        "late": {
+          "region_count": 9275,
+          "mean_oracle_gain": 0.011400675810980343,
+          "median_oracle_gain": 0.0017805183015298098,
+          "mean_oracle_margin": 0.0010289847164495771,
+          "positive_oracle_gain_fraction": 0.9319676549865229,
+          "gain_cosine_oracle_agreement": 0.6558490566037736,
+          "oracle_temperature_distribution": {
+            "0.5": {
+              "count": 5712,
+              "fraction": 0.6158490566037735
+            },
+            "0.75": {
+              "count": 1618,
+              "fraction": 0.17444743935309973
+            },
+            "1.0": {
+              "count": 460,
+              "fraction": 0.04959568733153639
+            },
+            "1.25": {
+              "count": 253,
+              "fraction": 0.027277628032345014
+            },
+            "1.5": {
+              "count": 332,
+              "fraction": 0.035795148247978435
+            },
+            "2.0": {
+              "count": 900,
+              "fraction": 0.09703504043126684
+            }
+          }
+        }
+      },
+      "state_transitions": [
+        {
+          "left": "early",
+          "right": "middle",
+          "common_regions": 9275,
+          "exact_agreement": 0.5609703504043126,
+          "adjacent_agreement": 0.8369811320754716,
+          "mean_candidate_index_shift": 0.786522911051213,
+          "mean_absolute_temperature_shift": 0.2189757412398922
+        },
+        {
+          "left": "middle",
+          "right": "late",
+          "common_regions": 9275,
+          "exact_agreement": 0.6395687331536388,
+          "adjacent_agreement": 0.8994070080862534,
+          "mean_candidate_index_shift": 0.5645283018867925,
+          "mean_absolute_temperature_shift": 0.15574123989218328
+        },
+        {
+          "left": "early",
+          "right": "late",
+          "common_regions": 9275,
+          "exact_agreement": 0.5700269541778976,
+          "adjacent_agreement": 0.8395687331536388,
+          "mean_candidate_index_shift": 0.7612938005390836,
+          "mean_absolute_temperature_shift": 0.21105121293800538
+        }
+      ],
+      "execution_gate_pass": true
+    },
+    "P3": {
+      "stage": "P3",
+      "hypothesis": "distance between teacher and current student CoVar coordinates predicts regional teachability",
+      "generated_at": "2026-08-26T08:41:29.849957+00:00",
+      "input": {
+        "candidate_cache": "runs/covar_match/P2_region_candidate_teachability.csv.gz",
+        "candidate_cache_sha256": "d170dcbd67130fa8a72a6c2bd2d464e8579d678992848bf2bd88b1dbdbd2cf84",
+        "p2_json": "reports/covar_match/P2_region_teachability.json",
+        "p2_json_sha256": "3b6febf6ab4d2062e9e9f0b98e14f4237f26f1385d8a1b70a7b211c8fd2fa40a",
+        "candidate_rows": 166950,
+        "region_state_groups": 27825
+      },
+      "score_semantics": {
+        "teacher_min_r": "teacher r(T)",
+        "scalar_r_gap": "absolute teacher r(T) minus student r(1)",
+        "vector_covar_gap": "Euclidean distance in standardized r_c/r_v coordinates",
+        "teacher_student_kl": "KL(teacher(T) || student(1))",
+        "selection": "minimum score",
+        "component_population_standard_deviation": {
+          "r_c": 0.17518351852566527,
+          "r_v": 0.6517060315499618
+        },
+        "scale_source": "same unlabeled P2 candidate cache; exploratory normalization"
+      },
+      "metrics": {
+        "early": {
+          "teacher_min_r": {
+            "region_count": 9275,
+            "top1_accuracy": 0.5416711590296496,
+            "adjacent_accuracy": 0.7246361185983827,
+            "mean_regret": 0.004216969997582871,
+            "median_regret": 0.0,
+            "mean_spearman": 0.6048326639525635,
+            "median_spearman": 0.9428571428571428
+          },
+          "scalar_r_gap": {
+            "region_count": 9275,
+            "top1_accuracy": 0.11504043126684636,
+            "adjacent_accuracy": 0.20463611859838274,
+            "mean_regret": 0.003329953254270439,
+            "median_regret": 0.0006016113329678774,
+            "mean_spearman": -0.2808207439460642,
+            "median_spearman": -0.6571428571428571
+          },
+          "vector_covar_gap": {
+            "region_count": 9275,
+            "top1_accuracy": 0.1232345013477089,
+            "adjacent_accuracy": 0.2155256064690027,
+            "mean_regret": 0.0030393251466908655,
+            "median_regret": 0.0003627254336606711,
+            "mean_spearman": -0.19143834110114227,
+            "median_spearman": -0.14285714285714285
+          },
+          "teacher_student_kl": {
+            "region_count": 9275,
+            "top1_accuracy": 0.13444743935309972,
+            "adjacent_accuracy": 0.30641509433962266,
+            "mean_regret": 0.0026852133669653996,
+            "median_regret": 4.4094398617744446e-05,
+            "mean_spearman": 0.07678451240698057,
+            "median_spearman": 0.08571428571428572
+          }
+        },
+        "middle": {
+          "teacher_min_r": {
+            "region_count": 9275,
+            "top1_accuracy": 0.595256064690027,
+            "adjacent_accuracy": 0.783611859838275,
+            "mean_regret": 0.0023902231301545234,
+            "median_regret": 0.0,
+            "mean_spearman": 0.6768601855907,
+            "median_spearman": 0.9856107606091623
+          },
+          "scalar_r_gap": {
+            "region_count": 9275,
+            "top1_accuracy": 0.11956873315363882,
+            "adjacent_accuracy": 0.22587601078167116,
+            "mean_regret": 0.0022516406926140708,
+            "median_regret": 0.0004952264243911486,
+            "mean_spearman": -0.20179872188903591,
+            "median_spearman": -0.14285714285714285
+          },
+          "vector_covar_gap": {
+            "region_count": 9275,
+            "top1_accuracy": 0.12064690026954178,
+            "adjacent_accuracy": 0.24549865229110512,
+            "mean_regret": 0.0020375480346300325,
+            "median_regret": 0.0002922871499322355,
+            "mean_spearman": -0.08340229078120683,
+            "median_spearman": -0.08571428571428572
+          },
+          "teacher_student_kl": {
+            "region_count": 9275,
+            "top1_accuracy": 0.14684636118598382,
+            "adjacent_accuracy": 0.3721832884097035,
+            "mean_regret": 0.00179119275443066,
+            "median_regret": 2.4168100026145112e-05,
+            "mean_spearman": 0.2257478298573241,
+            "median_spearman": 0.42857142857142855
+          }
+        },
+        "late": {
+          "teacher_min_r": {
+            "region_count": 9275,
+            "top1_accuracy": 0.6155256064690027,
+            "adjacent_accuracy": 0.7900808625336927,
+            "mean_regret": 0.002596178307640527,
+            "median_regret": 0.0,
+            "mean_spearman": 0.6717250719011646,
+            "median_spearman": 0.9856107606091623
+          },
+          "scalar_r_gap": {
+            "region_count": 9275,
+            "top1_accuracy": 0.12291105121293801,
+            "adjacent_accuracy": 0.24819407008086253,
+            "mean_regret": 0.002298987787681811,
+            "median_regret": 0.00040111891030392144,
+            "mean_spearman": -0.11672753937154587,
+            "median_spearman": -0.11595420713048969
+          },
+          "vector_covar_gap": {
+            "region_count": 9275,
+            "top1_accuracy": 0.1198921832884097,
+            "adjacent_accuracy": 0.2734231805929919,
+            "mean_regret": 0.002121860590897506,
+            "median_regret": 0.0002455081707921636,
+            "mean_spearman": 0.007423988105120891,
+            "median_spearman": 0.02857142857142857
+          },
+          "teacher_student_kl": {
+            "region_count": 9275,
+            "top1_accuracy": 0.15514824797843665,
+            "adjacent_accuracy": 0.4125067385444744,
+            "mean_regret": 0.001855460005447759,
+            "median_regret": 1.6161465152565876e-05,
+            "mean_spearman": 0.31699571277109384,
+            "median_spearman": 0.4857142857142857
+          }
+        },
+        "overall": {
+          "teacher_min_r": {
+            "region_count": 27825,
+            "top1_accuracy": 0.5841509433962264,
+            "adjacent_accuracy": 0.7661096136567834,
+            "mean_regret": 0.0030677904784593073,
+            "median_regret": 0.0,
+            "mean_spearman": 0.6511393071481425,
+            "median_spearman": 0.9856107606091623
+          },
+          "scalar_r_gap": {
+            "region_count": 27825,
+            "top1_accuracy": 0.11917340521114106,
+            "adjacent_accuracy": 0.2262353998203055,
+            "mean_regret": 0.0026268605781887737,
+            "median_regret": 0.0004960981605108827,
+            "mean_spearman": -0.199782335068882,
+            "median_spearman": -0.14285714285714285
+          },
+          "vector_covar_gap": {
+            "region_count": 27825,
+            "top1_accuracy": 0.12125786163522012,
+            "adjacent_accuracy": 0.2448158131176999,
+            "mean_regret": 0.002399577924072801,
+            "median_regret": 0.0002983672839036444,
+            "mean_spearman": -0.08913888125907608,
+            "median_spearman": -0.08571428571428572
+          },
+          "teacher_student_kl": {
+            "region_count": 27825,
+            "top1_accuracy": 0.1454806828391734,
+            "adjacent_accuracy": 0.36370170709793354,
+            "mean_regret": 0.0021106220422812735,
+            "median_regret": 2.738810144364834e-05,
+            "mean_spearman": 0.20650935167846615,
+            "median_spearman": 0.42857142857142855
+          }
+        }
+      },
+      "observation": {
+        "random_top1": 0.16666666666666666,
+        "best_top1_score": "teacher_min_r",
+        "best_regret_score": "teacher_student_kl",
+        "vector_gap_predictive": false,
+        "vector_outperforms_scalar_gap": true,
+        "vector_minus_scalar_top1": 0.002084456424079062,
+        "vector_minus_scalar_mean_regret": -0.00022728265411597285
+      },
+      "execution_gate_pass": true
+    }
+  }
+}

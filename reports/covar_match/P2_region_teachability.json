@@ -1,0 +1,214 @@
+{
+  "stage": "P2",
+  "hypothesis": "regional teachability depends on teacher target temperature and the current student state",
+  "generated_at": "2026-08-26T08:39:48.390891+00:00",
+  "config": {
+    "temperatures": [
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5,
+      2.0
+    ],
+    "region_size": 8,
+    "min_valid_pixels": 16,
+    "step_size": 0.1,
+    "normalization": "per-pixel KD gradient L2 normalization",
+    "oracle": "maximum regional mean supervised CE decrease after one normalized logit step",
+    "seed": 1234
+  },
+  "scope": {
+    "dataset": "Pascal VOC val",
+    "dataset_size": 1449,
+    "processed_images": 200,
+    "selected_image_ids_sha256": "23cf73fa23a536a66ac5dda8c306cffcc67043097cd8364a9114a8fcc82f8777",
+    "candidate_rows": 166950,
+    "candidate_cache": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P2_region_candidate_teachability.csv.gz",
+    "oracle_cache": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P2_region_oracle_summary.csv.gz"
+  },
+  "checkpoints": {
+    "early": {
+      "iteration": 4000,
+      "student_checkpoint": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/kd_deeplabv3_mobilenet_ssseg_mobilenetv3_small_voc_iter004000.pth",
+      "student_checkpoint_sha256": "9bfb3cd00dba32566a16634ed6a2ad83fe3758e6eb5d7243bb9a08569dcaff79",
+      "training_state": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/training_state_iter004000.pth",
+      "training_state_sha256": "9c6aeb2c39eb6f91f73ad151395739574ac5155b1aa3cdba5269e01e18c175a7",
+      "contract": {
+        "iteration": true,
+        "seed": true,
+        "kd_mode": true,
+        "temperature": true,
+        "student_temperature": true,
+        "no_temperature_squared_compensation": true,
+        "outer_teacher_temperature": true
+      }
+    },
+    "middle": {
+      "iteration": 12000,
+      "student_checkpoint": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/kd_deeplabv3_mobilenet_ssseg_mobilenetv3_small_voc_iter012000.pth",
+      "student_checkpoint_sha256": "3bce13420727817e157d1af51709bad2c90eec0349dcf1ee3076a64c4e2e8e32",
+      "training_state": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/training_state_iter012000.pth",
+      "training_state_sha256": "aa6e5242e7f2d5926f82ab33c572101ea836a2533ceda6401e3358e817f16271",
+      "contract": {
+        "iteration": true,
+        "seed": true,
+        "kd_mode": true,
+        "temperature": true,
+        "student_temperature": true,
+        "no_temperature_squared_compensation": true,
+        "outer_teacher_temperature": true
+      }
+    },
+    "late": {
+      "iteration": 20000,
+      "student_checkpoint": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/kd_deeplabv3_mobilenet_ssseg_mobilenetv3_small_voc_iter020000.pth",
+      "student_checkpoint_sha256": "0b4d7db76213bdca1a3ebc2b4cb00132ccefa517cb242774935992e15a96e2c2",
+      "training_state": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/training_state_iter020000.pth",
+      "training_state_sha256": "3916b260621877d792be5ff7dcdd779654a24e5658c4959aba7f8e1a775896da",
+      "contract": {
+        "iteration": true,
+        "seed": true,
+        "kd_mode": true,
+        "temperature": true,
+        "student_temperature": true,
+        "no_temperature_squared_compensation": true,
+        "outer_teacher_temperature": true
+      }
+    }
+  },
+  "stage_summaries": {
+    "early": {
+      "region_count": 9275,
+      "mean_oracle_gain": 0.02066373267542284,
+      "median_oracle_gain": 0.0062495742233530166,
+      "mean_oracle_margin": 0.0013176036410247395,
+      "positive_oracle_gain_fraction": 0.976388140161725,
+      "gain_cosine_oracle_agreement": 0.6035579514824798,
+      "oracle_temperature_distribution": {
+        "0.5": {
+          "count": 5024,
+          "fraction": 0.5416711590296496
+        },
+        "0.75": {
+          "count": 1696,
+          "fraction": 0.18285714285714286
+        },
+        "1.0": {
+          "count": 729,
+          "fraction": 0.07859838274932615
+        },
+        "1.25": {
+          "count": 325,
+          "fraction": 0.03504043126684636
+        },
+        "1.5": {
+          "count": 446,
+          "fraction": 0.04808625336927224
+        },
+        "2.0": {
+          "count": 1055,
+          "fraction": 0.11374663072776281
+        }
+      }
+    },
+    "middle": {
+      "region_count": 9275,
+      "mean_oracle_gain": 0.014002257709231492,
+      "median_oracle_gain": 0.003167463140562177,
+      "mean_oracle_margin": 0.0009196222945643512,
+      "positive_oracle_gain_fraction": 0.9437196765498652,
+      "gain_cosine_oracle_agreement": 0.6267385444743935,
+      "oracle_temperature_distribution": {
+        "0.5": {
+          "count": 5521,
+          "fraction": 0.595256064690027
+        },
+        "0.75": {
+          "count": 1747,
+          "fraction": 0.188355795148248
+        },
+        "1.0": {
+          "count": 525,
+          "fraction": 0.05660377358490566
+        },
+        "1.25": {
+          "count": 244,
+          "fraction": 0.026307277628032345
+        },
+        "1.5": {
+          "count": 342,
+          "fraction": 0.0368733153638814
+        },
+        "2.0": {
+          "count": 896,
+          "fraction": 0.09660377358490566
+        }
+      }
+    },
+    "late": {
+      "region_count": 9275,
+      "mean_oracle_gain": 0.011400675810980343,
+      "median_oracle_gain": 0.0017805183015298098,
+      "mean_oracle_margin": 0.0010289847164495771,
+      "positive_oracle_gain_fraction": 0.9319676549865229,
+      "gain_cosine_oracle_agreement": 0.6558490566037736,
+      "oracle_temperature_distribution": {
+        "0.5": {
+          "count": 5712,
+          "fraction": 0.6158490566037735
+        },
+        "0.75": {
+          "count": 1618,
+          "fraction": 0.17444743935309973
+        },
+        "1.0": {
+          "count": 460,
+          "fraction": 0.04959568733153639
+        },
+        "1.25": {
+          "count": 253,
+          "fraction": 0.027277628032345014
+        },
+        "1.5": {
+          "count": 332,
+          "fraction": 0.035795148247978435
+        },
+        "2.0": {
+          "count": 900,
+          "fraction": 0.09703504043126684
+        }
+      }
+    }
+  },
+  "state_transitions": [
+    {
+      "left": "early",
+      "right": "middle",
+      "common_regions": 9275,
+      "exact_agreement": 0.5609703504043126,
+      "adjacent_agreement": 0.8369811320754716,
+      "mean_candidate_index_shift": 0.786522911051213,
+      "mean_absolute_temperature_shift": 0.2189757412398922
+    },
+    {
+      "left": "middle",
+      "right": "late",
+      "common_regions": 9275,
+      "exact_agreement": 0.6395687331536388,
+      "adjacent_agreement": 0.8994070080862534,
+      "mean_candidate_index_shift": 0.5645283018867925,
+      "mean_absolute_temperature_shift": 0.15574123989218328
+    },
+    {
+      "left": "early",
+      "right": "late",
+      "common_regions": 9275,
+      "exact_agreement": 0.5700269541778976,
+      "adjacent_agreement": 0.8395687331536388,
+      "mean_candidate_index_shift": 0.7612938005390836,
+      "mean_absolute_temperature_shift": 0.21105121293800538
+    }
+  ],
+  "execution_gate_pass": true
+}

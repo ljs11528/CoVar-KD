@@ -42,6 +42,7 @@ from utils.covar_temperature import (
     covar_temperature_kd_loss,
     newton_covar_temperature_map,
 )
+from utils.teacher_only_kd import teacher_target_kd_loss
 from utils.rtc_temperature import (
     RTCConfig,
     build_rtc_temperature_map,
@@ -1024,8 +1025,8 @@ def parse_args():
 
     parser.add_argument("--kd-temperature", type=float, default=1.0, help="logits KD temperature")
     parser.add_argument('--kd-loss-mode', type=str, default='legacy',
-                        choices=['legacy', 'masked', RTC_O12_KD_LOSS_MODE],
-                        help='legacy, fair masked, or strict O1.2 teacher-target-only pixel KD')
+                        choices=['legacy', 'masked', 'teacher_only', RTC_O12_KD_LOSS_MODE],
+                        help='legacy, fair masked, teacher-target-only, or strict O1.2 pixel KD')
     parser.add_argument("--lambda-kd", type=float, default=0., help="lambda_kd")
     parser.add_argument("--lambda-adv", type=float, default=0., help="lambda adversarial loss")
     parser.add_argument("--lambda-d", type=float, default=0., help="lambda discriminator loss")
@@ -1135,6 +1136,8 @@ def parse_args():
                         help='print log every log-iter')
     parser.add_argument('--save-per-iters', type=int, default=800,
                         help='per iters to save')
+    parser.add_argument('--keep-checkpoint-iters', type=int, nargs='*', default=[],
+                        help='iterations whose student and training states are kept separately')
     parser.add_argument('--val-per-iters', type=int, default=800,
                         help='per iters to val')
     parser.add_argument('--teacher-pretrained-base', type=str, default='None',
@@ -1157,6 +1160,16 @@ def parse_args():
         parser.error('--teacher-output-temp must be positive')
     if args.kd_temperature <= 0:
         parser.error('--kd-temperature must be positive')
+    if any(step <= 0 or step > args.max_iterations
+           for step in args.keep_checkpoint_iters):
+        parser.error('--keep-checkpoint-iters must lie in [1, max-iterations]')
+    if len(set(args.keep_checkpoint_iters)) != len(args.keep_checkpoint_iters):
+        parser.error('--keep-checkpoint-iters must not contain duplicates')
+    if args.kd_loss_mode == 'teacher_only':
+        if args.teacher_output_temp != 1.0:
+            parser.error('teacher_only requires --teacher-output-temp 1.0')
+        if args.use_covar:
+            parser.error('teacher_only is a scalar target-temperature control; omit --use-covar')
     try:
         validate_rtc_o12_cli_contract(args)
     except ValueError as error:
@@ -2239,6 +2252,13 @@ class Trainer(object):
                         o12_global_valid_count,
                         get_world_size(),
                     )
+                elif self.args.kd_loss_mode == 'teacher_only':
+                    kd_loss = self.args.lambda_kd * teacher_target_kd_loss(
+                        s_outputs[0],
+                        raw_teacher_logits,
+                        self.args.kd_temperature,
+                        targets != self.args.ignore_label,
+                    )
                 elif rtc_maps is not None:
                     kd_loss = self.args.lambda_kd * masked_temperature_kd_loss(
                         s_outputs[0],
@@ -2296,6 +2316,7 @@ class Trainer(object):
                 self.rtc_o12_config is not None
                 or rtc_maps is not None
                 or self.args.kd_loss_mode == 'masked'
+                or self.args.kd_loss_mode == 'teacher_only'
             ):
                 local_nonfinite = not bool(torch.isfinite(losses).item())
                 if self.use_adv:
@@ -2522,6 +2543,11 @@ class Trainer(object):
                                 self.args.covar_kd_temp_power,
                             )
                         )
+                elif self.args.kd_loss_mode == 'teacher_only':
+                    log_message += (
+                        " || Teacher-only target T: {:.4f}"
+                        " || Student T: 1.0000 || T^2 compensation: off"
+                    ).format(self.args.kd_temperature)
                 elif self.args.teacher_output_temp != 1.0:
                     log_message += " || Teacher output T: {:.4f}".format(self.args.teacher_output_temp)
                 logger.info(log_message)
@@ -2620,6 +2646,17 @@ def save_checkpoint(
         torch.save(model_state, filename)
         if training_state is not None:
             torch.save(training_state, os.path.join(directory, 'training_state_latest.pth'))
+            iteration = int(training_state.get('iteration', 0))
+            if iteration in set(getattr(args, 'keep_checkpoint_iters', [])):
+                stem = 'kd_{}_{}_{}_iter{:06d}'.format(
+                    args.student_model, args.student_backbone, args.dataset,
+                    iteration,
+                )
+                torch.save(model_state, os.path.join(directory, stem + '.pth'))
+                torch.save(
+                    training_state,
+                    os.path.join(directory, 'training_state_iter{:06d}.pth'.format(iteration)),
+                )
 
     if is_best:
         best_filename = 'kd_{}_{}_{}_best_model.pth'.format(

@@ -3,6 +3,12 @@ from dataclasses import dataclass
 import torch
 import torch.nn.functional as F
 
+from utils.covar_metrics import (
+    covar_coefficient,
+    covar_components_from_sorted_logits,
+    covar_derivatives_from_sorted_logits,
+)
+
 
 @dataclass(frozen=True)
 class NewtonCoVarConfig:
@@ -42,106 +48,51 @@ def _combine_reliability(confidence, variance_term, mode, epsilon):
 @torch.no_grad()
 def compute_reliability_terms(sorted_logits, temperature_map, coefficient_a, reliability_mode="full",
                               epsilon=1e-8):
-    temp = temperature_map.clamp_min(epsilon)
-    probability = F.softmax(sorted_logits / temp.unsqueeze(-1), dim=-1)
-
-    confidence = probability[..., 0].clamp(min=epsilon, max=1.0 - epsilon)
-    nonmax_probability = probability[..., 1:]
-    if nonmax_probability.shape[-1] == 0:
-        variance = torch.zeros_like(confidence)
-    else:
-        mean = nonmax_probability.mean(dim=-1, keepdim=True)
-        variance = torch.mean((nonmax_probability - mean) ** 2, dim=-1)
-
-    residual_mass = (1.0 - confidence).clamp_min(epsilon)
-    variance_term = coefficient_a * variance / residual_mass
-    reliability = _combine_reliability(
-        confidence,
-        variance_term,
-        mode=reliability_mode,
+    components = covar_components_from_sorted_logits(
+        sorted_logits,
+        temperature_map,
+        coefficient_a=coefficient_a,
         epsilon=epsilon,
     )
-    return probability, confidence, variance, reliability
+    if reliability_mode == "confidence":
+        reliability = components["r_c"]
+    elif reliability_mode == "variance":
+        reliability = components["r_v"]
+    elif reliability_mode == "full":
+        reliability = components["r"]
+    else:
+        raise ValueError(f"unsupported reliability_mode: {reliability_mode}")
+    return (
+        components["probability"],
+        components["confidence"],
+        components["residual_variance"],
+        reliability,
+    )
 
 
 @torch.no_grad()
 def compute_reliability_derivatives(sorted_logits, temperature_map, coefficient_a,
                                     reliability_mode="full", epsilon=1e-8):
-    temp = temperature_map.clamp_min(epsilon)
-    probability, confidence, variance, reliability = compute_reliability_terms(
+    closed = covar_derivatives_from_sorted_logits(
         sorted_logits,
-        temp,
-        coefficient_a,
+        temperature_map,
+        coefficient_a=coefficient_a,
         reliability_mode=reliability_mode,
         epsilon=epsilon,
     )
-
-    nonmax_probability = probability[..., 1:]
-    if nonmax_probability.shape[-1] == 0:
-        zeros = torch.zeros_like(temp)
-        return zeros, zeros, reliability, confidence, variance
-
-    mean_logit = torch.sum(probability * sorted_logits, dim=-1)
-    centered_logits = mean_logit.unsqueeze(-1) - sorted_logits
-    temp_squared = temp ** 2
-    temp_cubed = temp_squared * temp
-    temp_fourth = temp_squared * temp_squared
-    probability_prime = probability * centered_logits / temp_squared.unsqueeze(-1)
-    logit_variance = torch.sum(probability * centered_logits ** 2, dim=-1)
-    probability_double_prime = probability * (
-        (centered_logits ** 2 - logit_variance.unsqueeze(-1)) / temp_fourth.unsqueeze(-1)
-        - 2.0 * centered_logits / temp_cubed.unsqueeze(-1)
-    )
-
-    residual_mass = (1.0 - confidence).clamp_min(epsilon)
-    num_nonmax = nonmax_probability.shape[-1]
-    nonmax_mean = residual_mass / num_nonmax
-
-    confidence_prime = probability_prime[..., 0]
-    confidence_double_prime = probability_double_prime[..., 0]
-    nonmax_prime = probability_prime[..., 1:]
-    nonmax_double_prime = probability_double_prime[..., 1:]
-    nonmax_mean_prime = -confidence_prime / num_nonmax
-    nonmax_mean_double_prime = -confidence_double_prime / num_nonmax
-
-    variance_prime = (
-        (2.0 / num_nonmax) * torch.sum(nonmax_probability * nonmax_prime, dim=-1)
-        - 2.0 * nonmax_mean * nonmax_mean_prime
-    )
-    variance_double_prime = (
-        (2.0 / num_nonmax)
-        * torch.sum(nonmax_prime ** 2 + nonmax_probability * nonmax_double_prime, dim=-1)
-        - 2.0 * (nonmax_mean_prime ** 2 + nonmax_mean * nonmax_mean_double_prime)
-    )
-
-    confidence_first = -confidence_prime / confidence
-    confidence_second = (
-        (confidence_prime ** 2) / (confidence ** 2)
-        - confidence_double_prime / confidence
-    )
-    variance_first = coefficient_a * (
-        variance * confidence_prime / (residual_mass ** 2)
-        + variance_prime / residual_mass
-    )
-    variance_second = coefficient_a * (
-        variance_double_prime / residual_mass
-        + variance * confidence_double_prime / (residual_mass ** 2)
-        + 2.0 * confidence_prime * variance_prime / (residual_mass ** 2)
-        + 2.0 * variance * (confidence_prime ** 2) / (residual_mass ** 3)
-    )
-
     if reliability_mode == "confidence":
-        first_derivative = confidence_first
-        second_derivative = confidence_second
+        reliability = closed["r_c"]
     elif reliability_mode == "variance":
-        first_derivative = variance_first
-        second_derivative = variance_second
+        reliability = closed["r_v"]
     else:
-        first_derivative = confidence_first + variance_first
-        second_derivative = confidence_second + variance_second
-
-    return first_derivative, second_derivative, reliability, confidence, variance
-
+        reliability = closed["r"]
+    return (
+        closed["dr_dT"],
+        closed["d2r_dT2"],
+        reliability,
+        closed["confidence"],
+        closed["residual_variance"],
+    )
 
 def _resize_valid_mask(valid_mask, output_size):
     if valid_mask.shape[-2:] == output_size:
@@ -161,9 +112,7 @@ def newton_covar_temperature_map(teacher_logits, valid_mask, config, epsilon=1e-
     ).values
 
     num_classes = sorted_logits.shape[-1]
-    coefficient_a = config.coefficient_a
-    if coefficient_a is None:
-        coefficient_a = float((max(num_classes, 1) - 1) ** 2) / 2.0
+    coefficient_a = covar_coefficient(num_classes, config.coefficient_a)
 
     temperature_map = torch.full(
         sorted_logits.shape[:-1],
