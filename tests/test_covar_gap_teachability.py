@@ -1,10 +1,27 @@
 import math
 
 from scripts.diagnostics.covar_gap_teachability import (
+    audit_raw_cost_direction,
     average_ranks,
     evaluate_candidate_group,
     spearman,
 )
+
+
+def test_raw_cost_direction_contract_is_locked():
+    result = audit_raw_cost_direction(
+        [1.0, 2.0, 3.0, 4.0],
+        [4.0, 3.0, 2.0, 1.0],
+    )
+    assert result["pred_idx"] == 0
+    assert result["oracle_idx"] == 0
+    assert math.isclose(result["raw_rho"], -1.0, abs_tol=1e-12)
+    assert math.isclose(result["aligned_rho"], 1.0, abs_tol=1e-12)
+    assert math.isclose(
+        result["aligned_rho"],
+        -result["raw_rho"],
+        abs_tol=1e-12,
+    )
 
 
 def test_average_ranks_and_spearman_handle_ties():

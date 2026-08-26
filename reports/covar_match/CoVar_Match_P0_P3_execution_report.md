@@ -54,7 +54,7 @@
 
 ## 5. P3：gap 对 teachability 的预测
 
-| 分数 | overall top-1 | adjacent | mean regret | mean Spearman |
+| 分数 | overall top-1 | adjacent | mean regret | mean aligned rho |
 |---|---:|---:|---:|---:|
 | teacher_min_r | 58.4151% | 76.6110% | 3.067790e-03 | 0.651139 |
 | scalar_r_gap | 11.9173% | 22.6235% | 2.626861e-03 | -0.199782 |
@@ -66,8 +66,8 @@
 
 ## 6. 测试验证
 
-- P0–P3 聚焦测试：17 passed。
-- 完整测试套件：132 passed，1 failed。
+- P0–P3 聚焦测试：19 passed。
+- 完整测试套件：137 passed，1 failed。
 - 唯一失败原因：缺少历史冻结 artifact runs/diagnostics/phaseO_o11/voc_train_rtc_confidence_cdf.pt；项目内无副本。
 - 远端系统 pytest 的自动插件 anyio 与 pytest 版本不兼容，测试使用 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1；未修改依赖。
 

@@ -85,6 +85,27 @@ def spearman(values_a, values_b):
         return 0.0
     return float(np.dot(centered_a, centered_b) / denominator)
 
+def audit_raw_cost_direction(raw_cost, gain):
+    """Lock the lower-is-better score convention and both rho directions."""
+    raw_cost = np.asarray(raw_cost, dtype=np.float64)
+    gain = np.asarray(gain, dtype=np.float64)
+    if raw_cost.ndim != 1 or gain.ndim != 1:
+        raise ValueError("raw_cost and gain must be one-dimensional")
+    if len(raw_cost) != len(gain) or len(raw_cost) < 2:
+        raise ValueError("raw_cost and gain must have equal length >= 2")
+    if not np.isfinite(raw_cost).all() or not np.isfinite(gain).all():
+        raise ValueError("raw_cost and gain must be finite")
+
+    raw_rho = spearman(raw_cost, gain)
+    aligned_rho = spearman(-raw_cost, gain)
+    return {
+        "pred_idx": int(np.argmin(raw_cost)),
+        "oracle_idx": int(np.argmax(gain)),
+        "raw_rho": raw_rho,
+        "aligned_rho": aligned_rho,
+        "rho_identity_abs_error": abs(aligned_rho + raw_rho),
+    }
+
 
 def row_scores(row, component_scales):
     teacher_r = float(row["teacher_r"])
@@ -127,16 +148,24 @@ def evaluate_candidate_group(rows, component_scales, temperatures):
             ],
             dtype=np.float64,
         )
-        prediction_index = int(np.argmin(values))
+        direction = audit_raw_cost_direction(values, gains)
+        prediction_index = direction["pred_idx"]
         index_distance = abs(prediction_index - oracle_index)
         result["scores"][score_name] = {
+            "prediction_index": prediction_index,
             "prediction_temperature": temperatures[prediction_index],
+            "oracle_index": direction["oracle_idx"],
             "exact": float(index_distance == 0),
             "adjacent": float(index_distance <= 1),
             "regret": max(
                 float(gains[oracle_index] - gains[prediction_index]), 0.0
             ),
-            "spearman": spearman(-values, gains),
+            "raw_rho": direction["raw_rho"],
+            "aligned_rho": direction["aligned_rho"],
+            "rho_identity_abs_error": direction[
+                "rho_identity_abs_error"
+            ],
+            "spearman": direction["aligned_rho"],
         }
     return result
 
@@ -219,9 +248,8 @@ def add_result(accumulator, result):
     stage = result["stage"]
     for score, metrics in result["scores"].items():
         for scope in (stage, "overall"):
-            for metric, value in metrics.items():
-                if metric == "prediction_temperature":
-                    continue
+            for metric in ("exact", "adjacent", "regret", "spearman"):
+                value = metrics[metric]
                 accumulator[scope][score][metric].append(float(value))
 
 
@@ -273,11 +301,17 @@ def render_report(payload):
         "- 本阶段不训练；完全复用 P2 的区域×状态×候选温度缓存。",
         "- 预测规则统一为分数越小越优；oracle 为 P2 的一步监督 CE gain 最大温度。",
         "- 二维 CoVar gap 使用全分析缓存的总体标准差缩放 r_c/r_v；不使用标签拟合权重。",
+        "- 方向契约：pred_idx = argmin(raw_cost)。",
+        "- 相关性契约：raw_rho = spearmanr(raw_cost, gain)；"
+        "aligned_rho = spearmanr(-raw_cost, gain)。",
+        f"- 方向恒等式最大绝对误差："
+        f"{payload['score_direction_contract']['max_rho_identity_abs_error']:.3e}；"
+        "aligned_rho = -raw_rho。",
         f"- 执行门禁：{'通过' if payload['execution_gate_pass'] else '失败'}",
         "",
         "## 预测结果",
         "",
-        "| 状态 | 分数 | top-1 | adjacent | mean regret | median regret | mean Spearman | median Spearman |",
+        "| 状态 | 分数 | top-1 | adjacent | mean regret | median regret | mean aligned rho | median aligned rho |",
         "|---|---|---:|---:|---:|---:|---:|---:|",
     ]
     for scope in SCOPES:
@@ -348,6 +382,17 @@ def main():
     group_count = 0
     stages_seen = set()
     finite = True
+    max_rho_identity_abs_error = 0.0
+    artificial_direction = audit_raw_cost_direction(
+        [1.0, 2.0, 3.0, 4.0],
+        [4.0, 3.0, 2.0, 1.0],
+    )
+    artificial_direction_pass = (
+        artificial_direction["pred_idx"] == 0
+        and artificial_direction["oracle_idx"] == 0
+        and abs(artificial_direction["raw_rho"] + 1.0) <= 1e-12
+        and abs(artificial_direction["aligned_rho"] - 1.0) <= 1e-12
+    )
     for _, rows in iter_candidate_groups(args.candidate_cache):
         result = evaluate_candidate_group(rows, scales, temperatures)
         stages_seen.add(result["stage"])
@@ -358,6 +403,13 @@ def main():
             for score_metrics in result["scores"].values()
             for name, metric in score_metrics.items()
             if name != "prediction_temperature"
+        )
+        max_rho_identity_abs_error = max(
+            max_rho_identity_abs_error,
+            max(
+                metrics["rho_identity_abs_error"]
+                for metrics in result["scores"].values()
+            ),
         )
 
     metrics, csv_rows = finalize_metrics(accumulator)
@@ -409,6 +461,8 @@ def main():
             for scope in SCOPES
             for score in SCORES
         )
+        and artificial_direction_pass
+        and max_rho_identity_abs_error <= 1e-12
     )
     payload = {
         "stage": "P3",
@@ -432,6 +486,17 @@ def main():
             "selection": "minimum score",
             "component_population_standard_deviation": scales,
             "scale_source": "same unlabeled P2 candidate cache; exploratory normalization",
+        },
+        "score_direction_contract": {
+            "selection": "pred_idx = argmin(raw_cost)",
+            "raw_correlation": "raw_rho = spearmanr(raw_cost, gain)",
+            "aligned_correlation": (
+                "aligned_rho = spearmanr(-raw_cost, gain)"
+            ),
+            "identity": "aligned_rho = -raw_rho",
+            "max_rho_identity_abs_error": max_rho_identity_abs_error,
+            "artificial_array": artificial_direction,
+            "artificial_array_pass": artificial_direction_pass,
         },
         "metrics": metrics,
         "observation": observation,

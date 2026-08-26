@@ -1,0 +1,575 @@
+{
+  "stage": "P3A",
+  "generated_at": "2026-08-26T15:18:05.863640+00:00",
+  "protocol": {
+    "training": false,
+    "implements_covar_match": false,
+    "temperatures": [
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5,
+      2.0
+    ],
+    "region_size": 8,
+    "min_valid_pixels": 16,
+    "direction_images": 30,
+    "direction_step_sizes": [
+      0.1,
+      0.03,
+      0.01
+    ],
+    "oracle_images": 200,
+    "bootstrap_unit": "image",
+    "bootstrap_replicates": 2000,
+    "seed": 1234
+  },
+  "inputs": {
+    "candidate_cache": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P2_region_candidate_teachability.csv.gz",
+    "candidate_cache_sha256": "d170dcbd67130fa8a72a6c2bd2d464e8579d678992848bf2bd88b1dbdbd2cf84",
+    "p2_json": "/srv/codex-work/my-project/CoVar-KD/reports/covar_match/P2_region_teachability.json",
+    "p2_json_sha256": "3b6febf6ab4d2062e9e9f0b98e14f4237f26f1385d8a1b70a7b211c8fd2fa40a",
+    "p3_json": "/srv/codex-work/my-project/CoVar-KD/reports/covar_match/P3_covar_gap_teachability.json",
+    "p3_json_sha256": "0b0ac076307e7e915c7e49662e76f34c6e0f966e9028f403ab0880fdbfacee06",
+    "region_state_groups": 27825
+  },
+  "p3a_1_score_direction": {
+    "selection_rule": "pred_idx = argmin(raw_cost)",
+    "raw_correlation": "raw_rho = spearmanr(raw_cost, gain)",
+    "aligned_correlation": "aligned_rho = spearmanr(-raw_cost, gain)",
+    "identity": "aligned_rho = -raw_rho",
+    "artificial_cost": [
+      1.0,
+      2.0,
+      3.0,
+      4.0
+    ],
+    "artificial_gain": [
+      4.0,
+      3.0,
+      2.0,
+      1.0
+    ],
+    "artificial_result": {
+      "pred_idx": 0,
+      "oracle_idx": 0,
+      "raw_rho": -1.0,
+      "aligned_rho": 1.0,
+      "rho_identity_abs_error": 0.0
+    },
+    "p3_all_group_max_identity_abs_error": 0.0,
+    "pass": true
+  },
+  "p3a_2_kl": {
+    "temperature": 1.7,
+    "valid_pixels": 3,
+    "reduction": "sum over valid pixels divided by valid pixel count",
+    "implementation_value": 0.22388828185634058,
+    "manual_kl_value": 0.22388828185634055,
+    "value_abs_error": 2.7755575615628914e-17,
+    "gradient_max_abs_error": 4.163336342344337e-17,
+    "expected_gradient": "(p_s - p_t) * valid_mask / valid_count",
+    "pass": true
+  },
+  "p3a_3_directional_gain": {
+    "definition": {
+      "u_T": "(p_s - p_t(T)) / ||p_s - p_t(T)||_2 per valid pixel",
+      "actual_update": "z_s_after = z_s_before - eta * u_T",
+      "directional_score": "d(T) = <g_CE, u_T>",
+      "comparison": "spearmanr(d(T), CE_before - CE_after(T))",
+      "region_reduction": "mean over the same valid pixels for d(T) and gain",
+      "numerical_precision": "frozen float32 model logits cast to float64 before direction and CE-difference audit"
+    },
+    "scope": {
+      "dataset": "Pascal VOC val",
+      "selected_images": 30,
+      "selected_image_ids_sha256": "50273a4ff9340f183ae6e9b02ca521b1619f1f336b39c9ed9273c6e829437409",
+      "temperatures": [
+        0.5,
+        0.75,
+        1.0,
+        1.25,
+        1.5,
+        2.0
+      ],
+      "step_sizes": [
+        0.1,
+        0.03,
+        0.01
+      ],
+      "region_size": 8,
+      "min_valid_pixels": 16
+    },
+    "metrics": {
+      "early": {
+        "0.1": {
+          "image_count": 30,
+          "region_count": 1413,
+          "mean_spearman": 0.9876251137397636,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.9695682944090588
+        },
+        "0.03": {
+          "image_count": 30,
+          "region_count": 1413,
+          "mean_spearman": 0.9933272672126174,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.9844302901627743
+        },
+        "0.01": {
+          "image_count": 30,
+          "region_count": 1413,
+          "mean_spearman": 0.9967647356182389,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.9950460014154282
+        }
+      },
+      "middle": {
+        "0.1": {
+          "image_count": 30,
+          "region_count": 1413,
+          "mean_spearman": 0.9901324436356284,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.9766454352441614
+        },
+        "0.03": {
+          "image_count": 30,
+          "region_count": 1413,
+          "mean_spearman": 0.9960772419371147,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.9936305732484076
+        },
+        "0.01": {
+          "image_count": 30,
+          "region_count": 1413,
+          "mean_spearman": 0.9975735517136791,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.9985845718329794
+        }
+      },
+      "late": {
+        "0.1": {
+          "image_count": 30,
+          "region_count": 1413,
+          "mean_spearman": 0.9927206551410374,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.9893842887473461
+        },
+        "0.03": {
+          "image_count": 30,
+          "region_count": 1413,
+          "mean_spearman": 0.9958750379132545,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.9936305732484076
+        },
+        "0.01": {
+          "image_count": 30,
+          "region_count": 1413,
+          "mean_spearman": 0.9978161965423112,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.997169143665959
+        }
+      },
+      "overall": {
+        "0.1": {
+          "image_count": 30,
+          "region_count": 4239,
+          "mean_spearman": 0.9901594041721431,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.9785326728001887
+        },
+        "0.03": {
+          "image_count": 30,
+          "region_count": 4239,
+          "mean_spearman": 0.995093182354329,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.9905638122198632
+        },
+        "0.01": {
+          "image_count": 30,
+          "region_count": 4239,
+          "mean_spearman": 0.9973848279580765,
+          "median_spearman": 1.0,
+          "p_spearman_ge_0_9": 0.9969332389714556
+        }
+      }
+    },
+    "trend": {
+      "early": {
+        "mean_spearman_by_descending_eta": [
+          0.9876251137397636,
+          0.9933272672126174,
+          0.9967647356182389
+        ],
+        "median_spearman_by_descending_eta": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_nondecreasing_as_eta_decreases": true,
+        "median_nondecreasing_as_eta_decreases": true,
+        "eta_0p01_median_close_to_one": true,
+        "pass": true
+      },
+      "middle": {
+        "mean_spearman_by_descending_eta": [
+          0.9901324436356284,
+          0.9960772419371147,
+          0.9975735517136791
+        ],
+        "median_spearman_by_descending_eta": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_nondecreasing_as_eta_decreases": true,
+        "median_nondecreasing_as_eta_decreases": true,
+        "eta_0p01_median_close_to_one": true,
+        "pass": true
+      },
+      "late": {
+        "mean_spearman_by_descending_eta": [
+          0.9927206551410374,
+          0.9958750379132545,
+          0.9978161965423112
+        ],
+        "median_spearman_by_descending_eta": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_nondecreasing_as_eta_decreases": true,
+        "median_nondecreasing_as_eta_decreases": true,
+        "eta_0p01_median_close_to_one": true,
+        "pass": true
+      },
+      "overall": {
+        "mean_spearman_by_descending_eta": [
+          0.9901594041721431,
+          0.995093182354329,
+          0.9973848279580765
+        ],
+        "median_spearman_by_descending_eta": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean_nondecreasing_as_eta_decreases": true,
+        "median_nondecreasing_as_eta_decreases": true,
+        "eta_0p01_median_close_to_one": true,
+        "pass": true
+      }
+    },
+    "max_direction_recompute_abs_error": 0.0,
+    "checkpoint_contracts": {
+      "early": {
+        "iteration": 4000,
+        "student_checkpoint": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/kd_deeplabv3_mobilenet_ssseg_mobilenetv3_small_voc_iter004000.pth",
+        "student_checkpoint_sha256": "9bfb3cd00dba32566a16634ed6a2ad83fe3758e6eb5d7243bb9a08569dcaff79",
+        "training_state": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/training_state_iter004000.pth",
+        "training_state_sha256": "9c6aeb2c39eb6f91f73ad151395739574ac5155b1aa3cdba5269e01e18c175a7",
+        "contract": {
+          "iteration": true,
+          "seed": true,
+          "kd_mode": true,
+          "temperature": true,
+          "student_temperature": true,
+          "no_temperature_squared_compensation": true,
+          "outer_teacher_temperature": true
+        }
+      },
+      "middle": {
+        "iteration": 12000,
+        "student_checkpoint": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/kd_deeplabv3_mobilenet_ssseg_mobilenetv3_small_voc_iter012000.pth",
+        "student_checkpoint_sha256": "3bce13420727817e157d1af51709bad2c90eec0349dcf1ee3076a64c4e2e8e32",
+        "training_state": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/training_state_iter012000.pth",
+        "training_state_sha256": "aa6e5242e7f2d5926f82ab33c572101ea836a2533ceda6401e3358e817f16271",
+        "contract": {
+          "iteration": true,
+          "seed": true,
+          "kd_mode": true,
+          "temperature": true,
+          "student_temperature": true,
+          "no_temperature_squared_compensation": true,
+          "outer_teacher_temperature": true
+        }
+      },
+      "late": {
+        "iteration": 20000,
+        "student_checkpoint": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/kd_deeplabv3_mobilenet_ssseg_mobilenetv3_small_voc_iter020000.pth",
+        "student_checkpoint_sha256": "0b4d7db76213bdca1a3ebc2b4cb00132ccefa517cb242774935992e15a96e2c2",
+        "training_state": "/srv/codex-work/my-project/CoVar-KD/runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p0_20k_seed1234/training_state_iter020000.pth",
+        "training_state_sha256": "3916b260621877d792be5ff7dcdd779654a24e5658c4959aba7f8e1a775896da",
+        "contract": {
+          "iteration": true,
+          "seed": true,
+          "kd_mode": true,
+          "temperature": true,
+          "student_temperature": true,
+          "no_temperature_squared_compensation": true,
+          "outer_teacher_temperature": true
+        }
+      }
+    },
+    "pass": true
+  },
+  "p3a_4_oracle_ceiling": {
+    "early": {
+      "point": {
+        "image_count": 200,
+        "region_count": 9275,
+        "mean_gain_by_temperature": {
+          "0.5": 0.01643809049852421,
+          "0.75": 0.01715362687436589,
+          "1.0": 0.01790019505470749,
+          "1.25": 0.018435252738585407,
+          "1.5": 0.018784619447717477,
+          "2.0": 0.018638749144169454
+        },
+        "best_fixed_temperature": 1.5,
+        "best_fixed_mean_gain": 0.018784619447717477,
+        "mean_oracle_gain": 0.02066373267542284,
+        "oracle_uplift_over_best_fixed": 0.0018791132277053632,
+        "relative_oracle_uplift": 0.10003467107414277,
+        "median_top1_second_margin": 1.1106021702289581e-07,
+        "p_margin_lt_1e_4": 0.7039353099730459,
+        "p_margin_lt_1pct_abs_oracle_gain": 0.742533692722372
+      },
+      "bootstrap": {
+        "resampling_unit": "image",
+        "replicates": 2000,
+        "seed": 1234,
+        "confidence_level": 0.95,
+        "mean_gain_by_temperature_ci95": {
+          "0.5": [
+            0.014373583773228546,
+            0.0185295115905262
+          ],
+          "0.75": [
+            0.015181237642601065,
+            0.01928768501407734
+          ],
+          "1.0": [
+            0.015878430407774796,
+            0.020002188934577773
+          ],
+          "1.25": [
+            0.016376852981340072,
+            0.02050621843199368
+          ],
+          "1.5": [
+            0.016715639798363217,
+            0.020867758996270327
+          ],
+          "2.0": [
+            0.016594821022579993,
+            0.020774265234923855
+          ]
+        },
+        "best_fixed_mean_gain_ci95": [
+          0.016760475323789156,
+          0.020903401213813573
+        ],
+        "mean_oracle_gain_ci95": [
+          0.018574010053519403,
+          0.022845414955186598
+        ],
+        "oracle_uplift_over_best_fixed_ci95": [
+          0.001390969768340016,
+          0.002122482104270712
+        ],
+        "relative_oracle_uplift_ci95": [
+          0.07231141576187752,
+          0.11763144650785053
+        ],
+        "median_top1_second_margin_ci95": [
+          4.237517714500427e-08,
+          3.6368974432678306e-07
+        ],
+        "p_margin_lt_1e_4_ci95": [
+          0.6820489031904662,
+          0.7262910128453199
+        ],
+        "p_margin_lt_1pct_abs_oracle_gain_ci95": [
+          0.7238217254949201,
+          0.7631539257507665
+        ]
+      }
+    },
+    "middle": {
+      "point": {
+        "image_count": 200,
+        "region_count": 9275,
+        "mean_gain_by_temperature": {
+          "0.5": 0.01160359116616612,
+          "0.75": 0.01193759280676267,
+          "1.0": 0.012198186637914776,
+          "1.25": 0.012348688033980586,
+          "1.5": 0.012395434696649488,
+          "2.0": 0.011907497958507268
+        },
+        "best_fixed_temperature": 1.5,
+        "best_fixed_mean_gain": 0.012395434696649488,
+        "mean_oracle_gain": 0.014002257709231492,
+        "oracle_uplift_over_best_fixed": 0.0016068230125820034,
+        "relative_oracle_uplift": 0.12963022692671933,
+        "median_top1_second_margin": 1.2027365820649338e-07,
+        "p_margin_lt_1e_4": 0.7077088948787063,
+        "p_margin_lt_1pct_abs_oracle_gain": 0.7007008086253369
+      },
+      "bootstrap": {
+        "resampling_unit": "image",
+        "replicates": 2000,
+        "seed": 1235,
+        "confidence_level": 0.95,
+        "mean_gain_by_temperature_ci95": {
+          "0.5": [
+            0.009798234064848444,
+            0.013419603688905789
+          ],
+          "0.75": [
+            0.010131636556882949,
+            0.013776210680558766
+          ],
+          "1.0": [
+            0.010399211110133264,
+            0.014053134335096801
+          ],
+          "1.25": [
+            0.010543457667932063,
+            0.014220090014562684
+          ],
+          "1.5": [
+            0.010600530963907196,
+            0.014264827756341207
+          ],
+          "2.0": [
+            0.010162348109756738,
+            0.013763145002208106
+          ]
+        },
+        "best_fixed_mean_gain_ci95": [
+          0.010602718907616212,
+          0.014269040059906646
+        ],
+        "mean_oracle_gain_ci95": [
+          0.01220337340400236,
+          0.015890097031238407
+        ],
+        "oracle_uplift_over_best_fixed_ci95": [
+          0.001338087805262501,
+          0.0018895688491315458
+        ],
+        "relative_oracle_uplift_ci95": [
+          0.10216459644446334,
+          0.16419447303889728
+        ],
+        "median_top1_second_margin_ci95": [
+          4.939719084567134e-08,
+          2.891972578465377e-07
+        ],
+        "p_margin_lt_1e_4_ci95": [
+          0.6874292706466478,
+          0.7283932059604109
+        ],
+        "p_margin_lt_1pct_abs_oracle_gain_ci95": [
+          0.6787347076746272,
+          0.7220877240118099
+        ]
+      }
+    },
+    "late": {
+      "point": {
+        "image_count": 200,
+        "region_count": 9275,
+        "mean_gain_by_temperature": {
+          "0.5": 0.008799734239913901,
+          "0.75": 0.009157110439189344,
+          "1.0": 0.00942136522005545,
+          "1.25": 0.009593297697854147,
+          "1.5": 0.009648463538555765,
+          "2.0": 0.00932512924214724
+        },
+        "best_fixed_temperature": 1.5,
+        "best_fixed_mean_gain": 0.009648463538555765,
+        "mean_oracle_gain": 0.011400675810980343,
+        "oracle_uplift_over_best_fixed": 0.0017522122724245772,
+        "relative_oracle_uplift": 0.18160531626850693,
+        "median_top1_second_margin": 1.724175189922657e-07,
+        "p_margin_lt_1e_4": 0.7030727762803235,
+        "p_margin_lt_1pct_abs_oracle_gain": 0.6623180592991914
+      },
+      "bootstrap": {
+        "resampling_unit": "image",
+        "replicates": 2000,
+        "seed": 1236,
+        "confidence_level": 0.95,
+        "mean_gain_by_temperature_ci95": {
+          "0.5": [
+            0.007076047246921084,
+            0.010599118802375115
+          ],
+          "0.75": [
+            0.007418006679129401,
+            0.010960877428350679
+          ],
+          "1.0": [
+            0.007651795314414097,
+            0.01124899985474664
+          ],
+          "1.25": [
+            0.007836561510625529,
+            0.011447734761522868
+          ],
+          "1.5": [
+            0.007921819081951697,
+            0.011460512857616253
+          ],
+          "2.0": [
+            0.007682560125321963,
+            0.011096292562061929
+          ]
+        },
+        "best_fixed_mean_gain_ci95": [
+          0.00792427433060383,
+          0.011496796007903312
+        ],
+        "mean_oracle_gain_ci95": [
+          0.009725831716319695,
+          0.013181916928181728
+        ],
+        "oracle_uplift_over_best_fixed_ci95": [
+          0.00142166590458901,
+          0.0020587507012150706
+        ],
+        "relative_oracle_uplift_ci95": [
+          0.13565458995141186,
+          0.23931571730474757
+        ],
+        "median_top1_second_margin_ci95": [
+          8.172674732520746e-08,
+          3.885806687660153e-07
+        ],
+        "p_margin_lt_1e_4_ci95": [
+          0.6797762022998711,
+          0.7265971490761179
+        ],
+        "p_margin_lt_1pct_abs_oracle_gain_ci95": [
+          0.6390561386398274,
+          0.6849445282205945
+        ]
+      }
+    }
+  },
+  "decision": {
+    "case": "C",
+    "summary": "存在 student-dependent 温度信号，但 CoVar gap 无法捕获",
+    "implementation_pass": true,
+    "oracle_uplift_resolved_above_zero": true,
+    "vector_gap_positive": false,
+    "vector_gap_top1": 0.12125786163522012,
+    "vector_gap_aligned_mean_spearman": -0.08913888125907608
+  },
+  "execution_gate_pass": true
+}

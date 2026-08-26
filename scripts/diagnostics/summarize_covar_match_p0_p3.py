@@ -103,7 +103,7 @@ def render(payload):
             "",
             "## 5. P3：gap 对 teachability 的预测",
             "",
-            "| 分数 | overall top-1 | adjacent | mean regret | mean Spearman |",
+            "| 分数 | overall top-1 | adjacent | mean regret | mean aligned rho |",
             "|---|---:|---:|---:|---:|",
         ]
     )
@@ -196,8 +196,8 @@ def main():
         "execution_gates": gates,
         "all_execution_gates_pass": all(gates.values()),
         "verification": {
-            "focused_passed": 17,
-            "full_passed": 132,
+            "focused_passed": 19,
+            "full_passed": 137,
             "full_failed": 1,
             "missing_artifact": (
                 "runs/diagnostics/phaseO_o11/voc_train_rtc_confidence_cdf.pt"

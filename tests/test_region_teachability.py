@@ -34,6 +34,20 @@ def test_normalized_step_gain_matches_direct_logit_update():
     assert torch.allclose(
         maps["ce_gain"].sum(), expected_gain, atol=1e-12, rtol=1e-12
     )
+    ce_gradient = probability - F.one_hot(
+        target, num_classes=student.shape[1]
+    ).permute(0, 3, 1, 2)
+    expected_dot = (
+        ce_gradient * gradient / torch.linalg.vector_norm(
+            gradient, dim=1, keepdim=True
+        )
+    ).sum(dim=1)
+    assert torch.allclose(
+        maps["ce_kd_direction_dot"],
+        expected_dot,
+        atol=1e-12,
+        rtol=1e-12,
+    )
 
 
 def test_gradient_cosine_uses_region_flattening_and_ignore_mask():
@@ -52,6 +66,7 @@ def test_gradient_cosine_uses_region_flattening_and_ignore_mask():
         cosine, torch.tensor(1.0, dtype=torch.float64), atol=1e-12
     )
     assert maps["ce_gain"][0, 0, 1].item() == 0.0
+    assert maps["ce_kd_direction_dot"][0, 0, 1].item() == 0.0
     assert maps["teacher_student_kl"][0, 0, 1].item() == 0.0
 
 

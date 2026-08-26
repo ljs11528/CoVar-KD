@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-26T08:43:41.177824+00:00",
+  "generated_at": "2026-08-26T15:18:35.754680+00:00",
   "base_commit": "f102a71",
   "execution_gates": {
     "P0": true,
@@ -9,8 +9,8 @@
   },
   "all_execution_gates_pass": true,
   "verification": {
-    "focused_passed": 17,
-    "full_passed": 132,
+    "focused_passed": 19,
+    "full_passed": 137,
     "full_failed": 1,
     "missing_artifact": "runs/diagnostics/phaseO_o11/voc_train_rtc_confidence_cdf.pt"
   },
@@ -604,7 +604,7 @@
     "P3": {
       "stage": "P3",
       "hypothesis": "distance between teacher and current student CoVar coordinates predicts regional teachability",
-      "generated_at": "2026-08-26T08:41:29.849957+00:00",
+      "generated_at": "2026-08-26T15:17:05.205223+00:00",
       "input": {
         "candidate_cache": "runs/covar_match/P2_region_candidate_teachability.csv.gz",
         "candidate_cache_sha256": "d170dcbd67130fa8a72a6c2bd2d464e8579d678992848bf2bd88b1dbdbd2cf84",
@@ -624,6 +624,21 @@
           "r_v": 0.6517060315499618
         },
         "scale_source": "same unlabeled P2 candidate cache; exploratory normalization"
+      },
+      "score_direction_contract": {
+        "selection": "pred_idx = argmin(raw_cost)",
+        "raw_correlation": "raw_rho = spearmanr(raw_cost, gain)",
+        "aligned_correlation": "aligned_rho = spearmanr(-raw_cost, gain)",
+        "identity": "aligned_rho = -raw_rho",
+        "max_rho_identity_abs_error": 0.0,
+        "artificial_array": {
+          "pred_idx": 0,
+          "oracle_idx": 0,
+          "raw_rho": -1.0,
+          "aligned_rho": 1.0,
+          "rho_identity_abs_error": 0.0
+        },
+        "artificial_array_pass": true
       },
       "metrics": {
         "early": {

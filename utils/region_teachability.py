@@ -13,7 +13,7 @@ def normalized_teacher_step_maps(
     ignore_label=-1,
     epsilon=1e-12,
 ):
-    """Return per-pixel CE gain and gradient-alignment sufficient statistics.
+    """Return per-pixel CE gain and update-direction sufficient statistics.
 
     The KD direction is normalized independently at each pixel before taking a
     logit-space step of length step_size. This removes temperature-dependent
@@ -49,6 +49,9 @@ def normalized_teacher_step_maps(
     )
     normalized_kd_gradient = kd_gradient / kd_norm.clamp_min(float(epsilon))
     updated_logits = student_logits - float(step_size) * normalized_kd_gradient
+    ce_kd_direction_dot = (
+        supervised_gradient * normalized_kd_gradient
+    ).sum(dim=1)
 
     ce_before = F.cross_entropy(
         student_logits, safe_targets, reduction="none"
@@ -65,6 +68,7 @@ def normalized_teacher_step_maps(
     valid_float = valid.to(student_logits.dtype)
     return {
         "valid": valid,
+        "ce_kd_direction_dot": ce_kd_direction_dot * valid_float,
         "ce_gain": (ce_before - ce_after) * valid_float,
         "gradient_dot": (
             supervised_gradient * kd_gradient
