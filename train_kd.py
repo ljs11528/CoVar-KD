@@ -43,6 +43,15 @@ from utils.covar_temperature import (
     newton_covar_temperature_map,
 )
 from utils.teacher_only_kd import teacher_target_kd_loss
+from utils.task_aligned_temperature import (
+    TASK_ALIGNED_FALLBACK_TEMPERATURE,
+    TASK_ALIGNED_KD_LOSS_MODE,
+    TASK_ALIGNED_STATISTICS_SIZE,
+    build_task_aligned_region_selection,
+    task_aligned_region_kd_loss,
+    task_aligned_statistics_dict,
+)
+
 from utils.rtc_temperature import (
     RTCConfig,
     build_rtc_temperature_map,
@@ -1025,8 +1034,11 @@ def parse_args():
 
     parser.add_argument("--kd-temperature", type=float, default=1.0, help="logits KD temperature")
     parser.add_argument('--kd-loss-mode', type=str, default='legacy',
-                        choices=['legacy', 'masked', 'teacher_only', RTC_O12_KD_LOSS_MODE],
-                        help='legacy, fair masked, teacher-target-only, or strict O1.2 pixel KD')
+                        choices=[
+                            'legacy', 'masked', 'teacher_only',
+                            TASK_ALIGNED_KD_LOSS_MODE, RTC_O12_KD_LOSS_MODE,
+                        ],
+                        help='legacy, masked, scalar teacher-only, task-aligned region, or strict O1.2 KD')
     parser.add_argument("--lambda-kd", type=float, default=0., help="lambda_kd")
     parser.add_argument("--lambda-adv", type=float, default=0., help="lambda adversarial loss")
     parser.add_argument("--lambda-d", type=float, default=0., help="lambda discriminator loss")
@@ -1170,6 +1182,45 @@ def parse_args():
             parser.error('teacher_only requires --teacher-output-temp 1.0')
         if args.use_covar:
             parser.error('teacher_only is a scalar target-temperature control; omit --use-covar')
+    if args.kd_loss_mode == TASK_ALIGNED_KD_LOSS_MODE:
+        if args.teacher_output_temp != 1.0:
+            parser.error(
+                'task_aligned_region requires --teacher-output-temp 1.0'
+            )
+        if args.use_covar:
+            parser.error(
+                'task_aligned_region selects temperature by task direction; '
+                'omit --use-covar'
+            )
+        if not math.isclose(
+            args.kd_temperature,
+            TASK_ALIGNED_FALLBACK_TEMPERATURE,
+            rel_tol=0.0,
+            abs_tol=1e-12,
+        ):
+            parser.error(
+                'task_aligned_region locks --kd-temperature to the T=1.5 '
+                'fallback/baseline'
+            )
+        if not math.isclose(args.lambda_kd, 1.0, rel_tol=0.0, abs_tol=1e-12):
+            parser.error('task_aligned_region requires --lambda-kd 1.0')
+        incompatible = [
+            name
+            for name in (
+                'lambda_adv', 'lambda_d', 'lambda_skd', 'lambda_cwd_fea',
+                'lambda_cwd_logit', 'lambda_ifv', 'lambda_fitnet',
+                'lambda_at', 'lambda_psd', 'lambda_csd',
+            )
+            if not math.isclose(
+                float(getattr(args, name)), 0.0, rel_tol=0.0, abs_tol=1e-12
+            )
+        ]
+        if incompatible:
+            parser.error(
+                'task_aligned_region forbids other KD branches: {}'.format(
+                    ', '.join(incompatible)
+                )
+            )
     try:
         validate_rtc_o12_cli_contract(args)
     except ValueError as error:
@@ -2080,6 +2131,13 @@ class Trainer(object):
         save_to_disk = get_rank() == 0
         log_per_iters, val_per_iters = self.args.log_iter, self.args.val_per_iters
         save_per_iters = self.args.save_per_iters
+        task_aligned_interval_statistics = None
+        if self.args.kd_loss_mode == TASK_ALIGNED_KD_LOSS_MODE:
+            task_aligned_interval_statistics = torch.zeros(
+                TASK_ALIGNED_STATISTICS_SIZE,
+                device=self.device,
+                dtype=torch.float64,
+            )
         start_time = time.time()
         logger.info('Start training, Total Iterations {:d}'.format(self.args.max_iterations))
         if self.start_iteration:
@@ -2118,6 +2176,17 @@ class Trainer(object):
             o12_teacher_target = None
             o12_terms = None
             o12_global_valid_count = None
+            task_aligned_selection = None
+            if (
+                self.args.kd_loss_mode == TASK_ALIGNED_KD_LOSS_MODE
+                and self.args.lambda_kd != 0.0
+            ):
+                task_aligned_selection = build_task_aligned_region_selection(
+                    s_outputs[0],
+                    raw_teacher_logits,
+                    targets,
+                    ignore_label=self.args.ignore_label,
+                )
             if self.rtc_o12_config is not None and self.args.lambda_kd != 0.:
                 validate_rtc_o12_logit_shapes(
                     s_outputs[0], raw_teacher_logits
@@ -2252,6 +2321,13 @@ class Trainer(object):
                         o12_global_valid_count,
                         get_world_size(),
                     )
+                elif self.args.kd_loss_mode == TASK_ALIGNED_KD_LOSS_MODE:
+                    kd_loss = (
+                        self.args.lambda_kd
+                        * task_aligned_region_kd_loss(
+                            s_outputs[0], task_aligned_selection
+                        )
+                    )
                 elif self.args.kd_loss_mode == 'teacher_only':
                     kd_loss = self.args.lambda_kd * teacher_target_kd_loss(
                         s_outputs[0],
@@ -2317,6 +2393,7 @@ class Trainer(object):
                 or rtc_maps is not None
                 or self.args.kd_loss_mode == 'masked'
                 or self.args.kd_loss_mode == 'teacher_only'
+                or self.args.kd_loss_mode == TASK_ALIGNED_KD_LOSS_MODE
             ):
                 local_nonfinite = not bool(torch.isfinite(losses).item())
                 if self.use_adv:
@@ -2447,6 +2524,27 @@ class Trainer(object):
             ) * (self.args.max_iterations - iteration)
             eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
 
+            task_aligned_diagnostics = None
+            if task_aligned_selection is not None:
+                task_aligned_interval_statistics.add_(
+                    task_aligned_selection.statistics
+                )
+            if (
+                task_aligned_interval_statistics is not None
+                and iteration % log_per_iters == 0
+            ):
+                aggregated_statistics = (
+                    task_aligned_interval_statistics.clone()
+                )
+                if get_world_size() > 1:
+                    dist.all_reduce(
+                        aggregated_statistics, op=dist.ReduceOp.SUM
+                    )
+                task_aligned_diagnostics = task_aligned_statistics_dict(
+                    aggregated_statistics
+                )
+                task_aligned_interval_statistics.zero_()
+
             rtc_diagnostics = None
             if iteration % log_per_iters == 0 and rtc_maps is not None:
                 rtc_diagnostics = self.aggregate_rtc_diagnostics(rtc_maps)
@@ -2474,6 +2572,14 @@ class Trainer(object):
                         csd_loss_reduced.item(),
                         str(datetime.timedelta(seconds=int(time.time() - start_time))), 
                         eta_string))
+                if task_aligned_diagnostics is not None:
+                    log_message += " || P4a stats: {}".format(
+                        json.dumps(
+                            task_aligned_diagnostics,
+                            sort_keys=True,
+                            separators=(',', ':'),
+                        )
+                    )
                 if o12_diagnostics is not None:
                     log_message += (
                         ' || O1.2 variant: {variant}'
