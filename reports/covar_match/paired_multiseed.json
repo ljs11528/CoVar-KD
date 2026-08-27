@@ -1,0 +1,186 @@
+{
+  "stage": "paired_multiseed",
+  "generated_at": "2026-08-27T14:14:41.875542+00:00",
+  "seeds": [
+    1234,
+    2025,
+    3407
+  ],
+  "rows": [
+    {
+      "seed": 1234,
+      "methods": {
+        "fixed_t0p5": {
+          "variant": "T0p5_20k_seed1234",
+          "best_miou_percent": 59.49921,
+          "final_miou_percent": 59.49921,
+          "final_pixacc_percent": 89.774579,
+          "validation_checkpoints": 1,
+          "training_time": "1:07:09.723796",
+          "contract_pass": true,
+          "log_path": "runs/covar_match/P1_teacher_only_temperature/logs/T0p5_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P1_teacher_only_temperature/checkpoints/T0p5_20k_seed1234/training_state_latest.pth"
+        },
+        "fixed_t1p5": {
+          "variant": "T1p5_20k_seed1234",
+          "best_miou_percent": 60.861409,
+          "final_miou_percent": 60.861409,
+          "final_pixacc_percent": 90.041566,
+          "validation_checkpoints": 1,
+          "training_time": "1:07:05.689746",
+          "contract_pass": true,
+          "log_path": "runs/covar_match/P1_teacher_only_temperature/logs/T1p5_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p5_20k_seed1234/training_state_latest.pth"
+        },
+        "p4a_r8": {
+          "variant": "task_aligned_region_r8_20k_seed1234",
+          "best_miou_percent": 60.517776,
+          "final_miou_percent": 60.517776,
+          "final_pixacc_percent": 89.898586,
+          "validation_checkpoints": 1,
+          "training_time": "1:07:26.791419",
+          "contract_pass": true,
+          "log_path": "runs/covar_match/P4a_task_aligned_region/logs/task_aligned_region_r8_20k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P4a_task_aligned_region/checkpoints/task_aligned_region_r8_20k_seed1234/training_state_latest.pth"
+        }
+      },
+      "differences_pp": {
+        "complexity_best": 1.362199000000004,
+        "complexity_final": 1.362199000000004,
+        "adaptive_best": -0.3436330000000041,
+        "adaptive_final": -0.3436330000000041
+      }
+    },
+    {
+      "seed": 2025,
+      "methods": {
+        "fixed_t0p5": {
+          "variant": "T0p5_20k_seed2025",
+          "best_miou_percent": 60.292262,
+          "final_miou_percent": 60.292262,
+          "final_pixacc_percent": 89.957178,
+          "validation_checkpoints": 1,
+          "training_time": "1:07:07.304807",
+          "contract_pass": true,
+          "log_path": "runs/covar_match/P1_teacher_only_temperature/logs/T0p5_20k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P1_teacher_only_temperature/checkpoints/T0p5_20k_seed2025/training_state_latest.pth"
+        },
+        "fixed_t1p5": {
+          "variant": "T1p5_20k_seed2025",
+          "best_miou_percent": 59.794337,
+          "final_miou_percent": 59.794337,
+          "final_pixacc_percent": 89.774585,
+          "validation_checkpoints": 1,
+          "training_time": "1:07:11.133137",
+          "contract_pass": true,
+          "log_path": "runs/covar_match/P1_teacher_only_temperature/logs/T1p5_20k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p5_20k_seed2025/training_state_latest.pth"
+        },
+        "p4a_r8": {
+          "variant": "task_aligned_region_r8_20k_seed2025",
+          "best_miou_percent": 60.60403,
+          "final_miou_percent": 60.60403,
+          "final_pixacc_percent": 89.921451,
+          "validation_checkpoints": 1,
+          "training_time": "1:07:33.299084",
+          "contract_pass": true,
+          "log_path": "runs/covar_match/P4a_task_aligned_region/logs/task_aligned_region_r8_20k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P4a_task_aligned_region/checkpoints/task_aligned_region_r8_20k_seed2025/training_state_latest.pth"
+        }
+      },
+      "differences_pp": {
+        "complexity_best": -0.49792500000000217,
+        "complexity_final": -0.49792500000000217,
+        "adaptive_best": 0.8096930000000029,
+        "adaptive_final": 0.8096930000000029
+      }
+    },
+    {
+      "seed": 3407,
+      "methods": {
+        "fixed_t0p5": {
+          "variant": "T0p5_20k_seed3407",
+          "best_miou_percent": 61.49658,
+          "final_miou_percent": 61.49658,
+          "final_pixacc_percent": 90.240425,
+          "validation_checkpoints": 1,
+          "training_time": "1:07:18.341085",
+          "contract_pass": true,
+          "log_path": "runs/covar_match/P1_teacher_only_temperature/logs/T0p5_20k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P1_teacher_only_temperature/checkpoints/T0p5_20k_seed3407/training_state_latest.pth"
+        },
+        "fixed_t1p5": {
+          "variant": "T1p5_20k_seed3407",
+          "best_miou_percent": 61.67295,
+          "final_miou_percent": 61.67295,
+          "final_pixacc_percent": 90.092272,
+          "validation_checkpoints": 1,
+          "training_time": "1:07:10.122587",
+          "contract_pass": true,
+          "log_path": "runs/covar_match/P1_teacher_only_temperature/logs/T1p5_20k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P1_teacher_only_temperature/checkpoints/T1p5_20k_seed3407/training_state_latest.pth"
+        },
+        "p4a_r8": {
+          "variant": "task_aligned_region_r8_20k_seed3407",
+          "best_miou_percent": 61.425936,
+          "final_miou_percent": 61.425936,
+          "final_pixacc_percent": 90.189809,
+          "validation_checkpoints": 1,
+          "training_time": "1:07:40.963645",
+          "contract_pass": true,
+          "log_path": "runs/covar_match/P4a_task_aligned_region/logs/task_aligned_region_r8_20k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+          "checkpoint_path": "runs/covar_match/P4a_task_aligned_region/checkpoints/task_aligned_region_r8_20k_seed3407/training_state_latest.pth"
+        }
+      },
+      "differences_pp": {
+        "complexity_best": 0.17636999999999858,
+        "complexity_final": 0.17636999999999858,
+        "adaptive_best": -0.24701400000000007,
+        "adaptive_final": -0.24701400000000007
+      }
+    }
+  ],
+  "paired": {
+    "complexity_best": {
+      "values_pp": [
+        1.362199000000004,
+        -0.49792500000000217,
+        0.17636999999999858
+      ],
+      "mean_pp": 0.34688133333333343,
+      "sample_std_pp": 0.9417116915172814
+    },
+    "complexity_final": {
+      "values_pp": [
+        1.362199000000004,
+        -0.49792500000000217,
+        0.17636999999999858
+      ],
+      "mean_pp": 0.34688133333333343,
+      "sample_std_pp": 0.9417116915172814
+    },
+    "adaptive_best": {
+      "values_pp": [
+        -0.3436330000000041,
+        0.8096930000000029,
+        -0.24701400000000007
+      ],
+      "mean_pp": 0.07301533333333292,
+      "sample_std_pp": 0.6398080151219874
+    },
+    "adaptive_final": {
+      "values_pp": [
+        -0.3436330000000041,
+        0.8096930000000029,
+        -0.24701400000000007
+      ],
+      "mean_pp": 0.07301533333333292,
+      "sample_std_pp": 0.6398080151219874
+    }
+  },
+  "decision": {
+    "adaptive": "inconsistent_improvement",
+    "minimum_complexity_not_best_all_seeds": false
+  },
+  "p_value_reported": false
+}
