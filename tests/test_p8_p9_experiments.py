@@ -34,6 +34,7 @@ def synthetic_runs(values):
 
 def test_variant_names_are_locked():
     assert p8_variant(1234) == "ce_only_80k_seed1234"
+    assert p8_variant(2025) == "ce_only_80k_seed2025_retry1"
     assert p9_variant("0.25", 2025) == "fixed_T0p25_80k_seed2025"
     assert p9_variant("1.0", 3407) == "fixed_T1p0_80k_seed3407"
     assert p9_variant("1.25", 1234) == "fixed_T1p25_80k_seed1234"

@@ -123,6 +123,8 @@ def sample_statistics(values):
 def p8_variant(seed):
     if seed not in SEEDS:
         raise ValueError(f"unexpected P8 seed: {seed}")
+    if seed == 2025:
+        return "ce_only_80k_seed2025_retry1"
     return f"ce_only_80k_seed{seed}"
 
 
@@ -349,6 +351,12 @@ def summarize_p8(p7_payload, p7_seed_rows, ce_runs):
             ),
             "teacher": "DeepLabV3-ResNet101",
             "student": "DeepLabV3-MobileNetV3-Small",
+            "excluded_infrastructure_attempt": {
+                "variant": "ce_only_80k_seed2025",
+                "stopped_at_iteration": 22980,
+                "reason": "abrupt_server_shutdown",
+                "replacement": "ce_only_80k_seed2025_retry1",
+            },
             "seeds": list(SEEDS),
             "max_iterations": 80000,
             "validation_milestones": list(MILESTONES),
@@ -621,6 +629,7 @@ def write_p8_markdown(payload, path):
         "",
         "- Seeds: 1234, 2025, 3407.",
         "- Fresh 80k poly schedule; validation at 20k, 40k, 60k, and 80k.",
+        "- The interrupted seed-2025 infrastructure attempt is preserved and excluded; its formal replacement is a fresh, non-resumed retry1 run.",
         "- Same R101 teacher, MobileNetV3-Small student initialization rule, optimizer, batch size, and augmentation as P7.",
         "- Primary endpoint: final 80k VOC validation mIoU.",
         "- Descriptive paired statistics only; no p-value is emphasized for n=3.",

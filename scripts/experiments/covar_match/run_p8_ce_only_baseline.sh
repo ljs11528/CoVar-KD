@@ -27,7 +27,12 @@ if [[ ! -f "$TEACHER_PRETRAINED" || ! -f "$STUDENT_PRETRAINED_BASE" ]]; then
 fi
 
 variant_for() {
-  printf 'ce_only_80k_seed%s' "$1"
+  local seed="$1"
+  if [[ "$seed" == 2025 ]]; then
+    printf 'ce_only_80k_seed2025_retry1'
+    return 0
+  fi
+  printf 'ce_only_80k_seed%s' "$seed"
 }
 
 is_complete() {
@@ -94,6 +99,7 @@ run_one() {
 }
 
 echo "[P8] protocol=P7_locked_fresh_80k objective=CE_only seeds=1234,2025,3407 milestones=20k,40k,60k,80k"
+echo "[P8] excluded_infrastructure_attempt=ce_only_80k_seed2025 stopped_at=22980 replacement=ce_only_80k_seed2025_retry1 fresh_init=true resume=false"
 for seed in "${SEEDS[@]}"; do
   run_one "$seed"
 done
