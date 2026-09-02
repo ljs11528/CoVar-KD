@@ -10,7 +10,7 @@ WORKERS="${WORKERS:-4}"
 readonly MAX_ITERATIONS=80000
 readonly BATCH_SIZE=16
 readonly SEEDS=(1234 2025 3407)
-readonly TEMPERATURES=(0.75 1.25 2.0)
+readonly TEMPERATURES=(0.25 0.75 1.25 2.0)
 readonly MILESTONES=(20000 40000 60000 80000)
 readonly RUN_ROOT="${RUN_ROOT:-runs/covar_match/P7_fixed_temperature_response}"
 readonly TEACHER_PRETRAINED="${TEACHER_PRETRAINED:-data/winycg/cirkd/teachers/deeplabv3_resnet101_voc_best_model.pth}"
@@ -29,6 +29,7 @@ fi
 
 temperature_tag() {
   case "$1" in
+    0.25) printf 'T0p25' ;;
     0.75) printf 'T0p75' ;;
     1.25) printf 'T1p25' ;;
     2.0) printf 'T2p0' ;;
@@ -104,10 +105,10 @@ run_one() {
   echo "[P7] finish seed=$seed temperature=$temperature variant=$variant"
 }
 
-echo "[P7] protocol=P6_locked_fresh_80k seeds=1234,2025,3407 temperatures=0.75,1.25,2.0 milestones=20k,40k,60k,80k"
+echo "[P7] protocol=P6_locked_fresh_80k seeds=1234,2025,3407 temperatures=0.25,0.75,1.25,2.0 milestones=20k,40k,60k,80k"
 for seed in "${SEEDS[@]}"; do
   for temperature in "${TEMPERATURES[@]}"; do
     run_one "$seed" "$temperature"
   done
 done
-echo "[P7] all nine fixed-temperature runs complete"
+echo "[P7] all twelve fixed-temperature runs complete"

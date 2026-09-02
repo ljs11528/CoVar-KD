@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Combine P6 and P7 into the six-point fixed-temperature response grid."""
+"""Add the T=0.25 lower-boundary gate to the locked P7 response grid."""
 
 from __future__ import annotations
 
@@ -13,7 +13,8 @@ from statistics import mean, stdev
 
 
 SEEDS = (1234, 2025, 3407)
-TEMPERATURES = ("0.5", "0.75", "1.0", "1.25", "1.5", "2.0")
+TEMPERATURES = ("0.25", "0.5", "0.75", "1.0", "1.25", "1.5", "2.0")
+COVAR_TEMPERATURES = TEMPERATURES[1:]
 MILESTONES = (20000, 40000, 60000, 80000)
 LOG_NAME = "deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt"
 ITERATION_RE = re.compile(r"Iters:\s*(?P<iteration>\d+)/(?P<maximum>\d+)")
@@ -43,18 +44,23 @@ def parse_args():
     parser.add_argument(
         "--output-json",
         type=Path,
-        default=Path("reports/covar_match/P7_fixed_temperature_response.json"),
+        default=Path(
+            "reports/covar_match/P7_fixed_temperature_response_lower_boundary.json"
+        ),
     )
     parser.add_argument(
         "--output-markdown",
         type=Path,
-        default=Path("reports/covar_match/P7_fixed_temperature_response.md"),
+        default=Path(
+            "reports/covar_match/P7_fixed_temperature_response_lower_boundary.md"
+        ),
     )
     return parser.parse_args()
 
 
 def variant_for(temperature, seed):
     variants = {
+        "0.25": f"fixed_T0p25_80k_seed{seed}",
         "0.5": (
             "fixed_T0p5_80k_seed1234_retry1"
             if seed == 1234
@@ -162,10 +168,12 @@ def load_covar_path(path):
                 "r_v_mean": float(row["r_v_mean"]),
                 "r_mean": float(row["r_mean"]),
             }
-    missing = [temperature for temperature in TEMPERATURES if temperature not in rows]
+    missing = [
+        temperature for temperature in COVAR_TEMPERATURES if temperature not in rows
+    ]
     if missing:
         raise RuntimeError(f"CoVar path missing temperatures: {missing}")
-    return {temperature: rows[temperature] for temperature in TEMPERATURES}
+    return {temperature: rows.get(temperature) for temperature in TEMPERATURES}
 
 
 def rank_temperatures(runs, milestone):
@@ -198,6 +206,14 @@ def boundary_status(near_optimal):
         if touches_boundary
         else "search_boundary_closed_on_current_grid"
     )
+
+
+def lower_boundary_case(near_optimal, best_mean_temperature):
+    if "0.25" not in near_optimal:
+        return "case_1_lower_boundary_closed"
+    if best_mean_temperature != "0.25":
+        return "case_2_low_temperature_near_optimal_not_best"
+    return "case_3_t0p25_sample_mean_best"
 
 
 def summarize(p6_root, p7_root, covar_csv, delta):
@@ -291,14 +307,11 @@ def summarize(p6_root, p7_root, covar_csv, delta):
                 for row in seed_rows
             ]
         )
-    boundary_extension = []
-    if TEMPERATURES[0] in near_optimal:
-        boundary_extension.append("0.25")
-    if TEMPERATURES[-1] in near_optimal:
-        boundary_extension.append("3.0")
+    lower_case = lower_boundary_case(near_optimal, best_mean_temperature)
+    lower_boundary_closed = lower_case == "case_1_lower_boundary_closed"
 
     return {
-        "stage": "P7_fixed_temperature_response",
+        "stage": "P7_fixed_temperature_response_lower_boundary",
         "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
         "protocol": {
             "p6_locked": True,
@@ -322,7 +335,9 @@ def summarize(p6_root, p7_root, covar_csv, delta):
             "per_seed_best_temperature": per_seed_best,
             "candidate_paired_differences_pp": candidate_pairs,
             "boundary_status": boundary_status(near_optimal),
-            "boundary_extension_required": boundary_extension,
+            "lower_boundary_case": lower_case,
+            "lower_boundary_closed": lower_boundary_closed,
+            "hard_target_next_gate": not lower_boundary_closed,
             "provisional_case": classify(near_optimal, per_seed_best),
         },
         "evidence_boundary": {
@@ -331,6 +346,7 @@ def summarize(p6_root, p7_root, covar_csv, delta):
             "continuous_curve_fit_performed": False,
             "bootstrap_performed": False,
             "covar_means_reused_from_p0_full_voc_val": True,
+            "covar_t0p25_computed": False,
             "covar_quantiles_included": False,
         },
     }
@@ -346,20 +362,39 @@ def build_report(payload):
         f"{seed}: T={temperature}"
         for seed, temperature in selection["per_seed_best_temperature"].items()
     )
-    extension = selection["boundary_extension_required"]
-    if extension:
+    lower_case = selection["lower_boundary_case"]
+    if lower_case == "case_1_lower_boundary_closed":
         boundary_text = (
-            "当前离散近优集合触及搜索边界；按预注册规则，下一步候选边界点为 "
-            + "、".join(f"T={value}" for value in extension)
-            + "。本阶段未自动启动边界扩展。"
+            "情况 1：T=0.25 不在 δ-近优集合内，下边界闭合；"
+            "不继续在 T=0.25 与 T=0.5 之间细分。"
+        )
+        claim_text = (
+            "Within the evaluated range T in [0.25, 2.0], no uniquely "
+            "reproducible global optimum is identified. The sample-mean maximizer "
+            f"is T={selection['best_mean_temperature']}, while the near-optimal "
+            "set and per-seed winners remain non-unique."
+        )
+    elif lower_case == "case_2_low_temperature_near_optimal_not_best":
+        boundary_text = (
+            "情况 2：T=0.25 进入 δ-近优集合但不是最高均值，低温区尚未闭合；"
+            "下一门禁为 Hard Teacher Target，本阶段未运行。"
+        )
+        claim_text = (
+            "T=0.25 enters the near-optimal set without becoming the sample-mean "
+            "maximizer; the finite low-temperature boundary remains open."
         )
     else:
         boundary_text = (
-            "当前离散近优集合不触及 T=0.5 或 T=2.0，粗网格已在两侧形成边界。"
+            "情况 3：T=0.25 成为新的平均最佳点，仍不将其称为唯一最优温度；"
+            "下一门禁为 Hard Teacher Target，本阶段未运行。"
+        )
+        claim_text = (
+            "T=0.25 becomes the sample-mean maximizer, but it is not yet evidence "
+            "for a uniquely identifiable finite optimum."
         )
 
     lines = [
-        "# P7：固定全局温度响应曲线，阶段 1",
+        "# P7：固定全局温度响应曲线，下边界闭合",
         "",
         "## 结论先行",
         "",
@@ -371,13 +406,15 @@ def build_report(payload):
         f"- 各 seed 的 80k 最佳温度为：{bests}。",
         f"- 初步 A/B/C 判定：{selection['provisional_case']}；"
         f"边界门禁：{selection['boundary_status']}。",
+        f"- 下边界决策：{selection['lower_boundary_case']}。",
         f"- {boundary_text}",
+        f"- 推荐结论：{claim_text}",
         "",
         "## 锁定协议",
         "",
-        "- P7 只新增 T=0.75、1.25、2.0，各运行 seed=1234、2025、3407，"
-        "共 9 条全新 80k run。",
-        "- T=0.5、1.0、1.5 直接复用 P6 的三 seed 完整 schedule 结果；"
+        "- 本阶段只新增 T=0.25，运行 seed=1234、2025、3407，"
+        "共 3 条全新 80k run。",
+        "- T=0.5、1.0、1.5 复用 P6，T=0.75、1.25、2.0 复用 P7 阶段 1；"
         "P4a 不进入固定温度响应曲线。",
         "- teacher-only temperature，student T=1，无 T² 补偿，CE+KD，"
         "其余 teacher、student 初始化、optimizer、poly schedule、batch size、"
@@ -413,11 +450,17 @@ def build_report(payload):
     for temperature in TEMPERATURES:
         summary = summaries[temperature]
         covar = summary["covar"]
+        covar_cells = (
+            "— | — | —"
+            if covar is None
+            else (
+                f"{covar['r_c_mean']:.6f} | {covar['r_v_mean']:.6f} | "
+                f"{covar['r_mean']:.6f}"
+            )
+        )
         lines.append(
             f"| {temperature} | {summary['final']['mean']:.6f} | "
-            f"{summary['final']['sample_std']:.6f} | "
-            f"{covar['r_c_mean']:.6f} | {covar['r_v_mean']:.6f} | "
-            f"{covar['r_mean']:.6f} |"
+            f"{summary['final']['sample_std']:.6f} | {covar_cells} |"
         )
 
     lines += [
@@ -457,17 +500,17 @@ def build_report(payload):
         "",
         "## 证据边界与下一门禁",
         "",
-        "- 这是六点离散粗网格，不把最高样本均值直接称为唯一最优温度。",
+        "- 这是七点离散粗网格，不把最高样本均值直接称为唯一最优温度。",
         "- n=3 仅报告均值、样本标准差和 paired differences，不报告 p-value。",
         "- δ-optimal 结果是离散网格集合，不是连续温度区间；"
         "低自由度曲线、bootstrap 和 profile 区间属于下一阶段。",
         "- 当前 VOC val 同时用于响应曲线刻画，因此本报告不声称无偏最终测试性能；"
         "正式选温度仍需独立 selection split 和未参与选择的最终报告集。",
-        "- CoVar 均值直接复用 P0 在完整 VOC val 上的锁定实现结果。"
-        "本阶段尚未在独立 training-analysis split 上补 q10/q25/q50/q75/q90，"
+        "- T=0.5 至 T=2.0 的 CoVar 均值直接复用 P0 锁定结果；"
+        "本次最小边界门禁未额外计算 T=0.25 的 CoVar，也未补分位数，"
         "因此不据此宣称稳定的 CoVar 近优区间。",
-        "- 未运行 T=0.25、T=3.0、额外 seed、P4a、margin gate、"
-        "新 region size、shared temperature 或 T² compensation。",
+        "- 未运行 T=0.375、T=0.125、T=3.0、新 seed、Hard Teacher Target、"
+        "P4a、CoVar-Match、shared temperature 或 T² compensation。",
     ]
     return "\n".join(lines) + "\n"
 
