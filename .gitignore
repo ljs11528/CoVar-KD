@@ -69,3 +69,20 @@ data/winycg/checkpoints/
 
 # VSCode
 .vscode/
+
+# Local control metadata and private material
+.copy-verification/
+.runtime-cache/
+.venv-p8-p9/
+.pytest_cache/
+.env
+.env.*
+id_rsa
+id_rsa.pub
+ljs11528
+ljs11528.pub
+
+# Reviewable results for the single-GPU experiment
+!reports/covar_match/P8_P9_single_gpu/*.json
+!reports/covar_match/P8_P9_single_gpu/*.csv
+!reports/covar_match/P8_P9_single_gpu/*.png

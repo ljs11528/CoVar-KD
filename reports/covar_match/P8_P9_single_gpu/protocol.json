@@ -1,0 +1,77 @@
+{
+  "recorded_at": "2026-09-11T13:05:23.161851+00:00",
+  "execution_profile": "single_gpu",
+  "user_approved_deviation_from_p7": true,
+  "strict_p7_pairing": false,
+  "world_size": 1,
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "python": "3.10.14",
+  "torch": "2.2.2",
+  "cuda": "12.1",
+  "cudnn": 8902,
+  "numpy": "1.26.4",
+  "opencv": "4.7.0",
+  "python_executable": "/share/home/tm1156348881820000/a1156346300/covar-kd/.venv-p8-p9/bin/python",
+  "seeds": [
+    1234,
+    2025,
+    3407
+  ],
+  "iterations": 80000,
+  "milestones": [
+    20000,
+    40000,
+    60000,
+    80000
+  ],
+  "optimizer": {
+    "name": "SGD",
+    "lr": 0.02,
+    "momentum": 0.9,
+    "weight_decay": 0.0001
+  },
+  "schedule": "existing train_kd.py poly schedule",
+  "global_batch_size": 16,
+  "crop_size": [
+    512,
+    512
+  ],
+  "workers": 4,
+  "student_initialization": "ImageNet backbone plus fresh segmentation head for every run",
+  "teacher": "DeepLabV3-ResNet101",
+  "ce_student": "MobileNetV3-Small",
+  "second_student": "MobileNetV3-Large",
+  "augmentation": "original VOC random scale 0.5:0.1:2.0, random crop and mirror",
+  "ce_runs": 3,
+  "stage1_kd_runs": 15,
+  "conditional_stage2_kd_runs": 6,
+  "stage1_temperatures": [
+    "0.25",
+    "0.5",
+    "1.0",
+    "1.5",
+    "2.0"
+  ],
+  "conditional_temperatures": [
+    "0.75",
+    "1.25"
+  ],
+  "near_optimal_delta_pp": 0.2,
+  "protocol_differences": [
+    "Head SyncBatchNorm becomes BatchNorm; backbone local batch changes from 8 to 16.",
+    "RandomSampler replaces DistributedSampler; rank/worker random streams differ.",
+    "Single-rank validation uses each image once; the legacy two-rank sampler pads the odd-sized split.",
+    "The original P7 logs do not establish that their software versions match this runtime."
+  ],
+  "sha256": {
+    "data/winycg/cirkd/teachers/deeplabv3_resnet101_voc_best_model.pth": "ac49b2c7720b21d565072e974e4404fcb009ba106288d95d1a4bb25f09c3fe58",
+    "data/winycg/imagenet_pretrained/mobilenet_v3_small-47085aa1.pth": "47085aa164b2977003221458a2a5fdf5f46f434f5539b164dc71969b4dd4cd75",
+    "data/winycg/imagenet_pretrained/mobilenet_v3_large-bc2c3fd3.pth": "bc2c3fd391519fcd987035145d1aa407431051b7f2391db663feb2bc4a9d7c1a",
+    "train_kd.py": "4afb177d613a175881dedf26d622a3161ef660ae74a596241863a84473fc2c73",
+    "dataset/voc.py": "6349da2dd2e5a8ca5173509fe4f8112788c9fb7cae98f50ae6448d52d4fe5863",
+    "utils/distributed.py": "e85e5566f000134aa178503b62087ae84810fdd61ae5ac54b3f7483b0cf4e740",
+    "models/deeplabv3_mobilenetv3.py": "a360e50c5c998c8edcae627bf07aa4883978fa379a7e728d63b7a86a30e30434",
+    "models/base_models/mobilenetv3.py": "35754d04e0b27a5061fc7c554374797563774375bcc13223d14899450529c73f",
+    "scripts/experiments/covar_match/run_p8_p9_single_gpu.py": "2691a8a174c442a5af806228b0fe6d122e3058296ef9636d4b553b85caf8e73c"
+  }
+}

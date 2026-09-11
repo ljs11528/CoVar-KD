@@ -2712,9 +2712,9 @@ class Trainer(object):
             IoU = 1.0 * sum_total_inter / (2.220446049250313e-16 + sum_total_union)
             mIoU = IoU.mean().item()
 
-            logger.info(format_overall_validation_log(
-                pixAcc.item() * 100, mIoU * 100
-            ))
+        logger.info(format_overall_validation_log(
+            float(pixAcc) * 100, float(mIoU) * 100
+        ))
 
         new_pred = float(mIoU)
         if new_pred > self.best_pred:
