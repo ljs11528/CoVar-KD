@@ -86,3 +86,8 @@ ljs11528.pub
 !reports/covar_match/P8_P9_single_gpu/*.json
 !reports/covar_match/P8_P9_single_gpu/*.csv
 !reports/covar_match/P8_P9_single_gpu/*.png
+
+# P9 results from the second server
+!reports/covar_match/P8_P9_single_gpu/server2/*.json
+!reports/covar_match/P8_P9_single_gpu/server2/*.csv
+!reports/covar_match/P8_P9_single_gpu/server2/*.png

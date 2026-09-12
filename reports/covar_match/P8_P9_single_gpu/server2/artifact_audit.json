@@ -1,0 +1,182 @@
+{
+  "checked_at": "2026-09-12T12:00:42.883172+00:00",
+  "stage": "P9_stage1_in_progress",
+  "execution_protocol": "single_gpu",
+  "completed_stage1_runs": 1,
+  "planned_stage1_runs": 15,
+  "completed_runs": [
+    {
+      "variant": "fixed_T0p25_80k_seed1234",
+      "trajectory": {
+        "20000": {
+          "pixacc_percent": 89.584432,
+          "miou_percent": 58.273399
+        },
+        "40000": {
+          "pixacc_percent": 90.973888,
+          "miou_percent": 63.536787
+        },
+        "60000": {
+          "pixacc_percent": 92.105346,
+          "miou_percent": 67.013323
+        },
+        "80000": {
+          "pixacc_percent": 92.655237,
+          "miou_percent": 68.958694
+        }
+      },
+      "best_observed_miou_percent": 68.958694,
+      "final_miou_percent": 68.958694,
+      "final_pixacc_percent": 92.655237,
+      "training_time": "5:06:14.656455",
+      "contract_pass": true,
+      "log_path": "/share/home/tm1156348881820000/a1156346300/covar-kd/runs/covar_match/P9_pair2_temperature_response_single_gpu_server2/logs/fixed_T0p25_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+      "checkpoint_path": "/share/home/tm1156348881820000/a1156346300/covar-kd/runs/covar_match/P9_pair2_temperature_response_single_gpu_server2/checkpoints/fixed_T0p25_80k_seed1234/training_state_latest.pth",
+      "seed": 1234,
+      "temperature": "0.25",
+      "log_sha256": "ddcd1ab013b6bc645a5b07486e076b036f14dc6ce8c1b1fcf2431c57a05bb592"
+    }
+  ],
+  "active_run": {
+    "variant": "fixed_T0p5_80k_seed1234",
+    "seed": 1234,
+    "temperature": "0.5",
+    "latest_logged_iteration": 64420,
+    "planned_iterations": 80000,
+    "trajectory": {
+      "20000": {
+        "pixacc_percent": 90.433899,
+        "miou_percent": 60.474288
+      },
+      "40000": {
+        "pixacc_percent": 90.936768,
+        "miou_percent": 62.677807
+      },
+      "60000": {
+        "pixacc_percent": 91.742434,
+        "miou_percent": 65.160006
+      }
+    },
+    "latest_losses_finite": true,
+    "log_path": "/share/home/tm1156348881820000/a1156346300/covar-kd/runs/covar_match/P9_pair2_temperature_response_single_gpu_server2/logs/fixed_T0p5_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+    "performance_summary_complete": false
+  },
+  "controller": {
+    "pid": 661,
+    "status": "RUNNING",
+    "hostname": "szu-a21144257891921920377453"
+  },
+  "locked_source_and_weight_sha256_match": {
+    "data/winycg/cirkd/teachers/deeplabv3_resnet101_voc_best_model.pth": true,
+    "data/winycg/imagenet_pretrained/mobilenet_v3_small-47085aa1.pth": true,
+    "data/winycg/imagenet_pretrained/mobilenet_v3_large-bc2c3fd3.pth": true,
+    "train_kd.py": true,
+    "dataset/voc.py": true,
+    "utils/distributed.py": true,
+    "models/deeplabv3_mobilenetv3.py": true,
+    "models/base_models/mobilenetv3.py": true,
+    "scripts/experiments/covar_match/run_p8_p9_single_gpu.py": true,
+    "scripts/experiments/covar_match/continue_p9_single_gpu.py": true
+  },
+  "launch_protocol_sha256": "8d048ed7b3a5e8dbd84a533c04da3a8845836e94d834068e3277a62a5e4768d4",
+  "checkpoint_audit": [
+    {
+      "path": "runs/covar_match/P9_pair2_temperature_response_single_gpu_server2/checkpoints/fixed_T0p25_80k_seed1234/training_state_iter020000.pth",
+      "bytes": 54997578,
+      "iteration": 20000,
+      "checkpoint_type": "train_kd_training_state",
+      "student_tensors": 352,
+      "student_finite": true,
+      "optimizer_present": true,
+      "rng_state_present": true,
+      "sha256": "db9ad89e5582c164d3ba99e8eb7f39d73c71e64c4dd49c1e05701235f12de6ca"
+    },
+    {
+      "path": "runs/covar_match/P9_pair2_temperature_response_single_gpu_server2/checkpoints/fixed_T0p25_80k_seed1234/training_state_iter040000.pth",
+      "bytes": 54997578,
+      "iteration": 40000,
+      "checkpoint_type": "train_kd_training_state",
+      "student_tensors": 352,
+      "student_finite": true,
+      "optimizer_present": true,
+      "rng_state_present": true,
+      "sha256": "0eba2af2a2b3f4831bc47bf4a0e9a25ac702e3b2c2926d6c8e18cf21b47c781d"
+    },
+    {
+      "path": "runs/covar_match/P9_pair2_temperature_response_single_gpu_server2/checkpoints/fixed_T0p25_80k_seed1234/training_state_iter060000.pth",
+      "bytes": 54997578,
+      "iteration": 60000,
+      "checkpoint_type": "train_kd_training_state",
+      "student_tensors": 352,
+      "student_finite": true,
+      "optimizer_present": true,
+      "rng_state_present": true,
+      "sha256": "18314b1bcc4d117953b2ecb9430c6854bf6ab49c9e915eab4cb4019870b66454"
+    },
+    {
+      "path": "runs/covar_match/P9_pair2_temperature_response_single_gpu_server2/checkpoints/fixed_T0p25_80k_seed1234/training_state_iter080000.pth",
+      "bytes": 54997642,
+      "iteration": 80000,
+      "checkpoint_type": "train_kd_training_state",
+      "student_tensors": 352,
+      "student_finite": true,
+      "optimizer_present": true,
+      "rng_state_present": true,
+      "sha256": "29feb23f7f0758266778bfb851ba2a81c6174ed159bc2c438a874ee3374e3aa2"
+    },
+    {
+      "path": "runs/covar_match/P9_pair2_temperature_response_single_gpu_server2/checkpoints/fixed_T0p5_80k_seed1234/training_state_iter020000.pth",
+      "bytes": 54997578,
+      "iteration": 20000,
+      "checkpoint_type": "train_kd_training_state",
+      "student_tensors": 352,
+      "student_finite": true,
+      "optimizer_present": true,
+      "rng_state_present": true,
+      "sha256": "998d62d3bf68b8c4bcf0671cb24ba171312a2b1013e167dc6bf6753b05d55b65"
+    },
+    {
+      "path": "runs/covar_match/P9_pair2_temperature_response_single_gpu_server2/checkpoints/fixed_T0p5_80k_seed1234/training_state_iter040000.pth",
+      "bytes": 54997578,
+      "iteration": 40000,
+      "checkpoint_type": "train_kd_training_state",
+      "student_tensors": 352,
+      "student_finite": true,
+      "optimizer_present": true,
+      "rng_state_present": true,
+      "sha256": "febd1e160f136c99d25e1cc31d3640d2bb1b15dcef912fc1d855751ed039e501"
+    },
+    {
+      "path": "runs/covar_match/P9_pair2_temperature_response_single_gpu_server2/checkpoints/fixed_T0p5_80k_seed1234/training_state_iter060000.pth",
+      "bytes": 54997578,
+      "iteration": 60000,
+      "checkpoint_type": "train_kd_training_state",
+      "student_tensors": 352,
+      "student_finite": true,
+      "optimizer_present": true,
+      "rng_state_present": true,
+      "sha256": "87cd8bb39df488619a19d4e4922aa354e7934a566ee04f91966e2e5652ee878d"
+    }
+  ],
+  "ce_reference": {
+    "run_contracts_passed": 3,
+    "ce_final": {
+      "values": [
+        62.062621,
+        61.753225,
+        61.720073
+      ],
+      "mean": 61.84530633333333,
+      "sample_std": 0.188928589782842
+    },
+    "report_hashes_match": {
+      "P8_ce_only.json": true,
+      "P8_ce_only.md": true,
+      "P8_ce_only.csv": true,
+      "P8_ce_only_trajectory.png": true,
+      "execution.md": true
+    },
+    "source_log_hashes_match": true
+  },
+  "interpretation": "One completed seed-temperature run; no temperature ranking, near-optimal set or stage-2 decision is available yet."
+}
