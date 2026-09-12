@@ -1,0 +1,364 @@
+{
+  "stage": "P8_ce_only_baseline",
+  "generated_at": "2026-09-12T01:02:45.551333+00:00",
+  "protocol": {
+    "p7_locked": false,
+    "objective": "L_CE_exactly; lambda_kd=0",
+    "teacher_forward": "retained for trainer/protocol parity but contributes no gradient",
+    "teacher": "DeepLabV3-ResNet101",
+    "student": "DeepLabV3-MobileNetV3-Small",
+    "seeds": [
+      1234,
+      2025,
+      3407
+    ],
+    "max_iterations": 80000,
+    "validation_milestones": [
+      20000,
+      40000,
+      60000,
+      80000
+    ],
+    "fresh_from_same_student_initialization_rule": true,
+    "p_value_reported": false,
+    "execution": {
+      "profile": "single_gpu",
+      "world_size": 1,
+      "strictly_matched_to_p7": false,
+      "global_batch_size": 16,
+      "note": "Single CUDA rank on H100. The student head uses BatchNorm instead of SyncBatchNorm; backbone batch statistics use 16 rather than 8 samples per rank. Sampling and validation reduction differ from P7. Same-numbered seeds do not establish a controlled P7 comparison."
+    },
+    "legacy_two_gpu_runs_pooled": false
+  },
+  "runs": {
+    "1234": {
+      "variant": "ce_only_80k_seed1234",
+      "trajectory": {
+        "20000": {
+          "pixacc_percent": 87.417751,
+          "miou_percent": 49.794796
+        },
+        "40000": {
+          "pixacc_percent": 89.247853,
+          "miou_percent": 57.343358
+        },
+        "60000": {
+          "pixacc_percent": 90.343051,
+          "miou_percent": 60.943651
+        },
+        "80000": {
+          "pixacc_percent": 90.713563,
+          "miou_percent": 62.062621
+        }
+      },
+      "best_observed_miou_percent": 62.062621,
+      "final_miou_percent": 62.062621,
+      "final_pixacc_percent": 90.713563,
+      "training_time": "3:59:30.413299",
+      "contract_pass": true,
+      "log_path": "/share/home/tm1156348881820000/a1156346300/covar-kd/runs/covar_match/P8_ce_only_baseline_single_gpu/logs/ce_only_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+      "checkpoint_path": "/share/home/tm1156348881820000/a1156346300/covar-kd/runs/covar_match/P8_ce_only_baseline_single_gpu/checkpoints/ce_only_80k_seed1234/training_state_latest.pth"
+    },
+    "2025": {
+      "variant": "ce_only_80k_seed2025",
+      "trajectory": {
+        "20000": {
+          "pixacc_percent": 88.413215,
+          "miou_percent": 54.595077
+        },
+        "40000": {
+          "pixacc_percent": 89.511927,
+          "miou_percent": 58.555084
+        },
+        "60000": {
+          "pixacc_percent": 90.032875,
+          "miou_percent": 60.315424
+        },
+        "80000": {
+          "pixacc_percent": 90.568143,
+          "miou_percent": 61.753225
+        }
+      },
+      "best_observed_miou_percent": 61.753225,
+      "final_miou_percent": 61.753225,
+      "final_pixacc_percent": 90.568143,
+      "training_time": "3:58:47.592837",
+      "contract_pass": true,
+      "log_path": "/share/home/tm1156348881820000/a1156346300/covar-kd/runs/covar_match/P8_ce_only_baseline_single_gpu/logs/ce_only_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+      "checkpoint_path": "/share/home/tm1156348881820000/a1156346300/covar-kd/runs/covar_match/P8_ce_only_baseline_single_gpu/checkpoints/ce_only_80k_seed2025/training_state_latest.pth"
+    },
+    "3407": {
+      "variant": "ce_only_80k_seed3407",
+      "trajectory": {
+        "20000": {
+          "pixacc_percent": 88.014683,
+          "miou_percent": 52.925235
+        },
+        "40000": {
+          "pixacc_percent": 89.088242,
+          "miou_percent": 56.225806
+        },
+        "60000": {
+          "pixacc_percent": 90.004584,
+          "miou_percent": 59.654081
+        },
+        "80000": {
+          "pixacc_percent": 90.553193,
+          "miou_percent": 61.720073
+        }
+      },
+      "best_observed_miou_percent": 61.720073,
+      "final_miou_percent": 61.720073,
+      "final_pixacc_percent": 90.553193,
+      "training_time": "3:58:32.623376",
+      "contract_pass": true,
+      "log_path": "/share/home/tm1156348881820000/a1156346300/covar-kd/runs/covar_match/P8_ce_only_baseline_single_gpu/logs/ce_only_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_small_log.txt",
+      "checkpoint_path": "/share/home/tm1156348881820000/a1156346300/covar-kd/runs/covar_match/P8_ce_only_baseline_single_gpu/checkpoints/ce_only_80k_seed3407/training_state_latest.pth"
+    }
+  },
+  "ce_summary": {
+    "final": {
+      "values": [
+        62.062621,
+        61.753225,
+        61.720073
+      ],
+      "mean": 61.84530633333333,
+      "sample_std": 0.188928589782842
+    },
+    "milestones": {
+      "20000": {
+        "values": [
+          49.794796,
+          54.595077,
+          52.925235
+        ],
+        "mean": 52.438369333333334,
+        "sample_std": 2.4368941406582163
+      },
+      "40000": {
+        "values": [
+          57.343358,
+          58.555084,
+          56.225806
+        ],
+        "mean": 57.374749333333334,
+        "sample_std": 1.1649562490399954
+      },
+      "60000": {
+        "values": [
+          60.943651,
+          60.315424,
+          59.654081
+        ],
+        "mean": 60.304385333333336,
+        "sample_std": 0.6448558640086453
+      },
+      "80000": {
+        "values": [
+          62.062621,
+          61.753225,
+          61.720073
+        ],
+        "mean": 61.84530633333333,
+        "sample_std": 0.188928589782842
+      }
+    }
+  },
+  "conclusions": {
+    "p7_best_mean_temperature": "1.5",
+    "best_fixed_temperature_gain_over_ce_pp": {
+      "values": [
+        1.1321670000000026,
+        1.053798999999998,
+        0.5234009999999998
+      ],
+      "mean": 0.9031223333333335,
+      "sample_std": 0.3311745825049587,
+      "positive_seed_count": 3,
+      "all_seeds_positive": true,
+      "kd_mean_final_miou_percent": 62.74842866666667,
+      "ce_mean_final_miou_percent": 61.84530633333333
+    },
+    "positive_mean_temperatures": [
+      "0.25",
+      "0.5",
+      "0.75",
+      "1.0",
+      "1.25",
+      "1.5",
+      "2.0"
+    ],
+    "all_seven_temperature_means_above_ce": true,
+    "interpretation": "descriptive_cross_protocol_differences_do_not_identify_kd_benefit",
+    "all_21_same_seed_comparisons_above_ce": false,
+    "controlled_kd_effect_identifiable": false
+  },
+  "source_p7_selection_summary": {
+    "best_mean_temperature": "1.5",
+    "best_mean_final_miou_percent": 62.74842866666667,
+    "delta_optimal_grid_set": [
+      "0.5",
+      "1.5"
+    ],
+    "per_seed_best_temperature": {
+      "1234": "1.5",
+      "2025": "0.25",
+      "3407": "0.75"
+    },
+    "candidate_paired_differences_pp": {
+      "0.25": {
+        "values": [
+          1.1496430000000046,
+          -0.3434000000000026,
+          0.02825899999999848
+        ],
+        "mean": 0.2781673333333335,
+        "sample_std": 0.7772612052999553
+      },
+      "0.5": {
+        "values": [
+          0.6866760000000056,
+          -0.2864590000000007,
+          -0.1033299999999997
+        ],
+        "mean": 0.09896233333333508,
+        "sample_std": 0.5171456014995552
+      },
+      "0.75": {
+        "values": [
+          0.6734849999999994,
+          1.4964879999999994,
+          -0.8045729999999978
+        ],
+        "mean": 0.45513333333333367,
+        "sample_std": 1.1659667744761553
+      },
+      "1.0": {
+        "values": [
+          1.7499030000000033,
+          0.06664999999999566,
+          -0.23857300000000237
+        ],
+        "mean": 0.5259933333333322,
+        "sample_std": 1.0708671365077653
+      },
+      "1.25": {
+        "values": [
+          0.1711790000000022,
+          0.7377210000000005,
+          0.4754609999999957
+        ],
+        "mean": 0.46145366666666615,
+        "sample_std": 0.28353062177008814
+      },
+      "2.0": {
+        "values": [
+          0.8547610000000034,
+          -0.14132800000000145,
+          0.04661699999999769
+        ],
+        "mean": 0.2533499999999999,
+        "sample_std": 0.5292468459490365
+      }
+    },
+    "boundary_status": "search_boundary_closed_on_current_grid",
+    "lower_boundary_case": "case_1_lower_boundary_closed",
+    "lower_boundary_closed": true,
+    "hard_target_next_gate": false,
+    "provisional_case": "case_C_no_unique_reproducible_optimum"
+  },
+  "same_seed_cross_protocol_kd_minus_ce_pp": {
+    "0.25": {
+      "values": [
+        -0.017476000000002045,
+        1.3971990000000005,
+        0.4951420000000013
+      ],
+      "mean": 0.6249549999999999,
+      "sample_std": 0.7162156798988707,
+      "positive_seed_count": 2,
+      "all_seeds_positive": false,
+      "kd_mean_final_miou_percent": 62.47026133333333,
+      "ce_mean_final_miou_percent": 61.84530633333333
+    },
+    "0.5": {
+      "values": [
+        0.445490999999997,
+        1.3402579999999986,
+        0.6267309999999995
+      ],
+      "mean": 0.8041599999999983,
+      "sample_std": 0.47303571070586253,
+      "positive_seed_count": 3,
+      "all_seeds_positive": true,
+      "kd_mean_final_miou_percent": 62.64946633333333,
+      "ce_mean_final_miou_percent": 61.84530633333333
+    },
+    "0.75": {
+      "values": [
+        0.45868200000000314,
+        -0.44268900000000144,
+        1.3279739999999975
+      ],
+      "mean": 0.44798899999999975,
+      "sample_std": 0.8853799297922893,
+      "positive_seed_count": 2,
+      "all_seeds_positive": false,
+      "kd_mean_final_miou_percent": 62.29329533333333,
+      "ce_mean_final_miou_percent": 61.84530633333333
+    },
+    "1.0": {
+      "values": [
+        -0.6177360000000007,
+        0.9871490000000023,
+        0.7619740000000021
+      ],
+      "mean": 0.3771290000000012,
+      "sample_std": 0.8689034591512471,
+      "positive_seed_count": 2,
+      "all_seeds_positive": false,
+      "kd_mean_final_miou_percent": 62.22243533333334,
+      "ce_mean_final_miou_percent": 61.84530633333333
+    },
+    "1.25": {
+      "values": [
+        0.9609880000000004,
+        0.3160779999999974,
+        0.04794000000000409
+      ],
+      "mean": 0.4416686666666673,
+      "sample_std": 0.46930152806200437,
+      "positive_seed_count": 3,
+      "all_seeds_positive": true,
+      "kd_mean_final_miou_percent": 62.286975,
+      "ce_mean_final_miou_percent": 61.84530633333333
+    },
+    "1.5": {
+      "values": [
+        1.1321670000000026,
+        1.053798999999998,
+        0.5234009999999998
+      ],
+      "mean": 0.9031223333333335,
+      "sample_std": 0.3311745825049587,
+      "positive_seed_count": 3,
+      "all_seeds_positive": true,
+      "kd_mean_final_miou_percent": 62.74842866666667,
+      "ce_mean_final_miou_percent": 61.84530633333333
+    },
+    "2.0": {
+      "values": [
+        0.27740599999999915,
+        1.1951269999999994,
+        0.4767840000000021
+      ],
+      "mean": 0.6497723333333335,
+      "sample_std": 0.482697297550269,
+      "positive_seed_count": 3,
+      "all_seeds_positive": true,
+      "kd_mean_final_miou_percent": 62.495078666666664,
+      "ce_mean_final_miou_percent": 61.84530633333333
+    }
+  }
+}

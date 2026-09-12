@@ -1,0 +1,69 @@
+{
+  "stage": "P8_ce_only_complete",
+  "verified_at": "2026-09-12T02:24:12.126839+00:00",
+  "code_commit": "cfd47408da07dc5118b35c045591ce5ab0a341b4",
+  "execution_protocol": "single_gpu",
+  "strictly_matched_to_p7": false,
+  "seeds": [
+    1234,
+    2025,
+    3407
+  ],
+  "iterations": 80000,
+  "milestones": [
+    20000,
+    40000,
+    60000,
+    80000
+  ],
+  "run_contracts_passed": 3,
+  "csv_rows_verified": 12,
+  "finite_metrics": true,
+  "json_matches_read_run": true,
+  "csv_matches_json": true,
+  "statistics_independently_recomputed": true,
+  "training_source_and_weight_hashes_match_launch": true,
+  "source_log_sha256": {
+    "1234": "12f96d2e8e86659310c0e008ec9869972126d5401622fd7d1d213e8f4a2b9aba",
+    "2025": "27e74354ff38cc825c3b837b34a103b74a7a1b3d35e320065b25b6eec1214fe9",
+    "3407": "ec05929a1995c05f71502e9ebe1c388884db6dc6f43e97b482669f841b155b9e"
+  },
+  "launch_protocol_sha256": "a139d80f87c2e0828bed60139b785a4318fa119aaa4923a24b21cc3886b593cc",
+  "verified_launch_files_sha256": {
+    "data/winycg/cirkd/teachers/deeplabv3_resnet101_voc_best_model.pth": "ac49b2c7720b21d565072e974e4404fcb009ba106288d95d1a4bb25f09c3fe58",
+    "data/winycg/imagenet_pretrained/mobilenet_v3_small-47085aa1.pth": "47085aa164b2977003221458a2a5fdf5f46f434f5539b164dc71969b4dd4cd75",
+    "data/winycg/imagenet_pretrained/mobilenet_v3_large-bc2c3fd3.pth": "bc2c3fd391519fcd987035145d1aa407431051b7f2391db663feb2bc4a9d7c1a",
+    "train_kd.py": "4afb177d613a175881dedf26d622a3161ef660ae74a596241863a84473fc2c73",
+    "dataset/voc.py": "6349da2dd2e5a8ca5173509fe4f8112788c9fb7cae98f50ae6448d52d4fe5863",
+    "utils/distributed.py": "e85e5566f000134aa178503b62087ae84810fdd61ae5ac54b3f7483b0cf4e740",
+    "models/deeplabv3_mobilenetv3.py": "a360e50c5c998c8edcae627bf07aa4883978fa379a7e728d63b7a86a30e30434",
+    "models/base_models/mobilenetv3.py": "35754d04e0b27a5061fc7c554374797563774375bcc13223d14899450529c73f",
+    "scripts/experiments/covar_match/run_p8_p9_single_gpu.py": "2691a8a174c442a5af806228b0fe6d122e3058296ef9636d4b553b85caf8e73c"
+  },
+  "ce_final": {
+    "values": [
+      62.062621,
+      61.753225,
+      61.720073
+    ],
+    "mean": 61.84530633333333,
+    "sample_std": 0.188928589782842
+  },
+  "queue_snapshot": {
+    "status": "RUNNING",
+    "variant": "fixed_T0p25_80k_seed1234",
+    "completed_runs": [
+      "ce_only_80k_seed1234",
+      "ce_only_80k_seed2025",
+      "ce_only_80k_seed3407"
+    ]
+  },
+  "comparison_scope": "P7 comparisons are descriptive across two-GPU KD and single-GPU CE; KD benefit is not isolated.",
+  "report_sha256": {
+    "P8_ce_only.json": "9c98499267f8930cdd0818b5f21de71e46261a73bd5cdcd2b2313853a06d2e08",
+    "P8_ce_only.md": "51dc235d9f9767f2a0180d1879e1f0abb4342683e1879d69482144cf9ee21bdf",
+    "P8_ce_only.csv": "60303821892d4237fb9b75660d8b2b53026dbe3b5b82c89b6fdbef54f40b6ddf",
+    "P8_ce_only_trajectory.png": "aa2132813702d55d33f1a993b51b6c06b8d9e9434f881f4855dc9d395247847b",
+    "execution.md": "5ff9795c4e6efc692dd91921954a7cb34cac750348aea0169c0b4c15d9c56c65"
+  }
+}

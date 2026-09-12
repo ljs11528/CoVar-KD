@@ -1,0 +1,13 @@
+execution_protocol,seed,temperature,iteration,miou_percent,pixacc_percent
+single_gpu,1234,CE-only,20000,49.794796,87.417751
+single_gpu,1234,CE-only,40000,57.343358,89.247853
+single_gpu,1234,CE-only,60000,60.943651,90.343051
+single_gpu,1234,CE-only,80000,62.062621,90.713563
+single_gpu,2025,CE-only,20000,54.595077,88.413215
+single_gpu,2025,CE-only,40000,58.555084,89.511927
+single_gpu,2025,CE-only,60000,60.315424,90.032875
+single_gpu,2025,CE-only,80000,61.753225,90.568143
+single_gpu,3407,CE-only,20000,52.925235,88.014683
+single_gpu,3407,CE-only,40000,56.225806,89.088242
+single_gpu,3407,CE-only,60000,59.654081,90.004584
+single_gpu,3407,CE-only,80000,61.720073,90.553193
