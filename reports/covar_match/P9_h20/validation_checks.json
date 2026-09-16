@@ -1,0 +1,89 @@
+{
+  "checked_at": "2026-09-16T13:12:15.266138+00:00",
+  "tests": {
+    "passed": 29,
+    "exit_code": 0,
+    "command": "../env/bin/python -B -m pytest -q tests/test_p8_p9_experiments.py tests/test_p8_p9_single_gpu.py tests/test_p9_continuation.py tests/test_p9_h20.py"
+  },
+  "smoke_runs": {
+    "1234": {
+      "state": {
+        "seed": 1234,
+        "gpu": 6,
+        "stage": 1,
+        "pid": 1739173,
+        "completed_runs": [
+          "smoke_fixed_T1p0_80k_seed1234"
+        ],
+        "status": "COMPLETE",
+        "variant": "smoke_fixed_T1p0_80k_seed1234",
+        "kind": "kd",
+        "temperature": "1.0",
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_h20/smoke/kd/logs/smoke_fixed_T1p0_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "updated_at": "2026-09-16T13:09:39.772888+00:00"
+      },
+      "last_training_line": "2026-09-16 13:09:54,540 semantic_segmentation INFO: Iters: 20/20 || Lr: 0.001349 || Task Loss: 1.7357 || KD Loss: 1.7242|| Adv_G Loss: 0.0000 || Adv_D Loss: 0.0000|| skd_loss: 0.0000 || cwd_fea_loss: 0.0000 || cwd_logit_loss: 0.0000 || ifv_loss: 0.0000 || at_loss: 0.0000 || fitnet_loss: 0.0000 || psd_loss: 0.0000 || csd_loss: 0.0000 || Cost Time: 0:00:10 || Estimated Time: 0:00:00 || Teacher-only target T: 1.0000 || Student T: 1.0000 || T^2 compensation: off",
+      "log_sha256": "5ae808730e7f98ad4dd0d12e8f41dffd540bba4c098a221b065524fc16421c94"
+    },
+    "2025": {
+      "state": {
+        "seed": 2025,
+        "gpu": 7,
+        "stage": 1,
+        "pid": 1739174,
+        "completed_runs": [
+          "smoke_fixed_T1p0_80k_seed2025"
+        ],
+        "status": "COMPLETE",
+        "variant": "smoke_fixed_T1p0_80k_seed2025",
+        "kind": "kd",
+        "temperature": "1.0",
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_h20/smoke/kd/logs/smoke_fixed_T1p0_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "updated_at": "2026-09-16T13:09:39.772888+00:00"
+      },
+      "last_training_line": "2026-09-16 13:09:54,557 semantic_segmentation INFO: Iters: 20/20 || Lr: 0.001349 || Task Loss: 1.2949 || KD Loss: 1.2446|| Adv_G Loss: 0.0000 || Adv_D Loss: 0.0000|| skd_loss: 0.0000 || cwd_fea_loss: 0.0000 || cwd_logit_loss: 0.0000 || ifv_loss: 0.0000 || at_loss: 0.0000 || fitnet_loss: 0.0000 || psd_loss: 0.0000 || csd_loss: 0.0000 || Cost Time: 0:00:10 || Estimated Time: 0:00:00 || Teacher-only target T: 1.0000 || Student T: 1.0000 || T^2 compensation: off",
+      "log_sha256": "a51ebb27bc5e70cec4d565cb10b9a4187baa484feb6289c11a9f72bfdc18e591"
+    },
+    "3407": {
+      "state": {
+        "seed": 3407,
+        "gpu": 6,
+        "stage": 1,
+        "pid": 1769095,
+        "completed_runs": [
+          "smoke_fixed_T1p0_80k_seed3407"
+        ],
+        "status": "COMPLETE",
+        "variant": "smoke_fixed_T1p0_80k_seed3407",
+        "kind": "kd",
+        "temperature": "1.0",
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_h20/smoke/kd/logs/smoke_fixed_T1p0_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "updated_at": "2026-09-16T13:09:56.057684+00:00"
+      },
+      "last_training_line": "2026-09-16 13:10:09,821 semantic_segmentation INFO: Iters: 20/20 || Lr: 0.001349 || Task Loss: 1.6248 || KD Loss: 1.5646|| Adv_G Loss: 0.0000 || Adv_D Loss: 0.0000|| skd_loss: 0.0000 || cwd_fea_loss: 0.0000 || cwd_logit_loss: 0.0000 || ifv_loss: 0.0000 || at_loss: 0.0000 || fitnet_loss: 0.0000 || psd_loss: 0.0000 || csd_loss: 0.0000 || Cost Time: 0:00:10 || Estimated Time: 0:00:00 || Teacher-only target T: 1.0000 || Student T: 1.0000 || T^2 compensation: off",
+      "log_sha256": "ac9fbf832424f671cab26937d5476d46f4d6b01eebff51ffe47d8c4f81a28cc4"
+    }
+  },
+  "formal_launch_state": {
+    "status": "RUNNING",
+    "pid": 1895621,
+    "gpus": [
+      6,
+      7
+    ],
+    "started_at": "2026-09-16T13:11:09.741809+00:00",
+    "stage": 1
+  },
+  "prior_resource_preflight": {
+    "status": "FAILED",
+    "pid": 1473653,
+    "gpus": [
+      4,
+      5,
+      6
+    ],
+    "started_at": "2026-09-16T13:07:17.446574+00:00",
+    "error": "GPU 4 is already busy: ['4', ' GPU-80d6a792-6f98-807b-6495-b652447c7101', ' NVIDIA H20-3e', ' 121029', ' 0']"
+  },
+  "formal_results_complete": false
+}

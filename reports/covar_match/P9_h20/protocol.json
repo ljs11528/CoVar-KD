@@ -1,0 +1,135 @@
+{
+  "recorded_at": "2026-09-16T13:11:11.951713+00:00",
+  "execution_profile": "single_gpu",
+  "user_approved_deviation_from_p7": true,
+  "strict_p7_pairing": false,
+  "world_size": 1,
+  "gpu": "NVIDIA H20-3e",
+  "python": "3.10.20",
+  "torch": "2.0.1+cu118",
+  "cuda": "11.8",
+  "cudnn": 8700,
+  "numpy": "1.24.4",
+  "opencv": "4.8.0",
+  "python_executable": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/../env/bin/python",
+  "seeds": [
+    1234,
+    2025,
+    3407
+  ],
+  "iterations": 80000,
+  "milestones": [
+    20000,
+    40000,
+    60000,
+    80000
+  ],
+  "optimizer": {
+    "name": "SGD",
+    "lr": 0.02,
+    "momentum": 0.9,
+    "weight_decay": 0.0001
+  },
+  "schedule": "existing train_kd.py poly schedule",
+  "global_batch_size": 16,
+  "crop_size": [
+    512,
+    512
+  ],
+  "workers": 4,
+  "student_initialization": "ImageNet backbone plus fresh segmentation head for every run",
+  "teacher": "DeepLabV3-ResNet101",
+  "ce_student": "MobileNetV3-Small",
+  "second_student": "MobileNetV3-Large",
+  "augmentation": "original VOC random scale 0.5:0.1:2.0, random crop and mirror",
+  "ce_runs": 0,
+  "stage1_kd_runs": 15,
+  "conditional_stage2_kd_runs": 6,
+  "stage1_temperatures": [
+    "0.25",
+    "0.5",
+    "1.0",
+    "1.5",
+    "2.0"
+  ],
+  "conditional_temperatures": [
+    "0.75",
+    "1.25"
+  ],
+  "near_optimal_delta_pp": 0.2,
+  "protocol_differences": [
+    "Head SyncBatchNorm becomes BatchNorm; backbone local batch changes from 8 to 16.",
+    "RandomSampler replaces DistributedSampler; rank/worker random streams differ.",
+    "Single-rank validation uses each image once; the legacy two-rank sampler pads the odd-sized split.",
+    "The original P7 logs do not establish that their software versions match this runtime."
+  ],
+  "sha256": {
+    "data/winycg/cirkd/teachers/deeplabv3_resnet101_voc_best_model.pth": "ac49b2c7720b21d565072e974e4404fcb009ba106288d95d1a4bb25f09c3fe58",
+    "data/winycg/imagenet_pretrained/mobilenet_v3_small-47085aa1.pth": "47085aa164b2977003221458a2a5fdf5f46f434f5539b164dc71969b4dd4cd75",
+    "data/winycg/imagenet_pretrained/mobilenet_v3_large-bc2c3fd3.pth": "bc2c3fd391519fcd987035145d1aa407431051b7f2391db663feb2bc4a9d7c1a",
+    "train_kd.py": "4afb177d613a175881dedf26d622a3161ef660ae74a596241863a84473fc2c73",
+    "dataset/voc.py": "6349da2dd2e5a8ca5173509fe4f8112788c9fb7cae98f50ae6448d52d4fe5863",
+    "utils/distributed.py": "e85e5566f000134aa178503b62087ae84810fdd61ae5ac54b3f7483b0cf4e740",
+    "models/deeplabv3_mobilenetv3.py": "a360e50c5c998c8edcae627bf07aa4883978fa379a7e728d63b7a86a30e30434",
+    "models/base_models/mobilenetv3.py": "35754d04e0b27a5061fc7c554374797563774375bcc13223d14899450529c73f",
+    "scripts/experiments/covar_match/run_p8_p9_single_gpu.py": "2691a8a174c442a5af806228b0fe6d122e3058296ef9636d4b553b85caf8e73c",
+    "scripts/experiments/covar_match/run_p9_h20.py": "b0236bab811c203747327ef57fe7dbc3be866e11b04187ab86564e2c15560cf9",
+    "scripts/diagnostics/summarize_p8_p9_experiments.py": "62ab4acf17126f0a9ac0e9cd2768f21adb236b116172817c616e993405b732d1"
+  },
+  "cohort": "P9_h20",
+  "smoke": false,
+  "seed_gpu_mapping": {
+    "1234": 6,
+    "2025": 7,
+    "3407": 6
+  },
+  "selected_gpus": {
+    "6": [
+      "6",
+      " GPU-77258994-3fc6-0c03-190f-ae3a88268bd8",
+      " NVIDIA H20-3e",
+      " 0",
+      " 0"
+    ],
+    "7": [
+      "7",
+      " GPU-9d35dccc-6a75-6770-2f1a-34df630d7d59",
+      " NVIDIA H20-3e",
+      " 0",
+      " 0"
+    ]
+  },
+  "legacy_h100_results_pooled": false,
+  "runtime_changes_from_h100": {
+    "gpu": {
+      "reference": "NVIDIA H100 80GB HBM3",
+      "current": "NVIDIA H20-3e"
+    },
+    "python": {
+      "reference": "3.10.14",
+      "current": "3.10.20"
+    },
+    "torch": {
+      "reference": "2.2.2",
+      "current": "2.0.1+cu118"
+    },
+    "cuda": {
+      "reference": "12.1",
+      "current": "11.8"
+    },
+    "cudnn": {
+      "reference": 8902,
+      "current": 8700
+    },
+    "numpy": {
+      "reference": "1.26.4",
+      "current": "1.24.4"
+    },
+    "opencv": {
+      "reference": "4.7.0",
+      "current": "4.8.0"
+    }
+  },
+  "initialization": "fresh ImageNet backbone and same-seed head for each temperature",
+  "cross_pair_scope": "P7 differs in student capacity, execution and unverified software; capacity effect is not isolated"
+}

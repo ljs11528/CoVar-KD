@@ -99,7 +99,7 @@ def execution_metadata(profile):
         "note": (
             "Two CUDA ranks, matching the original P7 execution protocol."
             if matched else
-            "Single CUDA rank on H100. The student head uses BatchNorm instead "
+            "Single CUDA rank. The student head uses BatchNorm instead "
             "of SyncBatchNorm; backbone batch statistics use 16 rather than 8 "
             "samples per rank. Sampling and validation reduction differ from P7. "
             "Same-numbered seeds do not establish a controlled P7 comparison."

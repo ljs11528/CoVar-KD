@@ -91,3 +91,8 @@ ljs11528.pub
 !reports/covar_match/P8_P9_single_gpu/server2/*.json
 !reports/covar_match/P8_P9_single_gpu/server2/*.csv
 !reports/covar_match/P8_P9_single_gpu/server2/*.png
+
+# P9 fresh H20 cohort reports
+!reports/covar_match/P9_h20/*.json
+!reports/covar_match/P9_h20/*.csv
+!reports/covar_match/P9_h20/*.png
