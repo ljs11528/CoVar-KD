@@ -1,0 +1,1664 @@
+{
+  "stage": "P9_pair2_temperature_response",
+  "generated_at": "2026-09-22T03:52:35.347579+00:00",
+  "protocol": {
+    "teacher": "DeepLabV3-ResNet101",
+    "student": "DeepLabV3-MobileNetV3-Large",
+    "only_student_capacity_changed_from_P7": false,
+    "teacher_only_temperature": true,
+    "student_temperature": 1.0,
+    "t_squared_compensation": false,
+    "lambda_ce": 1.0,
+    "lambda_kd": 1.0,
+    "seeds": [
+      1234,
+      2025,
+      3407
+    ],
+    "max_iterations": 80000,
+    "validation_milestones": [
+      20000,
+      40000,
+      60000,
+      80000
+    ],
+    "stage1_temperatures": [
+      "0.25",
+      "0.5",
+      "1.0",
+      "1.5",
+      "2.0"
+    ],
+    "conditional_stage2_temperatures": [
+      "0.75",
+      "1.25"
+    ],
+    "delta_miou_pp": 0.2,
+    "p_value_reported": false,
+    "execution": {
+      "profile": "single_gpu",
+      "world_size": 1,
+      "strictly_matched_to_p7": false,
+      "global_batch_size": 16,
+      "note": "Single CUDA rank. The student head uses BatchNorm instead of SyncBatchNorm; backbone batch statistics use 16 rather than 8 samples per rank. Sampling and validation reduction differ from P7. Same-numbered seeds do not establish a controlled P7 comparison."
+    }
+  },
+  "stage1": {
+    "runs": {
+      "1234": {
+        "0.25": {
+          "variant": "fixed_T0p25_80k_seed1234",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 90.256314,
+              "miou_percent": 59.62289
+            },
+            "40000": {
+              "pixacc_percent": 90.789426,
+              "miou_percent": 61.924523
+            },
+            "60000": {
+              "pixacc_percent": 92.239994,
+              "miou_percent": 67.492074
+            },
+            "80000": {
+              "pixacc_percent": 92.644383,
+              "miou_percent": 69.480413
+            }
+          },
+          "best_observed_miou_percent": 69.480413,
+          "final_miou_percent": 69.480413,
+          "final_pixacc_percent": 92.644383,
+          "training_time": "13:43:49.264876",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p25_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed1234/training_state_latest.pth"
+        },
+        "0.5": {
+          "variant": "fixed_T0p5_80k_seed1234",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 90.377705,
+              "miou_percent": 59.929723
+            },
+            "40000": {
+              "pixacc_percent": 90.143427,
+              "miou_percent": 60.579044
+            },
+            "60000": {
+              "pixacc_percent": 92.233316,
+              "miou_percent": 67.794269
+            },
+            "80000": {
+              "pixacc_percent": 92.578093,
+              "miou_percent": 68.759316
+            }
+          },
+          "best_observed_miou_percent": 68.759316,
+          "final_miou_percent": 68.759316,
+          "final_pixacc_percent": 92.578093,
+          "training_time": "16:52:33.772273",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p5_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed1234/training_state_latest.pth"
+        },
+        "1.0": {
+          "variant": "fixed_T1p0_80k_seed1234",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 89.645341,
+              "miou_percent": 56.869495
+            },
+            "40000": {
+              "pixacc_percent": 90.831698,
+              "miou_percent": 62.359279
+            },
+            "60000": {
+              "pixacc_percent": 91.856583,
+              "miou_percent": 65.753555
+            },
+            "80000": {
+              "pixacc_percent": 92.295698,
+              "miou_percent": 67.800862
+            }
+          },
+          "best_observed_miou_percent": 67.800862,
+          "final_miou_percent": 67.800862,
+          "final_pixacc_percent": 92.295698,
+          "training_time": "16:34:32.405806",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p0_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed1234/training_state_latest.pth"
+        },
+        "1.5": {
+          "variant": "fixed_T1p5_80k_seed1234",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 90.187252,
+              "miou_percent": 59.353191
+            },
+            "40000": {
+              "pixacc_percent": 90.682643,
+              "miou_percent": 61.694688
+            },
+            "60000": {
+              "pixacc_percent": 92.024603,
+              "miou_percent": 67.097867
+            },
+            "80000": {
+              "pixacc_percent": 92.602439,
+              "miou_percent": 69.165152
+            }
+          },
+          "best_observed_miou_percent": 69.165152,
+          "final_miou_percent": 69.165152,
+          "final_pixacc_percent": 92.602439,
+          "training_time": "11:43:14.841259",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p5_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed1234/training_state_latest.pth"
+        },
+        "2.0": {
+          "variant": "fixed_T2p0_80k_seed1234",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 90.542917,
+              "miou_percent": 60.939342
+            },
+            "40000": {
+              "pixacc_percent": 91.467589,
+              "miou_percent": 65.211493
+            },
+            "60000": {
+              "pixacc_percent": 91.821841,
+              "miou_percent": 66.531247
+            },
+            "80000": {
+              "pixacc_percent": 92.637741,
+              "miou_percent": 69.335973
+            }
+          },
+          "best_observed_miou_percent": 69.335973,
+          "final_miou_percent": 69.335973,
+          "final_pixacc_percent": 92.637741,
+          "training_time": "10:27:01.122949",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T2p0_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed1234/training_state_latest.pth"
+        }
+      },
+      "2025": {
+        "0.25": {
+          "variant": "fixed_T0p25_80k_seed2025",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 89.911134,
+              "miou_percent": 58.26723
+            },
+            "40000": {
+              "pixacc_percent": 90.798932,
+              "miou_percent": 63.677323
+            },
+            "60000": {
+              "pixacc_percent": 91.771337,
+              "miou_percent": 65.159625
+            },
+            "80000": {
+              "pixacc_percent": 92.603017,
+              "miou_percent": 68.664455
+            }
+          },
+          "best_observed_miou_percent": 68.664455,
+          "final_miou_percent": 68.664455,
+          "final_pixacc_percent": 92.603017,
+          "training_time": "13:41:54.365973",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p25_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed2025/training_state_latest.pth"
+        },
+        "0.5": {
+          "variant": "fixed_T0p5_80k_seed2025",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 90.738842,
+              "miou_percent": 61.789423
+            },
+            "40000": {
+              "pixacc_percent": 90.209099,
+              "miou_percent": 60.922652
+            },
+            "60000": {
+              "pixacc_percent": 91.733834,
+              "miou_percent": 65.82191
+            },
+            "80000": {
+              "pixacc_percent": 92.599474,
+              "miou_percent": 69.214028
+            }
+          },
+          "best_observed_miou_percent": 69.214028,
+          "final_miou_percent": 69.214028,
+          "final_pixacc_percent": 92.599474,
+          "training_time": "16:38:25.320302",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p5_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed2025/training_state_latest.pth"
+        },
+        "1.0": {
+          "variant": "fixed_T1p0_80k_seed2025",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 89.956797,
+              "miou_percent": 59.115952
+            },
+            "40000": {
+              "pixacc_percent": 88.72836,
+              "miou_percent": 55.225861
+            },
+            "60000": {
+              "pixacc_percent": 91.87701,
+              "miou_percent": 66.291106
+            },
+            "80000": {
+              "pixacc_percent": 92.332796,
+              "miou_percent": 68.012673
+            }
+          },
+          "best_observed_miou_percent": 68.012673,
+          "final_miou_percent": 68.012673,
+          "final_pixacc_percent": 92.332796,
+          "training_time": "16:41:12.289936",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p0_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed2025/training_state_latest.pth"
+        },
+        "1.5": {
+          "variant": "fixed_T1p5_80k_seed2025",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 89.937538,
+              "miou_percent": 58.979142
+            },
+            "40000": {
+              "pixacc_percent": 89.972849,
+              "miou_percent": 60.132855
+            },
+            "60000": {
+              "pixacc_percent": 91.750507,
+              "miou_percent": 65.769517
+            },
+            "80000": {
+              "pixacc_percent": 92.395948,
+              "miou_percent": 68.912899
+            }
+          },
+          "best_observed_miou_percent": 68.912899,
+          "final_miou_percent": 68.912899,
+          "final_pixacc_percent": 92.395948,
+          "training_time": "11:47:41.404171",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p5_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed2025/training_state_latest.pth"
+        },
+        "2.0": {
+          "variant": "fixed_T2p0_80k_seed2025",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 90.291515,
+              "miou_percent": 61.017811
+            },
+            "40000": {
+              "pixacc_percent": 90.370608,
+              "miou_percent": 62.209457
+            },
+            "60000": {
+              "pixacc_percent": 91.978389,
+              "miou_percent": 66.855758
+            },
+            "80000": {
+              "pixacc_percent": 92.527855,
+              "miou_percent": 68.994683
+            }
+          },
+          "best_observed_miou_percent": 68.994683,
+          "final_miou_percent": 68.994683,
+          "final_pixacc_percent": 92.527855,
+          "training_time": "10:27:18.879376",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T2p0_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed2025/training_state_latest.pth"
+        }
+      },
+      "3407": {
+        "0.25": {
+          "variant": "fixed_T0p25_80k_seed3407",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 91.000455,
+              "miou_percent": 62.363464
+            },
+            "40000": {
+              "pixacc_percent": 90.994414,
+              "miou_percent": 62.869537
+            },
+            "60000": {
+              "pixacc_percent": 92.254297,
+              "miou_percent": 67.041171
+            },
+            "80000": {
+              "pixacc_percent": 92.509384,
+              "miou_percent": 68.4623
+            }
+          },
+          "best_observed_miou_percent": 68.4623,
+          "final_miou_percent": 68.4623,
+          "final_pixacc_percent": 92.509384,
+          "training_time": "14:24:14.595113",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p25_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed3407/training_state_latest.pth"
+        },
+        "0.5": {
+          "variant": "fixed_T0p5_80k_seed3407",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 90.320084,
+              "miou_percent": 60.983914
+            },
+            "40000": {
+              "pixacc_percent": 90.771385,
+              "miou_percent": 61.737239
+            },
+            "60000": {
+              "pixacc_percent": 92.167217,
+              "miou_percent": 67.244428
+            },
+            "80000": {
+              "pixacc_percent": 92.346626,
+              "miou_percent": 68.115371
+            }
+          },
+          "best_observed_miou_percent": 68.115371,
+          "final_miou_percent": 68.115371,
+          "final_pixacc_percent": 92.346626,
+          "training_time": "15:55:21.377965",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p5_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed3407/training_state_latest.pth"
+        },
+        "1.0": {
+          "variant": "fixed_T1p0_80k_seed3407",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 90.80529,
+              "miou_percent": 61.890501
+            },
+            "40000": {
+              "pixacc_percent": 91.029453,
+              "miou_percent": 63.001603
+            },
+            "60000": {
+              "pixacc_percent": 92.074525,
+              "miou_percent": 67.096633
+            },
+            "80000": {
+              "pixacc_percent": 92.604213,
+              "miou_percent": 69.02948
+            }
+          },
+          "best_observed_miou_percent": 69.02948,
+          "final_miou_percent": 69.02948,
+          "final_pixacc_percent": 92.604213,
+          "training_time": "11:27:09.515017",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p0_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed3407/training_state_latest.pth"
+        },
+        "1.5": {
+          "variant": "fixed_T1p5_80k_seed3407",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 91.015049,
+              "miou_percent": 62.498707
+            },
+            "40000": {
+              "pixacc_percent": 91.050041,
+              "miou_percent": 63.843375
+            },
+            "60000": {
+              "pixacc_percent": 92.060082,
+              "miou_percent": 67.157447
+            },
+            "80000": {
+              "pixacc_percent": 92.499731,
+              "miou_percent": 69.320095
+            }
+          },
+          "best_observed_miou_percent": 69.320095,
+          "final_miou_percent": 69.320095,
+          "final_pixacc_percent": 92.499731,
+          "training_time": "10:27:26.111484",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p5_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed3407/training_state_latest.pth"
+        },
+        "2.0": {
+          "variant": "fixed_T2p0_80k_seed3407",
+          "trajectory": {
+            "20000": {
+              "pixacc_percent": 90.723336,
+              "miou_percent": 62.53199
+            },
+            "40000": {
+              "pixacc_percent": 90.94296,
+              "miou_percent": 63.585877
+            },
+            "60000": {
+              "pixacc_percent": 92.201586,
+              "miou_percent": 67.727947
+            },
+            "80000": {
+              "pixacc_percent": 92.538265,
+              "miou_percent": 69.586152
+            }
+          },
+          "best_observed_miou_percent": 69.586152,
+          "final_miou_percent": 69.586152,
+          "final_pixacc_percent": 92.538265,
+          "training_time": "13:04:42.975394",
+          "contract_pass": true,
+          "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T2p0_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+          "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed3407/training_state_latest.pth"
+        }
+      }
+    },
+    "summary": {
+      "temperature_summaries": {
+        "0.25": {
+          "final": {
+            "values": [
+              69.480413,
+              68.664455,
+              68.4623
+            ],
+            "mean": 68.869056,
+            "sample_std": 0.5390127058734319
+          },
+          "milestones": {
+            "20000": {
+              "values": [
+                59.62289,
+                58.26723,
+                62.363464
+              ],
+              "mean": 60.084528,
+              "sample_std": 2.0867715442692822
+            },
+            "40000": {
+              "values": [
+                61.924523,
+                63.677323,
+                62.869537
+              ],
+              "mean": 62.82379433333333,
+              "sample_std": 0.8772948499024338
+            },
+            "60000": {
+              "values": [
+                67.492074,
+                65.159625,
+                67.041171
+              ],
+              "mean": 66.56429,
+              "sample_std": 1.2371908504838682
+            },
+            "80000": {
+              "values": [
+                69.480413,
+                68.664455,
+                68.4623
+              ],
+              "mean": 68.869056,
+              "sample_std": 0.5390127058734319
+            }
+          }
+        },
+        "0.5": {
+          "final": {
+            "values": [
+              68.759316,
+              69.214028,
+              68.115371
+            ],
+            "mean": 68.69623833333333,
+            "sample_std": 0.5520379470075721
+          },
+          "milestones": {
+            "20000": {
+              "values": [
+                59.929723,
+                61.789423,
+                60.983914
+              ],
+              "mean": 60.90102,
+              "sample_std": 0.9326170617820567
+            },
+            "40000": {
+              "values": [
+                60.579044,
+                60.922652,
+                61.737239
+              ],
+              "mean": 61.079645,
+              "sample_std": 0.5948436904288387
+            },
+            "60000": {
+              "values": [
+                67.794269,
+                65.82191,
+                67.244428
+              ],
+              "mean": 66.95353566666667,
+              "sample_std": 1.0178476155173377
+            },
+            "80000": {
+              "values": [
+                68.759316,
+                69.214028,
+                68.115371
+              ],
+              "mean": 68.69623833333333,
+              "sample_std": 0.5520379470075721
+            }
+          }
+        },
+        "1.0": {
+          "final": {
+            "values": [
+              67.800862,
+              68.012673,
+              69.02948
+            ],
+            "mean": 68.28100500000001,
+            "sample_std": 0.6567930375308538
+          },
+          "milestones": {
+            "20000": {
+              "values": [
+                56.869495,
+                59.115952,
+                61.890501
+              ],
+              "mean": 59.29198266666667,
+              "sample_std": 2.5151273148121813
+            },
+            "40000": {
+              "values": [
+                62.359279,
+                55.225861,
+                63.001603
+              ],
+              "mean": 60.195581000000004,
+              "sample_std": 4.315869864702132
+            },
+            "60000": {
+              "values": [
+                65.753555,
+                66.291106,
+                67.096633
+              ],
+              "mean": 66.38043133333333,
+              "sample_std": 0.6759799478552065
+            },
+            "80000": {
+              "values": [
+                67.800862,
+                68.012673,
+                69.02948
+              ],
+              "mean": 68.28100500000001,
+              "sample_std": 0.6567930375308538
+            }
+          }
+        },
+        "1.5": {
+          "final": {
+            "values": [
+              69.165152,
+              68.912899,
+              69.320095
+            ],
+            "mean": 69.13271533333334,
+            "sample_std": 0.20552675887176705
+          },
+          "milestones": {
+            "20000": {
+              "values": [
+                59.353191,
+                58.979142,
+                62.498707
+              ],
+              "mean": 60.277013333333336,
+              "sample_std": 1.9331115397152678
+            },
+            "40000": {
+              "values": [
+                61.694688,
+                60.132855,
+                63.843375
+              ],
+              "mean": 61.890306,
+              "sample_std": 1.8629786550154044
+            },
+            "60000": {
+              "values": [
+                67.097867,
+                65.769517,
+                67.157447
+              ],
+              "mean": 66.67494366666666,
+              "sample_std": 0.7846881741388352
+            },
+            "80000": {
+              "values": [
+                69.165152,
+                68.912899,
+                69.320095
+              ],
+              "mean": 69.13271533333334,
+              "sample_std": 0.20552675887176705
+            }
+          }
+        },
+        "2.0": {
+          "final": {
+            "values": [
+              69.335973,
+              68.994683,
+              69.586152
+            ],
+            "mean": 69.30560266666666,
+            "sample_std": 0.29690177222498076
+          },
+          "milestones": {
+            "20000": {
+              "values": [
+                60.939342,
+                61.017811,
+                62.53199
+              ],
+              "mean": 61.496381,
+              "sample_std": 0.8977214749859768
+            },
+            "40000": {
+              "values": [
+                65.211493,
+                62.209457,
+                63.585877
+              ],
+              "mean": 63.668942333333334,
+              "sample_std": 1.5027408038398833
+            },
+            "60000": {
+              "values": [
+                66.531247,
+                66.855758,
+                67.727947
+              ],
+              "mean": 67.03831733333332,
+              "sample_std": 0.6188850096264555
+            },
+            "80000": {
+              "values": [
+                69.335973,
+                68.994683,
+                69.586152
+              ],
+              "mean": 69.30560266666666,
+              "sample_std": 0.29690177222498076
+            }
+          }
+        }
+      },
+      "mean_winner": "2.0",
+      "mean_winner_miou_percent": 69.30560266666666,
+      "delta_miou_pp": 0.2,
+      "delta_optimal_grid_set": [
+        "1.5",
+        "2.0"
+      ],
+      "per_seed_winners": {
+        "1234": "0.25",
+        "2025": "0.5",
+        "3407": "2.0"
+      }
+    },
+    "phase2_gate": {
+      "required": false,
+      "reason": "coarse_grid_does_not_identify_an_unresolved_candidate_peak_inside_0p5_to_1p5",
+      "interior_near_optimal_points": [
+        "1.5"
+      ]
+    }
+  },
+  "phase2_status": "not_required",
+  "runs": {
+    "1234": {
+      "0.25": {
+        "variant": "fixed_T0p25_80k_seed1234",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 90.256314,
+            "miou_percent": 59.62289
+          },
+          "40000": {
+            "pixacc_percent": 90.789426,
+            "miou_percent": 61.924523
+          },
+          "60000": {
+            "pixacc_percent": 92.239994,
+            "miou_percent": 67.492074
+          },
+          "80000": {
+            "pixacc_percent": 92.644383,
+            "miou_percent": 69.480413
+          }
+        },
+        "best_observed_miou_percent": 69.480413,
+        "final_miou_percent": 69.480413,
+        "final_pixacc_percent": 92.644383,
+        "training_time": "13:43:49.264876",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p25_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed1234/training_state_latest.pth"
+      },
+      "0.5": {
+        "variant": "fixed_T0p5_80k_seed1234",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 90.377705,
+            "miou_percent": 59.929723
+          },
+          "40000": {
+            "pixacc_percent": 90.143427,
+            "miou_percent": 60.579044
+          },
+          "60000": {
+            "pixacc_percent": 92.233316,
+            "miou_percent": 67.794269
+          },
+          "80000": {
+            "pixacc_percent": 92.578093,
+            "miou_percent": 68.759316
+          }
+        },
+        "best_observed_miou_percent": 68.759316,
+        "final_miou_percent": 68.759316,
+        "final_pixacc_percent": 92.578093,
+        "training_time": "16:52:33.772273",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p5_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed1234/training_state_latest.pth"
+      },
+      "1.0": {
+        "variant": "fixed_T1p0_80k_seed1234",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 89.645341,
+            "miou_percent": 56.869495
+          },
+          "40000": {
+            "pixacc_percent": 90.831698,
+            "miou_percent": 62.359279
+          },
+          "60000": {
+            "pixacc_percent": 91.856583,
+            "miou_percent": 65.753555
+          },
+          "80000": {
+            "pixacc_percent": 92.295698,
+            "miou_percent": 67.800862
+          }
+        },
+        "best_observed_miou_percent": 67.800862,
+        "final_miou_percent": 67.800862,
+        "final_pixacc_percent": 92.295698,
+        "training_time": "16:34:32.405806",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p0_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed1234/training_state_latest.pth"
+      },
+      "1.5": {
+        "variant": "fixed_T1p5_80k_seed1234",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 90.187252,
+            "miou_percent": 59.353191
+          },
+          "40000": {
+            "pixacc_percent": 90.682643,
+            "miou_percent": 61.694688
+          },
+          "60000": {
+            "pixacc_percent": 92.024603,
+            "miou_percent": 67.097867
+          },
+          "80000": {
+            "pixacc_percent": 92.602439,
+            "miou_percent": 69.165152
+          }
+        },
+        "best_observed_miou_percent": 69.165152,
+        "final_miou_percent": 69.165152,
+        "final_pixacc_percent": 92.602439,
+        "training_time": "11:43:14.841259",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p5_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed1234/training_state_latest.pth"
+      },
+      "2.0": {
+        "variant": "fixed_T2p0_80k_seed1234",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 90.542917,
+            "miou_percent": 60.939342
+          },
+          "40000": {
+            "pixacc_percent": 91.467589,
+            "miou_percent": 65.211493
+          },
+          "60000": {
+            "pixacc_percent": 91.821841,
+            "miou_percent": 66.531247
+          },
+          "80000": {
+            "pixacc_percent": 92.637741,
+            "miou_percent": 69.335973
+          }
+        },
+        "best_observed_miou_percent": 69.335973,
+        "final_miou_percent": 69.335973,
+        "final_pixacc_percent": 92.637741,
+        "training_time": "10:27:01.122949",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T2p0_80k_seed1234/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed1234/training_state_latest.pth"
+      }
+    },
+    "2025": {
+      "0.25": {
+        "variant": "fixed_T0p25_80k_seed2025",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 89.911134,
+            "miou_percent": 58.26723
+          },
+          "40000": {
+            "pixacc_percent": 90.798932,
+            "miou_percent": 63.677323
+          },
+          "60000": {
+            "pixacc_percent": 91.771337,
+            "miou_percent": 65.159625
+          },
+          "80000": {
+            "pixacc_percent": 92.603017,
+            "miou_percent": 68.664455
+          }
+        },
+        "best_observed_miou_percent": 68.664455,
+        "final_miou_percent": 68.664455,
+        "final_pixacc_percent": 92.603017,
+        "training_time": "13:41:54.365973",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p25_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed2025/training_state_latest.pth"
+      },
+      "0.5": {
+        "variant": "fixed_T0p5_80k_seed2025",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 90.738842,
+            "miou_percent": 61.789423
+          },
+          "40000": {
+            "pixacc_percent": 90.209099,
+            "miou_percent": 60.922652
+          },
+          "60000": {
+            "pixacc_percent": 91.733834,
+            "miou_percent": 65.82191
+          },
+          "80000": {
+            "pixacc_percent": 92.599474,
+            "miou_percent": 69.214028
+          }
+        },
+        "best_observed_miou_percent": 69.214028,
+        "final_miou_percent": 69.214028,
+        "final_pixacc_percent": 92.599474,
+        "training_time": "16:38:25.320302",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p5_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed2025/training_state_latest.pth"
+      },
+      "1.0": {
+        "variant": "fixed_T1p0_80k_seed2025",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 89.956797,
+            "miou_percent": 59.115952
+          },
+          "40000": {
+            "pixacc_percent": 88.72836,
+            "miou_percent": 55.225861
+          },
+          "60000": {
+            "pixacc_percent": 91.87701,
+            "miou_percent": 66.291106
+          },
+          "80000": {
+            "pixacc_percent": 92.332796,
+            "miou_percent": 68.012673
+          }
+        },
+        "best_observed_miou_percent": 68.012673,
+        "final_miou_percent": 68.012673,
+        "final_pixacc_percent": 92.332796,
+        "training_time": "16:41:12.289936",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p0_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed2025/training_state_latest.pth"
+      },
+      "1.5": {
+        "variant": "fixed_T1p5_80k_seed2025",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 89.937538,
+            "miou_percent": 58.979142
+          },
+          "40000": {
+            "pixacc_percent": 89.972849,
+            "miou_percent": 60.132855
+          },
+          "60000": {
+            "pixacc_percent": 91.750507,
+            "miou_percent": 65.769517
+          },
+          "80000": {
+            "pixacc_percent": 92.395948,
+            "miou_percent": 68.912899
+          }
+        },
+        "best_observed_miou_percent": 68.912899,
+        "final_miou_percent": 68.912899,
+        "final_pixacc_percent": 92.395948,
+        "training_time": "11:47:41.404171",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p5_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed2025/training_state_latest.pth"
+      },
+      "2.0": {
+        "variant": "fixed_T2p0_80k_seed2025",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 90.291515,
+            "miou_percent": 61.017811
+          },
+          "40000": {
+            "pixacc_percent": 90.370608,
+            "miou_percent": 62.209457
+          },
+          "60000": {
+            "pixacc_percent": 91.978389,
+            "miou_percent": 66.855758
+          },
+          "80000": {
+            "pixacc_percent": 92.527855,
+            "miou_percent": 68.994683
+          }
+        },
+        "best_observed_miou_percent": 68.994683,
+        "final_miou_percent": 68.994683,
+        "final_pixacc_percent": 92.527855,
+        "training_time": "10:27:18.879376",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T2p0_80k_seed2025/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed2025/training_state_latest.pth"
+      }
+    },
+    "3407": {
+      "0.25": {
+        "variant": "fixed_T0p25_80k_seed3407",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 91.000455,
+            "miou_percent": 62.363464
+          },
+          "40000": {
+            "pixacc_percent": 90.994414,
+            "miou_percent": 62.869537
+          },
+          "60000": {
+            "pixacc_percent": 92.254297,
+            "miou_percent": 67.041171
+          },
+          "80000": {
+            "pixacc_percent": 92.509384,
+            "miou_percent": 68.4623
+          }
+        },
+        "best_observed_miou_percent": 68.4623,
+        "final_miou_percent": 68.4623,
+        "final_pixacc_percent": 92.509384,
+        "training_time": "14:24:14.595113",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p25_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed3407/training_state_latest.pth"
+      },
+      "0.5": {
+        "variant": "fixed_T0p5_80k_seed3407",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 90.320084,
+            "miou_percent": 60.983914
+          },
+          "40000": {
+            "pixacc_percent": 90.771385,
+            "miou_percent": 61.737239
+          },
+          "60000": {
+            "pixacc_percent": 92.167217,
+            "miou_percent": 67.244428
+          },
+          "80000": {
+            "pixacc_percent": 92.346626,
+            "miou_percent": 68.115371
+          }
+        },
+        "best_observed_miou_percent": 68.115371,
+        "final_miou_percent": 68.115371,
+        "final_pixacc_percent": 92.346626,
+        "training_time": "15:55:21.377965",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T0p5_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed3407/training_state_latest.pth"
+      },
+      "1.0": {
+        "variant": "fixed_T1p0_80k_seed3407",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 90.80529,
+            "miou_percent": 61.890501
+          },
+          "40000": {
+            "pixacc_percent": 91.029453,
+            "miou_percent": 63.001603
+          },
+          "60000": {
+            "pixacc_percent": 92.074525,
+            "miou_percent": 67.096633
+          },
+          "80000": {
+            "pixacc_percent": 92.604213,
+            "miou_percent": 69.02948
+          }
+        },
+        "best_observed_miou_percent": 69.02948,
+        "final_miou_percent": 69.02948,
+        "final_pixacc_percent": 92.604213,
+        "training_time": "11:27:09.515017",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p0_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed3407/training_state_latest.pth"
+      },
+      "1.5": {
+        "variant": "fixed_T1p5_80k_seed3407",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 91.015049,
+            "miou_percent": 62.498707
+          },
+          "40000": {
+            "pixacc_percent": 91.050041,
+            "miou_percent": 63.843375
+          },
+          "60000": {
+            "pixacc_percent": 92.060082,
+            "miou_percent": 67.157447
+          },
+          "80000": {
+            "pixacc_percent": 92.499731,
+            "miou_percent": 69.320095
+          }
+        },
+        "best_observed_miou_percent": 69.320095,
+        "final_miou_percent": 69.320095,
+        "final_pixacc_percent": 92.499731,
+        "training_time": "10:27:26.111484",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T1p5_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed3407/training_state_latest.pth"
+      },
+      "2.0": {
+        "variant": "fixed_T2p0_80k_seed3407",
+        "trajectory": {
+          "20000": {
+            "pixacc_percent": 90.723336,
+            "miou_percent": 62.53199
+          },
+          "40000": {
+            "pixacc_percent": 90.94296,
+            "miou_percent": 63.585877
+          },
+          "60000": {
+            "pixacc_percent": 92.201586,
+            "miou_percent": 67.727947
+          },
+          "80000": {
+            "pixacc_percent": 92.538265,
+            "miou_percent": 69.586152
+          }
+        },
+        "best_observed_miou_percent": 69.586152,
+        "final_miou_percent": 69.586152,
+        "final_pixacc_percent": 92.538265,
+        "training_time": "13:04:42.975394",
+        "contract_pass": true,
+        "log_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/logs/fixed_T2p0_80k_seed3407/deeplabv3_mobilenet_ssseg_resnet101_mobilenetv3_large_log.txt",
+        "checkpoint_path": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed3407/training_state_latest.pth"
+      }
+    }
+  },
+  "final_grid_temperatures": [
+    "0.25",
+    "0.5",
+    "1.0",
+    "1.5",
+    "2.0"
+  ],
+  "final_summary": {
+    "temperature_summaries": {
+      "0.25": {
+        "final": {
+          "values": [
+            69.480413,
+            68.664455,
+            68.4623
+          ],
+          "mean": 68.869056,
+          "sample_std": 0.5390127058734319
+        },
+        "milestones": {
+          "20000": {
+            "values": [
+              59.62289,
+              58.26723,
+              62.363464
+            ],
+            "mean": 60.084528,
+            "sample_std": 2.0867715442692822
+          },
+          "40000": {
+            "values": [
+              61.924523,
+              63.677323,
+              62.869537
+            ],
+            "mean": 62.82379433333333,
+            "sample_std": 0.8772948499024338
+          },
+          "60000": {
+            "values": [
+              67.492074,
+              65.159625,
+              67.041171
+            ],
+            "mean": 66.56429,
+            "sample_std": 1.2371908504838682
+          },
+          "80000": {
+            "values": [
+              69.480413,
+              68.664455,
+              68.4623
+            ],
+            "mean": 68.869056,
+            "sample_std": 0.5390127058734319
+          }
+        }
+      },
+      "0.5": {
+        "final": {
+          "values": [
+            68.759316,
+            69.214028,
+            68.115371
+          ],
+          "mean": 68.69623833333333,
+          "sample_std": 0.5520379470075721
+        },
+        "milestones": {
+          "20000": {
+            "values": [
+              59.929723,
+              61.789423,
+              60.983914
+            ],
+            "mean": 60.90102,
+            "sample_std": 0.9326170617820567
+          },
+          "40000": {
+            "values": [
+              60.579044,
+              60.922652,
+              61.737239
+            ],
+            "mean": 61.079645,
+            "sample_std": 0.5948436904288387
+          },
+          "60000": {
+            "values": [
+              67.794269,
+              65.82191,
+              67.244428
+            ],
+            "mean": 66.95353566666667,
+            "sample_std": 1.0178476155173377
+          },
+          "80000": {
+            "values": [
+              68.759316,
+              69.214028,
+              68.115371
+            ],
+            "mean": 68.69623833333333,
+            "sample_std": 0.5520379470075721
+          }
+        }
+      },
+      "1.0": {
+        "final": {
+          "values": [
+            67.800862,
+            68.012673,
+            69.02948
+          ],
+          "mean": 68.28100500000001,
+          "sample_std": 0.6567930375308538
+        },
+        "milestones": {
+          "20000": {
+            "values": [
+              56.869495,
+              59.115952,
+              61.890501
+            ],
+            "mean": 59.29198266666667,
+            "sample_std": 2.5151273148121813
+          },
+          "40000": {
+            "values": [
+              62.359279,
+              55.225861,
+              63.001603
+            ],
+            "mean": 60.195581000000004,
+            "sample_std": 4.315869864702132
+          },
+          "60000": {
+            "values": [
+              65.753555,
+              66.291106,
+              67.096633
+            ],
+            "mean": 66.38043133333333,
+            "sample_std": 0.6759799478552065
+          },
+          "80000": {
+            "values": [
+              67.800862,
+              68.012673,
+              69.02948
+            ],
+            "mean": 68.28100500000001,
+            "sample_std": 0.6567930375308538
+          }
+        }
+      },
+      "1.5": {
+        "final": {
+          "values": [
+            69.165152,
+            68.912899,
+            69.320095
+          ],
+          "mean": 69.13271533333334,
+          "sample_std": 0.20552675887176705
+        },
+        "milestones": {
+          "20000": {
+            "values": [
+              59.353191,
+              58.979142,
+              62.498707
+            ],
+            "mean": 60.277013333333336,
+            "sample_std": 1.9331115397152678
+          },
+          "40000": {
+            "values": [
+              61.694688,
+              60.132855,
+              63.843375
+            ],
+            "mean": 61.890306,
+            "sample_std": 1.8629786550154044
+          },
+          "60000": {
+            "values": [
+              67.097867,
+              65.769517,
+              67.157447
+            ],
+            "mean": 66.67494366666666,
+            "sample_std": 0.7846881741388352
+          },
+          "80000": {
+            "values": [
+              69.165152,
+              68.912899,
+              69.320095
+            ],
+            "mean": 69.13271533333334,
+            "sample_std": 0.20552675887176705
+          }
+        }
+      },
+      "2.0": {
+        "final": {
+          "values": [
+            69.335973,
+            68.994683,
+            69.586152
+          ],
+          "mean": 69.30560266666666,
+          "sample_std": 0.29690177222498076
+        },
+        "milestones": {
+          "20000": {
+            "values": [
+              60.939342,
+              61.017811,
+              62.53199
+            ],
+            "mean": 61.496381,
+            "sample_std": 0.8977214749859768
+          },
+          "40000": {
+            "values": [
+              65.211493,
+              62.209457,
+              63.585877
+            ],
+            "mean": 63.668942333333334,
+            "sample_std": 1.5027408038398833
+          },
+          "60000": {
+            "values": [
+              66.531247,
+              66.855758,
+              67.727947
+            ],
+            "mean": 67.03831733333332,
+            "sample_std": 0.6188850096264555
+          },
+          "80000": {
+            "values": [
+              69.335973,
+              68.994683,
+              69.586152
+            ],
+            "mean": 69.30560266666666,
+            "sample_std": 0.29690177222498076
+          }
+        }
+      }
+    },
+    "mean_winner": "2.0",
+    "mean_winner_miou_percent": 69.30560266666666,
+    "delta_miou_pp": 0.2,
+    "delta_optimal_grid_set": [
+      "1.5",
+      "2.0"
+    ],
+    "per_seed_winners": {
+      "1234": "0.25",
+      "2025": "0.5",
+      "3407": "2.0"
+    }
+  },
+  "identifiability_case": "result_A_no_unique_reproducible_grid_winner",
+  "covar_coordinates": {
+    "0.25": {
+      "r_c_mean": 0.005927385803266734,
+      "r_v_mean": 0.04594439932666535,
+      "r_mean": 0.051871785128482735
+    },
+    "0.5": {
+      "r_c_mean": 0.012145203743161114,
+      "r_v_mean": 0.09122689765097029,
+      "r_mean": 0.10337210139490154
+    },
+    "1.0": {
+      "r_c_mean": 0.026652497880057753,
+      "r_v_mean": 0.17995524995361412,
+      "r_mean": 0.20660774783141622
+    },
+    "1.5": {
+      "r_c_mean": 0.05083644645187705,
+      "r_v_mean": 0.24305592402825457,
+      "r_mean": 0.2938923704797309
+    },
+    "2.0": {
+      "r_c_mean": 0.10225264746011026,
+      "r_v_mean": 0.25113332857493886,
+      "r_mean": 0.3533859760365425
+    }
+  },
+  "cross_pair_comparison": {
+    "pair1_mean_winner": "1.5",
+    "pair1_delta_optimal_grid_set": [
+      "0.5",
+      "1.5"
+    ],
+    "pair2_mean_winner": "2.0",
+    "pair2_delta_optimal_grid_set": [
+      "1.5",
+      "2.0"
+    ],
+    "mean_winners_differ": true,
+    "exact_near_optimal_covar_grid_overlap": [
+      "1.5"
+    ],
+    "note": "Exact shared temperature points imply identical teacher CoVar coordinates because the teacher and analysis protocol are fixed; no unregistered distance threshold is introduced.",
+    "capacity_effect_identifiable_against_p7": false,
+    "transfer_rule_validated": false,
+    "different_winners_with_covar_overlap": true,
+    "interpretation": "student_capacity_and_execution_protocol_both_differ_from_p7"
+  },
+  "runtime_protocol": {
+    "recorded_at": "2026-09-16T13:11:11.951713+00:00",
+    "execution_profile": "single_gpu",
+    "user_approved_deviation_from_p7": true,
+    "strict_p7_pairing": false,
+    "world_size": 1,
+    "gpu": "NVIDIA H20-3e",
+    "python": "3.10.20",
+    "torch": "2.0.1+cu118",
+    "cuda": "11.8",
+    "cudnn": 8700,
+    "numpy": "1.24.4",
+    "opencv": "4.8.0",
+    "python_executable": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/../env/bin/python",
+    "seeds": [
+      1234,
+      2025,
+      3407
+    ],
+    "iterations": 80000,
+    "milestones": [
+      20000,
+      40000,
+      60000,
+      80000
+    ],
+    "optimizer": {
+      "name": "SGD",
+      "lr": 0.02,
+      "momentum": 0.9,
+      "weight_decay": 0.0001
+    },
+    "schedule": "existing train_kd.py poly schedule",
+    "global_batch_size": 16,
+    "crop_size": [
+      512,
+      512
+    ],
+    "workers": 4,
+    "student_initialization": "ImageNet backbone plus fresh segmentation head for every run",
+    "teacher": "DeepLabV3-ResNet101",
+    "ce_student": "MobileNetV3-Small",
+    "second_student": "MobileNetV3-Large",
+    "augmentation": "original VOC random scale 0.5:0.1:2.0, random crop and mirror",
+    "ce_runs": 0,
+    "stage1_kd_runs": 15,
+    "conditional_stage2_kd_runs": 6,
+    "stage1_temperatures": [
+      "0.25",
+      "0.5",
+      "1.0",
+      "1.5",
+      "2.0"
+    ],
+    "conditional_temperatures": [
+      "0.75",
+      "1.25"
+    ],
+    "near_optimal_delta_pp": 0.2,
+    "protocol_differences": [
+      "Head SyncBatchNorm becomes BatchNorm; backbone local batch changes from 8 to 16.",
+      "RandomSampler replaces DistributedSampler; rank/worker random streams differ.",
+      "Single-rank validation uses each image once; the legacy two-rank sampler pads the odd-sized split.",
+      "The original P7 logs do not establish that their software versions match this runtime."
+    ],
+    "sha256": {
+      "data/winycg/cirkd/teachers/deeplabv3_resnet101_voc_best_model.pth": "ac49b2c7720b21d565072e974e4404fcb009ba106288d95d1a4bb25f09c3fe58",
+      "data/winycg/imagenet_pretrained/mobilenet_v3_small-47085aa1.pth": "47085aa164b2977003221458a2a5fdf5f46f434f5539b164dc71969b4dd4cd75",
+      "data/winycg/imagenet_pretrained/mobilenet_v3_large-bc2c3fd3.pth": "bc2c3fd391519fcd987035145d1aa407431051b7f2391db663feb2bc4a9d7c1a",
+      "train_kd.py": "4afb177d613a175881dedf26d622a3161ef660ae74a596241863a84473fc2c73",
+      "dataset/voc.py": "6349da2dd2e5a8ca5173509fe4f8112788c9fb7cae98f50ae6448d52d4fe5863",
+      "utils/distributed.py": "e85e5566f000134aa178503b62087ae84810fdd61ae5ac54b3f7483b0cf4e740",
+      "models/deeplabv3_mobilenetv3.py": "a360e50c5c998c8edcae627bf07aa4883978fa379a7e728d63b7a86a30e30434",
+      "models/base_models/mobilenetv3.py": "35754d04e0b27a5061fc7c554374797563774375bcc13223d14899450529c73f",
+      "scripts/experiments/covar_match/run_p8_p9_single_gpu.py": "2691a8a174c442a5af806228b0fe6d122e3058296ef9636d4b553b85caf8e73c",
+      "scripts/experiments/covar_match/run_p9_h20.py": "b0236bab811c203747327ef57fe7dbc3be866e11b04187ab86564e2c15560cf9",
+      "scripts/diagnostics/summarize_p8_p9_experiments.py": "62ab4acf17126f0a9ac0e9cd2768f21adb236b116172817c616e993405b732d1"
+    },
+    "cohort": "P9_h20",
+    "smoke": false,
+    "seed_gpu_mapping": {
+      "1234": 6,
+      "2025": 7,
+      "3407": 6
+    },
+    "selected_gpus": {
+      "6": [
+        "6",
+        " GPU-77258994-3fc6-0c03-190f-ae3a88268bd8",
+        " NVIDIA H20-3e",
+        " 0",
+        " 0"
+      ],
+      "7": [
+        "7",
+        " GPU-9d35dccc-6a75-6770-2f1a-34df630d7d59",
+        " NVIDIA H20-3e",
+        " 0",
+        " 0"
+      ]
+    },
+    "legacy_h100_results_pooled": false,
+    "runtime_changes_from_h100": {
+      "gpu": {
+        "reference": "NVIDIA H100 80GB HBM3",
+        "current": "NVIDIA H20-3e"
+      },
+      "python": {
+        "reference": "3.10.14",
+        "current": "3.10.20"
+      },
+      "torch": {
+        "reference": "2.2.2",
+        "current": "2.0.1+cu118"
+      },
+      "cuda": {
+        "reference": "12.1",
+        "current": "11.8"
+      },
+      "cudnn": {
+        "reference": 8902,
+        "current": 8700
+      },
+      "numpy": {
+        "reference": "1.26.4",
+        "current": "1.24.4"
+      },
+      "opencv": {
+        "reference": "4.7.0",
+        "current": "4.8.0"
+      }
+    },
+    "initialization": "fresh ImageNet backbone and same-seed head for each temperature",
+    "cross_pair_scope": "P7 differs in student capacity, execution and unverified software; capacity effect is not isolated"
+  },
+  "per_seed_delta_optimal_grid_sets": {
+    "1234": [
+      "0.25",
+      "2.0"
+    ],
+    "2025": [
+      "0.5"
+    ],
+    "3407": [
+      "2.0"
+    ]
+  },
+  "paired_mean_winner_minus_temperature_pp": {
+    "0.25": [
+      -0.144440000000003,
+      0.3302279999999911,
+      1.1238519999999994
+    ],
+    "0.5": [
+      0.5766569999999973,
+      -0.21934500000000412,
+      1.4707810000000023
+    ],
+    "1.0": [
+      1.5351110000000006,
+      0.9820099999999883,
+      0.5566719999999918
+    ],
+    "1.5": [
+      0.17082099999998945,
+      0.08178399999999897,
+      0.26605700000000354
+    ],
+    "2.0": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+}

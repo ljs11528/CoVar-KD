@@ -1,0 +1,7 @@
+{
+  "required": false,
+  "reason": "coarse_grid_does_not_identify_an_unresolved_candidate_peak_inside_0p5_to_1p5",
+  "interior_near_optimal_points": [
+    "1.5"
+  ]
+}

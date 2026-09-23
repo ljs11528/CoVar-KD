@@ -1,6 +1,6 @@
 # 第二教师—学生模型对：H20 实验批次
 
-2026-09-16 21:11（北京时间）已启动第一阶段。当前尚无完整 80k run，不报告温度赢家或 A/B/C 结论。
+2026-09-16 21:11（北京时间）启动，2026-09-22 11:52 完成：15/15 条均为完整 80k，预设规则判定无需补点。最终均值最高点为 T=2.0（69.305603%），δ=0.2 pp 近优集合为 {1.5, 2.0}。详见[最终结果报告](final_report.md)和[完整性核验](completion_audit.json)。下文保留启动协议及执行记录。
 
 Teacher 为 DeepLabV3-ResNet101，student 为 DeepLabV3-MobileNetV3-Large；原 P7 student 为 MobileNetV3-Small。主问题是该模型对在 VOC dense prediction 上的温度响应、近优集合和逐 seed 排名是否稳定。
 
@@ -47,11 +47,11 @@ P7 为双卡 DDP，本批次为单卡，存在 head SyncBN→BN、backbone 本�
 ```bash
 cd /home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2
 source ../env/bin/activate
-# 当前队列已运行，请勿重复启动。
+# 本批次已完成，请勿重复启动。
 # 本批次的启动命令：
 python -B -u scripts/experiments/covar_match/run_p9_h20.py --gpus 6 7
 ```
 
-控制进程位于 tmux 会话 `covar-p9-h20`。状态与日志为 `runs/covar_match/P9_h20/runtime/`，训练产物为 `runs/covar_match/P9_pair2_temperature_response_h20/`。启动时控制器 PID 为 1895621；后续判断进程时需同时核对 cwd 与命令。
+控制队列曾运行于 tmux 会话 `covar-p9-h20`，完成后已退出，状态为 COMPLETE。状态与日志为 `runs/covar_match/P9_h20/runtime/`，训练产物为 `runs/covar_match/P9_pair2_temperature_response_h20/`。启动时控制器 PID 为 1895621，仅作历史记录。
 
-本机报告下载目录：`/Users/ljs/research_2026/covar_kd_2026/remote/downloads/P9_h20/`。代码和报告提交到 `codex/p8-p9-single-gpu`。阶段完成后核验、下载并更新 GitHub；未完整完成的 run 不进入最终统计。
+本机报告下载目录：`/Users/ljs/research_2026/covar_kd_2026/remote/downloads/P9_h20/`。代码和报告提交到 `codex/p8-p9-single-gpu`。2026-09-23 已完成 15 条训练、60 个验证点和 75 份状态的独立核验，并重算最终统计；所有正式 run 均完整，无中断 run 被纳入统计。

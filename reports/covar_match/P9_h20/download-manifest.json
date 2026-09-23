@@ -1,0 +1,74 @@
+{
+  "created_at": "2026-09-23T13:30:46.923098+00:00",
+  "source": "lyf_H200_141G:/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/reports/covar_match/P9_h20",
+  "files": {
+    "P9_stage1.csv": {
+      "sha256": "e77509463d813d0d9d49f7424bf98f15f82aeca66b665503fde995c871d4006a",
+      "bytes": 2896
+    },
+    "P9_stage1.json": {
+      "sha256": "1fdca33f8a3e4228ac1c6fb566a731fdb7f88b1efca165483a0b7a6003866cad",
+      "bytes": 57636
+    },
+    "P9_stage1.md": {
+      "sha256": "c69ef2507d6efa6a1fd576a4e6a7acf522be0a531a01284e65f41ce27bf66b43",
+      "bytes": 4327
+    },
+    "P9_temperature.csv": {
+      "sha256": "e77509463d813d0d9d49f7424bf98f15f82aeca66b665503fde995c871d4006a",
+      "bytes": 2896
+    },
+    "P9_temperature.json": {
+      "sha256": "1fdca33f8a3e4228ac1c6fb566a731fdb7f88b1efca165483a0b7a6003866cad",
+      "bytes": 57636
+    },
+    "P9_temperature.md": {
+      "sha256": "c69ef2507d6efa6a1fd576a4e6a7acf522be0a531a01284e65f41ce27bf66b43",
+      "bytes": 4327
+    },
+    "completion_audit.json": {
+      "sha256": "6866388b2c8ab029c1a4bc14a7568714b9d0019fec1e770992da8c836e4ebc9b",
+      "bytes": 36793
+    },
+    "environment-freeze.txt": {
+      "sha256": "26d2bef980a9e08ff8fe0563e1901ab01107fe8d393860c5b1f2c1e5e685a1bc",
+      "bytes": 4394
+    },
+    "execution.md": {
+      "sha256": "cd01bb6898ff9567de6c040963cfdbdeaa9afbe0ca237222bb92164dc62affc8",
+      "bytes": 5120
+    },
+    "final_report.md": {
+      "sha256": "ed0d59d8a2f79efb0005d3895661fd0b5f596dc024b4f138aa999ea0eb38b16f",
+      "bytes": 5168
+    },
+    "protocol.json": {
+      "sha256": "2ab2719058cb779799956e934284dec58aab0762bd19f932f212fb4f42e65354",
+      "bytes": 4292
+    },
+    "stage2_decision.json": {
+      "sha256": "ebcb250fae74a1953268a756c0777fea2b89fe469b80f11f0e8a51dbb7111726",
+      "bytes": 167
+    },
+    "temperature_response.pdf": {
+      "sha256": "f5e913e8bf93a923084cf434e0a80c98453f89f79e6609518a13d878385247d3",
+      "bytes": 27428
+    },
+    "temperature_response.png": {
+      "sha256": "8056a057d0d2db61a81185c3d31d2bcc9b9b35e6953acbed5c26c250abfb264d",
+      "bytes": 230934
+    },
+    "validation_checks.json": {
+      "sha256": "21b0cf881b02ad1563f5844c4ca292db49c0b5c51016b0f8beaa212a4647f72f",
+      "bytes": 4394
+    },
+    "validation_trajectories.pdf": {
+      "sha256": "5cb6adbf835589f70cd7ca6662193d351c31ff7d9ba0ae9848f15322762a4362",
+      "bytes": 22888
+    },
+    "validation_trajectories.png": {
+      "sha256": "9787b72364dc955406fed08a1e86f72825fdfc847e57f2894b74da018acfc1f0",
+      "bytes": 188253
+    }
+  }
+}

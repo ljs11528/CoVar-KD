@@ -1,0 +1,747 @@
+{
+  "audited_at": "2026-09-23T13:25:10.917474+00:00",
+  "cohort": "P9_h20",
+  "status": "PASS",
+  "completed_runs": 15,
+  "milestone_checkpoints_checked": 60,
+  "latest_checkpoints_checked": 15,
+  "raw_validation_points_checked": 60,
+  "csv_rows_checked": 60,
+  "locked_sha256": {
+    "data/winycg/cirkd/teachers/deeplabv3_resnet101_voc_best_model.pth": "ac49b2c7720b21d565072e974e4404fcb009ba106288d95d1a4bb25f09c3fe58",
+    "data/winycg/imagenet_pretrained/mobilenet_v3_small-47085aa1.pth": "47085aa164b2977003221458a2a5fdf5f46f434f5539b164dc71969b4dd4cd75",
+    "data/winycg/imagenet_pretrained/mobilenet_v3_large-bc2c3fd3.pth": "bc2c3fd391519fcd987035145d1aa407431051b7f2391db663feb2bc4a9d7c1a",
+    "train_kd.py": "4afb177d613a175881dedf26d622a3161ef660ae74a596241863a84473fc2c73",
+    "dataset/voc.py": "6349da2dd2e5a8ca5173509fe4f8112788c9fb7cae98f50ae6448d52d4fe5863",
+    "utils/distributed.py": "e85e5566f000134aa178503b62087ae84810fdd61ae5ac54b3f7483b0cf4e740",
+    "models/deeplabv3_mobilenetv3.py": "a360e50c5c998c8edcae627bf07aa4883978fa379a7e728d63b7a86a30e30434",
+    "models/base_models/mobilenetv3.py": "35754d04e0b27a5061fc7c554374797563774375bcc13223d14899450529c73f",
+    "scripts/experiments/covar_match/run_p8_p9_single_gpu.py": "2691a8a174c442a5af806228b0fe6d122e3058296ef9636d4b553b85caf8e73c",
+    "scripts/experiments/covar_match/run_p9_h20.py": "b0236bab811c203747327ef57fe7dbc3be866e11b04187ab86564e2c15560cf9",
+    "scripts/diagnostics/summarize_p8_p9_experiments.py": "62ab4acf17126f0a9ac0e9cd2768f21adb236b116172817c616e993405b732d1"
+  },
+  "runs": {
+    "1234": {
+      "0.25": {
+        "contract_pass": true,
+        "final_miou_percent": 69.480413,
+        "log_sha256": "51789931f423d0caeef3fe9b6a584b99d49234005e79696a5d54db06097dcd62",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed1234/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "1a91280ea7d0004a6e8e140f48a3483a53f98f2b10346ac1e7ea64171f37cffe",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed1234/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "e0aed957d06e38a5e9dd25e94896ae6af79ec3a2e87d3e8d749071141b83d721",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed1234/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "a588f49541396e29ed07bfcf2dfd12d087acea6146beeaa20b1371909e036487",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed1234/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "d2b300103e39a0a282161ebe02980274390353f2eea2acf27b44f83b9afbe756",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed1234/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "6c9e9951b078d8fd803276f4270dfe6b38b3b101d07df107f31e5dd937093f21",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "0.5": {
+        "contract_pass": true,
+        "final_miou_percent": 68.759316,
+        "log_sha256": "39bd3a79faf255dd1ea438fde617cc8d99cb04732988bcf9472f3ac76f36e844",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed1234/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "f763c5d01fe48697df534ff11d3f14011857690d8987486795ff7175480da585",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed1234/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "02695a4b6d4ea0c83646d3fa6eb6457d3bd05135671c8ee1c066fbe7d7274d92",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed1234/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "2275f00a30b6cbc3fbacd33bd0ba36c7274ee411addcb9ef47e84c008502cd6f",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed1234/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "ae76d1919873c04283f60315230a3af76d16980d24d94f9ab28aa2a9efb3edc2",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed1234/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "6b0f24f3603fdeb4d5d265293596cbb0afac1febbc694f205b2224358bbeb623",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "1.0": {
+        "contract_pass": true,
+        "final_miou_percent": 67.800862,
+        "log_sha256": "658375709abbd1c8f730369c2644b65df969fb7b99793d37c053bba5881565c9",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed1234/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "86e88d76f1d263d1844d03def5e7cd2d63ca51fb056255cd0c350363825c4de2",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed1234/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "cd3fcccdba521ad64839d23e419e658551c896742c563a92ddff73dd8a427bf4",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed1234/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "f62bf1bf3b7155583c64a932075a938a3930e8cb61fae521c0d45a9e4ac5035b",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed1234/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "5b586ae6660eb1d4cdb450282c538b83e2e3d914b2b3da865ac4924cc1e584d7",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed1234/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "903c348ae8eba1309b2ee2736c47c039669ea1fd9c449ab4553780e10f89bce8",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "1.5": {
+        "contract_pass": true,
+        "final_miou_percent": 69.165152,
+        "log_sha256": "3ba99dc196e9b55ae6c1a7f9beb062345cff48e5764579cead7f17aafcdfa713",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed1234/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "b8abba3d76d0b6120a5452653d2df5d45c3f4c4096bd5b7ed6afd13cdd60936c",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed1234/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "7d0eaa1ff648ba6c761874e31f6a752ffd5f840b3d229736cba8a11db25d3f37",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed1234/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "58f78e32e5c72d8f93e1ebbbd51d2f36338e057e04282c99d50f998ec94df486",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed1234/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "9080464fc34e9dd93e4d906fc4cce74ef7965a5bcc18af22187b0a50e0081f01",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed1234/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "5afad9a2ecab49ffc8e7306f4f9511e5025c0a81482534493795d89ac96f76b1",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "2.0": {
+        "contract_pass": true,
+        "final_miou_percent": 69.335973,
+        "log_sha256": "9095caf7bf1faf85d2d7e4a597f4ec71b07f9cdd7e04c25d05f28abbc8fab479",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed1234/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "bd2afcaa4591cd76fb987e7d4b601774a475e00cd6f8cd43b12344a61e8a389b",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed1234/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "75c7666b530c38c81121bb0a68473b65ecd78f3ee9f19162df200adcddda75fe",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed1234/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "53f58f72ceaa467c2317b1f27c5cade696eab32a3d1bd6949304bd2c26942b72",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed1234/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "14c85d7ad29261d849135230b32638e001d31c0b39bbc40025a30671ac6216f8",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed1234/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "4917a7650753f9b31cd907cbfe1ccb63e404e5a71abf83905c921dedb7c2f304",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      }
+    },
+    "2025": {
+      "0.25": {
+        "contract_pass": true,
+        "final_miou_percent": 68.664455,
+        "log_sha256": "35ed30d86f5a44157ae7af41e34c2b32553a027da9220b77cb4addda36eb434b",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed2025/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "984a44d6071b2102cce1418ed49bc6eae29c5b35a61b3c2b40f39969d620df24",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed2025/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "3f76f0b8f4da61ca9396ce55d453f77c97cc1aaea8b614e37be837bc0d0a1eca",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed2025/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "8314183132307a3a0f187ec963069ec8bcb2d8b05aa3f720026e22297711c72a",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed2025/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "12effb1d53bc939f1fe139d3043b6760dddc149223d10b0087648c05fd0b2d16",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed2025/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "05cbe1de4931a8080cb83671fdd761bb49a643b91df14a5a6fd8841e8534d86c",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "0.5": {
+        "contract_pass": true,
+        "final_miou_percent": 69.214028,
+        "log_sha256": "156ea754d959784d63977bc9bd39f1b12f83d920ceafa2a4a4dec96a0a394ab1",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed2025/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "ec65b5eda25c2417ebb5d08f26d2ddbb155a4898c96d1edbf8b8cb69426b9a26",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed2025/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "fe98b83378156a82b41380ecdc938942cf9980da3f19a7d2c3969d508b8be361",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed2025/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "fa9c884123d41fda66f3af148150b0c70bb9ccbc25f8e8bf1ae98381840ddc89",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed2025/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "fdd2dce61260dc616cdb839cb23b096de2dd3385c0523355ab1c8e3991cbce69",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed2025/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "321a521d23e6246aa0a13ac24e5af207d5faf8a50d3379eed9477214579f981c",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "1.0": {
+        "contract_pass": true,
+        "final_miou_percent": 68.012673,
+        "log_sha256": "5ecff3dda34e87b067878ea590748b9e634810098753ccf859fb964f2a9522a2",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed2025/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "4d8df05897bef086d1a66a9de01c675732deecc6453426790e29af253ff2fe3c",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed2025/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "fda549ed12630d55a6040e02edf781132aa61e22eaf00f6ac184a863f0afe231",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed2025/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "711499516c8d81754031aa80d841cf8a6c404fd079728d1c2fe48daad35a7ec7",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed2025/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "32f983a8b57fedba1e0eac906302b2dae3f3ba0aabe5a0ffe2b5bcbdc915bb63",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed2025/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "2f2e6771b9dc7bf8082a9a0cea895f0d23196af416425cb1e015affdd4d001cf",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "1.5": {
+        "contract_pass": true,
+        "final_miou_percent": 68.912899,
+        "log_sha256": "157e0d3deebc2ad645f822ed7dec00a7e14049fcca326862cddf173316816bdb",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed2025/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "a8f302ad51d574ea564a3525f2c938629d6b791838ccbcbe01c0749bbeea8085",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed2025/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "4c73fc26a0169309ad28fc0a375a604e46242ed6f3b19854a41f7186f364c1f3",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed2025/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "3e2a4d699eaabc5f168351119634d79443936bb03caec3e41050293d9ca5df5b",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed2025/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "71ceef07ab849e3fb87fa85c3a307ea9d13a73f73ddad52772116a38b5599bba",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed2025/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "3c34f0f4fc0fbff735c4aa1e3804f9469c559c177bd7f6b841465573a4b38e77",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "2.0": {
+        "contract_pass": true,
+        "final_miou_percent": 68.994683,
+        "log_sha256": "fd4052770913bef480e1785f428d8b7732c7b93a6dde03ecd37eabb2c1ba7a9e",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed2025/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "b8a1fa24a6cca20f7ea49956ae5fe36f0d502aec7f8b9db7207a743deccb7164",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed2025/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "b80cb29007ad3f2d5f16a544f1cb33a94643e1f5401998c426282c8667bc7fa4",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed2025/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "b98bf26821b4e3f9f79bdbce9b8b7c2123a9c951048d3eef69e910deeacd8195",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed2025/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "4bddac48d13a2dc5189b5d6d0056bbb9f217f8e8aec0818fa715e2cfcaf48406",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed2025/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "e222abd31090b5fdd7284274e71a2bc98579460f5649e60eb44f6b129d36aab8",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      }
+    },
+    "3407": {
+      "0.25": {
+        "contract_pass": true,
+        "final_miou_percent": 68.4623,
+        "log_sha256": "6c8ecdf3a234535798217d8c7365b7c4e9090d19ee1274bffe2835b6cacbd4ff",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed3407/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "7188dceadbe70c8a8adcdbad56e602224c85fa60160d664ffb53bf6080cd9c59",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed3407/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "6ee1229906424e0bf2f46eb975ce68e79e30c9c3cc60a7d31bb88e9e64cc79aa",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed3407/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "2c942d022561196df2f384a1ffe23a5b0d58481f953d203032ef3a209f2f4bb5",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed3407/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "34618ebd3a70e740e6b9d8bf6c7d71cc0ba4dc1fe30b735ab6d56aea07422e3c",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p25_80k_seed3407/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "976ab5f85d83d1095ad8954396198bc90361c554cc8b4c2dfd2ee17f4ac3a3c1",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "0.5": {
+        "contract_pass": true,
+        "final_miou_percent": 68.115371,
+        "log_sha256": "3f9e1934d12ffc68b114977e138bd243354988cb70846c083c148e3d4c6dbc2d",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed3407/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "0a343cc26a40516299fbcabb15ab5a25de24bf56ebea9a7eaca3efc2384f9081",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed3407/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "e2ae70ad011fc6c5c6b17df1f90f966e844df2b6dc9767dee3e12193c886c0b5",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed3407/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "9bdeac7d879e42ae83c2dd95c553b75054bcbda5d591db276868352f65e20794",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed3407/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "8aa2a6fa804f3036b7076dfefb3dd95888478ad3a9c8d5676416f03c9bcf6e0e",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T0p5_80k_seed3407/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "b563d51b4c1f70944b6f07c96c120a7f2b7915e78cd2c28a5642b3669968b6e5",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "1.0": {
+        "contract_pass": true,
+        "final_miou_percent": 69.02948,
+        "log_sha256": "05df49ea47d227b91e88477846f5debe07a5b6c4f198a76c453396ba47af48c6",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed3407/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "bfa6a84fe34ec0ef78b75d91d37b7c8590388159542eee36ca22d346b85c254f",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed3407/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "8aa59fe53adb674f65b4e2769d10de3bded8373967da244e29d3a22acd612f39",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed3407/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "f6c0bdd3f795eac913d9234ca11b341b723d724d58ee298f8ff78c0a3611f2ba",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed3407/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "1b7062c80132b881ac8b1f7e295bd8fb4cf2a9dfc4a7518e6c5eb5c8d9daac61",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p0_80k_seed3407/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "58bfece782b0f20197469ed42887383198a3f3c068fecd2cb0ad598741d0d4c9",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "1.5": {
+        "contract_pass": true,
+        "final_miou_percent": 69.320095,
+        "log_sha256": "f6158fc79024d273495e494b79d21f735efbba2ef76aafbd04ab67a84bac9b12",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed3407/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "17b6d12fcaf887fa0c00dc2b9cb69d29c53e84a965bd15465aeb35404a59a4d2",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed3407/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "60886c42322d7d5620059ef6e8b887466587b6c9d559dc9440b49e1396225ae7",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed3407/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "28487e631d24e4e75f282b89b9642ed9f7c5e23b21cb74425e66f52fc3e8337e",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed3407/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "e0c99b961c27cafd03b9ef12064b117c25653931f142092860bdea9cecc8e3bf",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T1p5_80k_seed3407/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "fb176dc2e19fca470a77e71680e8f1ed10152c159316f75077c9b69c34656019",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      },
+      "2.0": {
+        "contract_pass": true,
+        "final_miou_percent": 69.586152,
+        "log_sha256": "62ee86cda92b3d4c4293d185acd2a8b61fac431a83f7697fad2af0b107ff3221",
+        "checkpoints": [
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed3407/training_state_iter020000.pth",
+            "iteration": 20000,
+            "sha256": "f777102f1a9c9f1609366586d1362a871f031f0f4aea50a8cd54fc05a8b31828",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed3407/training_state_iter040000.pth",
+            "iteration": 40000,
+            "sha256": "57c31d57500566ef90f7f99992067b408f45cce2c08a5d4d9304f8e31a9380a1",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed3407/training_state_iter060000.pth",
+            "iteration": 60000,
+            "sha256": "78682002e37d5e034f849672d193f84f49d125e70dd6c9ceb99f9231d58c01cf",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed3407/training_state_iter080000.pth",
+            "iteration": 80000,
+            "sha256": "86183aba618dc24d0936a15e1b8ce39f0f444cb17b4f1874877c8cc2524e4fae",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          },
+          {
+            "path": "runs/covar_match/P9_pair2_temperature_response_h20/checkpoints/fixed_T2p0_80k_seed3407/training_state_latest.pth",
+            "iteration": 80000,
+            "sha256": "8d5759f9bd7e9a8f0f302fdbf55c222250351cece4920ffc161c041c7b35d582",
+            "student_and_optimizer_tensors_finite": true,
+            "optimizer_and_rng_present": true
+          }
+        ]
+      }
+    }
+  },
+  "independently_recomputed_statistics": {
+    "0.25": {
+      "values": [
+        69.480413,
+        68.664455,
+        68.4623
+      ],
+      "mean": 68.869056,
+      "sample_std": 0.5390127058734319
+    },
+    "0.5": {
+      "values": [
+        68.759316,
+        69.214028,
+        68.115371
+      ],
+      "mean": 68.69623833333333,
+      "sample_std": 0.5520379470075721
+    },
+    "1.0": {
+      "values": [
+        67.800862,
+        68.012673,
+        69.02948
+      ],
+      "mean": 68.28100500000001,
+      "sample_std": 0.6567930375308538
+    },
+    "1.5": {
+      "values": [
+        69.165152,
+        68.912899,
+        69.320095
+      ],
+      "mean": 69.13271533333334,
+      "sample_std": 0.20552675887176705
+    },
+    "2.0": {
+      "values": [
+        69.335973,
+        68.994683,
+        69.586152
+      ],
+      "mean": 69.30560266666666,
+      "sample_std": 0.29690177222498076
+    }
+  },
+  "mean_winner": "2.0",
+  "delta_optimal_grid_set": [
+    "1.5",
+    "2.0"
+  ],
+  "per_seed_winners": {
+    "1234": "0.25",
+    "2025": "0.5",
+    "3407": "2.0"
+  },
+  "per_seed_delta_optimal_grid_sets": {
+    "1234": [
+      "0.25",
+      "2.0"
+    ],
+    "2025": [
+      "0.5"
+    ],
+    "3407": [
+      "2.0"
+    ]
+  },
+  "stage2_required": false,
+  "stage1_and_final_archives_identical": true,
+  "report_sha256": {
+    "P9_stage1.md": "c69ef2507d6efa6a1fd576a4e6a7acf522be0a531a01284e65f41ce27bf66b43",
+    "P9_temperature.md": "c69ef2507d6efa6a1fd576a4e6a7acf522be0a531a01284e65f41ce27bf66b43",
+    "protocol.json": "2ab2719058cb779799956e934284dec58aab0762bd19f932f212fb4f42e65354",
+    "stage2_decision.json": "ebcb250fae74a1953268a756c0777fea2b89fe469b80f11f0e8a51dbb7111726",
+    "validation_checks.json": "21b0cf881b02ad1563f5844c4ca292db49c0b5c51016b0f8beaa212a4647f72f",
+    "environment-freeze.txt": "26d2bef980a9e08ff8fe0563e1901ab01107fe8d393860c5b1f2c1e5e685a1bc",
+    "P9_temperature.csv": "e77509463d813d0d9d49f7424bf98f15f82aeca66b665503fde995c871d4006a",
+    "P9_stage1.csv": "e77509463d813d0d9d49f7424bf98f15f82aeca66b665503fde995c871d4006a",
+    "P9_temperature.json": "1fdca33f8a3e4228ac1c6fb566a731fdb7f88b1efca165483a0b7a6003866cad",
+    "P9_stage1.json": "1fdca33f8a3e4228ac1c6fb566a731fdb7f88b1efca165483a0b7a6003866cad",
+    "execution.md": "2f05379b732ab0a12d15a33126155a27420a05814f88fb24b63de07febc7fb80"
+  },
+  "p7_comparison_is_descriptive": true,
+  "report_hash_scope": "report_sha256 records the source-report snapshot before adding final narrative and figures; download-manifest.json records the delivered files."
+}
