@@ -1,18 +1,26 @@
 {
-  "created_at": "2026-09-27T00:43:04.144819+00:00",
-  "source": "lyf_H200_141G:/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/reports/covar_match/P10_h20",
+  "created_at": "2026-09-27T01:04:08.712724+00:00",
+  "source": "lyf_H200_141G:/data/lyf/common/covar_kd/CoVar-KD-pair2/reports/covar_match/P10_h20",
   "files": {
     "environment-freeze.txt": {
       "sha256": "052ff7c2649202bba0db644c2a96e186ec093e564e8055e42a5a06cd4cab5880",
       "bytes": 4461
     },
     "execution.md": {
-      "sha256": "35a383fd1722437d36e50c4c41caee1e5fb9bccaa34e6c07aaf2e510e5721d98",
-      "bytes": 1104
+      "sha256": "9e1b5ad20f850daf7b358e23104b1e0c5f6459a714864e75d599917657bd0d6c",
+      "bytes": 1377
     },
     "experiment_plan.md": {
       "sha256": "5120f914678a6dcfb48fad38f0304f60d8dc110516fd099f927b02a2d354942d",
       "bytes": 4093
+    },
+    "migration.json": {
+      "sha256": "b8cf596f5170544efccf3733b84b3e834a9345346387ede210e54bb48bee02e6",
+      "bytes": 2026
+    },
+    "migration.md": {
+      "sha256": "bc8c21ff93af5f87059ba3b27cd20d41b6cc36a0b3b6dcd886316c3e6a15d77e",
+      "bytes": 1951
     },
     "protocol.json": {
       "sha256": "91acacc23593fc12cf1d135d2841ffc0cda03425b9292c2801741fa5fc17ae26",

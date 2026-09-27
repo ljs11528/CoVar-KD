@@ -1,0 +1,52 @@
+{
+  "source": "/home/lyf/research_2026/covar_kd_2026",
+  "target": "/data/lyf/common/covar_kd",
+  "started_at": "2026-09-27T00:56:57.900739+00:00",
+  "pid": 3195156,
+  "stage": "COMPLETE",
+  "updated_at": "2026-09-27T01:04:08.712724+00:00",
+  "controller_stopped": true,
+  "checked_entries": 57000,
+  "checked_files": 56257,
+  "checked_bytes": 20704416882,
+  "source_entries": 57546,
+  "source_files": 56741,
+  "source_bytes": 20715698455,
+  "verified_files": 56741,
+  "verified_bytes": 20715698455,
+  "verified_entries": 57546,
+  "sha256_content_match": true,
+  "symlinks_and_modes_match": true,
+  "finished_copy_at": "2026-09-27T00:58:53.277666+00:00",
+  "cutover_at": "2026-09-27T01:00:15.225060+00:00",
+  "legacy_compatibility_symlink": "/home/lyf/research_2026/covar_kd_2026",
+  "legacy_target": "/data/lyf/common/covar_kd",
+  "source_backup": "/home/lyf/research_2026/covar_kd_2026.migrated-backup-20260927",
+  "internal_symlink_rewrites": [
+    {
+      "path": "CoVar-KD-pair2/data",
+      "old_target": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD/data",
+      "new_target": "../CoVar-KD/data"
+    },
+    {
+      "path": "CoVar-KD-pair2/dataset/VOCAug",
+      "old_target": "/home/lyf/research_2026/covar_kd_2026/CoVar-KD/dataset/VOCAug",
+      "new_target": "../../CoVar-KD/dataset/VOCAug"
+    }
+  ],
+  "runtime_revalidation": "PASS",
+  "cpu_regression_tests_passed": 58,
+  "cpu_regression_tests_failed": 0,
+  "runtime_checked_at": "2026-09-27T01:02:01.318405+00:00",
+  "source_backup_removed": true,
+  "queue_restart_at": "2026-09-27T01:02:04.113454+00:00",
+  "finished_at": "2026-09-27T01:04:08.712724+00:00",
+  "new_controller_pid": 3647218,
+  "new_controller_running": true,
+  "new_queue_status": "WAITING_GPU",
+  "canonical_project": "/data/lyf/common/covar_kd/CoVar-KD-pair2",
+  "canonical_python": "/data/lyf/common/covar_kd/env/bin/python",
+  "source_manifest_sha256": "b72f209b4a07a35eae4b09257473d93281934caf9e72ce1d0d4f4963cc9887d7",
+  "automation_id": "covar-kd-p10",
+  "automation_status": "ACTIVE"
+}

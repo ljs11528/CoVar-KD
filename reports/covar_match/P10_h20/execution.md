@@ -11,3 +11,7 @@
 - 基础实验24条，加最小2×2中三个新格子×三seed共9条，总计33条fresh80k。
 - 运行器按阶段产生报告并逐条审计检查点；最终报告和图表完成后下载、核验并推送指定分支。
 - 本记录是启动时快照。实时状态以远程 runs/covar_match/P10_h20/runtime/state.json 为准；启动记录不代表已完成训练。
+
+## 目录迁移
+
+2026-09-27 已迁移到 /data/lyf/common/covar_kd/CoVar-KD-pair2，环境为 /data/lyf/common/covar_kd/env/bin/python。上方启动记录为迁移前历史快照；当前路径、全量哈希核验和队列恢复信息见 [migration.md](migration.md)。
