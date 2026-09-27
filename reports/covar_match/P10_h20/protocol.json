@@ -1,0 +1,469 @@
+{
+  "cohort": "P10_h20",
+  "registered_at": "2026-09-27T00:38:39.867868+00:00",
+  "runtime": {
+    "python": "3.10.20",
+    "torch": "2.0.1+cu118",
+    "cuda": "11.8",
+    "cudnn": 8700,
+    "numpy": "1.24.4",
+    "opencv": "4.8.0"
+  },
+  "reference_cohort": "P9_h20",
+  "reference_sha256": "2ab2719058cb779799956e934284dec58aab0762bd19f932f212fb4f42e65354",
+  "reference_results_sha256": "1fdca33f8a3e4228ac1c6fb566a731fdb7f88b1efca165483a0b7a6003866cad",
+  "baseline_audit_sha256": "6866388b2c8ab029c1a4bc14a7568714b9d0019fec1e770992da8c836e4ebc9b",
+  "training_source_unchanged_from_p9": true,
+  "source_sha256": {
+    "data/winycg/cirkd/teachers/deeplabv3_resnet101_voc_best_model.pth": "ac49b2c7720b21d565072e974e4404fcb009ba106288d95d1a4bb25f09c3fe58",
+    "data/winycg/imagenet_pretrained/mobilenet_v3_small-47085aa1.pth": "47085aa164b2977003221458a2a5fdf5f46f434f5539b164dc71969b4dd4cd75",
+    "data/winycg/imagenet_pretrained/mobilenet_v3_large-bc2c3fd3.pth": "bc2c3fd391519fcd987035145d1aa407431051b7f2391db663feb2bc4a9d7c1a",
+    "train_kd.py": "4afb177d613a175881dedf26d622a3161ef660ae74a596241863a84473fc2c73",
+    "dataset/voc.py": "6349da2dd2e5a8ca5173509fe4f8112788c9fb7cae98f50ae6448d52d4fe5863",
+    "utils/distributed.py": "e85e5566f000134aa178503b62087ae84810fdd61ae5ac54b3f7483b0cf4e740",
+    "models/deeplabv3_mobilenetv3.py": "a360e50c5c998c8edcae627bf07aa4883978fa379a7e728d63b7a86a30e30434",
+    "models/base_models/mobilenetv3.py": "35754d04e0b27a5061fc7c554374797563774375bcc13223d14899450529c73f",
+    "scripts/experiments/covar_match/run_p8_p9_single_gpu.py": "2691a8a174c442a5af806228b0fe6d122e3058296ef9636d4b553b85caf8e73c",
+    "scripts/experiments/covar_match/run_p9_h20.py": "b0236bab811c203747327ef57fe7dbc3be866e11b04187ab86564e2c15560cf9",
+    "scripts/diagnostics/summarize_p8_p9_experiments.py": "62ab4acf17126f0a9ac0e9cd2768f21adb236b116172817c616e993405b732d1",
+    "scripts/experiments/covar_match/run_p10_h20.py": "39e2f7092a6d43fda3642a238cb1255de1c81d23e2bb0f1b8c1b8f1034eeba15",
+    "scripts/diagnostics/summarize_p10_h20.py": "d474f021dcbbaddfdb885e3a94b43eda04b99bceceda581c734135f7c8fb13e3",
+    "tests/test_p10_h20.py": "adbf7fbe20ec9dc0879541a2ea9d22adc6f469db99aadb1d07ac1437ce0a8ab2",
+    "utils/teacher_only_kd.py": "17f92f4eef6f447dc2a2faf8e1ddb2d2b523f508b0e32972de8c0158c79cc2c5",
+    "utils/rtc_temperature.py": "01b7b6e6aa0d513561332510347b52ea9411330dfb0f2da54abdc36f2375fe59",
+    "dataset/list/voc/train_aug.txt": "d1326bd532648d73bc4b1bd275434eba81930982dc7401a65a8cecb26c028e24",
+    "dataset/list/voc/val.txt": "cdc1326d12f69ce5153aa5da04a4d8783e146868d42d19f82f44e74b97ac907d"
+  },
+  "requested_gpus": [
+    6,
+    7
+  ],
+  "initial_gpu_inventory": {
+    "0": {
+      "uuid": "GPU-50a72c0e-0837-4833-6ec8-02cd96be3b76",
+      "name": "NVIDIA H20-3e",
+      "memory_mib": 39801,
+      "utilization_percent": 0
+    },
+    "1": {
+      "uuid": "GPU-258331d2-29d4-26c1-60ac-dc0dbb1080e8",
+      "name": "NVIDIA H20-3e",
+      "memory_mib": 38413,
+      "utilization_percent": 0
+    },
+    "2": {
+      "uuid": "GPU-6078f836-40f4-c593-4386-aaedf5e31786",
+      "name": "NVIDIA H20-3e",
+      "memory_mib": 39353,
+      "utilization_percent": 0
+    },
+    "3": {
+      "uuid": "GPU-5fd03fc9-e271-cf33-0546-2317bb88a6ba",
+      "name": "NVIDIA H20-3e",
+      "memory_mib": 63089,
+      "utilization_percent": 0
+    },
+    "4": {
+      "uuid": "GPU-80d6a792-6f98-807b-6495-b652447c7101",
+      "name": "NVIDIA H20-3e",
+      "memory_mib": 59825,
+      "utilization_percent": 0
+    },
+    "5": {
+      "uuid": "GPU-708cb874-9ff4-74d2-3902-599c8bfbae36",
+      "name": "NVIDIA H20-3e",
+      "memory_mib": 60877,
+      "utilization_percent": 0
+    },
+    "6": {
+      "uuid": "GPU-77258994-3fc6-0c03-190f-ae3a88268bd8",
+      "name": "NVIDIA H20-3e",
+      "memory_mib": 61201,
+      "utilization_percent": 0
+    },
+    "7": {
+      "uuid": "GPU-9d35dccc-6a75-6770-2f1a-34df630d7d59",
+      "name": "NVIDIA H20-3e",
+      "memory_mib": 60339,
+      "utilization_percent": 0
+    }
+  },
+  "execution_profile": "single_gpu",
+  "global_batch_size": 16,
+  "crop_size": [
+    512,
+    512
+  ],
+  "workers": 4,
+  "iterations": 80000,
+  "milestones": [
+    20000,
+    40000,
+    60000,
+    80000
+  ],
+  "seeds": [
+    1234,
+    2025,
+    3407
+  ],
+  "optimizer": {
+    "name": "SGD",
+    "lr": 0.02,
+    "momentum": 0.9,
+    "weight_decay": 0.0001
+  },
+  "initialization": "fresh ImageNet backbone and same-seed head for each temperature",
+  "new_runs": [
+    {
+      "phase": 1,
+      "group": "small_ce",
+      "student": "small",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": "1.0",
+      "lambda_kd": 0.0,
+      "variant": "small_ce_80k_seed1234"
+    },
+    {
+      "phase": 1,
+      "group": "small_ce",
+      "student": "small",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": "1.0",
+      "lambda_kd": 0.0,
+      "variant": "small_ce_80k_seed2025"
+    },
+    {
+      "phase": 1,
+      "group": "small_ce",
+      "student": "small",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": "1.0",
+      "lambda_kd": 0.0,
+      "variant": "small_ce_80k_seed3407"
+    },
+    {
+      "phase": 1,
+      "group": "large_ce",
+      "student": "large",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": "1.0",
+      "lambda_kd": 0.0,
+      "variant": "large_ce_80k_seed1234"
+    },
+    {
+      "phase": 1,
+      "group": "large_ce",
+      "student": "large",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": "1.0",
+      "lambda_kd": 0.0,
+      "variant": "large_ce_80k_seed2025"
+    },
+    {
+      "phase": 1,
+      "group": "large_ce",
+      "student": "large",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": "1.0",
+      "lambda_kd": 0.0,
+      "variant": "large_ce_80k_seed3407"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T0p25_L1",
+      "student": "small",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": "0.25",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T0p25_L1_80k_seed1234"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T0p25_L1",
+      "student": "small",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": "0.25",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T0p25_L1_80k_seed2025"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T0p25_L1",
+      "student": "small",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": "0.25",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T0p25_L1_80k_seed3407"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T0p5_L1",
+      "student": "small",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": "0.5",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T0p5_L1_80k_seed1234"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T0p5_L1",
+      "student": "small",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": "0.5",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T0p5_L1_80k_seed2025"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T0p5_L1",
+      "student": "small",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": "0.5",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T0p5_L1_80k_seed3407"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T1p0_L1",
+      "student": "small",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": "1.0",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T1p0_L1_80k_seed1234"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T1p0_L1",
+      "student": "small",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": "1.0",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T1p0_L1_80k_seed2025"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T1p0_L1",
+      "student": "small",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": "1.0",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T1p0_L1_80k_seed3407"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T1p5_L1",
+      "student": "small",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": "1.5",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T1p5_L1_80k_seed1234"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T1p5_L1",
+      "student": "small",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": "1.5",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T1p5_L1_80k_seed2025"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T1p5_L1",
+      "student": "small",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": "1.5",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T1p5_L1_80k_seed3407"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T2p0_L1",
+      "student": "small",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": "2.0",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T2p0_L1_80k_seed1234"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T2p0_L1",
+      "student": "small",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": "2.0",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T2p0_L1_80k_seed2025"
+    },
+    {
+      "phase": 1,
+      "group": "small_teacher_T2p0_L1",
+      "student": "small",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": "2.0",
+      "lambda_kd": 1.0,
+      "variant": "small_teacher_T2p0_L1_80k_seed3407"
+    },
+    {
+      "phase": 2,
+      "group": "large_teacher_T4p0_L1",
+      "student": "large",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": "4.0",
+      "lambda_kd": 1.0,
+      "variant": "large_teacher_T4p0_L1_80k_seed1234"
+    },
+    {
+      "phase": 2,
+      "group": "large_teacher_T4p0_L1",
+      "student": "large",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": "4.0",
+      "lambda_kd": 1.0,
+      "variant": "large_teacher_T4p0_L1_80k_seed2025"
+    },
+    {
+      "phase": 2,
+      "group": "large_teacher_T4p0_L1",
+      "student": "large",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": "4.0",
+      "lambda_kd": 1.0,
+      "variant": "large_teacher_T4p0_L1_80k_seed3407"
+    },
+    {
+      "phase": 3,
+      "group": "large_teacher_T2p0_L4",
+      "student": "large",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": "2.0",
+      "lambda_kd": 4.0,
+      "variant": "large_teacher_T2p0_L4_80k_seed1234"
+    },
+    {
+      "phase": 3,
+      "group": "large_teacher_T2p0_L4",
+      "student": "large",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": "2.0",
+      "lambda_kd": 4.0,
+      "variant": "large_teacher_T2p0_L4_80k_seed2025"
+    },
+    {
+      "phase": 3,
+      "group": "large_teacher_T2p0_L4",
+      "student": "large",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": "2.0",
+      "lambda_kd": 4.0,
+      "variant": "large_teacher_T2p0_L4_80k_seed3407"
+    },
+    {
+      "phase": 3,
+      "group": "large_shared_T2p0_L1",
+      "student": "large",
+      "seed": 1234,
+      "mode": "masked",
+      "temperature": "2.0",
+      "lambda_kd": 1.0,
+      "variant": "large_shared_T2p0_L1_80k_seed1234"
+    },
+    {
+      "phase": 3,
+      "group": "large_shared_T2p0_L1",
+      "student": "large",
+      "seed": 2025,
+      "mode": "masked",
+      "temperature": "2.0",
+      "lambda_kd": 1.0,
+      "variant": "large_shared_T2p0_L1_80k_seed2025"
+    },
+    {
+      "phase": 3,
+      "group": "large_shared_T2p0_L1",
+      "student": "large",
+      "seed": 3407,
+      "mode": "masked",
+      "temperature": "2.0",
+      "lambda_kd": 1.0,
+      "variant": "large_shared_T2p0_L1_80k_seed3407"
+    },
+    {
+      "phase": 3,
+      "group": "large_shared_T2p0_L4",
+      "student": "large",
+      "seed": 1234,
+      "mode": "masked",
+      "temperature": "2.0",
+      "lambda_kd": 4.0,
+      "variant": "large_shared_T2p0_L4_80k_seed1234"
+    },
+    {
+      "phase": 3,
+      "group": "large_shared_T2p0_L4",
+      "student": "large",
+      "seed": 2025,
+      "mode": "masked",
+      "temperature": "2.0",
+      "lambda_kd": 4.0,
+      "variant": "large_shared_T2p0_L4_80k_seed2025"
+    },
+    {
+      "phase": 3,
+      "group": "large_shared_T2p0_L4",
+      "student": "large",
+      "seed": 3407,
+      "mode": "masked",
+      "temperature": "2.0",
+      "lambda_kd": 4.0,
+      "variant": "large_shared_T2p0_L4_80k_seed3407"
+    }
+  ],
+  "new_run_count": 33,
+  "reused_p9_runs": 15,
+  "common_grid": [
+    "0.25",
+    "0.5",
+    "1.0",
+    "1.5",
+    "2.0"
+  ],
+  "delta_pp": 0.2,
+  "boundary_rule": "Evaluate T=4 once. Upper boundary is unresolved if T=4 belongs to the expanded grid's delta-near-optimal mean set. Never auto-expand to T=8.",
+  "controls": "Large Tt=2, Ts in {1,2}, total KL coefficient in {1,4}; mean-valid-pixel KL, CE unchanged. The Ts=1/coefficient=1 cell reuses P9. Shared Ts=2/coefficient=4 equals standard T^2 KD. No gradient-norm matching claim.",
+  "preserved_p9_stage2_decision": {
+    "required": false,
+    "reason": "coarse_grid_does_not_identify_an_unresolved_candidate_peak_inside_0p5_to_1p5",
+    "interior_near_optimal_points": [
+      "1.5"
+    ]
+  },
+  "scope": "Frozen P9 protocol with new Small and CE controls; old P7/H100 outcomes are not pooled. Same-numbered seeds, no claim of identical random streams across capacities. T=2 loss control is a local sensitivity experiment, not a temperature-response grid for shared KD."
+}

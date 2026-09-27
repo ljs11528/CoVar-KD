@@ -1,0 +1,24 @@
+{
+  "recorded_at": "2026-09-27T00:39:25.031030+00:00",
+  "status": "CPU_PASS_GPU_PENDING",
+  "cpu_tests": {
+    "passed": 58,
+    "failed": 0,
+    "warnings": 2,
+    "files": [
+      "tests/test_p10_h20.py",
+      "tests/test_teacher_only_kd.py",
+      "tests/test_p8_p9_single_gpu.py",
+      "tests/test_p9_h20.py",
+      "tests/test_rtc_temperature.py"
+    ],
+    "environment": "P9 existing venv, CUDA_VISIBLE_DEVICES empty, PYTEST_DISABLE_PLUGIN_AUTOLOAD=1",
+    "warnings_note": "Two pre-existing tensor-copy warnings in the legacy two-rank validation test"
+  },
+  "gpu_smokes": {
+    "status": "PENDING",
+    "planned_runs": 7,
+    "required_before_formal_training": true
+  },
+  "scope": "Startup CPU checks; GPU-smoke completion is recorded separately in smoke_checks.json when available."
+}

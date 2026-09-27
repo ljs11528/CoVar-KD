@@ -1,0 +1,26 @@
+{
+  "created_at": "2026-09-27T00:43:04.144819+00:00",
+  "source": "lyf_H200_141G:/home/lyf/research_2026/covar_kd_2026/CoVar-KD-pair2/reports/covar_match/P10_h20",
+  "files": {
+    "environment-freeze.txt": {
+      "sha256": "052ff7c2649202bba0db644c2a96e186ec093e564e8055e42a5a06cd4cab5880",
+      "bytes": 4461
+    },
+    "execution.md": {
+      "sha256": "35a383fd1722437d36e50c4c41caee1e5fb9bccaa34e6c07aaf2e510e5721d98",
+      "bytes": 1104
+    },
+    "experiment_plan.md": {
+      "sha256": "5120f914678a6dcfb48fad38f0304f60d8dc110516fd099f927b02a2d354942d",
+      "bytes": 4093
+    },
+    "protocol.json": {
+      "sha256": "91acacc23593fc12cf1d135d2841ffc0cda03425b9292c2801741fa5fc17ae26",
+      "bytes": 13694
+    },
+    "validation_checks.json": {
+      "sha256": "ae97e453f3315bb01485d13b30039e510822365aa0a63fe8b71586f8a26d3f21",
+      "bytes": 799
+    }
+  }
+}

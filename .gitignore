@@ -96,3 +96,8 @@ ljs11528.pub
 !reports/covar_match/P9_h20/*.json
 !reports/covar_match/P9_h20/*.csv
 !reports/covar_match/P9_h20/*.png
+
+# P10 matched-protocol controls and reports
+!reports/covar_match/P10_h20/*.json
+!reports/covar_match/P10_h20/*.csv
+!reports/covar_match/P10_h20/*.png
