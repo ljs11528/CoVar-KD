@@ -55,3 +55,23 @@ dataset. If it fails, selector full training stops and the result is reported.
 If it passes, KD-start and 128-step diagnostics follow before deciding whether
 the registered selector experiments are scientifically supported. Source sync,
 data transfer and smoke results are not full-training results.
+
+## Resource admission repair
+
+Both Maker GPU smokes passed their engineering contracts: 18 branches each,
+all matched-training branches finite and complete state restoration verified.
+Cityscapes retained the two previously seen legacy-eval divergences at step 3.
+The first formal queue then rejected GPU 3 with **0 MiB used but a stale 43%
+utilization reading** immediately after its smoke exited. The other lane had
+started, so the controller and its own worker were stopped before repair.
+Preserve this complete attempt in `P14_Utility_Maker_20261015`, including logs,
+raw records and the resource-stop receipt. Do not merge it into the new attempt.
+
+Restart in `P14_Utility_Maker_20261015_r2` with fresh source hashes. GPU admission
+now waits up to 60 seconds and requires two consecutive idle readings, two
+seconds apart, before importing CUDA. This preserves the same memory/utilization
+thresholds and never starts on an occupied card. A real worker failure is made
+visible immediately and stops only children launched by this controller.
+Numerical divergence remains an explicitly recorded diagnostic outcome.
+No metric formula, update, monitor image, seed, checkpoint, coefficient or
+scientific gate changes in this repair. Repeat CPU and GPU verification.

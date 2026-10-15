@@ -12,7 +12,7 @@ from utility_study.core import (
 )
 from utility_study.register import monitoring_indices, paired_updates, validate_checkpoint_metadata
 from utility_study.workflow import gate_from_values, phase_jobs, validate_gpus, pop_ready_job
-from utility_study.runner import selected_seeds, selected_stages, shard_name
+from utility_study.runner import selected_seeds, selected_stages, shard_name, wait_for_idle_gpu
 from utility_study.migrate import dataset_paths
 
 
@@ -273,6 +273,32 @@ def test_pending_copies_do_not_block_other_ready_cases_and_partial_files_are_not
     a.with_suffix(".pth.partial").replace(a)
     assert pop_ready_job(pending, registration, "ce") == ("voc", 1234, 20000)
     assert pending == []
+
+
+@pytest.mark.parametrize("utilizations", [[43, 0, 0], [0, 43, 0, 0]])
+def test_gpu_admission_waits_out_stale_utilization_and_requires_two_idle_samples(monkeypatch, utilizations):
+    import utility_study.runner as runner
+    samples = iter(utilizations)
+    calls = []
+    def query(*args, **kwargs):
+        value = next(samples)
+        calls.append(value)
+        return f"0, 30000, 100\n3, 0, {value}\n"
+    monkeypatch.setattr(runner.subprocess, "check_output", query)
+    monkeypatch.setattr(runner.time, "sleep", lambda _: None)
+    monkeypatch.setattr(runner.time, "monotonic", lambda: 0.)
+    wait_for_idle_gpu(3)
+    assert calls == utilizations
+
+
+def test_gpu_admission_times_out_without_using_an_occupied_card(monkeypatch):
+    import utility_study.runner as runner
+    ticks = iter([0., .1, 2.])
+    monkeypatch.setattr(runner.subprocess, "check_output", lambda *a, **k: "3, 2048, 0\n")
+    monkeypatch.setattr(runner.time, "sleep", lambda _: None)
+    monkeypatch.setattr(runner.time, "monotonic", lambda: next(ticks))
+    with pytest.raises(RuntimeError, match="did not become idle"):
+        wait_for_idle_gpu(3, timeout=1)
 
 
 def test_migration_remaps_paths_but_preserves_checkpoint_args_and_paired_inputs(tmp_path):

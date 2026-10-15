@@ -98,6 +98,7 @@ def main(root, out, gpu_list):
         queue_lock = threading.Lock()
         failed = threading.Event()
         waiting_since = time.monotonic()
+        active_children = {}
 
         def lane(gpu):
             while not failed.is_set():
@@ -124,13 +125,18 @@ def main(root, out, gpu_list):
                 try:
                     with logfile.open("a") as log:
                         child = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT)
+                        with queue_lock:
+                            active_children[gpu] = child
                         worker = {"status": "RUNNING", "pid": child.pid, "command": command, "gpu": gpu,
                                   "phase": name, "dataset": dataset, "seed": seed, "checkpoint": stage}
                         write_json(worker_path, worker)
                         write_json(out / "lanes" / ("gpu" + str(gpu) + ".json"), worker)
                         code = child.wait()
+                        with queue_lock:
+                            active_children.pop(gpu, None)
                     worker.update(status="PASS" if code == 0 else "FAILED", returncode=code)
                     write_json(worker_path, worker)
+                    write_json(out / "lanes" / ("gpu" + str(gpu) + ".json"), worker)
                     if code:
                         raise RuntimeError(f"{dataset} {name} failed with code {code}: {logfile}")
                     print("LANE_PASS", dataset, seed, stage, name, cohorts, gpu, flush=True)
@@ -146,6 +152,15 @@ def main(root, out, gpu_list):
                     job.result()
                 except Exception as error:
                     failures.append(repr(error))
+                    state.update(status="FAILING", errors=list(failures))
+                    write_json(out / "workflow.json", state)
+                    # Stop only children launched by this controller. Numerical
+                    # divergence is recorded by runner and does not enter here.
+                    failed.set()
+                    with queue_lock:
+                        for child in active_children.values():
+                            if child.poll() is None:
+                                child.terminate()
             if failures:
                 raise RuntimeError("; ".join(failures))
         state["completed_phases"].append(name + ":" + cohorts)

@@ -16,6 +16,23 @@ import time
 from .io import read_json, sha256, source_hashes, verify_sources, write_json
 
 
+def wait_for_idle_gpu(gpu, timeout=60, poll_seconds=2):
+    started, consecutive = time.monotonic(), 0
+    while True:
+        rows = subprocess.check_output([
+            "nvidia-smi", "--query-gpu=index,memory.used,utilization.gpu", "--format=csv,noheader,nounits"
+        ], text=True)
+        selected = next([int(x) for x in row.split(",")] for row in rows.splitlines() if int(row.split(",")[0]) == gpu)
+        consecutive = consecutive + 1 if selected[1] < 1024 and selected[2] <= 10 else 0
+        if consecutive >= 2:
+            return
+        if time.monotonic() - started >= timeout:
+            raise RuntimeError(f"GPU {gpu} did not become idle within {timeout}s: {selected}")
+        if not consecutive:
+            print("GPU_WAIT", gpu, selected, flush=True)
+        time.sleep(poll_seconds)
+
+
 def acquire_gpu(gpu, allowed=(0, 2)):
     if gpu not in allowed:
         raise ValueError("GPU is outside the immutable registered resource policy")
@@ -24,12 +41,12 @@ def acquire_gpu(gpu, allowed=(0, 2)):
         handle = open(name, "a+")
         fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         locks.append(handle)
-    rows = subprocess.check_output([
-        "nvidia-smi", "--query-gpu=index,memory.used,utilization.gpu", "--format=csv,noheader,nounits"
-    ], text=True)
-    selected = next([int(x) for x in row.split(",")] for row in rows.splitlines() if int(row.split(",")[0]) == gpu)
-    if selected[1] >= 1024 or selected[2] > 10:
-        raise RuntimeError(f"GPU {gpu} is occupied: {selected}")
+    try:
+        wait_for_idle_gpu(gpu)
+    except Exception:
+        for handle in locks:
+            handle.close()
+        raise
     os.environ.update(CUDA_VISIBLE_DEVICES=str(gpu), OMP_NUM_THREADS="1", MKL_NUM_THREADS="1",
                       OPENBLAS_NUM_THREADS="1", PYTHONDONTWRITEBYTECODE="1")
     sys.dont_write_bytecode = True
