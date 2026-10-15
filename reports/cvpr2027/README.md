@@ -10,9 +10,31 @@ before KD-start diagnostics, 128-step rollouts or selector training. The
 records, training-state effects, metric rankings and gradient controls. The
 [revised follow-up plan](followup_protocol_20261015.md) prioritizes causal controls
 and same-checkpoint continuation tests before allocating full training. That
-plan is not yet launched or an assertion that a new selector works. All future
-model experiments must run on Maker; the old server is a read-only checkpoint
-source.
+plan's P0/P1 queue is now running on Maker, with P1 conditional on P0 numerical
+calibration. This is an execution update, not evidence that a new selector
+works. All future model experiments must run on Maker; the old server is a
+read-only checkpoint source.
+
+The [P15 execution contract](p15_execution_20261015.md) freezes the concrete
+P0/P1 implementation and memory settings. The
+[verified P15 launch receipt](engineering/p15_launch_20261015.json) records
+47 passing CPU checks, full-batch GPU preflights for both datasets, four-card
+scoring agreement and then-live formal P0 workers on all four cards. P0 has
+72 primary one-step replays and 16 separate cross-card scores. If its registered
+numerical-resolution gate passes, the detached queue proceeds to the 36 fixed
+P1 cases (912 scored endpoints), starting with the four discovery cases.
+P2 and full training remain outside this launch. The scientific follow-up
+document is preserved as the original prelaunch plan; its historical
+`PLAN_NOT_LAUNCHED` status is superseded for P0/P1 by this launch receipt.
+
+Existing keepalive programs now occupy memory on all four GPUs and remain
+running. Full student batches are preserved by storing backward activations
+on CPU; the model still computes in FP32 on CUDA. Each worker caps its
+PyTorch allocation at 6144 MiB, and independent tasks use all four cards when
+the registered admission checks pass. Results and registration are copied
+to the large persistent volume as SHA-verified snapshots. The receipt is
+a timestamped launch snapshot; live progress and final P0/P1 outcomes belong
+to the execution output, not to this snapshot.
 
 ## Existing evidence
 

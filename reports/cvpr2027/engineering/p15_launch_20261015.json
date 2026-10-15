@@ -1,0 +1,395 @@
+{
+  "schema_version": 1,
+  "kind": "timestamped_launch_verification",
+  "at_utc": "2026-10-15T15:42:03.326544+00:00",
+  "site": "Maker, new RTX 4090 server only",
+  "authorized_phases": [
+    "p0",
+    "p1"
+  ],
+  "execution": {
+    "status": "P0_P1_PREPARATION_LAUNCHED",
+    "pid": 682282,
+    "code": "/tmp/liujinshi-covar-kd-20261015/code_P15_43078eb93858",
+    "output": "/tmp/liujinshi-covar-kd-20261015/reports/P15_ProbeValidity_20261015_r2",
+    "command": [
+      "/tmp/liujinshi-covar-kd-20261015/env/bin/python",
+      "-u",
+      "-m",
+      "probe_validity.launch",
+      "--root",
+      "/tmp/liujinshi-covar-kd-20261015",
+      "--out",
+      "/tmp/liujinshi-covar-kd-20261015/reports/P15_ProbeValidity_20261015_r2",
+      "--durable",
+      "/root/maker/makerdata/liujinshi/covar-kd/experiments/P15_ProbeValidity_20261015",
+      "--policy",
+      "/tmp/liujinshi-covar-kd-20261015/code_P15_43078eb93858/resource_policy.json"
+    ],
+    "bundle_sha256": "43078eb93858258bd3f93f756946a7372318e7ac93defecd5f46282c0622e068",
+    "code_commit": "70bd7d3bfd57832c9757a9f4c992c6a6630f458c",
+    "authorized_phases": [
+      "p0",
+      "p1"
+    ],
+    "keepalive_processes_signalled": 0,
+    "old_server_model_commands": 0,
+    "at": "2026-10-15T15:25:41.879498+00:00"
+  },
+  "cpu_checks": {
+    "status": "PASS",
+    "returncode": 0,
+    "output": "...............................................                          [100%]\n47 passed in 1.57s\n",
+    "at": "2026-10-15T15:25:44.102305+00:00",
+    "location": "Maker CPU; CUDA disabled",
+    "source_bundle_sha256": "43078eb93858258bd3f93f756946a7372318e7ac93defecd5f46282c0622e068"
+  },
+  "environment_verification": {
+    "status": "PASS",
+    "versions": {
+      "python": "3.10.22",
+      "torch": "2.0.1+cu118",
+      "cuda": "11.8",
+      "cudnn": 8700,
+      "numpy": "1.24.4",
+      "opencv": "4.8.0",
+      "pillow": "9.5.0"
+    },
+    "parent_versions_matched": true,
+    "save_on_cpu_signature": "(pin_memory=False)",
+    "registered_dependency": {
+      "path": "/tmp/liujinshi-covar-kd-20261015/PCOS.py",
+      "sha256": "65bee8f26f8cf6f2d6c9c3e2448eb3b5c7e893e76040175e88e3d238e2d0c9b3"
+    },
+    "model_experiments_in_this_check": 0
+  },
+  "registration_sha256": "5ee9c365f701c17cd47c874b34372a7d4fbe7c345ced9f223d71f7513d156caf",
+  "registered_source_hashes_verified": true,
+  "registered_source_file_count": 24,
+  "registered_counts": {
+    "p0_updates": 72,
+    "p0_primary_endpoints": 72,
+    "p0_cross_gpu_endpoints": 16,
+    "p1_factorial_updates": 432,
+    "p1_factorial_and_buffer_endpoints": 720,
+    "p1_additional_lr_updates": 72,
+    "p1_zero_momentum_updates": 24,
+    "p1_norm_updates": 48,
+    "p1_direction_endpoints": 48,
+    "p1_total_optimizer_updates": 576,
+    "p1_total_endpoints": 912,
+    "p1_buffer_only_forwards": 72,
+    "p1_tasks": 36,
+    "p0_tasks": 8
+  },
+  "preflight": {
+    "status": "PASS",
+    "gpus": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "native_cityscapes_images": 2,
+    "cross_card_ranges": {
+      "pixel_ce": 0.0,
+      "class_ce": 0.0,
+      "soft_miou": 0.0,
+      "hard_miou": 0.0
+    },
+    "allocation": "One full-batch update lane wherever memory permits; all four eligible scoring lanes",
+    "engineering_excluded_from_primary": true,
+    "score_memory_cap_mib": 6144,
+    "update_memory_cap_mib": 6144,
+    "activation_storage_checks": [
+      {
+        "bn": "running",
+        "dropout": false,
+        "reference_batch": 2,
+        "max_state_absolute_error": 2.384185791015625e-07
+      },
+      {
+        "bn": "running",
+        "dropout": true,
+        "reference_batch": 2,
+        "max_state_absolute_error": 1.1920928955078125e-07
+      },
+      {
+        "bn": "batch",
+        "dropout": false,
+        "reference_batch": 2,
+        "max_state_absolute_error": 1.1920928955078125e-07
+      },
+      {
+        "bn": "batch",
+        "dropout": true,
+        "reference_batch": 2,
+        "max_state_absolute_error": 1.1920928955078125e-07
+      }
+    ],
+    "keepalive_processes_signalled": 0
+  },
+  "full_batch_preflights": {
+    "voc": {
+      "status": "PASS",
+      "update_gpu": 1,
+      "seconds": 109.70931053906679,
+      "peak_allocated_mib": 2824.283203125,
+      "peak_reserved_mib": 3854.0,
+      "activation_storage_checks": [
+        {
+          "bn": "running",
+          "dropout": false,
+          "reference_batch": 2,
+          "max_state_absolute_error": 1.1920928955078125e-07
+        },
+        {
+          "bn": "running",
+          "dropout": true,
+          "reference_batch": 2,
+          "max_state_absolute_error": 5.960464477539063e-08
+        },
+        {
+          "bn": "batch",
+          "dropout": false,
+          "reference_batch": 2,
+          "max_state_absolute_error": 1.1920928955078125e-07
+        },
+        {
+          "bn": "batch",
+          "dropout": true,
+          "reference_batch": 2,
+          "max_state_absolute_error": 5.960464477539063e-08
+        }
+      ],
+      "teacher_chunk_max_absolute_error": 8.58306884765625e-06,
+      "original_checkpoints_written": 0,
+      "full_batch_branches": [
+        {
+          "name": "check_full_running",
+          "batch": 16,
+          "gpu": 1
+        },
+        {
+          "name": "check_full_batch",
+          "batch": 16,
+          "gpu": 1
+        }
+      ]
+    },
+    "cityscapes": {
+      "status": "PASS",
+      "update_gpu": 0,
+      "seconds": 100.80945535376668,
+      "peak_allocated_mib": 5095.2578125,
+      "peak_reserved_mib": 5838.0,
+      "activation_storage_checks": [
+        {
+          "bn": "running",
+          "dropout": false,
+          "reference_batch": 2,
+          "max_state_absolute_error": 2.384185791015625e-07
+        },
+        {
+          "bn": "running",
+          "dropout": true,
+          "reference_batch": 2,
+          "max_state_absolute_error": 1.1920928955078125e-07
+        },
+        {
+          "bn": "batch",
+          "dropout": false,
+          "reference_batch": 2,
+          "max_state_absolute_error": 1.1920928955078125e-07
+        },
+        {
+          "bn": "batch",
+          "dropout": true,
+          "reference_batch": 2,
+          "max_state_absolute_error": 1.1920928955078125e-07
+        }
+      ],
+      "teacher_chunk_max_absolute_error": 0.0,
+      "original_checkpoints_written": 0,
+      "full_batch_branches": [
+        {
+          "name": "check_full_running",
+          "batch": 8,
+          "gpu": 0
+        },
+        {
+          "name": "check_full_batch",
+          "batch": 8,
+          "gpu": 0
+        }
+      ]
+    }
+  },
+  "workflow": {
+    "status": "RUNNING",
+    "phase": "p0",
+    "pid": 682282,
+    "started_at": "2026-10-15T15:26:13.424847+00:00",
+    "gpus": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "registration_sha256": "5ee9c365f701c17cd47c874b34372a7d4fbe7c345ced9f223d71f7513d156caf",
+    "keepalive_processes_signalled": 0,
+    "old_server_model_commands": 0,
+    "full_training_runs_launched": 0,
+    "updated_at": "2026-10-15T15:42:00.252284+00:00",
+    "running": {
+      "0": {
+        "job": "base_cityscapes_1234_20000_A",
+        "kind": "score",
+        "pid": 690854,
+        "started_at": "2026-10-15T15:39:40.834703+00:00"
+      },
+      "2": {
+        "job": "base_cityscapes_1234_60000_A",
+        "kind": "score",
+        "pid": 691152,
+        "started_at": "2026-10-15T15:40:10.930321+00:00"
+      },
+      "1": {
+        "job": "cross_voc_20000_gpu1",
+        "kind": "score",
+        "pid": 692086,
+        "started_at": "2026-10-15T15:41:23.344481+00:00"
+      },
+      "3": {
+        "job": "cross_voc_60000_gpu3",
+        "kind": "score",
+        "pid": 692379,
+        "started_at": "2026-10-15T15:41:47.071337+00:00"
+      }
+    },
+    "pending": 17,
+    "completed_jobs": 23,
+    "gpu_memory": {
+      "0": {
+        "gpu": 0,
+        "uuid": "GPU-9e587a71-8e1c-c7c5-f048-fcb0e04a6c51",
+        "used_mib": 42053,
+        "free_mib": 6467,
+        "utilization": 100
+      },
+      "1": {
+        "gpu": 1,
+        "uuid": "GPU-eba2bb26-5d63-5e46-a133-f3953f7994b3",
+        "used_mib": 40521,
+        "free_mib": 7999,
+        "utilization": 100
+      },
+      "2": {
+        "gpu": 2,
+        "uuid": "GPU-27641db0-9e67-b359-5829-04d8225f42fb",
+        "used_mib": 42053,
+        "free_mib": 6467,
+        "utilization": 0
+      },
+      "3": {
+        "gpu": 3,
+        "uuid": "GPU-a62c30b6-0e79-92fe-6039-8a446f6033e9",
+        "used_mib": 40441,
+        "free_mib": 8079,
+        "utilization": 100
+      }
+    }
+  },
+  "verified_live_workers": {
+    "0": {
+      "job": "base_cityscapes_1234_20000_A",
+      "kind": "score",
+      "pid": 690854,
+      "started_at": "2026-10-15T15:39:40.834703+00:00",
+      "verified_own_worker": true
+    },
+    "2": {
+      "job": "base_cityscapes_1234_60000_A",
+      "kind": "score",
+      "pid": 691152,
+      "started_at": "2026-10-15T15:40:10.930321+00:00",
+      "verified_own_worker": true
+    },
+    "1": {
+      "job": "cross_voc_20000_gpu1",
+      "kind": "score",
+      "pid": 692086,
+      "started_at": "2026-10-15T15:41:23.344481+00:00",
+      "verified_own_worker": true
+    },
+    "3": {
+      "job": "cross_voc_60000_gpu3",
+      "kind": "score",
+      "pid": 692379,
+      "started_at": "2026-10-15T15:41:47.071337+00:00",
+      "verified_own_worker": true
+    }
+  },
+  "progress": {
+    "p0": {
+      "scored_endpoints": 0,
+      "by_dataset": {
+        "voc": 0,
+        "cityscapes": 0
+      }
+    },
+    "p1": {
+      "scored_endpoints": 0,
+      "by_dataset": {
+        "voc": 0,
+        "cityscapes": 0
+      }
+    },
+    "p0_completed_update_observations": 72,
+    "p0_passed_update_observations": 72,
+    "cross_gpu_scores": 1
+  },
+  "p0_calibration": null,
+  "durable_backup": {
+    "status": "PASS",
+    "at": "20261015T154019913599Z",
+    "index": "/root/maker/makerdata/liujinshi/covar-kd/experiments/P15_ProbeValidity_20261015/indexes/20261015T154019913599Z.json",
+    "index_sha256": "f34c35411843455422394697e6b117244ad638289731598be9dad7e0730c5dce",
+    "snapshot": "/root/maker/makerdata/liujinshi/covar-kd/experiments/P15_ProbeValidity_20261015/snapshots/fd8c9004666bd5ecdff9019b7e1bbb61df57a50e2f3a9a7de25a25e94a153f84.tar.gz",
+    "snapshot_sha256": "fd8c9004666bd5ecdff9019b7e1bbb61df57a50e2f3a9a7de25a25e94a153f84",
+    "scientific_json_count": 170,
+    "baseline_sample_objects": 0
+  },
+  "allocation": {
+    "gpus": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "student_batch_unchanged": true,
+    "update_and_scoring_allocator_cap_mib": 6144,
+    "saved_activations_on_cpu": true,
+    "model_arithmetic": "FP32 CUDA; TF32 disabled",
+    "keepalive_processes_signalled": 0,
+    "old_server_model_commands": 0
+  },
+  "limitations": [
+    "Launch snapshot, not a completed P0/P1 result.",
+    "P1 starts only after the registered P0 numerical-resolution gate passes.",
+    "No P2 or full-training execution is authorized by this queue."
+  ],
+  "superseded_engineering_launch": {
+    "status": "SUPERSEDED_ENGINEERING_FIX",
+    "at": "2026-10-15T15:12:40.166659+00:00",
+    "stopped": [
+      {
+        "pid": 674732,
+        "role": "own P15 controller"
+      }
+    ],
+    "keepalive_processes_signalled": 0,
+    "p0_scores_preserved": 0,
+    "reason": "Atomic baseline sample publication and completed-receipt validation before backup; preserve this revision; restart in r2"
+  }
+}
