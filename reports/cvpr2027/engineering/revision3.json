@@ -1,0 +1,15 @@
+{
+  "revision": 3,
+  "stage": "before formal primary inference",
+  "earlier_code_commit": "e7701dd",
+  "changes": [
+    "Pair training and eval modes on identical images/augmentation",
+    "Record numerical divergence as an outcome while verifying exact state restoration",
+    "Separate input/configuration errors from numerical divergence"
+  ],
+  "primary_gate_changed": false,
+  "old_checkpoints_modified": false,
+  "full_training_runs_launched": 0,
+  "earlier_engineering_output": "P14_Utility_20261015",
+  "active_output": "P14_Utility_20261015_revision3"
+}

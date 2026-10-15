@@ -42,6 +42,15 @@ def monitoring_indices(presence, classes, size=256, per_class=8, seed=20261015):
     return sorted(selected)
 
 
+def paired_updates(eligible, batch, seed, stage, horizon=128):
+    sampling = 20261015 + seed * 10000 + stage
+    rng = random.Random(sampling)
+    full = [{"indices": rng.sample(eligible, batch), "augmentation_seed": sampling + step * 131}
+            for step in range(horizon)]
+    legacy = [dict(row, indices=row["indices"][:2]) for row in full]
+    return {"legacy_eval": legacy, "matched_eval": full, "matched_train": full}
+
+
 def canonical_files(dataset, config):
     data = Path(config["data"])
     rows = Path(config["train_list"]).read_text().splitlines()
@@ -84,6 +93,8 @@ def main(root, out):
         "gate": "positive seed-mean primary contrast at >=2/3 stages in each dataset; no selector training otherwise",
         "sampling_seed": 20261015, "monitor_count": 256, "monitor_min_per_class": 8,
         "precision": "FP32; matmul/cuDNN TF32 off; cuDNN benchmark off", "max_gpus": 2,
+        "mode_pairing": "matched_eval and matched_train share exact images/augmentation; legacy uses the first two images",
+        "numerical_divergence": "Record DIVERGED, failed step and prior finite endpoints; missing endpoints are null, not scores",
         "allowed_gpus": [0, 2], "full_training_runs_launched": 0,
         "limits": ["Monitoring images are from train, and excluded only from virtual updates.",
                    "A virtual rollout does not reproduce a full KD training trajectory.",
@@ -108,13 +119,9 @@ def main(root, out):
         schedules = {}
         for seed in record["seeds"]:
             for stage in record["checkpoints"]:
-                for mode_index, mode in enumerate(MODES):
-                    batch = 2 if mode == "legacy_eval" else old["runs"][0]["args"]["batch_size"]
-                    sampling = 20261015 + seed * 10000 + stage + mode_index * 1000000
-                    rng = random.Random(sampling)
-                    updates = [{"indices": rng.sample(eligible, batch), "augmentation_seed": sampling + step * 131}
-                               for step in range(128)]
-                    schedules[f"{seed}_{stage}_{mode}"] = updates
+                streams = paired_updates(eligible, old["runs"][0]["args"]["batch_size"], seed, stage)
+                for mode in MODES:
+                    schedules[f"{seed}_{stage}_{mode}"] = streams[mode]
         selected = [r for r in old["runs"] if r["condition"] in COHORTS]
         assert len(selected) == 9
         inputs = {old["teacher"], old["train_list"]}

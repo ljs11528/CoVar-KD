@@ -58,6 +58,17 @@ new training or inputs claimed to have a prior P13 hash. The first registration
 attempt stopped before GPU use on this missing-hash distinction and is retained
 as an engineering failure, excluded from scientific inference.
 
+Revision 3 pairs matched train/eval update streams exactly; legacy batch2 uses
+the first two examples and identical augmentations from the matched batch.
+The second engineering smoke revealed numerical divergence in a legacy-eval
+high-coefficient branch. Divergence is recorded as DIVERGED with a failed step
+and any preceding finite endpoints. It is not discarded, replaced with a zero
+score, or included in a finite-only method average. Source/configuration errors
+remain failures. A diverged matched-training smoke stops the formal queue.
+The primary gate above is unchanged. Earlier engineering sources, logs and
+partial records remain available; no primary result had been generated when
+these engineering revisions were made.
+
 ## Stage B: freeze the intervention
 
 For both conditions, train CE+c*masked_KL with Shared teacher/student temperature

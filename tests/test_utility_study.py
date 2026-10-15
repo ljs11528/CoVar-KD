@@ -8,9 +8,9 @@ from torch import nn
 
 from utility_study.core import (
     PooledMetrics, Snapshot, ce_loss, choose_coefficient, evaluation_mode,
-    isolated_rng, kd_loss, restored_state, rng_state, tree_equal,
+    isolated_rng, kd_loss, restored_state, rng_state, tree_equal, virtual_outcome,
 )
-from utility_study.register import monitoring_indices, validate_checkpoint_metadata
+from utility_study.register import monitoring_indices, paired_updates, validate_checkpoint_metadata
 from utility_study.workflow import gate_from_values
 
 
@@ -197,3 +197,38 @@ def test_newly_registered_kd_intermediates_must_match_the_audited_run():
     state["args"]["seed"] = 1234
     with pytest.raises(ValueError, match="iteration"):
         validate_checkpoint_metadata(state, run, 40000)
+
+
+def test_mode_comparison_uses_identical_images_and_augmentation():
+    eligible = list(range(256, 1000))
+    updates = paired_updates(eligible, 16, seed=1234, stage=20000)
+    assert updates["matched_train"] == updates["matched_eval"]
+    assert len(updates["matched_train"]) == 128
+    for legacy, full in zip(updates["legacy_eval"], updates["matched_train"]):
+        assert legacy["indices"] == full["indices"][:2]
+        assert legacy["augmentation_seed"] == full["augmentation_seed"]
+        assert not set(full["indices"]) & set(range(256))
+
+
+def test_numerical_divergence_is_an_outcome_and_still_restores_the_state():
+    model, optimizer, x, y = small_problem()
+    original = Snapshot.capture(model, optimizer)
+    with virtual_outcome(model, optimizer) as result:
+        model.train()
+        ce_loss(model(x), y).backward()
+        optimizer.step()
+        raise FloatingPointError("injected divergence")
+    assert result["status"] == "DIVERGED"
+    assert result["reason"] == "injected divergence"
+    original.verify(model, optimizer)
+    with pytest.raises(RuntimeError):
+        with virtual_outcome(model, optimizer):
+            raise RuntimeError("Engineering errors must not be swallowed")
+
+
+def test_nonfinite_monitor_predictions_are_distinguished_from_a_wrong_class_mapping():
+    y = torch.zeros(1, 2, 2, dtype=torch.long)
+    with pytest.raises(FloatingPointError):
+        PooledMetrics(2).add(torch.full((1, 2, 2, 2), float("nan")), y)
+    with pytest.raises(ValueError):
+        PooledMetrics(3).add(torch.zeros(1, 2, 2, 2), y)

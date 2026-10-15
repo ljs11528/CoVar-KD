@@ -2,16 +2,16 @@
   "status": "PASS",
   "scope": "CPU engineering checks, not an experiment result",
   "command": "python -m pytest tests/test_utility_study.py -q",
-  "passed_tests": 15,
+  "passed_tests": 18,
   "python": "3.12.14",
   "torch": "2.8.0",
-  "test_source_sha256": "7fa6736d3e3259a4b1b5fd9194fd87b9a173f50f2178939fd5d4c4e355545848",
+  "test_source_sha256": "5d1f0308e53290b7fcbd197aabbe5c63a5887819bd2fe56cb01e72bd1e637b00",
   "source_hashes": {
     "__init__.py": "2d93c45ae267a58931b94c1b56bed4c3bee599b4b8f5b01318ae2ee9655c366e",
-    "core.py": "746cb98d5f0dfe6479f077039ad3a4f3774e165eebaad6582cebf271edd2e6ca",
+    "core.py": "e647326890d7c48b48e423ea459069096edc5a36b3983a938600ef0803a5ec65",
     "io.py": "21d6e7251ef00a92020b9929dd038e085e10716e556f18d9312d1f1bcb6ec567",
-    "register.py": "078e4114cc28c26afcd8391243bcd435aabdd98137bf3568d5ff31620dae924f",
-    "runner.py": "56cb929c8eb27f8677e9e34a9591ba57fbba8702d95bd15cbc2dc4073c0bafaa",
+    "register.py": "93682803b18d74819b598c407f56820ed5b3a7dbf57be96d076768dc843ff5bf",
+    "runner.py": "3b897f7361b0cec683d8d528abf26ae9ef71fd0eb5d3cae7ba4fe732c5fce0ee",
     "workflow.py": "92b8ff20e71505c9efde57c3eeeeab49a9cb6980e64958a49d6a11edf20eb4df"
   }
 }

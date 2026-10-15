@@ -45,7 +45,7 @@ def run(args):
     import cv2
     from PIL import Image
     from .core import (PooledMetrics, Snapshot, ce_loss, evaluation_mode, gradient_norm,
-                       isolated_rng, kd_loss, restored_state, tree_equal)
+                       isolated_rng, kd_loss, virtual_outcome)
     from .register import CITY_IDS, validate_checkpoint_metadata
 
     torch.set_num_threads(1)
@@ -71,6 +71,8 @@ def run(args):
             raise RuntimeError("Monitoring image or label changed")
     if sha256(config["teacher"]) != config["input_sha256"][config["teacher"]]:
         raise RuntimeError("Teacher checkpoint changed")
+    if sha256(config["train_list"]) != config["input_sha256"][config["train_list"]]:
+        raise RuntimeError("Training split changed")
 
     spec = importlib.util.spec_from_file_location("utility_frozen_trainer", runtime / "train_kd_3090.py")
     module = importlib.util.module_from_spec(spec)
@@ -173,13 +175,14 @@ def run(args):
                         path = work / cohort / str(seed) / str(stage) / mode / (condition + ".json")
                         if path.exists():
                             result = read_json(path)
-                            if result["registration_sha256"] != reg_hash or result["horizon"] != horizon or result["status"] != "PASS":
+                            if result["registration_sha256"] != reg_hash or result["horizon"] != horizon or result["status"] not in ("PASS", "DIVERGED"):
                                 raise RuntimeError("Existing branch belongs to a different registration")
                             outputs.append(str(path))
                             continue
                         branch_start = time.monotonic()
-                        coefficients, local_losses, checkpoints, first_gradient = [], [], {}, None
-                        with restored_state(student, optimizer):
+                        coefficients, local_losses, checkpoints, first_gradient, bn_updates = [], [], {}, None, None
+                        step = -1
+                        with virtual_outcome(student, optimizer) as outcome:
                             student.train(mode == "matched_train")
                             with isolated_rng(stream[0]["augmentation_seed"] + 90000000):
                                 for step in range(horizon):
@@ -199,8 +202,10 @@ def run(args):
                                             a = torch.autograd.grad(teacher_loss, parameters, retain_graph=True, allow_unused=True)
                                             b = torch.autograd.grad(knowledge, parameters, retain_graph=True, allow_unused=True)
                                             teacher_norm, shared_norm = gradient_norm(a), gradient_norm(b)
-                                            if not math.isfinite(teacher_norm + shared_norm) or min(teacher_norm, shared_norm) <= 0:
-                                                raise RuntimeError("Degenerate norm-control gradient")
+                                            if not math.isfinite(teacher_norm + shared_norm):
+                                                raise FloatingPointError("Nonfinite norm-control gradient")
+                                            if min(teacher_norm, shared_norm) <= 0:
+                                                raise RuntimeError("Zero norm-control gradient")
                                             alpha = teacher_norm / shared_norm
                                             norm_record = {"teacher_norm": teacher_norm, "shared_norm": shared_norm}
                                             del a, b, teacher_loss
@@ -208,7 +213,7 @@ def run(args):
                                     else:
                                         objective = task
                                     if not bool(torch.isfinite(objective)):
-                                        raise RuntimeError("Nonfinite virtual objective")
+                                        raise FloatingPointError("Nonfinite virtual objective")
                                     if step == 0:
                                         ce_grad = torch.autograd.grad(task, parameters, retain_graph=True, allow_unused=True)
                                         first_gradient = {"ce_norm": gradient_norm(ce_grad)}
@@ -223,7 +228,7 @@ def run(args):
                                         del ce_grad
                                     objective.backward()
                                     if any(p.grad is not None and not bool(torch.isfinite(p.grad).all()) for p in parameters):
-                                        raise RuntimeError("Nonfinite virtual gradient")
+                                        raise FloatingPointError("Nonfinite virtual gradient")
                                     optimizer.step()
                                     coefficients.append(float(alpha))
                                     local_losses.append(float(task.detach()))
@@ -245,9 +250,15 @@ def run(args):
                                 raise RuntimeError("Training-mode BN did not update")
                             if mode != "matched_train" and bn_updates != 0:
                                 raise RuntimeError("Frozen-mode BN unexpectedly updated")
+                        # Drop possible graph references from a diverged branch
+                        # before allocating the next candidate's forward pass.
+                        logits = task = objective = x = y = teacher = knowledge = None
+                        a = b = teacher_loss = ce_grad = kd_grad = None
                         baseline.verify(student, optimizer)
                         result = {
-                            "status": "PASS", "dataset": args.dataset, "cohort": cohort, "seed": seed,
+                            "status": outcome["status"], "divergence_reason": outcome["reason"],
+                            "failed_virtual_step": step + 1 if outcome["status"] == "DIVERGED" else None,
+                            "dataset": args.dataset, "cohort": cohort, "seed": seed,
                             "checkpoint": stage, "mode": mode, "condition": condition, "horizon": horizon,
                             "batch_size": len(stream[0]["indices"]), "monitor_images": len(monitor),
                             "registration_sha256": reg_hash, "checkpoint_sha256": config["input_sha256"][checkpoint],
@@ -257,14 +268,25 @@ def run(args):
                             "bn_counter_delta": bn_updates, "state_restored": True,
                             "seconds": time.monotonic() - branch_start,
                         }
+                        if outcome["status"] == "DIVERGED":
+                            def clean(value):
+                                if isinstance(value, float) and not math.isfinite(value):
+                                    return None
+                                if isinstance(value, dict):
+                                    return {key: clean(item) for key, item in value.items()}
+                                if isinstance(value, list):
+                                    return [clean(item) for item in value]
+                                return value
+                            result = clean(result)
                         write_json(path, result)
                         outputs.append(str(path))
                         write_json(work / "state.json", {"status": "RUNNING", "phase": args.phase, "gpu": args.gpu,
                                    "cohort": cohort, "seed": seed, "checkpoint": stage, "mode": mode,
                                    "condition": condition, "completed_branches": len(outputs), "pid": os.getpid(),
                                    "elapsed_seconds": time.monotonic() - started})
-                        print("BRANCH_PASS", args.dataset, cohort, seed, stage, mode, condition,
-                              f"CE={checkpoints[str(horizon)]['pixel_ce']:.8f}", flush=True)
+                        endpoint = checkpoints.get(str(horizon))
+                        print("BRANCH_" + outcome["status"], args.dataset, cohort, seed, stage, mode, condition,
+                              "CE=" + (f"{endpoint['pixel_ce']:.8f}" if endpoint else "UNDEFINED"), flush=True)
                     baseline.verify(student, optimizer)
                 if sha256(checkpoint) != config["input_sha256"][checkpoint]:
                     raise RuntimeError("Source checkpoint mutated")
@@ -272,12 +294,22 @@ def run(args):
     for item in config["monitor"]:
         if sha256(item["img"]) != item["image_sha256"] or sha256(item["label"]) != item["label_sha256"]:
             raise RuntimeError("Monitoring inputs mutated")
+    for name, digest in config["input_sha256"].items():
+        if Path(name).suffix == ".py" or name in (config["train_list"], config["teacher"]):
+            if sha256(name) != digest:
+                raise RuntimeError("Frozen source or shared input mutated")
     verify_sources(registration["source_hashes"])
+    records = [read_json(p) for p in outputs]
+    if smoke and any(r["status"] == "DIVERGED" and r["mode"] == "matched_train" for r in records):
+        raise RuntimeError("Matched-training smoke diverged; inspect before formal diagnostics")
     summary = {"status": "PASS", "dataset": args.dataset, "phase": args.phase, "cohorts": cohorts,
                "horizon": horizon, "registration_sha256": reg_hash, "branches": len(outputs),
                "files": outputs, "seconds": time.monotonic() - started,
                "peak_allocated_mib": torch.cuda.max_memory_allocated() / 1024 ** 2,
                "full_training_runs_launched": 0, "checkpoint_files_written": 0,
+               "diverged_branches": [{"cohort": r["cohort"], "seed": r["seed"], "checkpoint": r["checkpoint"],
+                                      "mode": r["mode"], "condition": r["condition"], "step": r["failed_virtual_step"]}
+                                     for r in records if r["status"] == "DIVERGED"],
                "completed_at": datetime.now(timezone.utc).isoformat()}
     write_json(work / ("summary_" + "_".join(cohorts) + ".json"), summary)
     write_json(work / "state.json", summary)

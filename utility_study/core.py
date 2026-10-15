@@ -57,8 +57,10 @@ class PooledMetrics:
     @torch.no_grad()
     def add(self, logits: torch.Tensor, target: torch.Tensor) -> None:
         z = resized_logits(logits, target)
-        if z.shape[1] != self.classes or not bool(torch.isfinite(z).all()):
-            raise ValueError("Nonfinite logits or incorrect class count")
+        if z.shape[1] != self.classes:
+            raise ValueError("Incorrect class count")
+        if not bool(torch.isfinite(z).all()):
+            raise FloatingPointError("Nonfinite monitoring logits")
         valid = target != self.ignore
         y = target[valid].long()
         if y.numel() == 0:
@@ -199,6 +201,17 @@ def restored_state(model, optimizer):
     finally:
         snapshot.restore(model, optimizer)
         snapshot.verify(model, optimizer)
+
+
+@contextmanager
+def virtual_outcome(model, optimizer):
+    """Record numerical divergence while still restoring every state component."""
+    outcome = {"status": "PASS", "reason": None}
+    with restored_state(model, optimizer):
+        try:
+            yield outcome
+        except FloatingPointError as error:
+            outcome.update(status="DIVERGED", reason=str(error))
 
 
 @contextmanager
