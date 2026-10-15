@@ -1,0 +1,5692 @@
+{
+  "audit": {
+    "downloaded_files_sha_verified": 347,
+    "records": 324,
+    "cases": 18,
+    "branches_per_case": 18,
+    "lineage": {
+      "inherited_byte_verified": 216,
+      "r3_new": 108
+    },
+    "registration_sha256": "ecc86a1da30a97f156fc6d864df02bcd16b6f4556f28360d5cff20a08ac8b22e",
+    "parent_registration_sha256": "864e47279ed077e98aa62ecaa0351b1f17be2911a123ffdd86b37d5367ee9026",
+    "complete_expected_factorial": true,
+    "before_identical_per_case": true,
+    "input_stream_pairing_verified": true,
+    "condition_gradient_replay_within_relative_1e_5": true,
+    "maximum_gradient_replay_relative_error": 3.072020402211191e-06,
+    "maximum_local_ce_replay_spread": 1.7881393432617188e-07,
+    "maximum_norm_control_relative_error": 2.6744795472889395e-07,
+    "norm_control_verified": true,
+    "state_restore_assertions": 324,
+    "maximum_metric_reconstruction_error": 2.6645352591003757e-15
+  },
+  "old_gate": {
+    "pass": false,
+    "datasets": {
+      "voc": {
+        "stages": [
+          {
+            "checkpoint": 20000,
+            "seed_differences": {
+              "1234": 9.755064339131425e-05,
+              "2025": -0.00021025755090020581,
+              "3407": 1.2648487756616866e-06
+            },
+            "mean": -3.7147352911076625e-05,
+            "sample_sd": 0.00015745822953109988
+          },
+          {
+            "checkpoint": 40000,
+            "seed_differences": {
+              "1234": 0.00011507796205920129,
+              "2025": -0.000790442060059432,
+              "3407": -0.00028734029460342203
+            },
+            "mean": -0.00032090146420121757,
+            "sample_sd": 0.00045369195683085624
+          },
+          {
+            "checkpoint": 60000,
+            "seed_differences": {
+              "1234": -0.00020933138392256745,
+              "2025": -0.00030597587585853847,
+              "3407": -4.090157750884227e-05
+            },
+            "mean": -0.00018540294576331606,
+            "sample_sd": 0.0001341473947788468
+          }
+        ],
+        "positive_stages": 0,
+        "pass": false
+      },
+      "cityscapes": {
+        "stages": [
+          {
+            "checkpoint": 20000,
+            "seed_differences": {
+              "1234": 0.0043564605409106005,
+              "2025": -3.651834573317747e-05,
+              "3407": 0.0002987707509278792
+            },
+            "mean": 0.0015395709820351007,
+            "sample_sd": 0.0024452514767936044
+          },
+          {
+            "checkpoint": 40000,
+            "seed_differences": {
+              "1234": -1.3836390313548552e-05,
+              "2025": -0.00040070416923067287,
+              "3407": -0.0004120132501004986
+            },
+            "mean": -0.00027551793654824003,
+            "sample_sd": 0.0002266933998981097
+          },
+          {
+            "checkpoint": 60000,
+            "seed_differences": {
+              "1234": -4.2994960330972054e-05,
+              "2025": -0.00015453955297246857,
+              "3407": -2.7091086106628692e-05
+            },
+            "mean": -7.487519980335644e-05,
+            "sample_sd": 6.944811140863158e-05
+          }
+        ],
+        "positive_stages": 1,
+        "pass": false
+      }
+    },
+    "definition": "Shared c4 minus c1 pixel CE, matched_train, CE starts, 1 virtual update",
+    "unit": "three training seeds; stages are repeated measurements",
+    "role": "resource gate, not a statistical significance test",
+    "full_training_authorized_by_this_gate_alone": false
+  },
+  "workflow": {
+    "status": "SCIENTIFIC_STOP",
+    "pid": 527833,
+    "started_at": "2026-10-15T12:00:19.070777+00:00",
+    "max_gpus": 4,
+    "gpus": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "completed_phases": [
+      "smoke:ce",
+      "one_step:ce"
+    ],
+    "full_training_runs_launched": 0,
+    "checkpoint_files_written": 0,
+    "registration_sha256": "ecc86a1da30a97f156fc6d864df02bcd16b6f4556f28360d5cff20a08ac8b22e",
+    "phase": "primary_gate",
+    "reused_completed_cases": {
+      "smoke:ce": 2,
+      "one_step:ce": 12
+    },
+    "primary_gate_pass": false,
+    "reason": "Historical local CE ordering did not replicate sufficiently under the matched training protocol.",
+    "next_action": "Review protocol dependence; selector training stopped by the registered gate."
+  },
+  "units": "CE raw loss; IoU fractions, multiply by 100 for percentage points. Seed is the replication unit; stages and modes are repeated.",
+  "descriptive_9case_summaries": "9 combines 3 repeated stages per training seed, not 9 independent runs; no significance claim.",
+  "pooled_conditions": [
+    {
+      "dataset": "voc",
+      "mode": "legacy_eval",
+      "condition": "ce",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 2.4515796598759905,
+          "sample_sd": 1.8454263086479001,
+          "median": 2.3361921939015806,
+          "minimum": 0.5157661849126826,
+          "maximum": 6.254675207472269,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0015892839651954745,
+          "sample_sd": 0.0020821645722031053,
+          "median": 0.0010418982200949,
+          "minimum": -0.0009240591516180008,
+          "maximum": 0.005488538537536614,
+          "positive": 7,
+          "negative": 2
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.01536359883729927,
+          "sample_sd": 0.017634868737733855,
+          "median": 0.00450365804510261,
+          "minimum": -0.001617733601410598,
+          "maximum": 0.04847621213333875,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.002178688852198321,
+          "sample_sd": 0.0018661563401451075,
+          "median": -0.0016022612024818583,
+          "minimum": -0.005431787614466721,
+          "maximum": 0.00033039413632995895,
+          "positive": 1,
+          "negative": 8
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0023461982403095963,
+          "sample_sd": 0.002015692001580683,
+          "median": -0.0023523423023572576,
+          "minimum": -0.005449464503436863,
+          "maximum": 0.0003926807099018381,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 0.0,
+        "sample_sd": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0,
+        "positive": 0,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "legacy_eval",
+      "condition": "shared_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 2.4515796456583434,
+          "sample_sd": 1.8454263360750633,
+          "median": 2.336192224077357,
+          "minimum": 0.5157661602702088,
+          "maximum": 6.254675324227943,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 3.3953616691062956,
+          "sample_sd": 2.3846882969757184,
+          "median": 3.2118369655404906,
+          "minimum": 0.8995702692994475,
+          "maximum": 7.7869634258880005,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.7140992596783492,
+          "sample_sd": 0.19347366987144912,
+          "median": 0.7729375736563799,
+          "minimum": 0.42886310143940515,
+          "maximum": 0.9257863380822017,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 1.6087154155701606,
+          "sample_sd": 0.8229661512305017,
+          "median": 1.7171864732491375,
+          "minimum": 0.38505832697680464,
+          "maximum": 3.3194810722984505,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.015733915264275325,
+          "sample_sd": 0.020515788061763122,
+          "median": 0.003179009459379295,
+          "minimum": -0.0004711585385972217,
+          "maximum": 0.05274811563269796,
+          "positive": 8,
+          "negative": 1
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0701295759295189,
+          "sample_sd": 0.08025644345174988,
+          "median": 0.023786980735978513,
+          "minimum": 0.0008131714780230115,
+          "maximum": 0.1946594074779615,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.015625252843578543,
+          "sample_sd": 0.021219782059312523,
+          "median": -0.0053031540700824165,
+          "minimum": -0.0593913256820342,
+          "maximum": 0.0013548777817625757,
+          "positive": 2,
+          "negative": 7
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.017240464289430008,
+          "sample_sd": 0.022491458748344677,
+          "median": -0.005999878278086013,
+          "minimum": -0.06086932311407178,
+          "maximum": 2.2921015850996262e-05,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0173231992294708,
+          "sample_sd": 0.02216792347555362,
+          "median": 0.004258059490500288,
+          "minimum": -0.0009145114205258431,
+          "maximum": 0.056210966678599816,
+          "positive": 8,
+          "negative": 1
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.08549317476681817,
+          "sample_sd": 0.0923505154948334,
+          "median": 0.042827032897721995,
+          "minimum": -0.0008045621233875866,
+          "maximum": 0.24313561961130026,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.017803941695776863,
+          "sample_sd": 0.0225344517288657,
+          "median": -0.006474394470148415,
+          "minimum": -0.06301115122789402,
+          "maximum": 0.0012924317696713095,
+          "positive": 1,
+          "negative": 8
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.019586662529739604,
+          "sample_sd": 0.024054415842965374,
+          "median": -0.006304933404968405,
+          "minimum": -0.0646731548602495,
+          "maximum": 0.0004156017257528344,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "legacy_eval",
+      "condition": "shared_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 2.451579677041468,
+          "sample_sd": 1.845426382639236,
+          "median": 2.3361923271987597,
+          "minimum": 0.5157661650454304,
+          "maximum": 6.254675471598099,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 3.3953619154704078,
+          "sample_sd": 2.3846888591158004,
+          "median": 3.211836947075408,
+          "minimum": 0.8995702535118062,
+          "maximum": 7.786965597801785,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.7140992783646991,
+          "sample_sd": 0.19347364094621913,
+          "median": 0.7729375731253186,
+          "minimum": 0.428863152804784,
+          "maximum": 0.925786316788883,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 6.434861745765051,
+          "sample_sd": 3.291864667669316,
+          "median": 6.868745552399144,
+          "minimum": 1.5402332128886786,
+          "maximum": 13.27792424950978,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.46724897525078485,
+          "sample_sd": 0.7350403391102137,
+          "median": 0.09099621215254994,
+          "minimum": -0.0002730431742982431,
+          "maximum": 2.2579007635528523,
+          "positive": 8,
+          "negative": 1
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 1.4176815124578956,
+          "sample_sd": 2.0294801395156283,
+          "median": 0.3787573068173513,
+          "minimum": 0.00920564549505265,
+          "maximum": 6.153818877051881,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.17784000753399445,
+          "sample_sd": 0.20470468293268188,
+          "median": -0.07979684902015394,
+          "minimum": -0.5718740885233834,
+          "maximum": 0.001394676196802891,
+          "positive": 1,
+          "negative": 8
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.2061275582662927,
+          "sample_sd": 0.23363728967616937,
+          "median": -0.10018901113740342,
+          "minimum": -0.6563476125360626,
+          "maximum": -0.0010488702195339261,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.46883825921598027,
+          "sample_sd": 0.7362265294696074,
+          "median": 0.09007215300093194,
+          "minimum": -0.0007163960562268645,
+          "maximum": 2.261363614598754,
+          "positive": 8,
+          "negative": 1
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 1.4330451112951947,
+          "sample_sd": 2.0339386402508466,
+          "median": 0.3977973589790948,
+          "minimum": 0.008201298223395825,
+          "maximum": 6.158322535096984,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.18001869638619278,
+          "sample_sd": 0.2058661420987621,
+          "median": -0.08096808942021994,
+          "minimum": -0.5754939140692432,
+          "maximum": 0.0017250703331328499,
+          "positive": 1,
+          "negative": 8
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.20847375650660227,
+          "sample_sd": 0.23517184005045647,
+          "median": -0.10049406626428581,
+          "minimum": -0.6601514442822403,
+          "maximum": -0.000656189509632088,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "legacy_eval",
+      "condition": "teacher_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 2.4515796592048376,
+          "sample_sd": 1.8454263286226444,
+          "median": 2.33619225931074,
+          "minimum": 0.5157661758488309,
+          "maximum": 6.254675307632799,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 3.7617370494030173,
+          "sample_sd": 1.333810384836519,
+          "median": 3.395209035094934,
+          "minimum": 2.2854414695542644,
+          "maximum": 6.454964006124108,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.2821478891209233,
+          "sample_sd": 0.45958711120590967,
+          "median": 0.16859076828630398,
+          "minimum": -0.46931823143848134,
+          "maximum": 0.8634014621220865,
+          "positive": 6,
+          "negative": 3
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 2.3852228339358006,
+          "sample_sd": 1.6591970473780382,
+          "median": 1.3837570177907532,
+          "minimum": 0.8500209147890719,
+          "maximum": 5.041130495878342,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.010369336248115995,
+          "sample_sd": 0.008425908911586873,
+          "median": 0.00607196756142514,
+          "minimum": 0.001401013117142219,
+          "maximum": 0.02241367550866727,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.01622581506868777,
+          "sample_sd": 0.03577121312803318,
+          "median": -0.0016739012881539228,
+          "minimum": -0.018519125422028382,
+          "maximum": 0.07949193573054958,
+          "positive": 4,
+          "negative": 5
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.013411944764214182,
+          "sample_sd": 0.007293850031885802,
+          "median": -0.012280067319778043,
+          "minimum": -0.022088103817596183,
+          "maximum": -0.0041842349189673556,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.009089188362413951,
+          "sample_sd": 0.008931953338815503,
+          "median": -0.005920738372428902,
+          "minimum": -0.024177964942525,
+          "maximum": 0.000358312437706676,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.011958620213311469,
+          "sample_sd": 0.009137774711682322,
+          "median": 0.008958547065778255,
+          "minimum": 0.0014226462585127109,
+          "maximum": 0.027516129595949207,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.03158941390598704,
+          "sample_sd": 0.05282736175966763,
+          "median": -0.003291634889564521,
+          "minimum": -0.014015467376925772,
+          "maximum": 0.12796814786388833,
+          "positive": 4,
+          "negative": 5
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.015590633616412504,
+          "sample_sd": 0.008321899511735753,
+          "median": -0.013882328522259901,
+          "minimum": -0.027519891432062904,
+          "maximum": -0.0038538407826373966,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.011435386602723549,
+          "sample_sd": 0.010092131784102537,
+          "median": -0.00827308067478616,
+          "minimum": -0.02962742944596186,
+          "maximum": 0.00028230835552378597,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "legacy_eval",
+      "condition": "teacher_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 2.451579654873954,
+          "sample_sd": 1.8454261978529911,
+          "median": 2.3361923621859133,
+          "minimum": 0.5157661498805667,
+          "maximum": 6.25467468682147,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 3.76173708106597,
+          "sample_sd": 1.3338104772771433,
+          "median": 3.3952087821077432,
+          "minimum": 2.285441337447904,
+          "maximum": 6.454964075262457,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.2821478882604607,
+          "sample_sd": 0.4595871388442231,
+          "median": 0.168590750991043,
+          "minimum": -0.4693183558796047,
+          "maximum": 0.8634015008228421,
+          "positive": 6,
+          "negative": 3
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 9.540891315765291,
+          "sample_sd": 6.63678848160778,
+          "median": 5.535027635629798,
+          "minimum": 3.400083747245999,
+          "maximum": 20.16452297408156,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.1620757794539068,
+          "sample_sd": 0.1435660093525278,
+          "median": 0.09142096550086265,
+          "minimum": 0.01616238011577939,
+          "maximum": 0.41443141949249035,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.38166782618614736,
+          "sample_sd": 0.3884573477350964,
+          "median": 0.20744467050824456,
+          "minimum": -0.004432554623641088,
+          "maximum": 1.09139651305113,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.1349956250830369,
+          "sample_sd": 0.0754991104101059,
+          "median": -0.127471161463807,
+          "minimum": -0.24860822733217636,
+          "maximum": -0.029022983340960318,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.12592155306679773,
+          "sample_sd": 0.09150125510642149,
+          "median": -0.10459492300601914,
+          "minimum": -0.2702144980543636,
+          "maximum": -0.015512468546959646,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.16366506341910228,
+          "sample_sd": 0.143744929138857,
+          "median": 0.09206114275435284,
+          "minimum": 0.01571902723385077,
+          "maximum": 0.4135073603408723,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.3970314250234467,
+          "sample_sd": 0.4045981254156833,
+          "median": 0.21148826756979577,
+          "minimum": -0.0023360478856590816,
+          "maximum": 1.1238420079977598,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.13717431393523521,
+          "sample_sd": 0.07599448559501452,
+          "median": -0.12907342266628885,
+          "minimum": -0.2501932178866558,
+          "maximum": -0.02869258920463036,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.12826775130710732,
+          "sample_sd": 0.09251144016193581,
+          "median": -0.1069472653083764,
+          "minimum": -0.273997367676434,
+          "maximum": -0.015119787837057808,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "legacy_eval",
+      "condition": "shared_norm",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 2.451579613108675,
+          "sample_sd": 1.8454262584042969,
+          "median": 2.336192283935948,
+          "minimum": 0.5157661658866344,
+          "maximum": 6.254675098648759,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 3.395361799214834,
+          "sample_sd": 2.3846886571510093,
+          "median": 3.211836852591066,
+          "minimum": 0.8995702435073138,
+          "maximum": 7.786964943685744,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.7140992650523187,
+          "sample_sd": 0.19347367075225438,
+          "median": 0.7729376018722793,
+          "minimum": 0.4288631399587578,
+          "maximum": 0.9257863278961541,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 2.3852227695368025,
+          "sample_sd": 1.6591969398399733,
+          "median": 1.3837569046145644,
+          "minimum": 0.850020990559656,
+          "maximum": 5.041129615823716,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.009839074657063825,
+          "sample_sd": 0.009300946002533518,
+          "median": 0.007552067158794917,
+          "minimum": -0.0005616274089479123,
+          "maximum": 0.026840746202229593,
+          "positive": 8,
+          "negative": 1
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.05010015872095246,
+          "sample_sd": 0.03967990582126375,
+          "median": 0.048445765228033344,
+          "minimum": 0.00595305979196023,
+          "maximum": 0.12391440900004491,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.010094400999471231,
+          "sample_sd": 0.00995147390818481,
+          "median": -0.007179874930960284,
+          "minimum": -0.024103825441946225,
+          "maximum": 0.001601695369057743,
+          "positive": 2,
+          "negative": 7
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.012837064977321252,
+          "sample_sd": 0.01135045912373255,
+          "median": -0.007204181138087629,
+          "minimum": -0.029432688519799965,
+          "maximum": -0.00047415667450945165,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0114283586222593,
+          "sample_sd": 0.011067777064408537,
+          "median": 0.008593965378889817,
+          "minimum": -0.0010049802908765337,
+          "maximum": 0.032329284739766206,
+          "positive": 8,
+          "negative": 1
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.06546375755825173,
+          "sample_sd": 0.05611094117309224,
+          "median": 0.06748581738977683,
+          "minimum": 0.006264484252853253,
+          "maximum": 0.17239062113338366,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.012273089851669552,
+          "sample_sd": 0.011296853616480291,
+          "median": -0.010126300892318807,
+          "minimum": -0.029535613056412946,
+          "maximum": 0.0019320895053877019,
+          "positive": 1,
+          "negative": 8
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.015183263217630848,
+          "sample_sd": 0.012943852354092662,
+          "median": -0.009483710885412333,
+          "minimum": -0.03488215302323683,
+          "maximum": -8.147596460761353e-05,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.6657841003653835,
+        "sample_sd": 1.0871587445632227,
+        "median": 1.498249991698561,
+        "minimum": 0.5691249216267573,
+        "maximum": 3.5936295433691208,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_eval",
+      "condition": "ce",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.9473000105799816,
+          "sample_sd": 1.2061937573033796,
+          "median": 1.8917274303817966,
+          "minimum": 0.7046910579831862,
+          "maximum": 4.681053614548692,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0004889512175794744,
+          "sample_sd": 0.004077929370545619,
+          "median": 0.0003298935888966237,
+          "minimum": -0.00760091360718293,
+          "maximum": 0.005924258510299818,
+          "positive": 5,
+          "negative": 4
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.014959923749682299,
+          "sample_sd": 0.02122782590940172,
+          "median": 0.004837567237210405,
+          "minimum": -0.0032219886722860136,
+          "maximum": 0.05216397937485617,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.001528395815892764,
+          "sample_sd": 0.003484503550253048,
+          "median": -0.0004338878483967079,
+          "minimum": -0.008301105012327614,
+          "maximum": 0.0012045079937084147,
+          "positive": 4,
+          "negative": 5
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.002175680396670327,
+          "sample_sd": 0.004054764890056566,
+          "median": -0.00020673953007910306,
+          "minimum": -0.010778937482005535,
+          "maximum": 0.0011906806850827678,
+          "positive": 3,
+          "negative": 6
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 0.0,
+        "sample_sd": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0,
+        "positive": 0,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_eval",
+      "condition": "shared_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.9472999978940646,
+          "sample_sd": 1.206193725334699,
+          "median": 1.8917274699774418,
+          "minimum": 0.7046910377679012,
+          "maximum": 4.681053511593816,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 1.5031120547958712,
+          "sample_sd": 0.6173075635770858,
+          "median": 1.4431687176358987,
+          "minimum": 0.6644002583807394,
+          "maximum": 2.594116950697165,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.707543540894621,
+          "sample_sd": 0.12364199678656636,
+          "median": 0.7188691174320321,
+          "minimum": 0.5126833173325658,
+          "maximum": 0.8528289410125267,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 0.8893690804478046,
+          "sample_sd": 0.3909425799178825,
+          "median": 0.7940329173729723,
+          "minimum": 0.5541737440668382,
+          "maximum": 1.8781306298776042,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0021181671207099106,
+          "sample_sd": 0.0036613503224216864,
+          "median": 0.0014599648671870524,
+          "minimum": -0.0007126140232465161,
+          "maximum": 0.01062736368083933,
+          "positive": 6,
+          "negative": 3
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.029217619536467215,
+          "sample_sd": 0.030120872038734342,
+          "median": 0.01547121205760782,
+          "minimum": 0.0012723177877850267,
+          "maximum": 0.0782865601982396,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0010839772227645799,
+          "sample_sd": 0.0033569237648310903,
+          "median": 0.0005143598049753839,
+          "minimum": -0.007978488327214261,
+          "maximum": 0.0015816480128532096,
+          "positive": 5,
+          "negative": 4
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.004487830656057092,
+          "sample_sd": 0.005257310637048091,
+          "median": -0.004151567426523228,
+          "minimum": -0.013653426676019764,
+          "maximum": 0.0005794369432914337,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.002607118338289385,
+          "sample_sd": 0.00605212604278916,
+          "median": 0.00040036462545209317,
+          "minimum": -0.002789583302311327,
+          "maximum": 0.01624308346945394,
+          "positive": 5,
+          "negative": 4
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.044177543286149513,
+          "sample_sd": 0.05058391966189029,
+          "median": 0.016196124503662757,
+          "minimum": 0.0011858138076440983,
+          "maximum": 0.12598118102166062,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.002612373038657344,
+          "sample_sd": 0.00602486860620182,
+          "median": -3.4079444114154533e-05,
+          "minimum": -0.016279593339541876,
+          "maximum": 0.0023808251717790663,
+          "positive": 4,
+          "negative": 5
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.00666351105272742,
+          "sample_sd": 0.008362087874241943,
+          "median": -0.006764686663877195,
+          "minimum": -0.0244323641580253,
+          "maximum": 0.0010162517779518376,
+          "positive": 3,
+          "negative": 6
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_eval",
+      "condition": "shared_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.947300045124125,
+          "sample_sd": 1.2061938522411575,
+          "median": 1.891727392111104,
+          "minimum": 0.7046910820027631,
+          "maximum": 4.681053932870921,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 1.5031120521397854,
+          "sample_sd": 0.6173075372488019,
+          "median": 1.443168768827544,
+          "minimum": 0.6644002571929071,
+          "maximum": 2.59411682479489,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.7075435448434522,
+          "sample_sd": 0.12364199401583906,
+          "median": 0.7188691624167345,
+          "minimum": 0.5126833066308147,
+          "maximum": 0.8528289504689681,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 3.557476290688964,
+          "sample_sd": 1.5637702157390232,
+          "median": 3.17613156127042,
+          "minimum": 2.216694669188655,
+          "maximum": 7.512522120986077,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.06571806186238616,
+          "sample_sd": 0.08182119818442263,
+          "median": 0.03825529330353791,
+          "minimum": -0.0017308213104525738,
+          "maximum": 0.22593174402534902,
+          "positive": 8,
+          "negative": 1
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.29261364426358105,
+          "sample_sd": 0.32372565799439135,
+          "median": 0.1603606996165185,
+          "minimum": 0.0061386970874031666,
+          "maximum": 0.8746876473026066,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.040920236159954056,
+          "sample_sd": 0.053168308679067786,
+          "median": -0.02309538849516246,
+          "minimum": -0.14747775684838094,
+          "maximum": 0.004526498287261038,
+          "positive": 3,
+          "negative": 6
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.05678020882062185,
+          "sample_sd": 0.06866418153580067,
+          "median": -0.03297845244987341,
+          "minimum": -0.1883951004118508,
+          "maximum": 0.00137306517742819,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.06620701307996563,
+          "sample_sd": 0.08208177761213804,
+          "median": 0.04087207611985069,
+          "minimum": -0.002171097701806568,
+          "maximum": 0.23154746381396363,
+          "positive": 8,
+          "negative": 1
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.30757356801326335,
+          "sample_sd": 0.34153756313845307,
+          "median": 0.16108561206257344,
+          "minimum": 0.006524115488785093,
+          "maximum": 0.9210466422996992,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.04244863197584682,
+          "sample_sd": 0.05505536994505173,
+          "median": -0.02352927634355917,
+          "minimum": -0.15577886186070855,
+          "maximum": 0.005217242706383574,
+          "positive": 2,
+          "negative": 7
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.058955889217292175,
+          "sample_sd": 0.07110212394380457,
+          "median": -0.035591571687227375,
+          "minimum": -0.19917403789385635,
+          "maximum": 0.0018098800120885938,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_eval",
+      "condition": "teacher_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.9473001227529196,
+          "sample_sd": 1.2061940241962128,
+          "median": 1.8917275614786648,
+          "minimum": 0.7046910319408048,
+          "maximum": 4.681054519319912,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 2.4526957959598397,
+          "sample_sd": 0.8313966485965715,
+          "median": 2.280321655812758,
+          "minimum": 1.3679767290507248,
+          "maximum": 4.359587220999968,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.5353722294228367,
+          "sample_sd": 0.29832327272520676,
+          "median": 0.5436806526546133,
+          "minimum": 0.03876306733058631,
+          "maximum": 0.9664167402039109,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 1.5038365865590448,
+          "sample_sd": 0.6108354081118148,
+          "median": 1.361034764641848,
+          "minimum": 0.9313258803132571,
+          "maximum": 2.792654293713449,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.00867835320888357,
+          "sample_sd": 0.012496608640450357,
+          "median": 0.0017534621850595344,
+          "minimum": 0.0008900606717789084,
+          "maximum": 0.03325619646861033,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.022874038394151405,
+          "sample_sd": 0.05444782452894672,
+          "median": -0.004452529633359348,
+          "minimum": -0.01392096724924441,
+          "maximum": 0.1370871962808063,
+          "positive": 4,
+          "negative": 5
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.012333466364483034,
+          "sample_sd": 0.012599695259256409,
+          "median": -0.005047873328003605,
+          "minimum": -0.03892771643932402,
+          "maximum": -0.004818829603103536,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.007350490464504731,
+          "sample_sd": 0.012039036292582173,
+          "median": -0.0009612444937769915,
+          "minimum": -0.03555360842940203,
+          "maximum": 0.0008624491689430691,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.009167304426463045,
+          "sample_sd": 0.01584584551909825,
+          "median": 0.002083355773956158,
+          "minimum": -0.005480660200955861,
+          "maximum": 0.03887191625722494,
+          "positive": 6,
+          "negative": 3
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.03783396214383371,
+          "sample_sd": 0.07156871418654463,
+          "median": -0.0037276171873044106,
+          "minimum": -0.015937299163100604,
+          "maximum": 0.18344619127789885,
+          "positive": 4,
+          "negative": 5
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.013861862180375797,
+          "sample_sd": 0.015989936250962514,
+          "median": -0.005745075944330047,
+          "minimum": -0.04722882145165164,
+          "maximum": -0.0036143216093951214,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.009526170861175057,
+          "sample_sd": 0.016024907922931514,
+          "median": -0.0014599007161907318,
+          "minimum": -0.04633254591140756,
+          "maximum": 0.0009005381642120946,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_eval",
+      "condition": "teacher_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.9473001220388053,
+          "sample_sd": 1.2061939515441433,
+          "median": 1.8917275130057079,
+          "minimum": 0.7046911326994589,
+          "maximum": 4.681054249070342,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 2.452695748350928,
+          "sample_sd": 0.8313966196844279,
+          "median": 2.2803215148887834,
+          "minimum": 1.3679767219902808,
+          "maximum": 4.359587045454652,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.5353722421382942,
+          "sample_sd": 0.29832327474147574,
+          "median": 0.5436807237359352,
+          "minimum": 0.03876309515984477,
+          "maximum": 0.9664167346106562,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 6.015346184256768,
+          "sample_sd": 2.44334170784283,
+          "median": 5.444139298533359,
+          "minimum": 3.7253035863196557,
+          "maximum": 11.170617618437063,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.19647427365317874,
+          "sample_sd": 0.3447834719643606,
+          "median": 0.01812623354137033,
+          "minimum": 0.009943803811731128,
+          "maximum": 0.9426029458712137,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.5165526737215919,
+          "sample_sd": 1.0187882809765523,
+          "median": 0.024947711128446293,
+          "minimum": -0.02251077396871387,
+          "maximum": 2.8650790971390365,
+          "positive": 5,
+          "negative": 4
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.10824348819304616,
+          "sample_sd": 0.14120056554316718,
+          "median": -0.0350004976022793,
+          "minimum": -0.4261894051259822,
+          "maximum": -0.027983376003453575,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.10286706871042434,
+          "sample_sd": 0.17071414835431073,
+          "median": -0.016797139660567617,
+          "minimum": -0.4869841698524394,
+          "maximum": -0.005007832359981146,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.19696322487075824,
+          "sample_sd": 0.34768564750113645,
+          "median": 0.018456127130266953,
+          "minimum": 0.008789769022642863,
+          "maximum": 0.9482186656598284,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.5315125974712742,
+          "sample_sd": 1.0329492561444547,
+          "median": 0.029785278365656698,
+          "minimum": -0.022496345783897642,
+          "maximum": 2.9114380921361294,
+          "positive": 5,
+          "negative": 4
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.10977188400893892,
+          "sample_sd": 0.144549408108431,
+          "median": -0.03453657523444442,
+          "minimum": -0.4344905101383098,
+          "maximum": -0.02710826335291483,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.10504274910709466,
+          "sample_sd": 0.17466781305469745,
+          "median": -0.01700387919064672,
+          "minimum": -0.49776310733444495,
+          "maximum": -0.00496974336471212,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_eval",
+      "condition": "shared_norm",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.9473000510616425,
+          "sample_sd": 1.20619380188314,
+          "median": 1.8917274977604253,
+          "minimum": 0.7046910208031077,
+          "maximum": 4.681053736728474,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 1.5031120284774175,
+          "sample_sd": 0.6173075369569913,
+          "median": 1.4431687070980843,
+          "minimum": 0.6644002623710489,
+          "maximum": 2.5941168490775,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.7075435542931848,
+          "sample_sd": 0.12364201503812998,
+          "median": 0.7188691619040146,
+          "minimum": 0.5126832714041009,
+          "maximum": 0.8528289776676664,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 1.5038365654120194,
+          "sample_sd": 0.6108354637296523,
+          "median": 1.3610347919159334,
+          "minimum": 0.9313258855111188,
+          "maximum": 2.7926544519200585,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.004687448588450971,
+          "sample_sd": 0.00918160832616744,
+          "median": 0.002062343778234277,
+          "minimum": -0.001502442389310188,
+          "maximum": 0.02815822250548311,
+          "positive": 6,
+          "negative": 3
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.04672626845704423,
+          "sample_sd": 0.050962111817964444,
+          "median": 0.023872198192343763,
+          "minimum": 0.004655840224543462,
+          "maximum": 0.16434575223728182,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.002523842855870385,
+          "sample_sd": 0.007492999474872785,
+          "median": -0.00031018245139002865,
+          "minimum": -0.0210399596617179,
+          "maximum": 0.003795891916505423,
+          "positive": 4,
+          "negative": 5
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.006893990866750392,
+          "sample_sd": 0.009223161744208673,
+          "median": -0.006560778139896306,
+          "minimum": -0.02892516213683083,
+          "maximum": 0.0012137886156612376,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0051763998060304454,
+          "sample_sd": 0.011759884282271005,
+          "median": 0.0006417573854161918,
+          "minimum": -0.0032655107991094445,
+          "maximum": 0.03377394229409772,
+          "positive": 5,
+          "negative": 4
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.06168619220672653,
+          "sample_sd": 0.06976542137688996,
+          "median": 0.0245971106383987,
+          "minimum": 0.005041258625925388,
+          "maximum": 0.21070474723437438,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.004052238671763149,
+          "sample_sd": 0.010426017854773876,
+          "median": -0.0006676869987729539,
+          "minimum": -0.029341064674045514,
+          "maximum": 0.004486636335627958,
+          "positive": 4,
+          "negative": 5
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.009069671263420719,
+          "sample_sd": 0.012784796332450995,
+          "median": -0.007878187272477355,
+          "minimum": -0.039704099618836364,
+          "maximum": 0.0016506034503216416,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.7958236487517198,
+        "sample_sd": 0.6828680130948301,
+        "median": 1.7616896743622208,
+        "minimum": 0.9670393231715105,
+        "maximum": 3.1781849721081907,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_train",
+      "condition": "ce",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.0842145497839142,
+          "sample_sd": 0.38742523520219474,
+          "median": 1.1586756767165687,
+          "minimum": 0.44754761450235436,
+          "maximum": 1.6839942812796684,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 8.544991507141503e-05,
+          "sample_sd": 0.0005463969506633483,
+          "median": 4.176753404797062e-05,
+          "minimum": -0.0009113923006068558,
+          "maximum": 0.00111026399951894,
+          "positive": 6,
+          "negative": 3
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.000619401996451817,
+          "sample_sd": 0.004668391476138078,
+          "median": 2.5321323040783383e-05,
+          "minimum": -0.006597177985733116,
+          "maximum": 0.01036446423545978,
+          "positive": 5,
+          "negative": 4
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0005417541325695657,
+          "sample_sd": 0.001157891508076784,
+          "median": -0.0006344475884292322,
+          "minimum": -0.0018403679379838112,
+          "maximum": 0.0014980886979418795,
+          "positive": 2,
+          "negative": 7
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0003232633583012154,
+          "sample_sd": 0.0006255128248138798,
+          "median": -0.00037396884763407634,
+          "minimum": -0.0012557370619499242,
+          "maximum": 0.0008274853506888835,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 0.0,
+        "sample_sd": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0,
+        "positive": 0,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_train",
+      "condition": "shared_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.0842145589677874,
+          "sample_sd": 0.3874252547848284,
+          "median": 1.1586756320436713,
+          "minimum": 0.44754760982246683,
+          "maximum": 1.6839944172035939,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 0.8147791725760214,
+          "sample_sd": 0.25194811843778675,
+          "median": 0.8153357835822439,
+          "minimum": 0.481364857607706,
+          "maximum": 1.245395520312425,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.7925504301587609,
+          "sample_sd": 0.07718653993607812,
+          "median": 0.8032364995185137,
+          "minimum": 0.6743864281610684,
+          "maximum": 0.9238988417774827,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 0.7813894374960797,
+          "sample_sd": 0.13706184490362208,
+          "median": 0.7395484851906474,
+          "minimum": 0.6384303911873636,
+          "maximum": 1.075561229784366,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": -8.884245610676756e-05,
+          "sample_sd": 8.872983144546476e-05,
+          "median": -9.375566046046502e-05,
+          "minimum": -0.0002877559066109814,
+          "maximum": 1.574740070095504e-05,
+          "positive": 1,
+          "negative": 8
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.00047765869472230556,
+          "sample_sd": 0.0006027896647005609,
+          "median": 0.00017910414558430787,
+          "minimum": -0.00031153352094320796,
+          "maximum": 0.001608222660417269,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": 0.00019098431166012878,
+          "sample_sd": 0.00010202392139908433,
+          "median": 0.00015406702488396373,
+          "minimum": 6.01755768233625e-05,
+          "maximum": 0.0003542222827532804,
+          "positive": 9,
+          "negative": 0
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": 9.55783103346381e-06,
+          "sample_sd": 0.00014605824431213838,
+          "median": 5.1145228515903085e-05,
+          "minimum": -0.0002948395877518939,
+          "maximum": 0.000174651903598666,
+          "positive": 6,
+          "negative": 3
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": -3.3925410353525317e-06,
+          "sample_sd": 0.0006149072217960731,
+          "median": -3.023788822265061e-05,
+          "minimum": -0.0011991482072178372,
+          "maximum": 0.001126011400219895,
+          "positive": 3,
+          "negative": 6
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0010970606911741227,
+          "sample_sd": 0.004973054683842511,
+          "median": 0.00020442546862509126,
+          "minimum": -0.00562753753073314,
+          "maximum": 0.01197268689587705,
+          "positive": 5,
+          "negative": 4
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0003507698209094369,
+          "sample_sd": 0.0011445089217893242,
+          "median": -0.0005377907315010644,
+          "minimum": -0.001609084308312525,
+          "maximum": 0.0016189304933919013,
+          "positive": 2,
+          "negative": 7
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0003137055272677516,
+          "sample_sd": 0.0006295896720016428,
+          "median": -0.0002795883484466577,
+          "minimum": -0.001204591833434021,
+          "maximum": 0.000686106264855546,
+          "positive": 3,
+          "negative": 6
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_train",
+      "condition": "shared_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.084214539531563,
+          "sample_sd": 0.38742520688918075,
+          "median": 1.1586756941377958,
+          "minimum": 0.4475476100345456,
+          "maximum": 1.6839941481805096,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 0.8147791841440245,
+          "sample_sd": 0.2519481477251079,
+          "median": 0.8153357441425106,
+          "minimum": 0.48136485954553804,
+          "maximum": 1.2453956094741787,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.7925504239037332,
+          "sample_sd": 0.07718654199456071,
+          "median": 0.8032364632847052,
+          "minimum": 0.6743864065892424,
+          "maximum": 0.9238988240282732,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 3.1255578019234074,
+          "sample_sd": 0.5482473815307701,
+          "median": 2.958194625129263,
+          "minimum": 2.5537216503086593,
+          "maximum": 4.302244934418326,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": -0.000269993043731971,
+          "sample_sd": 0.0003629569217378661,
+          "median": -0.0002817473956460148,
+          "minimum": -0.0010781979666704133,
+          "maximum": 0.00013082536276015633,
+          "positive": 2,
+          "negative": 7
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.002112493812455787,
+          "sample_sd": 0.002507995395329228,
+          "median": 0.0009001455576224671,
+          "minimum": -0.001130489910502297,
+          "maximum": 0.00660887486937306,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": 0.0006727727728983446,
+          "sample_sd": 0.000373560952277538,
+          "median": 0.0006039659596606128,
+          "minimum": 0.00023018241049455046,
+          "maximum": 0.001176624997594966,
+          "positive": 9,
+          "negative": 0
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -8.126000112653988e-05,
+          "sample_sd": 0.0007123944855608692,
+          "median": 0.00011941807895765599,
+          "minimum": -0.001635455925408591,
+          "maximum": 0.0006412193933686972,
+          "positive": 6,
+          "negative": 3
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": -0.00018454312866055596,
+          "sample_sd": 0.0008619995218825524,
+          "median": -0.00021415028015440984,
+          "minimum": -0.001989590267277269,
+          "maximum": 0.0012410893622790964,
+          "positive": 3,
+          "negative": 6
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.002731895808907604,
+          "sample_sd": 0.0061886579158367755,
+          "median": 0.0018370416931240419,
+          "minimum": -0.003190174391129119,
+          "maximum": 0.01697333910483284,
+          "positive": 6,
+          "negative": 3
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": 0.00013101864032877893,
+          "sample_sd": 0.0011559199217685517,
+          "median": -0.00011465625220041797,
+          "minimum": -0.00133006430284055,
+          "maximum": 0.0021222369264223273,
+          "positive": 3,
+          "negative": 6
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0004045233594277553,
+          "sample_sd": 0.0008927221493924534,
+          "median": -9.961007577374836e-05,
+          "minimum": -0.0022133315996464287,
+          "maximum": 0.0006244260723142769,
+          "positive": 3,
+          "negative": 6
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_train",
+      "condition": "teacher_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.0842145527712896,
+          "sample_sd": 0.387425242516318,
+          "median": 1.1586756429168867,
+          "minimum": 0.44754761011622046,
+          "maximum": 1.6839943464028182,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 1.0530251920185387,
+          "sample_sd": 0.2775119679670323,
+          "median": 1.1039156014462523,
+          "minimum": 0.5822832772798355,
+          "maximum": 1.481492339502555,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.8232004006944814,
+          "sample_sd": 0.20924058220946962,
+          "median": 0.8713855709029584,
+          "minimum": 0.29971757726876586,
+          "maximum": 0.9802760306566594,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 1.0221237311802438,
+          "sample_sd": 0.2083655109463208,
+          "median": 0.9435678423727644,
+          "minimum": 0.866266119937389,
+          "maximum": 1.5087287549184887,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 6.965402355642148e-05,
+          "sample_sd": 0.00019784190864326,
+          "median": 1.7804031974488765e-05,
+          "minimum": -0.00011525812120405377,
+          "maximum": 0.00048002745387623613,
+          "positive": 5,
+          "negative": 4
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": -0.0012905517078884061,
+          "sample_sd": 0.0009005884658183999,
+          "median": -0.0011744920263749847,
+          "minimum": -0.0027700555412576433,
+          "maximum": -0.0001488447682779781,
+          "positive": 0,
+          "negative": 9
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -8.309969242988509e-05,
+          "sample_sd": 0.00017896939551901,
+          "median": -0.0001293195806009173,
+          "minimum": -0.00030871088641382105,
+          "maximum": 0.00020363128117018015,
+          "positive": 3,
+          "negative": 6
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": 5.3757695545658064e-05,
+          "sample_sd": 0.0002540413730211875,
+          "median": -4.418538412265249e-06,
+          "minimum": -0.0002768739584388946,
+          "maximum": 0.00043273261597331913,
+          "positive": 4,
+          "negative": 5
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.00015510393862783653,
+          "sample_sd": 0.0005901471055249734,
+          "median": 0.00011437693916363512,
+          "minimum": -0.0010173885838662688,
+          "maximum": 0.0010830297832477576,
+          "positive": 5,
+          "negative": 4
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": -0.0006711497114365891,
+          "sample_sd": 0.005200651057650044,
+          "median": -0.001970597563984766,
+          "minimum": -0.008377516117672179,
+          "maximum": 0.010215619467181802,
+          "positive": 4,
+          "negative": 5
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0006248538249994508,
+          "sample_sd": 0.0010272111209340175,
+          "median": -0.0008573547990312624,
+          "minimum": -0.001686100704357929,
+          "maximum": 0.0011893778115280584,
+          "positive": 2,
+          "negative": 7
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0002695056627555574,
+          "sample_sd": 0.000484986664234486,
+          "median": -0.0003783873860463416,
+          "minimum": -0.0008574153575289234,
+          "maximum": 0.0005506113922499889,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_train",
+      "condition": "teacher_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.084214567869457,
+          "sample_sd": 0.38742525026173597,
+          "median": 1.1586756950789507,
+          "minimum": 0.447547610451209,
+          "maximum": 1.683994333602611,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 1.0530251752452302,
+          "sample_sd": 0.27751195731306977,
+          "median": 1.1039156154179284,
+          "minimum": 0.5822832906415997,
+          "maximum": 1.481492325186205,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.8232004006461113,
+          "sample_sd": 0.20924058011623667,
+          "median": 0.8713855664183771,
+          "minimum": 0.2997175841518794,
+          "maximum": 0.9802760328120926,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 4.0884948362129805,
+          "sample_sd": 0.8334620856662684,
+          "median": 3.7742714278782525,
+          "minimum": 3.4650638499534945,
+          "maximum": 6.034914940041356,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0004218916271038363,
+          "sample_sd": 0.000884014072799616,
+          "median": 8.230615269125274e-05,
+          "minimum": -0.0003717323605104683,
+          "maximum": 0.0022726908532077206,
+          "positive": 6,
+          "negative": 3
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": -0.00481218024106975,
+          "sample_sd": 0.0034878641903620974,
+          "median": -0.004355435813358177,
+          "minimum": -0.010750767251561266,
+          "maximum": -0.00046347207267088963,
+          "positive": 0,
+          "negative": 9
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.00048709598434748536,
+          "sample_sd": 0.0007457363370312475,
+          "median": -0.0005703170693930337,
+          "minimum": -0.001591372427526827,
+          "maximum": 0.0006666042659291271,
+          "positive": 3,
+          "negative": 6
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -3.263733680388311e-06,
+          "sample_sd": 0.00110050967008594,
+          "median": -5.811527107435488e-05,
+          "minimum": -0.001544406368585105,
+          "maximum": 0.0014729272870595,
+          "positive": 4,
+          "negative": 5
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0005073415421752513,
+          "sample_sd": 0.001076726492190096,
+          "median": 0.0003277588995386771,
+          "minimum": -0.0012831246611173242,
+          "maximum": 0.00228541706844243,
+          "positive": 5,
+          "negative": 4
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": -0.004192778244617933,
+          "sample_sd": 0.007094094334742826,
+          "median": -0.0032727890835708706,
+          "minimum": -0.012731097544563863,
+          "maximum": 0.00990099216278889,
+          "positive": 2,
+          "negative": 7
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0010288501169170511,
+          "sample_sd": 0.0007431549167270947,
+          "median": -0.001173763672054684,
+          "minimum": -0.0023619719241874115,
+          "maximum": -9.328372958494757e-05,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0003265270919816037,
+          "sample_sd": 0.0008193291055232084,
+          "median": -0.0004320841187084312,
+          "minimum": -0.0020423669465392535,
+          "maximum": 0.0007785145021308448,
+          "positive": 4,
+          "negative": 5
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_train",
+      "condition": "shared_norm",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.0842145704841002,
+          "sample_sd": 0.38742525024547375,
+          "median": 1.1586756811309848,
+          "minimum": 0.44754761436963636,
+          "maximum": 1.6839943488883333,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 0.8147791735564814,
+          "sample_sd": 0.2519481112876883,
+          "median": 0.8153357982172873,
+          "minimum": 0.48136485135502016,
+          "maximum": 1.2453954930246451,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.7925504371935504,
+          "sample_sd": 0.07718654034585513,
+          "median": 0.8032364937868378,
+          "minimum": 0.6743864386436269,
+          "maximum": 0.9238988402440798,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 1.0221237216585357,
+          "sample_sd": 0.20836549553074118,
+          "median": 0.9435678422048337,
+          "minimum": 0.8662659963749224,
+          "maximum": 1.5087286755057514,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": -0.00011469904897491568,
+          "sample_sd": 0.00011800271023380242,
+          "median": -0.00010272470647662568,
+          "minimum": -0.0003871809282873784,
+          "maximum": 1.6871146465924358e-05,
+          "positive": 1,
+          "negative": 8
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0006086625884558247,
+          "sample_sd": 0.0007912689255313622,
+          "median": 0.0001989393006772977,
+          "minimum": -0.0004012427386949624,
+          "maximum": 0.00218726487730464,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": 0.0002395199744148973,
+          "sample_sd": 0.00011906401337751968,
+          "median": 0.0002155224108421061,
+          "minimum": 0.0001119755644218845,
+          "maximum": 0.000417320827058254,
+          "positive": 9,
+          "negative": 0
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": 1.1589364296398723e-05,
+          "sample_sd": 0.00017991270463339087,
+          "median": 5.0681389197171356e-05,
+          "minimum": -0.00035159459118727643,
+          "maximum": 0.00021639372018222858,
+          "positive": 7,
+          "negative": 2
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": -2.924913390350065e-05,
+          "sample_sd": 0.0006401339414279953,
+          "median": -3.9206934238811275e-05,
+          "minimum": -0.0012985732288942342,
+          "maximum": 0.0011271351459848644,
+          "positive": 3,
+          "negative": 6
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0012280645849076417,
+          "sample_sd": 0.005103036824664676,
+          "median": 0.00021438055159234137,
+          "minimum": -0.005352405938731208,
+          "maximum": 0.01255172911276442,
+          "positive": 5,
+          "negative": 4
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.00030223415815466836,
+          "sample_sd": 0.001155230868405809,
+          "median": -0.0005030998010189247,
+          "minimum": -0.0016032501596395798,
+          "maximum": 0.0016471090243251885,
+          "positive": 2,
+          "negative": 7
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0003116739940048167,
+          "sample_sd": 0.0006345462430787435,
+          "median": -0.0002471308479599088,
+          "minimum": -0.0012029580132713047,
+          "maximum": 0.0006350113915345457,
+          "positive": 3,
+          "negative": 6
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.321131711171342,
+        "sample_sd": 0.24145833262399996,
+        "median": 1.3011425260668947,
+        "minimum": 1.0507793477778704,
+        "maximum": 1.8849375251381684,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "legacy_eval",
+      "condition": "ce",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 5.121999672957704,
+          "sample_sd": 5.304605852419391,
+          "median": 1.7576080488044885,
+          "minimum": 1.1984137100681171,
+          "maximum": 15.85814472880442,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.023853315486049267,
+          "sample_sd": 0.04223385301302551,
+          "median": 0.0006068175534009179,
+          "minimum": -0.00048410788437328045,
+          "maximum": 0.12291288571705894,
+          "positive": 7,
+          "negative": 2
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.07033131010018084,
+          "sample_sd": 0.1262471641708122,
+          "median": 0.0013380127203567738,
+          "minimum": -0.005573798319160772,
+          "maximum": 0.30929729592874544,
+          "positive": 6,
+          "negative": 3
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.024025083235239456,
+          "sample_sd": 0.03558252558932172,
+          "median": -0.0019144410758138442,
+          "minimum": -0.08825606000692321,
+          "maximum": 0.0012719977952238004,
+          "positive": 2,
+          "negative": 7
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.023539222924147032,
+          "sample_sd": 0.037278142963843575,
+          "median": -0.0007247172248810996,
+          "minimum": -0.10093277770508757,
+          "maximum": 0.001493860757272647,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 0.0,
+        "sample_sd": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0,
+        "positive": 0,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "legacy_eval",
+      "condition": "shared_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 5.121999778618759,
+          "sample_sd": 5.304606289574183,
+          "median": 1.7576079042282373,
+          "minimum": 1.1984137446192178,
+          "maximum": 15.858146600895681,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 5.8039574698265435,
+          "sample_sd": 8.453331376267105,
+          "median": 2.5954090136662753,
+          "minimum": 1.0863944798917777,
+          "maximum": 26.96427724413847,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.6019289760951487,
+          "sample_sd": 0.2862382653674936,
+          "median": 0.6367693946074213,
+          "minimum": 0.04494387060685915,
+          "maximum": 0.9694008140472514,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 1.055068796060853,
+          "sample_sd": 0.4762734192075794,
+          "median": 0.9418858026634993,
+          "minimum": 0.33237386548267106,
+          "maximum": 1.732130131460732,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.18692657285545106,
+          "sample_sd": 0.49296779049654643,
+          "median": 0.0025148540133663883,
+          "minimum": 0.00011030067072533012,
+          "maximum": 1.4954727741495129,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.321834380022719,
+          "sample_sd": 0.6932567680614651,
+          "median": 0.0038358987560663804,
+          "minimum": 0.0004453635923739041,
+          "maximum": 2.06147479848854,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.05503110691300338,
+          "sample_sd": 0.11413395539898193,
+          "median": -0.004658111250445018,
+          "minimum": -0.34333984960126535,
+          "maximum": 0.0005787609386014303,
+          "positive": 1,
+          "negative": 8
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.061527413859073427,
+          "sample_sd": 0.12875378274647964,
+          "median": -0.002588921666248467,
+          "minimum": -0.3862102302066495,
+          "maximum": 0.00017691346499792981,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.2107798883415003,
+          "sample_sd": 0.5102392472620779,
+          "median": 0.002568417028077835,
+          "minimum": 0.00010038944742073175,
+          "maximum": 1.5511893263326253,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.39216569012289987,
+          "sample_sd": 0.8008439181392895,
+          "median": 0.005173911476423154,
+          "minimum": -0.0035804489635342107,
+          "maximum": 2.3305237006458395,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.07905619014824283,
+          "sample_sd": 0.1403550451147876,
+          "median": -0.005427159020932604,
+          "minimum": -0.4070029221904283,
+          "maximum": 0.0007861722107428415,
+          "positive": 2,
+          "negative": 7
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.08506663678322046,
+          "sample_sd": 0.15533562451409677,
+          "median": -0.0039469199979870195,
+          "minimum": -0.446537641705469,
+          "maximum": 0.0016707742222705768,
+          "positive": 1,
+          "negative": 8
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "legacy_eval",
+      "condition": "shared_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 5.1219992257112095,
+          "sample_sd": 5.304605054224792,
+          "median": 1.7576080440718234,
+          "minimum": 1.1984137158666506,
+          "maximum": 15.858142444060435,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 5.803956439852323,
+          "sample_sd": 8.453328705160462,
+          "median": 2.595409050788776,
+          "minimum": 1.086394418350539,
+          "maximum": 26.964268739818586,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.6019290358410159,
+          "sample_sd": 0.28623822185641995,
+          "median": 0.6367693254725351,
+          "minimum": 0.04494386904345215,
+          "maximum": 0.9694007712817416,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 4.220274978682998,
+          "sample_sd": 1.9050934733378633,
+          "median": 3.7675434698757075,
+          "minimum": 1.3294954783500899,
+          "maximum": 6.928520323226531,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 1.3757101761667314,
+          "sample_sd": 2.6751806759203447,
+          "median": 0.03218738617200835,
+          "minimum": 0.0015310815230981795,
+          "maximum": 7.340672086595755,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 1.7962201178881865,
+          "sample_sd": 3.2887724168209314,
+          "median": 0.05883921172028578,
+          "minimum": 0.021138038650225066,
+          "maximum": 8.388457591579396,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.16086728776501735,
+          "sample_sd": 0.23253891317649855,
+          "median": -0.04485012115256237,
+          "minimum": -0.6171734369938109,
+          "maximum": 0.00028245497461043545,
+          "positive": 1,
+          "negative": 8
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.17706114144636698,
+          "sample_sd": 0.2676997157150637,
+          "median": -0.03051448227204645,
+          "minimum": -0.7028857194481046,
+          "maximum": -0.004276293924201924,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 1.3995634916527806,
+          "sample_sd": 2.707130859330396,
+          "median": 0.03279420372540927,
+          "minimum": 0.001521170299793581,
+          "maximum": 7.396388638778868,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 1.8665514279883673,
+          "sample_sd": 3.411706507818233,
+          "median": 0.059217388456547115,
+          "minimum": 0.019437254570180473,
+          "maximum": 8.657506493736694,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.18489237100025682,
+          "sample_sd": 0.2647900746991002,
+          "median": -0.046764562228376216,
+          "minimum": -0.6808365095829738,
+          "maximum": 0.0004898662467518466,
+          "positive": 1,
+          "negative": 8
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.200600364370514,
+          "sample_sd": 0.30141451194388874,
+          "median": -0.030918380098480247,
+          "minimum": -0.7632131309469241,
+          "maximum": -0.004372055223572202,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "legacy_eval",
+      "condition": "teacher_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 5.121999537506453,
+          "sample_sd": 5.304605818907987,
+          "median": 1.7576078690894608,
+          "minimum": 1.1984137588731627,
+          "maximum": 15.858145043180203,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 5.5374589143097,
+          "sample_sd": 2.6665588592311997,
+          "median": 5.312722587406653,
+          "minimum": 2.4685576349242453,
+          "maximum": 9.922905903332916,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.33879677691633997,
+          "sample_sd": 0.3205931414740257,
+          "median": 0.2950740548028239,
+          "minimum": -0.14471315478758798,
+          "maximum": 0.831398739551684,
+          "positive": 7,
+          "negative": 2
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 1.9145441477224585,
+          "sample_sd": 1.3352030657141543,
+          "median": 1.4900766725792727,
+          "minimum": 0.6257292940828703,
+          "maximum": 4.610191394598659,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.10496650625860969,
+          "sample_sd": 0.21279132666032646,
+          "median": 0.01713494683310547,
+          "minimum": 0.00035581419864638697,
+          "maximum": 0.6493193501156184,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.20356831750607207,
+          "sample_sd": 0.4334275581430963,
+          "median": 0.014380314848624065,
+          "minimum": -0.015351616521349198,
+          "maximum": 1.2871610814449022,
+          "positive": 6,
+          "negative": 3
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.04897587484242638,
+          "sample_sd": 0.06415233956920183,
+          "median": -0.022721365196081034,
+          "minimum": -0.193899448001297,
+          "maximum": -0.0029583790972362856,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.04293496548053087,
+          "sample_sd": 0.07201601785407984,
+          "median": -0.01530234616433912,
+          "minimum": -0.21251051125316134,
+          "maximum": 0.0012121084955619699,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.12881982174465895,
+          "sample_sd": 0.2538855483670475,
+          "median": 0.01665083894873219,
+          "minimum": 0.0003459029753417886,
+          "maximum": 0.7722322358326773,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.2738996276062529,
+          "sample_sd": 0.5502034409703819,
+          "median": 0.014758491584885403,
+          "minimum": -0.013396865196834584,
+          "maximum": 1.5964583773736476,
+          "positive": 6,
+          "negative": 3
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.07300095807766584,
+          "sample_sd": 0.09779112086066503,
+          "median": -0.023396236364792378,
+          "minimum": -0.2821555080082202,
+          "maximum": -0.0035812251535347617,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0664741884046779,
+          "sample_sd": 0.10779474148458057,
+          "median": -0.01699321586303093,
+          "minimum": -0.3134432889582489,
+          "maximum": 0.0008082106691281732,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "legacy_eval",
+      "condition": "teacher_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 5.121999294049017,
+          "sample_sd": 5.3046051320407015,
+          "median": 1.757607943424198,
+          "minimum": 1.1984137103427968,
+          "maximum": 15.858142182422837,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 5.537458781214592,
+          "sample_sd": 2.6665589376786976,
+          "median": 5.312722606565466,
+          "minimum": 2.4685577193294392,
+          "maximum": 9.922906950834335,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.33879678320266665,
+          "sample_sd": 0.320593138698716,
+          "median": 0.2950741241227371,
+          "minimum": -0.14471321432795337,
+          "maximum": 0.8313986287893579,
+          "positive": 7,
+          "negative": 2
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 7.658176243021203,
+          "sample_sd": 5.340812065315398,
+          "median": 5.960307263803067,
+          "minimum": 2.502917892067555,
+          "maximum": 18.440766763359502,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.953179035083306,
+          "sample_sd": 1.5754308997133197,
+          "median": 0.3587437468372938,
+          "minimum": 0.0044295549806845635,
+          "maximum": 4.888490047214585,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 1.1591615059653828,
+          "sample_sd": 2.1692100717406455,
+          "median": 0.3373320751551053,
+          "minimum": -0.011072547932581056,
+          "maximum": 6.661301460215632,
+          "positive": 7,
+          "negative": 2
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.21071520835288446,
+          "sample_sd": 0.17069055382140258,
+          "median": -0.18229226284096844,
+          "minimum": -0.5303930123522423,
+          "maximum": -0.02154825321973608,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.19344989845551022,
+          "sample_sd": 0.20845246334813305,
+          "median": -0.1634548743839599,
+          "minimum": -0.6111061398493718,
+          "maximum": -0.002979024477640313,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.9770323505693552,
+          "sample_sd": 1.6161550778105864,
+          "median": 0.3598778541974822,
+          "minimum": 0.004419643757379965,
+          "maximum": 5.011402932931643,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 1.2294928160655638,
+          "sample_sd": 2.2807140329712348,
+          "median": 0.39992227612100684,
+          "minimum": -0.009362571909775907,
+          "maximum": 6.970598756144377,
+          "positive": 7,
+          "negative": 2
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.2347402915881239,
+          "sample_sd": 0.20201131602200248,
+          "median": -0.1829671340096798,
+          "minimum": -0.6186490723591656,
+          "maximum": -0.02134084194759467,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.21698912137965726,
+          "sample_sd": 0.242725399546362,
+          "median": -0.16382383211652163,
+          "minimum": -0.7120389175544594,
+          "maximum": -0.0030747857770105913,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "legacy_eval",
+      "condition": "shared_norm",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 5.1219995792575626,
+          "sample_sd": 5.304605824989181,
+          "median": 1.7576080124208326,
+          "minimum": 1.198413695994774,
+          "maximum": 15.85814494649691,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 5.803956721523967,
+          "sample_sd": 8.453328801608544,
+          "median": 2.5954089210249163,
+          "minimum": 1.0863943701043577,
+          "maximum": 26.96426890277207,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.6019289609141134,
+          "sample_sd": 0.28623827119548617,
+          "median": 0.6367693260591066,
+          "minimum": 0.04494382560239163,
+          "maximum": 0.9694008151509902,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 1.9145441214613952,
+          "sample_sd": 1.3352029744111462,
+          "median": 1.4900766749438448,
+          "minimum": 0.6257293226083415,
+          "maximum": 4.6101909843225695,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0481868889898562,
+          "sample_sd": 0.0646824735031081,
+          "median": 0.010182506525334992,
+          "minimum": 0.0004242619418795557,
+          "maximum": 0.16884768918779516,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.15374141279377354,
+          "sample_sd": 0.22281257687796532,
+          "median": 0.03763076182793135,
+          "minimum": 0.003215148598135653,
+          "maximum": 0.6195291486656426,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.034883675507580425,
+          "sample_sd": 0.04255249378288466,
+          "median": -0.013047297032487304,
+          "minimum": -0.10163882336118146,
+          "maximum": 0.0008313010111951069,
+          "positive": 1,
+          "negative": 8
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.03604700789500369,
+          "sample_sd": 0.04547971026786096,
+          "median": -0.006303957350158873,
+          "minimum": -0.1108014594315323,
+          "maximum": -0.0016452409240093058,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.07204020447590546,
+          "sample_sd": 0.10149627378947942,
+          "median": 0.010236069540046439,
+          "minimum": 0.0004143507185749573,
+          "maximum": 0.2419566599620246,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.22407272289395438,
+          "sample_sd": 0.3470024054481345,
+          "median": 0.038008938564192685,
+          "minimum": -0.002358649721025119,
+          "maximum": 0.928826444594388,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.05890875874281988,
+          "sample_sd": 0.07751480982480229,
+          "median": -0.011775299237263503,
+          "minimum": -0.18517741475505756,
+          "maximum": 0.001038712283336518,
+          "positive": 1,
+          "negative": 8
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.05958623081915072,
+          "sample_sd": 0.0820892869970642,
+          "median": -0.008127565439443818,
+          "minimum": -0.21173423713661987,
+          "maximum": -0.001741002223379584,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.925415854434998,
+        "sample_sd": 0.9586737540649706,
+        "median": 2.046969306493243,
+        "minimum": 0.3680020523076848,
+        "maximum": 3.234847434231827,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_eval",
+      "condition": "ce",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.7456517553470825,
+          "sample_sd": 1.3127616907366828,
+          "median": 1.1213715203940897,
+          "minimum": 0.574220101403549,
+          "maximum": 4.163771896690095,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.002020744535004268,
+          "sample_sd": 0.00397964457346513,
+          "median": 0.0003587664224921766,
+          "minimum": -0.00039769001581796415,
+          "maximum": 0.012239602045373693,
+          "positive": 7,
+          "negative": 2
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.011458337254402904,
+          "sample_sd": 0.020930447859695788,
+          "median": 0.0031755703568842053,
+          "minimum": -0.0020627766554376925,
+          "maximum": 0.06356746429688309,
+          "positive": 5,
+          "negative": 4
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0030614732961337715,
+          "sample_sd": 0.006822446024378683,
+          "median": -0.0005071375284052548,
+          "minimum": -0.020837912114614388,
+          "maximum": 0.0006689145681070263,
+          "positive": 3,
+          "negative": 6
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0032945140992136513,
+          "sample_sd": 0.006532270875431388,
+          "median": -0.0007458749507937013,
+          "minimum": -0.020201171202311574,
+          "maximum": 0.000558685383406754,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 0.0,
+        "sample_sd": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0,
+        "positive": 0,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_eval",
+      "condition": "shared_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.7456518742286156,
+          "sample_sd": 1.3127618123804967,
+          "median": 1.121371631758432,
+          "minimum": 0.5742201004439749,
+          "maximum": 4.16377191999954,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 2.1078471805675068,
+          "sample_sd": 2.0859222326934095,
+          "median": 1.3227678812647916,
+          "minimum": 0.7873050804909065,
+          "maximum": 7.117697568234491,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.6086592646957136,
+          "sample_sd": 0.2081733396129651,
+          "median": 0.6255787066703512,
+          "minimum": 0.2876464614302145,
+          "maximum": 0.9514408614008476,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 1.19473107901532,
+          "sample_sd": 0.4139926563136487,
+          "median": 1.1795981312551564,
+          "minimum": 0.6344385647121441,
+          "maximum": 1.84066675771457,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.00504304442445316,
+          "sample_sd": 0.007714245980218595,
+          "median": 0.001690796872497194,
+          "minimum": -4.951878351894257e-06,
+          "maximum": 0.02237725989595707,
+          "positive": 8,
+          "negative": 1
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.027424444598275557,
+          "sample_sd": 0.036882173468558495,
+          "median": 0.005802114935686331,
+          "minimum": 0.00018520297008650655,
+          "maximum": 0.10481214651068815,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.005026793629207475,
+          "sample_sd": 0.009082501674085985,
+          "median": 0.0001889880461565241,
+          "minimum": -0.023267486472986265,
+          "maximum": 0.0017613763809123384,
+          "positive": 5,
+          "negative": 4
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.006653416361194603,
+          "sample_sd": 0.009625403944313523,
+          "median": -0.0013043159407818417,
+          "minimum": -0.026939589545393328,
+          "maximum": 0.0003821046183014598,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.007063788959457428,
+          "sample_sd": 0.011481242584703233,
+          "median": 0.0020495632949893705,
+          "minimum": -0.0004026418941698584,
+          "maximum": 0.03461686194133076,
+          "positive": 7,
+          "negative": 2
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.03888278185267846,
+          "sample_sd": 0.05708262106514632,
+          "median": 0.008894942952430651,
+          "minimum": -0.001877573685351186,
+          "maximum": 0.16837961080757124,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.008088266925341247,
+          "sample_sd": 0.015112261534369746,
+          "median": -0.00031814948224873074,
+          "minimum": -0.04410539858760065,
+          "maximum": 0.0024302909490193647,
+          "positive": 3,
+          "negative": 6
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.009947930460408254,
+          "sample_sd": 0.01575512590597545,
+          "median": -0.002050190891575543,
+          "minimum": -0.0471407607477049,
+          "maximum": 0.0009144759083139498,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_eval",
+      "condition": "shared_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.7456519172259468,
+          "sample_sd": 1.3127618591405315,
+          "median": 1.1213716654542658,
+          "minimum": 0.5742200701782532,
+          "maximum": 4.1637721469479905,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 2.107846957659545,
+          "sample_sd": 2.0859218052198103,
+          "median": 1.3227678763167252,
+          "minimum": 0.7873050354528248,
+          "maximum": 7.117696342368797,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.6086592674084553,
+          "sample_sd": 0.20817333089345774,
+          "median": 0.6255787770584346,
+          "minimum": 0.28764648130893306,
+          "maximum": 0.9514408290460233,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 4.7789239164774715,
+          "sample_sd": 1.6559702642899927,
+          "median": 4.718392365588707,
+          "minimum": 2.5377542372875994,
+          "maximum": 7.362666195755217,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.09908992518941777,
+          "sample_sd": 0.16735723681111422,
+          "median": 0.00971247281853059,
+          "minimum": 0.0016792021045380773,
+          "maximum": 0.4591372357514655,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.31836863558728024,
+          "sample_sd": 0.4925491398351363,
+          "median": 0.029874613052085608,
+          "minimum": 0.005216211253853853,
+          "maximum": 1.2412853357984774,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0590882057858064,
+          "sample_sd": 0.09309058852934875,
+          "median": -0.0018275295885944454,
+          "minimum": -0.2210155011797954,
+          "maximum": 0.004996130345846339,
+          "positive": 3,
+          "negative": 6
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.06826732144176778,
+          "sample_sd": 0.1007126919445491,
+          "median": -0.007156376067937176,
+          "minimum": -0.24487009175776064,
+          "maximum": -0.00026507337871550796,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.10111066972442202,
+          "sample_sd": 0.17087259639108882,
+          "median": 0.010071239241022767,
+          "minimum": 0.0013243172631676042,
+          "maximum": 0.47137683779683914,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.32982697284168316,
+          "sample_sd": 0.5111314265723237,
+          "median": 0.031315168479153555,
+          "minimum": 0.0031534345984161605,
+          "maximum": 1.3048528000953605,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.06214967908194016,
+          "sample_sd": 0.0979272476979942,
+          "median": -0.0023346671169997,
+          "minimum": -0.23686292668170056,
+          "maximum": 0.005665044913953365,
+          "positive": 3,
+          "negative": 6
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.07156183554098143,
+          "sample_sd": 0.10591358132152083,
+          "median": -0.007902251018730877,
+          "minimum": -0.2650712629600722,
+          "maximum": 0.00020558181267538167,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_eval",
+      "condition": "teacher_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.7456518935417098,
+          "sample_sd": 1.3127618500182703,
+          "median": 1.1213716595018917,
+          "minimum": 0.5742200965486796,
+          "maximum": 4.1637720905333735,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 2.8866192372253727,
+          "sample_sd": 0.37301293539218044,
+          "median": 2.8897665615183894,
+          "minimum": 2.2156112109071993,
+          "maximum": 3.3867561278176197,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.20536377651300897,
+          "sample_sd": 0.23499653453940406,
+          "median": 0.11794823551308946,
+          "minimum": -0.03984046470343528,
+          "maximum": 0.6032957041025304,
+          "positive": 7,
+          "negative": 2
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 2.4740486706079428,
+          "sample_sd": 1.435136864139108,
+          "median": 2.2820002747936505,
+          "minimum": 0.7163785532239625,
+          "maximum": 4.8168793954944515,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.006206356851709255,
+          "sample_sd": 0.006984409009564637,
+          "median": 0.002812260515055315,
+          "minimum": 0.000612095324743045,
+          "maximum": 0.018595057144265903,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.005487293793008743,
+          "sample_sd": 0.022434664749198086,
+          "median": -0.002262025577855431,
+          "minimum": -0.010459152356886992,
+          "maximum": 0.05426386073714351,
+          "positive": 3,
+          "negative": 6
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.011658949411032972,
+          "sample_sd": 0.00887671832677251,
+          "median": -0.008360986413735283,
+          "minimum": -0.031622345795532136,
+          "maximum": -0.004615749093006438,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.00474190544786431,
+          "sample_sd": 0.008283225461076762,
+          "median": -0.001105518566277719,
+          "minimum": -0.024530134754575106,
+          "maximum": 0.0011544791996572767,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.008227101386713523,
+          "sample_sd": 0.010126653503921825,
+          "median": 0.002634404948522101,
+          "minimum": 0.00065033465963657,
+          "maximum": 0.030834659189639596,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.016945631047411647,
+          "sample_sd": 0.04237291508480308,
+          "median": -0.002752754296886706,
+          "minimum": -0.011685712168656215,
+          "maximum": 0.1178313250340266,
+          "positive": 4,
+          "negative": 5
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.014720422707166744,
+          "sample_sd": 0.015165274884377182,
+          "median": -0.008405850039868157,
+          "minimum": -0.052460257910146524,
+          "maximum": -0.004335675664161376,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.008036419547077962,
+          "sample_sd": 0.014527158800005623,
+          "median": -0.00305599567831194,
+          "minimum": -0.04473130595688668,
+          "maximum": 0.0014948395761770206,
+          "positive": 3,
+          "negative": 6
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_eval",
+      "condition": "teacher_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.745651907470082,
+          "sample_sd": 1.3127619167432951,
+          "median": 1.1213716122559392,
+          "minimum": 0.5742200970732497,
+          "maximum": 4.16377273840653,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 2.886619180302901,
+          "sample_sd": 0.37301293460061197,
+          "median": 2.8897664967481864,
+          "minimum": 2.2156110878611566,
+          "maximum": 3.3867561164422146,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.2053637877355207,
+          "sample_sd": 0.2349965180024464,
+          "median": 0.11794837120901486,
+          "minimum": -0.039840411224581346,
+          "maximum": 0.6032956378530387,
+          "positive": 7,
+          "negative": 2
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 9.896194695831339,
+          "sample_sd": 5.740547568124231,
+          "median": 9.128000040368365,
+          "minimum": 2.865513619553249,
+          "maximum": 19.267517656677033,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.08607432025949464,
+          "sample_sd": 0.07962345257975867,
+          "median": 0.054414266316453005,
+          "minimum": 0.008242870807394553,
+          "maximum": 0.24414208089086087,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.09844721764956521,
+          "sample_sd": 0.1233268239954246,
+          "median": 0.045985259877159956,
+          "minimum": -0.0117579420631988,
+          "maximum": 0.3508418543214993,
+          "positive": 7,
+          "negative": 2
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.07825131359380753,
+          "sample_sd": 0.044895161191415185,
+          "median": -0.06871365736994317,
+          "minimum": -0.15703474268722095,
+          "maximum": -0.03207812986539749,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.044591958709062934,
+          "sample_sd": 0.04170775697055711,
+          "median": -0.02208012191868436,
+          "minimum": -0.12812708571052034,
+          "maximum": -0.003392330431503665,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.08809506479449891,
+          "sample_sd": 0.08123932670543145,
+          "median": 0.05401657630063504,
+          "minimum": 0.008281110142288078,
+          "maximum": 0.24450084731335303,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.10990555490396813,
+          "sample_sd": 0.1418069563674222,
+          "median": 0.0453909671688183,
+          "minimum": -0.013820718718636493,
+          "maximum": 0.41440931861838237,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.08131278688994131,
+          "sample_sd": 0.05003643316459465,
+          "median": -0.06804474280183614,
+          "minimum": -0.17787265480183534,
+          "maximum": -0.031563969850835205,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.04788647280827659,
+          "sample_sd": 0.04723670255058978,
+          "median": -0.022395795923787043,
+          "minimum": -0.1483282569128319,
+          "maximum": -0.0034790329148490784,
+          "positive": 0,
+          "negative": 9
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_eval",
+      "condition": "shared_norm",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.745651924538612,
+          "sample_sd": 1.3127618867227866,
+          "median": 1.121371676248538,
+          "minimum": 0.5742200991303218,
+          "maximum": 4.163772414500955,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 2.1078470051128635,
+          "sample_sd": 2.08592191223495,
+          "median": 1.322767770848188,
+          "minimum": 0.78730503282824,
+          "maximum": 7.117696559218511,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.6086592603101912,
+          "sample_sd": 0.20817333193163656,
+          "median": 0.6255786964605059,
+          "minimum": 0.28764648483318844,
+          "maximum": 0.9514408165453594,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 2.4740484943329957,
+          "sample_sd": 1.4351367517850144,
+          "median": 2.2819997971411063,
+          "minimum": 0.7163784191974647,
+          "maximum": 4.816879272955088,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0053710567535313215,
+          "sample_sd": 0.005675317968808453,
+          "median": 0.0036933939205388983,
+          "minimum": 0.0005203304370255263,
+          "maximum": 0.01804020212025731,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.03056157465267142,
+          "sample_sd": 0.02679417093045939,
+          "median": 0.021331179066030992,
+          "minimum": 0.0017118394871000753,
+          "maximum": 0.08664064018993478,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.003948724295774049,
+          "sample_sd": 0.007151313777830358,
+          "median": -0.0010794339298050293,
+          "minimum": -0.019102110791349936,
+          "maximum": 0.0045198687954368655,
+          "positive": 3,
+          "negative": 6
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.007013745325640635,
+          "sample_sd": 0.007610350931398479,
+          "median": -0.005222704723353622,
+          "minimum": -0.02238009559920151,
+          "maximum": 0.00042153744758499645,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0073918012885355894,
+          "sample_sd": 0.009410550582184285,
+          "median": 0.006035851758813202,
+          "minimum": 0.00031124767857851343,
+          "maximum": 0.030279804165631002,
+          "positive": 9,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.042019911907074325,
+          "sample_sd": 0.04567792604160068,
+          "median": 0.023504446395826273,
+          "minimum": -0.00035093716833761723,
+          "maximum": 0.15020810448681787,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.007010197591907821,
+          "sample_sd": 0.013598919084939574,
+          "median": -0.0015865714582102841,
+          "minimum": -0.03994002290596432,
+          "maximum": 0.005188783363543892,
+          "positive": 3,
+          "negative": 6
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.010308259424854286,
+          "sample_sd": 0.013627888509818298,
+          "median": -0.006643535693460212,
+          "minimum": -0.042581266801513085,
+          "maximum": 0.0009802228309917504,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 2.204455487543698,
+        "sample_sd": 1.1490771520812157,
+        "median": 2.4487205644157934,
+        "minimum": 0.4190733161186779,
+        "maximum": 3.45374678741385,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_train",
+      "condition": "ce",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.6943411825259995,
+          "sample_sd": 2.909707390400715,
+          "median": 0.6858206172523541,
+          "minimum": 0.38600142083633315,
+          "maximum": 9.376996437917027,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": 0.0,
+          "sample_sd": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "positive": 0,
+          "negative": 0
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.00033073145686012765,
+          "sample_sd": 0.00064419648671739,
+          "median": 7.986617629364423e-05,
+          "minimum": -0.0002285288274800068,
+          "maximum": 0.0016095817828915282,
+          "positive": 6,
+          "negative": 3
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0007029280590291682,
+          "sample_sd": 0.0025442197314919372,
+          "median": 0.0024942602782001555,
+          "minimum": -0.0027747367654265,
+          "maximum": 0.0032260964619151844,
+          "positive": 5,
+          "negative": 4
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0006407491422113498,
+          "sample_sd": 0.0012473883285668405,
+          "median": -0.0004864968519072699,
+          "minimum": -0.0038144574111296237,
+          "maximum": 0.0003805549946792608,
+          "positive": 3,
+          "negative": 6
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0006246465583211859,
+          "sample_sd": 0.0013250911430782903,
+          "median": -0.0002388043442592691,
+          "minimum": -0.00388265200043425,
+          "maximum": 0.0005264135511942047,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 0.0,
+        "sample_sd": 0.0,
+        "median": 0.0,
+        "minimum": 0.0,
+        "maximum": 0.0,
+        "positive": 0,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_train",
+      "condition": "shared_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.6943412217280385,
+          "sample_sd": 2.9097075357650604,
+          "median": 0.6858206184055844,
+          "minimum": 0.3860014210085298,
+          "maximum": 9.376996868289833,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 0.9958714742356948,
+          "sample_sd": 1.2511234819237247,
+          "median": 0.6392381964912113,
+          "minimum": 0.37622384152015487,
+          "maximum": 4.297557060282703,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.7262475380926183,
+          "sample_sd": 0.15716717113847106,
+          "median": 0.7327211259173166,
+          "minimum": 0.4186545585560631,
+          "maximum": 0.9804213917682622,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 0.8609166370740262,
+          "sample_sd": 0.32598635213233035,
+          "median": 0.9456618052392064,
+          "minimum": 0.40085127680931104,
+          "maximum": 1.3417739184352013,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 5.325057187394949e-05,
+          "sample_sd": 0.00029458654679834873,
+          "median": -1.5064623599528315e-05,
+          "minimum": -0.00015318284299732643,
+          "maximum": 0.0008155240018291043,
+          "positive": 2,
+          "negative": 7
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0012197202727291707,
+          "sample_sd": 0.002128410182425506,
+          "median": 0.00043634655252872134,
+          "minimum": 7.01042376248795e-05,
+          "maximum": 0.0067910307329266395,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -9.251979082390715e-05,
+          "sample_sd": 0.0007252094306656995,
+          "median": 0.0001025752864654006,
+          "minimum": -0.001993598058381396,
+          "maximum": 0.0003426091921016061,
+          "positive": 7,
+          "negative": 2
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.00018505290805605047,
+          "sample_sd": 0.0006619080656962779,
+          "median": 2.6081113869258488e-05,
+          "minimum": -0.0019284321870164378,
+          "maximum": 0.0002094671550003646,
+          "positive": 7,
+          "negative": 2
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0003839820287340771,
+          "sample_sd": 0.0008618394387020211,
+          "median": 1.9768987496462942e-05,
+          "minimum": -0.00023949324616394374,
+          "maximum": 0.0024251057847206325,
+          "positive": 5,
+          "negative": 4
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.001922648331758339,
+          "sample_sd": 0.003876868888476167,
+          "median": 0.0025815921043178536,
+          "minimum": -0.002055963946927475,
+          "maximum": 0.010017127194841824,
+          "positive": 5,
+          "negative": 4
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0007332689330352569,
+          "sample_sd": 0.0019271959889658199,
+          "median": -0.00032608061284167267,
+          "minimum": -0.00580805546951102,
+          "maximum": 0.00026691527899891376,
+          "positive": 4,
+          "negative": 5
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0008096994663772364,
+          "sample_sd": 0.0019414452904007369,
+          "median": -0.00042837027234043923,
+          "minimum": -0.005811084187450688,
+          "maximum": 0.0006175177216551919,
+          "positive": 2,
+          "negative": 7
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_train",
+      "condition": "shared_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.694341304372916,
+          "sample_sd": 2.9097077266180826,
+          "median": 0.6858206285184756,
+          "minimum": 0.38600142110181135,
+          "maximum": 9.376997455033674,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 0.9958713342231411,
+          "sample_sd": 1.251123100388205,
+          "median": 0.6392381900438848,
+          "minimum": 0.3762238447603107,
+          "maximum": 4.297555900068555,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.7262475356141834,
+          "sample_sd": 0.15716717872756683,
+          "median": 0.7327211382282683,
+          "minimum": 0.4186545432382033,
+          "maximum": 0.9804213942039318,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 3.4436663735436137,
+          "sample_sd": 1.3039454267856807,
+          "median": 3.7826470122797624,
+          "minimum": 1.603404988306983,
+          "maximum": 5.36709521087563,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.00044964318710178427,
+          "sample_sd": 0.0017938073929037218,
+          "median": -5.805958393050037e-05,
+          "minimum": -0.000565196093097825,
+          "maximum": 0.005171984542739705,
+          "positive": 2,
+          "negative": 7
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0061416020696199265,
+          "sample_sd": 0.01197904018362205,
+          "median": 0.0017663076999150373,
+          "minimum": 0.0002887173547254096,
+          "maximum": 0.03776399634878491,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0007472014382073036,
+          "sample_sd": 0.00389694188199702,
+          "median": 0.0003999724970557006,
+          "minimum": -0.011043796944281592,
+          "maximum": 0.0012929748789650697,
+          "positive": 7,
+          "negative": 2
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0011969568418904607,
+          "sample_sd": 0.0038817359303781732,
+          "median": 0.00010632839427449081,
+          "minimum": -0.011484670089221383,
+          "maximum": 0.0007490333620721046,
+          "positive": 6,
+          "negative": 3
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0007803746439619119,
+          "sample_sd": 0.0022812348156535734,
+          "median": -8.181904027634856e-05,
+          "minimum": -0.00039224426260403567,
+          "maximum": 0.006781566325631233,
+          "positive": 4,
+          "negative": 5
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0068445301286490946,
+          "sample_sd": 0.013147485425443094,
+          "median": 0.0028002052214183837,
+          "minimum": -0.0007260027995411589,
+          "maximum": 0.040990092810700096,
+          "positive": 8,
+          "negative": 1
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0013879505804186535,
+          "sample_sd": 0.005066567462503897,
+          "median": 0.00037732526148004375,
+          "minimum": -0.014858254355411216,
+          "maximum": 0.0008767492851109449,
+          "positive": 5,
+          "negative": 4
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0018216034002116466,
+          "sample_sd": 0.005114629154376956,
+          "median": -0.00012443986238008797,
+          "minimum": -0.015367322089655633,
+          "maximum": 0.0008903058882225867,
+          "positive": 4,
+          "negative": 5
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_train",
+      "condition": "teacher_c1",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.6943411144131866,
+          "sample_sd": 2.909707222570118,
+          "median": 0.6858206147191304,
+          "minimum": 0.3860014227308263,
+          "maximum": 9.376995927988615,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 1.6648562624924519,
+          "sample_sd": 2.5471181604945365,
+          "median": 0.846739273586348,
+          "minimum": 0.500375522718437,
+          "maximum": 8.433167265273172,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.5345487838685445,
+          "sample_sd": 0.3289639274361465,
+          "median": 0.5350455453241512,
+          "minimum": -0.034827886035580534,
+          "maximum": 0.9948756365558178,
+          "positive": 8,
+          "negative": 1
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 1.2207540546383364,
+          "sample_sd": 0.33437737010061214,
+          "median": 1.2047521631695803,
+          "minimum": 0.7124837147458032,
+          "maximum": 1.769781469663712,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0002885713272943288,
+          "sample_sd": 0.000859866264108131,
+          "median": 1.5497361126368125e-05,
+          "minimum": -9.088964363890284e-05,
+          "maximum": 0.0025753121749791663,
+          "positive": 5,
+          "negative": 4
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.00036786683308824103,
+          "sample_sd": 0.004852613520060707,
+          "median": -0.0008509427918638179,
+          "minimum": -0.002696416348895836,
+          "maximum": 0.013166272929319933,
+          "positive": 1,
+          "negative": 8
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0008593474994617415,
+          "sample_sd": 0.0018682432369238223,
+          "median": -0.00017662895987424765,
+          "minimum": -0.005824091842969947,
+          "maximum": -0.00010694907732611281,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0006053848957268374,
+          "sample_sd": 0.0019365589211781387,
+          "median": 3.4806919598229236e-05,
+          "minimum": -0.005759845456834611,
+          "maximum": 0.0002897380578031905,
+          "positive": 6,
+          "negative": 3
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0006193027841544565,
+          "sample_sd": 0.001398502529210978,
+          "median": 0.00011771741622082499,
+          "minimum": -0.00024144589683766648,
+          "maximum": 0.0041848939578706945,
+          "positive": 7,
+          "negative": 2
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0010707948921174092,
+          "sample_sd": 0.006095194555286368,
+          "median": 0.000393364285220299,
+          "minimum": -0.00358196803763694,
+          "maximum": 0.016392369391235118,
+          "positive": 5,
+          "negative": 4
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0015000966416730914,
+          "sample_sd": 0.003075241951611425,
+          "median": -0.0006165350008003889,
+          "minimum": -0.009638549254099571,
+          "maximum": 0.0002070825545221755,
+          "positive": 1,
+          "negative": 8
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0012300314540480233,
+          "sample_sd": 0.0031908301590188024,
+          "median": -9.550992451967666e-05,
+          "minimum": -0.009642497457268862,
+          "maximum": 0.0004823146649796106,
+          "positive": 4,
+          "negative": 5
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.0,
+        "sample_sd": 0.0,
+        "median": 1.0,
+        "minimum": 1.0,
+        "maximum": 1.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_train",
+      "condition": "teacher_c4",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.694341254760907,
+          "sample_sd": 2.909707582494518,
+          "median": 0.6858206198596992,
+          "minimum": 0.386001422818348,
+          "maximum": 9.376997015644747,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 1.6648562100502153,
+          "sample_sd": 2.5471179849101513,
+          "median": 0.8467392775851826,
+          "minimum": 0.5003755223769428,
+          "maximum": 8.43316674039957,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.5345487754832049,
+          "sample_sd": 0.32896393386337824,
+          "median": 0.535045534281029,
+          "minimum": -0.03482790987142206,
+          "maximum": 0.9948756373314414,
+          "positive": 8,
+          "negative": 1
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 4.883016154918152,
+          "sample_sd": 1.3375096433225961,
+          "median": 4.819008698264412,
+          "minimum": 2.8499346751050023,
+          "maximum": 7.079125930345518,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.002285840691003343,
+          "sample_sd": 0.006678757412975759,
+          "median": 9.332669789097192e-05,
+          "minimum": -0.00027062782089049,
+          "maximum": 0.020080123092370866,
+          "positive": 5,
+          "negative": 4
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.006071589082984225,
+          "sample_sd": 0.03256776956501675,
+          "median": -0.003306819126856264,
+          "minimum": -0.010338949967579891,
+          "maximum": 0.09261974070747903,
+          "positive": 1,
+          "negative": 8
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0046918024906874335,
+          "sample_sd": 0.01101941765140498,
+          "median": -0.0008254066268048588,
+          "minimum": -0.03402099209004039,
+          "maximum": -0.0004510480374505521,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0036251684275261254,
+          "sample_sd": 0.011172367513659461,
+          "median": 2.963157003232908e-05,
+          "minimum": -0.03338908065431112,
+          "maximum": 0.001027753155900979,
+          "positive": 6,
+          "negative": 3
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0026165721478634708,
+          "sample_sd": 0.007164696490689866,
+          "median": 0.00017052137612331986,
+          "minimum": -0.00026830048196552214,
+          "maximum": 0.021689704875262394,
+          "positive": 6,
+          "negative": 3
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.006774517142013393,
+          "sample_sd": 0.0334843171805812,
+          "median": -0.005081954011311451,
+          "minimum": -0.007249169333463756,
+          "maximum": 0.09584583716939421,
+          "positive": 2,
+          "negative": 7
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.005332551632898783,
+          "sample_sd": 0.012208893367679012,
+          "median": -0.0011817153397991609,
+          "minimum": -0.037835449501170015,
+          "maximum": -0.0003803251641077976,
+          "positive": 0,
+          "negative": 9
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.004249814985847311,
+          "sample_sd": 0.012394996874374783,
+          "median": -0.00026657895441739576,
+          "minimum": -0.03727173265474537,
+          "maximum": 0.0007889488116417098,
+          "positive": 4,
+          "negative": 5
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 4.0,
+        "sample_sd": 0.0,
+        "median": 4.0,
+        "minimum": 4.0,
+        "maximum": 4.0,
+        "positive": 9,
+        "negative": 0
+      }
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_train",
+      "condition": "shared_norm",
+      "gradient": {
+        "ce_norm": {
+          "n": 9,
+          "mean": 1.6943413255529238,
+          "sample_sd": 2.9097078590037118,
+          "median": 0.6858206119143581,
+          "minimum": 0.3860014168949698,
+          "maximum": 9.376997851396501,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_norm": {
+          "n": 9,
+          "mean": 0.9958713421243566,
+          "sample_sd": 1.2511231155564093,
+          "median": 0.6392381468582338,
+          "minimum": 0.37622384292922345,
+          "maximum": 4.297555943400671,
+          "positive": 9,
+          "negative": 0
+        },
+        "kd_ce_cosine": {
+          "n": 9,
+          "mean": 0.7262475301418048,
+          "sample_sd": 0.15716717811866296,
+          "median": 0.732721143191753,
+          "minimum": 0.4186545358197137,
+          "maximum": 0.9804213837622556,
+          "positive": 9,
+          "negative": 0
+        },
+        "effective_kd_ce_norm_ratio": {
+          "n": 9,
+          "mean": 1.2207540226656723,
+          "sample_sd": 0.3343774176964428,
+          "median": 1.2047521524956561,
+          "minimum": 0.7124837982215142,
+          "maximum": 1.7697815098079643,
+          "positive": 9,
+          "negative": 0
+        }
+      },
+      "effect_vs_ce": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.00016377276282377205,
+          "sample_sd": 0.0006416729715114996,
+          "median": -3.164478674530513e-05,
+          "minimum": -0.00014271947034888433,
+          "maximum": 0.0018647729064584229,
+          "positive": 2,
+          "negative": 7
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.0022373664893962455,
+          "sample_sd": 0.0047520579379186625,
+          "median": 0.000634118588381416,
+          "minimum": 0.0001510484277467139,
+          "maximum": 0.01486662062775257,
+          "positive": 9,
+          "negative": 0
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.00031056852333029755,
+          "sample_sd": 0.0015412104030569395,
+          "median": 0.00018506563224052197,
+          "minimum": -0.0044009811290356415,
+          "maximum": 0.00040558236835530614,
+          "positive": 7,
+          "negative": 2
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0004605986957650046,
+          "sample_sd": 0.0015191000484960917,
+          "median": 5.515506442099749e-05,
+          "minimum": -0.004500746127877764,
+          "maximum": 0.00019498474716894698,
+          "positive": 6,
+          "negative": 3
+        }
+      },
+      "drift_vs_before": {
+        "pixel_ce": {
+          "n": 9,
+          "mean": 0.0004945042196838998,
+          "sample_sd": 0.0011870192929391747,
+          "median": 3.170579075550961e-05,
+          "minimum": -0.0002457308405515307,
+          "maximum": 0.003474354689349951,
+          "positive": 5,
+          "negative": 4
+        },
+        "class_ce": {
+          "n": 9,
+          "mean": 0.002940294548425414,
+          "sample_sd": 0.00618170491983384,
+          "median": 0.002662536294439688,
+          "minimum": -0.0020365865476155154,
+          "maximum": 0.018092717089667754,
+          "positive": 5,
+          "negative": 4
+        },
+        "soft_miou": {
+          "n": 9,
+          "mean": -0.0009513176655416474,
+          "sample_sd": 0.0027448540545009963,
+          "median": -0.00032934595417477563,
+          "minimum": -0.008215438540165265,
+          "maximum": 0.00043528106991341797,
+          "positive": 4,
+          "negative": 5
+        },
+        "hard_miou": {
+          "n": 9,
+          "mean": -0.0010852452540861905,
+          "sample_sd": 0.0027834108722596227,
+          "median": -0.0004448784474441192,
+          "minimum": -0.008383398128312014,
+          "maximum": 0.0006691473051050334,
+          "positive": 3,
+          "negative": 6
+        }
+      },
+      "alpha": {
+        "n": 9,
+        "mean": 1.536030300291885,
+        "sample_sd": 0.44389400415917535,
+        "median": 1.614018556733975,
+        "minimum": 0.9201525077436713,
+        "maximum": 2.131030962252075,
+        "positive": 9,
+        "negative": 0
+      }
+    }
+  ],
+  "mode_comparison": [
+    {
+      "dataset": "voc",
+      "case_count": 9,
+      "eval_train_pixel_sign_flips": 5,
+      "cases": [
+        {
+          "seed": 1234,
+          "stage": 20000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.5850128432936013,
+              "class_ce": 1.775997693398716,
+              "soft_miou": -0.29682204383315586,
+              "hard_miou": -0.33724659727199857
+            },
+            "matched_eval": {
+              "pixel_ce": 0.04925033084045724,
+              "class_ce": 0.23539337344521183,
+              "soft_miou": -0.03133473289859878,
+              "hard_miou": -0.03408166678146296
+            },
+            "matched_train": {
+              "pixel_ce": 9.755064339131425e-05,
+              "class_ce": 0.0032852346946082855,
+              "soft_miou": 0.0002036353707869365,
+              "hard_miou": -0.0006518275204566715
+            }
+          }
+        },
+        {
+          "seed": 1234,
+          "stage": 40000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.006294450212602887,
+              "class_ce": 0.009005860346783412,
+              "soft_miou": -0.005953083483927757,
+              "hard_miou": -0.007394082804593527
+            },
+            "matched_eval": {
+              "pixel_ce": 0.0016236706197196582,
+              "class_ce": 0.02604072746171282,
+              "soft_miou": 0.00017355990817191636,
+              "hard_miou": -0.0035111578926496634
+            },
+            "matched_train": {
+              "pixel_ce": 0.00011507796205920129,
+              "class_ce": 0.0007210414120381592,
+              "soft_miou": 0.0002790200054719749,
+              "hard_miou": 6.820727344247768e-05
+            }
+          }
+        },
+        {
+          "seed": 1234,
+          "stage": 60000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.00019811536429897858,
+              "class_ce": 0.007667696416653325,
+              "soft_miou": 0.0004326385634615404,
+              "hard_miou": -0.0010717912353849224
+            },
+            "matched_eval": {
+              "pixel_ce": -0.0011312470753511161,
+              "class_ce": 0.00486637929961814,
+              "soft_miou": 0.0031468847701676683,
+              "hard_miou": 0.0007936282341367562
+            },
+            "matched_train": {
+              "pixel_ce": -0.00020933138392256745,
+              "class_ce": 0.0004421346819854788,
+              "soft_miou": 0.0004498989347766491,
+              "hard_miou": 0.00025075809193619847
+            }
+          }
+        },
+        {
+          "seed": 2025,
+          "stage": 20000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.009465098895268143,
+              "class_ce": 0.07167836175783349,
+              "soft_miou": -0.00573516227121007,
+              "hard_miou": -0.014956394799930606
+            },
+            "matched_eval": {
+              "pixel_ce": 0.12752555643353583,
+              "class_ce": 0.548202852014045,
+              "soft_miou": -0.08180368075297872,
+              "hard_miou": -0.1095865981344577
+            },
+            "matched_train": {
+              "pixel_ce": -0.00021025755090020581,
+              "class_ce": 0.0021400866692297127,
+              "soft_miou": 0.0006682659320672579,
+              "hard_miou": 0.0001637386352549841
+            }
+          }
+        },
+        {
+          "seed": 2025,
+          "stage": 40000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.08781720269317064,
+              "class_ce": 0.3549703260813728,
+              "soft_miou": -0.07449369495007152,
+              "hard_miou": -0.0941891328593174
+            },
+            "matched_eval": {
+              "pixel_ce": 0.1387242798891055,
+              "class_ce": 0.5525433343360902,
+              "soft_miou": -0.08119545887094715,
+              "hard_miou": -0.11102815752140482
+            },
+            "matched_train": {
+              "pixel_ce": -0.000790442060059432,
+              "class_ce": 0.005000652208955791,
+              "soft_miou": 0.00022607193884571775,
+              "hard_miou": -0.00011840326540568658
+            }
+          }
+        },
+        {
+          "seed": 2025,
+          "stage": 60000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.4126415468350586,
+              "class_ce": 1.3795599585256406,
+              "soft_miou": -0.2533471559292675,
+              "hard_miou": -0.28517982789404084
+            },
+            "matched_eval": {
+              "pixel_ce": 0.0032648297957510175,
+              "class_ce": 0.03898403939498313,
+              "soft_miou": -0.003783982372095096,
+              "hard_miou": -0.007201853621601639
+            },
+            "matched_train": {
+              "pixel_ce": -0.00030597587585853847,
+              "class_ce": 0.0003746701161638777,
+              "soft_miou": 0.0006809845718313001,
+              "hard_miou": 0.00031551474819135894
+            }
+          }
+        },
+        {
+          "seed": 3407,
+          "stage": 20000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.7470807796056527,
+              "class_ce": 2.5044385937548372,
+              "soft_miou": -0.296190074809794,
+              "hard_miou": -0.3505297201180828
+            },
+            "matched_eval": {
+              "pixel_ce": 0.2153043803445097,
+              "class_ce": 0.7964010871043671,
+              "soft_miou": -0.13949926852116667,
+              "hard_miou": -0.17474167373583105
+            },
+            "matched_train": {
+              "pixel_ce": 1.2648487756616866e-06,
+              "class_ce": 0.0033431060398033674,
+              "soft_miou": 0.0008224027148416857,
+              "hard_miou": -0.001340616337656697
+            }
+          }
+        },
+        {
+          "seed": 3407,
+          "stage": 40000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 2.2051526479201544,
+              "class_ce": 5.963969196811805,
+              "soft_miou": -0.5124827628413492,
+              "hard_miou": -0.5954782894219908
+            },
+            "matched_eval": {
+              "pixel_ce": 0.03605338212219547,
+              "class_ce": 0.14488948755891068,
+              "soft_miou": -0.023609748300137845,
+              "hard_miou": -0.02882688502335018
+            },
+            "matched_train": {
+              "pixel_ce": -0.00028734029460342203,
+              "class_ce": -0.000818956389559089,
+              "soft_miou": 0.0008358098488512322,
+              "hard_miou": 0.00046656748977003115
+            }
+          }
+        },
+        {
+          "seed": 3407,
+          "stage": 60000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.00997285505877811,
+              "class_ce": 0.0606797416617475,
+              "soft_miou": -0.01534145265842879,
+              "hard_miou": -0.013938009386424643
+            },
+            "matched_eval": {
+              "pixel_ce": 0.0017838697051629354,
+              "class_ce": 0.02324294192908577,
+              "soft_miou": -0.0006199033971205914,
+              "hard_miou": -0.0024470390044615264
+            },
+            "matched_train": {
+              "pixel_ce": -4.090157750884227e-05,
+              "class_ce": 0.00022554662637574996,
+              "soft_miou": 0.00017000683367118796,
+              "hard_miou": 2.870039548397152e-05
+            }
+          }
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "case_count": 9,
+      "eval_train_pixel_sign_flips": 7,
+      "cases": [
+        {
+          "seed": 1234,
+          "stage": 20000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 4.351946431797674,
+              "class_ce": 5.95878923996778,
+              "soft_miou": -0.37982281467682566,
+              "hard_miou": -0.4340806391574454
+            },
+            "matched_eval": {
+              "pixel_ce": 0.4367599758555084,
+              "class_ce": 1.136473189287789,
+              "soft_miou": -0.1927575280940999,
+              "hard_miou": -0.21793050221236732
+            },
+            "matched_train": {
+              "pixel_ce": 0.0043564605409106005,
+              "class_ce": 0.030972965615858272,
+              "soft_miou": -0.009050198885900196,
+              "hard_miou": -0.009556237902204945
+            }
+          }
+        },
+        {
+          "seed": 1234,
+          "stage": 40000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.02853957910207469,
+              "class_ce": 0.05549422374934826,
+              "soft_miou": -0.02116811593215373,
+              "hard_miou": -0.012618896971579807
+            },
+            "matched_eval": {
+              "pixel_ce": 0.0017269591573374626,
+              "class_ce": 0.0171029088964213,
+              "soft_miou": 0.0032347539649340007,
+              "hard_miou": -0.0006471779970169678
+            },
+            "matched_train": {
+              "pixel_ce": -1.3836390313548552e-05,
+              "class_ce": 0.0010457436526453145,
+              "soft_miou": 0.0002973972105903,
+              "hard_miou": 0.00010324840483622033
+            }
+          }
+        },
+        {
+          "seed": 1234,
+          "stage": 60000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.04055611476571572,
+              "class_ce": 0.1631478779886491,
+              "soft_miou": -0.06293552992920459,
+              "hard_miou": -0.0564033861010812
+            },
+            "matched_eval": {
+              "pixel_ce": 0.0016814733214075284,
+              "class_ce": 0.011869491370935237,
+              "soft_miou": -0.0020165176347509695,
+              "hard_miou": -0.0034996016548325404
+            },
+            "matched_train": {
+              "pixel_ce": -4.2994960330972054e-05,
+              "class_ce": 0.0002186131171005301,
+              "soft_miou": 0.00022903401317897476,
+              "hard_miou": 8.027562392598497e-05
+            }
+          }
+        },
+        {
+          "seed": 2025,
+          "stage": 20000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.383692684094894,
+              "class_ce": 0.6498465716388659,
+              "soft_miou": -0.1574729095472444,
+              "hard_miou": -0.16932545261185794
+            },
+            "matched_eval": {
+              "pixel_ce": 0.027083354060874948,
+              "class_ce": 0.14949676517980137,
+              "soft_miou": -0.03212669301675719,
+              "hard_miou": -0.03965584388820176
+            },
+            "matched_train": {
+              "pixel_ce": -3.651834573317747e-05,
+              "class_ce": 0.001226270601764723,
+              "soft_miou": 0.0006136434477075348,
+              "hard_miou": -9.341112741034774e-05
+            }
+          }
+        },
+        {
+          "seed": 2025,
+          "stage": 40000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.0066695274991185605,
+              "class_ce": 0.01934747925938829,
+              "soft_miou": -0.006275808496072233,
+              "hard_miou": -0.007047584055675737
+            },
+            "matched_eval": {
+              "pixel_ce": 0.008021675946033396,
+              "class_ce": 0.024072498116399277,
+              "soft_miou": -0.0016030026388352825,
+              "hard_miou": -0.005852060127155334
+            },
+            "matched_train": {
+              "pixel_ce": -0.00040070416923067287,
+              "class_ce": 0.002325671693559961,
+              "soft_miou": 0.0007470968779506038,
+              "hard_miou": 0.00015125127031967445
+            }
+          }
+        },
+        {
+          "seed": 2025,
+          "stage": 60000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.029535078556568783,
+              "class_ce": 0.055109490942922446,
+              "soft_miou": -0.040192009902117354,
+              "hard_miou": -0.027925560605797983
+            },
+            "matched_eval": {
+              "pixel_ce": 0.0016354481833604634,
+              "class_ce": 0.0050310082837673464,
+              "soft_miou": -0.00014996623283713983,
+              "hard_miou": -0.0007123057973457136
+            },
+            "matched_train": {
+              "pixel_ce": -0.00015453955297246857,
+              "class_ce": 0.001329961147386316,
+              "soft_miou": 0.0005425550542308422,
+              "hard_miou": 0.0002727881665673948
+            }
+          }
+        },
+        {
+          "seed": 3407,
+          "stage": 20000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.011492920686862695,
+              "class_ce": 0.02345182425723935,
+              "soft_miou": -0.010528545827971247,
+              "hard_miou": -0.012012081923414852
+            },
+            "matched_eval": {
+              "pixel_ce": 0.07352992343591314,
+              "class_ce": 0.22042509817552747,
+              "soft_miou": -0.057527787385829754,
+              "hard_miou": -0.0648537359849729
+            },
+            "matched_train": {
+              "pixel_ce": 0.0002987707509278792,
+              "class_ce": 0.004690806691331595,
+              "soft_miou": -0.00041841594979563634,
+              "hard_miou": -0.0006781902653556493
+            }
+          }
+        },
+        {
+          "seed": 3407,
+          "stage": 40000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 5.845199312446242,
+              "class_ce": 6.326982793090854,
+              "soft_miou": -0.2738335873925456,
+              "hard_miou": -0.3166754892414551
+            },
+            "matched_eval": {
+              "pixel_ce": 0.2944033713667443,
+              "class_ce": 1.031606534063678,
+              "soft_miou": -0.20363386423767948,
+              "hard_miou": -0.2182277865707436
+            },
+            "matched_train": {
+              "pixel_ce": -0.0004120132501004986,
+              "class_ce": 0.0017813035291244228,
+              "soft_miou": 0.0009503656868634636,
+              "hard_miou": 0.00053956620707174
+            }
+          }
+        },
+        {
+          "seed": 3407,
+          "stage": 60000,
+          "values": {
+            "legacy_eval": {
+              "pixel_ce": 0.0014207808523728493,
+              "class_ce": 0.017302139894158686,
+              "soft_miou": -0.00029630596399099485,
+              "hard_miou": -0.0037144576173340216
+            },
+            "matched_eval": {
+              "pixel_ce": 0.0015797455575017605,
+              "class_ce": 0.022420225526722903,
+              "soft_miou": 2.7895866465454944e-05,
+              "hard_miou": -0.003146131492522408
+            },
+            "matched_train": {
+              "pixel_ce": -2.7091086106628692e-05,
+              "class_ce": 0.0007056001232456643,
+              "soft_miou": 0.0001963877187235452,
+              "hard_miou": 7.357421774023543e-05
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "metric_comparison": [
+    {
+      "dataset": "voc",
+      "mode": "legacy_eval",
+      "cases": 9,
+      "ce_hard_disagreements": 0,
+      "ce_soft_disagreements": 1,
+      "classce_hard_disagreements": 0,
+      "soft_hard_disagreements": 1
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_eval",
+      "cases": 9,
+      "ce_hard_disagreements": 0,
+      "ce_soft_disagreements": 1,
+      "classce_hard_disagreements": 1,
+      "soft_hard_disagreements": 1
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_train",
+      "cases": 9,
+      "ce_hard_disagreements": 2,
+      "ce_soft_disagreements": 3,
+      "classce_hard_disagreements": 5,
+      "soft_hard_disagreements": 3
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "legacy_eval",
+      "cases": 9,
+      "ce_hard_disagreements": 0,
+      "ce_soft_disagreements": 0,
+      "classce_hard_disagreements": 0,
+      "soft_hard_disagreements": 0
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_eval",
+      "cases": 9,
+      "ce_hard_disagreements": 0,
+      "ce_soft_disagreements": 2,
+      "classce_hard_disagreements": 0,
+      "soft_hard_disagreements": 2
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_train",
+      "cases": 9,
+      "ce_hard_disagreements": 1,
+      "ce_soft_disagreements": 0,
+      "classce_hard_disagreements": 6,
+      "soft_hard_disagreements": 1
+    }
+  ],
+  "selection_summary": [
+    {
+      "dataset": "voc",
+      "mode": "legacy_eval",
+      "choice_counts": {
+        "pixel_ce": {
+          "0": 8,
+          "1": 1
+        },
+        "class_ce": {
+          "0": 9
+        },
+        "soft_miou": {
+          "0": 7,
+          "4": 1,
+          "1": 1
+        },
+        "hard_miou": {
+          "0": 8,
+          "1": 1
+        }
+      },
+      "ce_soft_differ": 2,
+      "soft_hard_differ": 2
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_eval",
+      "choice_counts": {
+        "pixel_ce": {
+          "0": 6,
+          "1": 2,
+          "4": 1
+        },
+        "class_ce": {
+          "0": 9
+        },
+        "soft_miou": {
+          "0": 4,
+          "4": 2,
+          "1": 3
+        },
+        "hard_miou": {
+          "0": 7,
+          "1": 1,
+          "4": 1
+        }
+      },
+      "ce_soft_differ": 3,
+      "soft_hard_differ": 4
+    },
+    {
+      "dataset": "voc",
+      "mode": "matched_train",
+      "choice_counts": {
+        "pixel_ce": {
+          "1": 2,
+          "0": 1,
+          "4": 6
+        },
+        "class_ce": {
+          "0": 8,
+          "4": 1
+        },
+        "soft_miou": {
+          "4": 9
+        },
+        "hard_miou": {
+          "0": 3,
+          "4": 6
+        }
+      },
+      "ce_soft_differ": 3,
+      "soft_hard_differ": 3
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "legacy_eval",
+      "choice_counts": {
+        "pixel_ce": {
+          "0": 9
+        },
+        "class_ce": {
+          "0": 9
+        },
+        "soft_miou": {
+          "0": 8,
+          "1": 1
+        },
+        "hard_miou": {
+          "0": 8,
+          "1": 1
+        }
+      },
+      "ce_soft_differ": 1,
+      "soft_hard_differ": 2
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_eval",
+      "choice_counts": {
+        "pixel_ce": {
+          "0": 8,
+          "1": 1
+        },
+        "class_ce": {
+          "0": 9
+        },
+        "soft_miou": {
+          "0": 4,
+          "4": 2,
+          "1": 3
+        },
+        "hard_miou": {
+          "0": 7,
+          "1": 2
+        }
+      },
+      "ce_soft_differ": 5,
+      "soft_hard_differ": 4
+    },
+    {
+      "dataset": "cityscapes",
+      "mode": "matched_train",
+      "choice_counts": {
+        "pixel_ce": {
+          "0": 2,
+          "4": 7
+        },
+        "class_ce": {
+          "0": 9
+        },
+        "soft_miou": {
+          "0": 2,
+          "4": 7
+        },
+        "hard_miou": {
+          "0": 2,
+          "4": 6,
+          "1": 1
+        }
+      },
+      "ce_soft_differ": 0,
+      "soft_hard_differ": 1
+    }
+  ],
+  "branch_times": {
+    "voc": {
+      "sum_branch_seconds": 1915.3860858269036,
+      "median_branch_seconds": 9.64670723862946
+    },
+    "cityscapes": {
+      "sum_branch_seconds": 23880.915602814406,
+      "median_branch_seconds": 143.21043624542654
+    }
+  }
+}

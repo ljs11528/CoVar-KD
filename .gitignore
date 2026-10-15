@@ -96,3 +96,4 @@ id_ed25519*
 !reports/**/*.csv
 !reports/**/figures/*.png
 !repro/**/*.json
+!reports/cvpr2027/diagnostics_324_20261015/evidence.tar.gz

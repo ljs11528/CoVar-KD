@@ -1,7 +1,18 @@
 # Controlled dense-prediction distillation experiments
 
-Snapshot: 2026-10-15. The current research question is when a local distillation
-diagnostic predicts the opposite ordering from the final segmentation result.
+Snapshot: 2026-10-15. The current research question is when local distillation
+diagnostics can guide subsequent dense-prediction training.
+
+The Maker cohort completed all 324 formal CE-start one-step branches. Its
+registered replication gate failed on both datasets, and the workflow stopped
+before KD-start diagnostics, 128-step rollouts or selector training. The
+[complete analysis](diagnostics_324_20261015/analysis_zh.md) audits the inherited
+records, training-state effects, metric rankings and gradient controls. The
+[revised follow-up plan](followup_protocol_20261015.md) prioritizes causal controls
+and same-checkpoint continuation tests before allocating full training. That
+plan is not yet launched or an assertion that a new selector works. All future
+model experiments must run on Maker; the old server is a read-only checkpoint
+source.
 
 ## Existing evidence
 
@@ -44,12 +55,13 @@ Datasets, checkpoints, prediction tensors, SSH configuration and credentials
 are excluded. Current-tree credential removal does not remove credentials from
 earlier Git history; previously committed keys require replacement.
 
-## Approved next stage
+## Original conditional stage and execution provenance
 
-See [the research protocol](utility_protocol_20261015.md). The first stage is
-restored-state diagnostics on existing checkpoints. Full selector training is
-conditional on that stage; the approved upper bound is 12 fresh 80k trajectories.
-Planned experiments are not reported as completed results.
+The [original research protocol](utility_protocol_20261015.md) is retained for
+audit. Its first stage used restored-state diagnostics on existing checkpoints.
+Its gate has failed, so its selector-training grid remains suspended. The
+revised plan also caps its conditional final comparison at 12 fresh 80k
+trajectories and lists short diagnostic/continuation costs separately.
 
 The [Maker execution amendment](maker_migration_20261015.md) moves the new
 diagnostics to a separate RTX 4090 cohort. The user initially allocated idle GPUs
@@ -72,8 +84,10 @@ the unchanged scientific contract and inherited observations. Completed r2 cases
 retain their original registration hashes and are counted once. Missing verified
 checkpoints remain an input dependency even when GPU lanes are available.
 
-The new implementation is in [utility_study](../../utility_study/). In the
-original CUDA environment, from the repository root:
+The P14 implementation is in [utility_study](../../utility_study/). Its historical
+invocation below documents reproduction, not authorization to restart the
+stopped queue or use the old server. A new P15 execution requires its own
+frozen registration and output directory.
 
 ```bash
 python -m pytest tests/test_utility_study.py -q

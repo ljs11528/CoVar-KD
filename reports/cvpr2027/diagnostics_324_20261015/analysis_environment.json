@@ -1,0 +1,13 @@
+{
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "numpy": "2.0.2",
+  "scipy": "1.13.1",
+  "matplotlib": "3.9.4",
+  "computation": "CPU postprocessing of immutable Maker results, no new model experiment",
+  "source_sha256": "3988008462b0c7c380f4b45794b3093d7a07afd0c44f88fdbcba6ecc9d76109f",
+  "evidence_archive_sha256": "d0cde8c530de3e3986695a3692d328fcea9781f0f3bdc2745fc1e9690570a63f",
+  "audited_downloaded_json_files": 347,
+  "formal_branches": 324,
+  "model_experiments_started_by_this_analysis": 0,
+  "new_plan_status": "PLAN_NOT_LAUNCHED"
+}

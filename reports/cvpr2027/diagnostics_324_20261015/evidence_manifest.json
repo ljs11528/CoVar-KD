@@ -1,0 +1,1740 @@
+{
+  "source": "/tmp/liujinshi-covar-kd-20261015/reports/P14_Utility_Maker_20261015_r3",
+  "files": [
+    {
+      "path": "inheritance/parent_registration.json",
+      "bytes": 2469920,
+      "sha256": "864e47279ed077e98aa62ecaa0351b1f17be2911a123ffdd86b37d5367ee9026"
+    },
+    {
+      "path": "inheritance/records.json",
+      "bytes": 37121,
+      "sha256": "4ac3da7aa1566b6a105a755ad0137062533c690c043633bec889ddfcddc7167b"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/legacy_eval/ce.json",
+      "bytes": 19017,
+      "sha256": "4ca2772363b986202a2d027a6213aaf8f29cdee708c58b6db64dca7de9752ca3"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/legacy_eval/shared_c1.json",
+      "bytes": 19115,
+      "sha256": "a38418837bd2b43b5879da4ed0dd620bf3df6532ce2bc29f0606a5521ba09dcd"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/legacy_eval/shared_c4.json",
+      "bytes": 18487,
+      "sha256": "9ecb65e92dc37c14a93ae182e8db862015ea0b7c58a73ee997ad921423b4c1d6"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/legacy_eval/shared_norm.json",
+      "bytes": 19211,
+      "sha256": "541f580d2e1dc42bbc17a49e9afd91ba126582594b5bc4abe05b785d59d47357"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/legacy_eval/teacher_c1.json",
+      "bytes": 19071,
+      "sha256": "5bc8bcd2b0bc3b9259826c3ba56ad3efe2d2f0e4ea464fdf8777aef87b02574a"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/legacy_eval/teacher_c4.json",
+      "bytes": 18323,
+      "sha256": "57f6a8aa3b3e0b3494653a4b46e350216bf38ab36fd129a6ef2c46fd386f095c"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_eval/ce.json",
+      "bytes": 19025,
+      "sha256": "7a74156fdc469747b19a9ea91f7960d2b24f97d0f75755ebcdb3d1272d6fd1eb"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_eval/shared_c1.json",
+      "bytes": 19151,
+      "sha256": "5158ee5d44362119ae832da6dd64ec122fa5814ef11a8337b9e104f15e29cc4d"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_eval/shared_c4.json",
+      "bytes": 19101,
+      "sha256": "226420988a5f585cd12ef8373f8d65047e644f972ade3490d7399a229cedd7cf"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_eval/shared_norm.json",
+      "bytes": 19244,
+      "sha256": "817fe3e1c9b49f5c3ad40ea675a98e3ddacfd58f33ff53b7737bae8ff325bb4e"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_eval/teacher_c1.json",
+      "bytes": 19172,
+      "sha256": "7fde12eb0ef15756d2974a8bb2fe42e1609ecfbef3059f21974b7975bab38ff4"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_eval/teacher_c4.json",
+      "bytes": 19172,
+      "sha256": "053c64c7407a1e68e62a52c00854fbe305e7c540f46d90a31789b891c1d8dbf3"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_train/ce.json",
+      "bytes": 19027,
+      "sha256": "b5cd0c557ccfc5c54fc5fe2407da58e10e2137347b38577a36cc307201281548"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_train/shared_c1.json",
+      "bytes": 19165,
+      "sha256": "f8356b4fdc7e3622bc00bcb1a50fb9b4ba9482236b2a091763e5d5dbe11e6682"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_train/shared_c4.json",
+      "bytes": 19161,
+      "sha256": "ef5da78c08e439e07c048dbd4b8b84dcc4f4f451d6387cf306ab0ad18ab29c83"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_train/shared_norm.json",
+      "bytes": 19257,
+      "sha256": "eb6c938c2996ab8b0013d801e892829c7277c26adb880cd013df66eef50c96ec"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_train/teacher_c1.json",
+      "bytes": 19166,
+      "sha256": "a80d9e9104f6dd2b31d390a04b3d3b09d9f88f434185a42c7c480177ec138149"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/20000/matched_train/teacher_c4.json",
+      "bytes": 19163,
+      "sha256": "190f2442e8fcf4091d388fe7115d298d765cdbb2bf72a54879077cfc8ff2b1e3"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/legacy_eval/ce.json",
+      "bytes": 18991,
+      "sha256": "34afe96aa9c82318a923ba696cde25267db2b1965cd987da2e6934c440f7b0b3"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/legacy_eval/shared_c1.json",
+      "bytes": 19136,
+      "sha256": "7b91911146b8c9da1d553bcbad481e1986876164f1ac25a05b60adf5f4456fc7"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/legacy_eval/shared_c4.json",
+      "bytes": 19130,
+      "sha256": "aadf6f9bb9a86e8637ce642cc43d1c8f0d5d82c6c01628914f91c1e7cb8ba411"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/legacy_eval/shared_norm.json",
+      "bytes": 19235,
+      "sha256": "7713aa986be0f5382108fa0ab4cf23e48e054d6a6522fa593635453051ba803a"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/legacy_eval/teacher_c1.json",
+      "bytes": 19152,
+      "sha256": "3d10dc07ca6d81132de1b8bda6b8db471d0ba652f67b5685a7741427b1b2503e"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/legacy_eval/teacher_c4.json",
+      "bytes": 19172,
+      "sha256": "ddb5dfc5920f503e029059d387395cda3101f670a69ebfcea256fa73e3dd0fef"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_eval/ce.json",
+      "bytes": 19002,
+      "sha256": "59d77f5583a398a3e9d93b2714ab9034e172108d5bf8199ab1a6c2c3fddd4589"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_eval/shared_c1.json",
+      "bytes": 19139,
+      "sha256": "b6503b95da5eb5e5e32f824591ba59b2f7e1abd3c9401c8faef60bbeabf8597e"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_eval/shared_c4.json",
+      "bytes": 19133,
+      "sha256": "e45bd9b90d8f038cb74f1516a2dd150d0177f776e72eb273e6677dc69d1c773d"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_eval/shared_norm.json",
+      "bytes": 19235,
+      "sha256": "94693f3ba25127c04e3a940ecef1a47d219d30940102d32138bf40f279f468af"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_eval/teacher_c1.json",
+      "bytes": 19143,
+      "sha256": "3bb5b74b8762c770aec15482d548b4b9be793a6d29b7a111e83a7f51960bcc58"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_eval/teacher_c4.json",
+      "bytes": 19161,
+      "sha256": "eac67b6dfdedb6a9b1f262866fe17eb76b66e468937d4318f3e6ab78dcb08f8d"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_train/ce.json",
+      "bytes": 19015,
+      "sha256": "87a26d0d49364eac357a05b48d5fae07ef5cb5fa6592de65e467c7108d0e4867"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_train/shared_c1.json",
+      "bytes": 19148,
+      "sha256": "0db3f6d9437d5f687ec8ed272af32e7bc6187952df8408f27ceda9fa4ce33a99"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_train/shared_c4.json",
+      "bytes": 19148,
+      "sha256": "32dfcec9dfbdfe19eb9c0844dc0722513e9055c4df39eef11023679c805e24c9"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_train/shared_norm.json",
+      "bytes": 19246,
+      "sha256": "22ab38069dc98f8f69128978f575687d14fb1f40e088603a866d01a84cad128a"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_train/teacher_c1.json",
+      "bytes": 19146,
+      "sha256": "4b745b9c76826f7d5314361bbf212830d035cdd3d65d65b5b023c3b9d7fd2f9b"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/40000/matched_train/teacher_c4.json",
+      "bytes": 19132,
+      "sha256": "9a3862edd99e438bc3e6c1a66706aa2471722c234827873500c0c60be0ac5849"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/legacy_eval/ce.json",
+      "bytes": 18977,
+      "sha256": "2da7829d48c854346652c6a113bb945f6b9c999d29d9d1dcaa647ffa96707541"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/legacy_eval/shared_c1.json",
+      "bytes": 19115,
+      "sha256": "9585ca7ccea98ced5692d575a124356d1704d6f270aad220c20d2321ef4664ed"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/legacy_eval/shared_c4.json",
+      "bytes": 19136,
+      "sha256": "9b4911c1651b3f0e88151d05ee627a0650b90403200cc6b1e29d6b109be12ba6"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/legacy_eval/shared_norm.json",
+      "bytes": 19214,
+      "sha256": "4aaf98e2523aca7d0daa0048fc7079be91e60952d0fbc369930c8b1e9bfc9b54"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/legacy_eval/teacher_c1.json",
+      "bytes": 19109,
+      "sha256": "a87f85e7554ed9cafbe3a0ca8b5d4a6675cb5be3c43106cb53a7a272603c0601"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/legacy_eval/teacher_c4.json",
+      "bytes": 19081,
+      "sha256": "a4f3468f1be26b650b0a1e52cea37389f64de028d07e4613db63d25fb891acf7"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_eval/ce.json",
+      "bytes": 18961,
+      "sha256": "fbb3a68620e5f4a8fbd4ab2f1f45497aa1554ecb784ae040947c628ceb711768"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_eval/shared_c1.json",
+      "bytes": 19111,
+      "sha256": "95f8d82e3ccb778858a2110f6a3584af1afd051aab9a4448caebde516d106879"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_eval/shared_c4.json",
+      "bytes": 19124,
+      "sha256": "97442355c66ced6558712a3a872cec343b85df3cdd6b33a007e8a112089cb19d"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_eval/shared_norm.json",
+      "bytes": 19221,
+      "sha256": "4fcb8e1d6e401b866f54a2f5f65f891b647cb9d2090a9a5a9811becf8ae25d65"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_eval/teacher_c1.json",
+      "bytes": 19106,
+      "sha256": "81d1525839a1e1892f876a71bfef84394cf2e34ac319339ea6fb5772f8bef2db"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_eval/teacher_c4.json",
+      "bytes": 19121,
+      "sha256": "28efc62978ebe9e3244d2c92b45f79bcf91d63ba3e3d7048fad325e96ad848d8"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_train/ce.json",
+      "bytes": 18977,
+      "sha256": "a2f95eaa806a907d3c710077921c01004ac378e07f7735ed99d75b4e1d6fa170"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_train/shared_c1.json",
+      "bytes": 19106,
+      "sha256": "b6f09bc86d3e8310c9c15e6c54afab06c4e556188681a8d778bafc444b7273f6"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_train/shared_c4.json",
+      "bytes": 19115,
+      "sha256": "18804738dfe1c980c8a0d2c45417388ca69094a28cef818b3f216087f5af4fa4"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_train/shared_norm.json",
+      "bytes": 19205,
+      "sha256": "96fc37ced99ff6f81f3b44c1970abb1cb5f36c4f87ceeb98366112f2bf010b40"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_train/teacher_c1.json",
+      "bytes": 19104,
+      "sha256": "f54a182b709a79a2497f5225678a6c917f15b3654f6f695cf5e20f6a5c0ee884"
+    },
+    {
+      "path": "one_step/cityscapes/ce/1234/60000/matched_train/teacher_c4.json",
+      "bytes": 19111,
+      "sha256": "d8f294ad8d778d3db280db5f767cd282e0f1ea7553bfe5eac7de834d53198e06"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/legacy_eval/ce.json",
+      "bytes": 19047,
+      "sha256": "14801cef2c218f08da1eb459cc357ece44bbc5ec642810f3a20ccb42157a0a56"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/legacy_eval/shared_c1.json",
+      "bytes": 19182,
+      "sha256": "fe5643257ce8e57838b660e68708aa7d57806aed7231350945764f17ba2b656d"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/legacy_eval/shared_c4.json",
+      "bytes": 19122,
+      "sha256": "5305fc9cc6850c6d904cc1451fc47a52108d78c82f4a7b3390bb0d52a44156ed"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/legacy_eval/shared_norm.json",
+      "bytes": 19271,
+      "sha256": "3a0fb244af60e769f3761585a1da2cb78b99439f7725653127af092cb6717cb3"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/legacy_eval/teacher_c1.json",
+      "bytes": 19191,
+      "sha256": "6e25e8fde375302b9de3aa9801c5def240415b0d5a981f56345875f55531bed6"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/legacy_eval/teacher_c4.json",
+      "bytes": 19210,
+      "sha256": "e46540d50fe81a36710bf1d4beb99b05536c85a1c726d9d2f503aca2ae75ac84"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_eval/ce.json",
+      "bytes": 19030,
+      "sha256": "6ee7aa2fafc36ee99df2d94cf21bb9f97d70d349fdd88f05dbe4f5c9b555d5e2"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_eval/shared_c1.json",
+      "bytes": 19160,
+      "sha256": "27004d6b53107a752a73f3d1cb3c02e0385bf69a2e99443ae47b1767eacca531"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_eval/shared_c4.json",
+      "bytes": 19156,
+      "sha256": "15062a306430a453a0be97ba262c9087b8e94aaa491205ad0d8086ef96375e5e"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_eval/shared_norm.json",
+      "bytes": 19268,
+      "sha256": "0c98a5e20f731706400f287705e7a247ba03b4827e6de260d2dd2097dcea752d"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_eval/teacher_c1.json",
+      "bytes": 19155,
+      "sha256": "cd779b8387e3f56b880d594ceeaa5cc252ca0c783eb9217a63efb767e81107d7"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_eval/teacher_c4.json",
+      "bytes": 19173,
+      "sha256": "31f4314e3a8c5a06ac98585eb66bb1b5e0758050e528884d1a1bc3bbac33c63e"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_train/ce.json",
+      "bytes": 19015,
+      "sha256": "7191ed97ece653b3b9464e78ff50d8d4b1f16746ae7c51ce2eba90fa29ebb2a2"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_train/shared_c1.json",
+      "bytes": 19147,
+      "sha256": "e765ea49bd26b2862bc0344780bf5239c8727da97c46cc175d5dbdaf8819ff6b"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_train/shared_c4.json",
+      "bytes": 19149,
+      "sha256": "88dd1e858da089aa6db25c8e614fff83dd63d74d3139dd8807eb2190a19d0afa"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_train/shared_norm.json",
+      "bytes": 19251,
+      "sha256": "e997557e9176ce56699d65ce0b230b8205d3fa2eddc341063a6f3cb3480416aa"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_train/teacher_c1.json",
+      "bytes": 19147,
+      "sha256": "87e9956f10c0a32987fad0705e16d474d4691599cdf7e1f971024ddf74d14b23"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/20000/matched_train/teacher_c4.json",
+      "bytes": 19155,
+      "sha256": "a765df1f743cba4c6e386ffc4e82a945e5758bab18f30bb1dc4d40ba151a7b35"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/legacy_eval/ce.json",
+      "bytes": 18982,
+      "sha256": "4211ac9483731650aac877d0ef87c815e1eab1f42c30fb5f9fbebc94e3f5da76"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/legacy_eval/shared_c1.json",
+      "bytes": 19121,
+      "sha256": "14fe2ee94074d708e5668c1b36e4e1ce4ced49e95cdd5c6d7592e7aed462dcee"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/legacy_eval/shared_c4.json",
+      "bytes": 19125,
+      "sha256": "ab87a3171c7c7a5c86e00e3fecdb94cbeb6b4955e86bdfe173140e0ee7a4ee3f"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/legacy_eval/shared_norm.json",
+      "bytes": 19222,
+      "sha256": "536279b263e36b711a9078a04d2bac9a324995035ad9e6aece07ff29a2d485ee"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/legacy_eval/teacher_c1.json",
+      "bytes": 19126,
+      "sha256": "2967aff5267e5cb7f95d11bcaea7b0280f850f8092a3ef47ba326eee0360f1d6"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/legacy_eval/teacher_c4.json",
+      "bytes": 19141,
+      "sha256": "ca8521cf4e3e7b6c5092ac55a88002ba6d916e225fcadb1eeee591cf9cc9c622"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_eval/ce.json",
+      "bytes": 18976,
+      "sha256": "1bbeb4cab6ab23693c8e83a5356bd0ba649da8c8da8ef749014cc54bdc77d67a"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_eval/shared_c1.json",
+      "bytes": 19115,
+      "sha256": "d7b408e97e6f9b756c538ba75de5510d70abaeebfeb4700c19a45f28ed564908"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_eval/shared_c4.json",
+      "bytes": 19112,
+      "sha256": "9fe8b7c76c16edf0f732178163273569162df5051aceefa2145331feeb4e544b"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_eval/shared_norm.json",
+      "bytes": 19201,
+      "sha256": "c3b866972f58743c46a5f0c24c4bb92de0e175d76d7c587f01514f2da6258c7b"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_eval/teacher_c1.json",
+      "bytes": 19114,
+      "sha256": "ccd0605f9bab4ef1e563c7a89d72784255801584a4994342ef0d744fd4f1e165"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_eval/teacher_c4.json",
+      "bytes": 19150,
+      "sha256": "a7e800476bc416b32f161384b4716952436061bded020441e863d8cd20b0d0c5"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_train/ce.json",
+      "bytes": 18979,
+      "sha256": "c27bae05ff3ad4f82ffacfecca1edb750504814e36a8e7ec16134066ade2dd64"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_train/shared_c1.json",
+      "bytes": 19122,
+      "sha256": "d79824059e560d178e07c348cd0e9899454539b351b906148e98ccf92341e57d"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_train/shared_c4.json",
+      "bytes": 19110,
+      "sha256": "ee94dbf218042e6e641a1182c71f4029191c24d492476b8fbe671ad4eee2e608"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_train/shared_norm.json",
+      "bytes": 19213,
+      "sha256": "29110c68e72ebb792aa7cb92672dd85285579ee75c7ee101263ec1353bb6aefe"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_train/teacher_c1.json",
+      "bytes": 19119,
+      "sha256": "3e6d504ed2ab1a4444642981dbe4ecce42c57ebfcc8d6c8c9d855722e6479992"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/40000/matched_train/teacher_c4.json",
+      "bytes": 19114,
+      "sha256": "d6a70748cecc5a374f5f2f30b28ba7352c509ebfba653309f7e68d83e40cb2a0"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/legacy_eval/ce.json",
+      "bytes": 18998,
+      "sha256": "e132343eea25fa241bfc5aa8d82dc6fa07619e674537ef18bd4e6a6d2005bd0a"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/legacy_eval/shared_c1.json",
+      "bytes": 19137,
+      "sha256": "480dc20c4e11966d7cdd769b6548b54289178247436d69e286930520e19e7556"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/legacy_eval/shared_c4.json",
+      "bytes": 19161,
+      "sha256": "041f3e91a90aae4d672735d271da3d9a4190a8c433928d299c2cc80a86f17fca"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/legacy_eval/shared_norm.json",
+      "bytes": 19223,
+      "sha256": "71650bf9af1bb6e50da1ed7b192f7c308ff3a1cdfa430f1467abad9d6a457403"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/legacy_eval/teacher_c1.json",
+      "bytes": 19114,
+      "sha256": "cdecacc91156a849a1bdbe7d4c867bff50ed8e7879d8ff5095a98fa79dfdb684"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/legacy_eval/teacher_c4.json",
+      "bytes": 19137,
+      "sha256": "ad06dd0aea4a881a6043be201a4aed482775f50d0f895efc8288bce4d4c6f916"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_eval/ce.json",
+      "bytes": 18986,
+      "sha256": "ca94d3c3fc9bde41bb2c035470ddc359d0fa1d3f69bbbc977497d13c390a3298"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_eval/shared_c1.json",
+      "bytes": 19122,
+      "sha256": "f84fd1bc8402e169caed5d7ba100302fda273292130f14212dade40684dc8ffa"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_eval/shared_c4.json",
+      "bytes": 19127,
+      "sha256": "fe5f961b72eb6ac332d4d0fb5c83bddca09acf35fef5320655f605779866cdb4"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_eval/shared_norm.json",
+      "bytes": 19213,
+      "sha256": "28807eecc69bf03431ad7454913a8fac0cf2a36e5f8d6be6cdf5f534baf69881"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_eval/teacher_c1.json",
+      "bytes": 19122,
+      "sha256": "f2a127244c5db3494cd6e20acb4dbb8e12adf72f3854a91c52259ab03d3e2a90"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_eval/teacher_c4.json",
+      "bytes": 19124,
+      "sha256": "ce04ca011235d64524db7bb90b3d571ac8386c13562afd56a862ac433d72951f"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_train/ce.json",
+      "bytes": 18983,
+      "sha256": "c03e10925171786df81a685accb3c3c4e990b124dfd066d1e8e08ddc81dafe21"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_train/shared_c1.json",
+      "bytes": 19115,
+      "sha256": "903aee8bd58dc9a2e4ec830718a929391f325a5a0d81e02484b5ffdcb3f07bb0"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_train/shared_c4.json",
+      "bytes": 19124,
+      "sha256": "75509525377115fae7b15cb947ff828021581e9b384f9cac339c617c42c667c9"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_train/shared_norm.json",
+      "bytes": 19214,
+      "sha256": "34f3d3047664707f9a7716a7f214d6de7b2901176174d994773f13371e1a36b0"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_train/teacher_c1.json",
+      "bytes": 19125,
+      "sha256": "dff0c6c404de2d3418e471e0ee12f7ee3fafb22d3817db63487ee4d30fac0c0e"
+    },
+    {
+      "path": "one_step/cityscapes/ce/2025/60000/matched_train/teacher_c4.json",
+      "bytes": 19121,
+      "sha256": "0cc08e7c998d57a75d0c817c118a7387aecdbae1fef51b7f4040cadfc8c03409"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/legacy_eval/ce.json",
+      "bytes": 18990,
+      "sha256": "f53189dbbcb74c9ee0dbf4da0fdd8692e40ae5094477887a4410a655add52519"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/legacy_eval/shared_c1.json",
+      "bytes": 19127,
+      "sha256": "336fc28f1e604a903fbd225341836e650e6c39680c1cfb764279c81c49449e8a"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/legacy_eval/shared_c4.json",
+      "bytes": 19130,
+      "sha256": "6b435c9e251b5f1676a31011a51bc99229e3977b9189e03583b977cc675453d8"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/legacy_eval/shared_norm.json",
+      "bytes": 19225,
+      "sha256": "537b0495724d3d77a71070ba316ed23bf28cc1adda197acae02964b7f6801e81"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/legacy_eval/teacher_c1.json",
+      "bytes": 19137,
+      "sha256": "daf62ce8ffa6d767dcb0c55218796037ff540144021d1826069743f50d25484f"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/legacy_eval/teacher_c4.json",
+      "bytes": 19176,
+      "sha256": "17d933160dc4a328299cd49a1cad4bc79bbd745dea60e7439fdb6348c11a6c39"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_eval/ce.json",
+      "bytes": 18979,
+      "sha256": "40521f5b8116216b21f57d2e395e473944236a4a0dd516505ff70970ac85f6ca"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_eval/shared_c1.json",
+      "bytes": 19121,
+      "sha256": "24cb92f842da00d8cbfb8666750fea038f286b1cdaed8202d5a32845f31e8923"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_eval/shared_c4.json",
+      "bytes": 19098,
+      "sha256": "ca4a977b7d5732c7855d960ad74569f09fc75ac94643dd349ad80c88b4f9e1e7"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_eval/shared_norm.json",
+      "bytes": 19202,
+      "sha256": "482000026a822758277088c7129a366b419e6e067faeeaec3b54e195069c953d"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_eval/teacher_c1.json",
+      "bytes": 19123,
+      "sha256": "4591b8070fdf658c2c7aa1506c2bfc66f38cb81d9ab7d349b97b3e27c3f0e4ab"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_eval/teacher_c4.json",
+      "bytes": 19124,
+      "sha256": "cb63bcc9c63d422f15e76c0813d596f2d54751cc6d30ae07a38a864c96c12d62"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_train/ce.json",
+      "bytes": 18988,
+      "sha256": "11505037fbf4e4d43661e441f67f2e3c71f55bb2b5e3861080be9ae767899a29"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_train/shared_c1.json",
+      "bytes": 19123,
+      "sha256": "25daa9f8cb222098940d73ea98def41a61d3b4953f4d1a2555ba207359f0a7c8"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_train/shared_c4.json",
+      "bytes": 19132,
+      "sha256": "cfee9f7e006a9389f93f0c1f7b48b442b94a56d3529fabfd0888fd1884304756"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_train/shared_norm.json",
+      "bytes": 19217,
+      "sha256": "3eeeb98bd5228c6e67a9ecf11fc407e023ba3080378a531efa9bb97c08e21f6b"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_train/teacher_c1.json",
+      "bytes": 19122,
+      "sha256": "5c1a42fc24f10f96f6e70d7459f97de33137a774a1b4c3ce48dd978a003990b4"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/20000/matched_train/teacher_c4.json",
+      "bytes": 19129,
+      "sha256": "7185a7a5fd17ba41137d4b63fb0af1672947199f537de923eff5e2af175a640c"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/legacy_eval/ce.json",
+      "bytes": 18989,
+      "sha256": "d79e1b0e126ce884836a5bf658bcf08195b4c2c8c99a0017f6f14751257f7daa"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/legacy_eval/shared_c1.json",
+      "bytes": 19052,
+      "sha256": "ab001716131b6d385307ec083c2ee0c8f358539218b986dc9a5f659c8ab73479"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/legacy_eval/shared_c4.json",
+      "bytes": 18256,
+      "sha256": "9d5380b36e1451832f33a0bc932909aef2e85d8301776f5a07e068566bcc763c"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/legacy_eval/shared_norm.json",
+      "bytes": 19240,
+      "sha256": "a8336f778295be25a6cffd90073150690f7c4d53be22db77592bea7078ca50c8"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/legacy_eval/teacher_c1.json",
+      "bytes": 19146,
+      "sha256": "76fe135f8a6809f8b5cfe1dec93521d1a040bb04137bad3803733f3cb30a88ad"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/legacy_eval/teacher_c4.json",
+      "bytes": 19120,
+      "sha256": "d455a6f268ded17d0ab0ef3a7937465adacb9fa1174d1cdd1e4f32f0fcd50a62"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_eval/ce.json",
+      "bytes": 18994,
+      "sha256": "5dd873c164631d17db7d52811f719f897f1a45522d4303ad32d673cc1f95cafb"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_eval/shared_c1.json",
+      "bytes": 19133,
+      "sha256": "1a1f5c855aa3bc4f3c8c2841e19394868aae55330d787c6e054f6f1df266a16a"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_eval/shared_c4.json",
+      "bytes": 19131,
+      "sha256": "a3e936d6b5044743154b753467f89309f0bfe4d712586485e909757494129d27"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_eval/shared_norm.json",
+      "bytes": 19230,
+      "sha256": "b0d9f7cdc12bf7411051bea783d1c6be8d86c54fa3a39525374da8e2c09d1a4b"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_eval/teacher_c1.json",
+      "bytes": 19127,
+      "sha256": "8fb3d4e3846b584e84876c019cf2e525f14724e9f9ecaa46bdeea5d213a2867f"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_eval/teacher_c4.json",
+      "bytes": 19126,
+      "sha256": "ef2967f8f5c944fcd4c8a7aace96989037bb2c83cbacf9ed3e6293ee6f69da0f"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_train/ce.json",
+      "bytes": 19002,
+      "sha256": "24e4d09a832a611256c2fe864686fc7856697dfb83a9142f9c44e39100975bc5"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_train/shared_c1.json",
+      "bytes": 19134,
+      "sha256": "b6d7d607dbe70bdfda692dbc98e6fea02f53814c6dd006c0bea36520c6f36090"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_train/shared_c4.json",
+      "bytes": 19138,
+      "sha256": "c785f9d412875f04df5f90f66b2635c7835395880755d1d1e23ef4eccc02f9aa"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_train/shared_norm.json",
+      "bytes": 19226,
+      "sha256": "4304d9cf0cf23ef75a1ecacadd9bb20b13d123c6bcaae5d9b355288fea72c307"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_train/teacher_c1.json",
+      "bytes": 19140,
+      "sha256": "2668a1b58b0caabd7677ea18dfa923e1b5f0b555d1b7ce5cf5db2537c892c3a4"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/40000/matched_train/teacher_c4.json",
+      "bytes": 19137,
+      "sha256": "5c6dea107824b3b042b05ef4b9456c91d0ff706c787cfea4966429269d49c0b2"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/legacy_eval/ce.json",
+      "bytes": 18965,
+      "sha256": "ef564c6c0cf5d8093d375430940d7338103a83e96596a8f7336bf7698320667b"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/legacy_eval/shared_c1.json",
+      "bytes": 19095,
+      "sha256": "c7e113c6e2e2a7efa16267e868992a52bc356787909acd8bf1068b279a3c6703"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/legacy_eval/shared_c4.json",
+      "bytes": 19105,
+      "sha256": "c8e0d9faec6ff10b1fce3fb90c12b0ed1b0b7fb435a153f9eebada2d53481af4"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/legacy_eval/shared_norm.json",
+      "bytes": 19207,
+      "sha256": "d937b7e17af0c54709899fac4a4d27b8189e5c6911ec68f0965f9025931a1004"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/legacy_eval/teacher_c1.json",
+      "bytes": 19106,
+      "sha256": "5ce7570e62fa06003cd217842a9e39525b912623a532dc26bf19830abc0b4222"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/legacy_eval/teacher_c4.json",
+      "bytes": 19110,
+      "sha256": "209195a23c1b8a34a63d1bffacd910db990c31c6a6476c9db010f2a5d3eaea38"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_eval/ce.json",
+      "bytes": 18968,
+      "sha256": "77fdd766e27b7695d1a5b47a2a19d429821bbd4e4856a37b23c9f0391371e0ac"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_eval/shared_c1.json",
+      "bytes": 19106,
+      "sha256": "949e26549a3d8222f9a0fb8c9da06bf41000486ba8f4a9574a0491b18192e370"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_eval/shared_c4.json",
+      "bytes": 19101,
+      "sha256": "e0aa349dbcdb1ceb519aa3de2638bd7c79b321dbcb86c1fe6b81b9d012c73795"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_eval/shared_norm.json",
+      "bytes": 19191,
+      "sha256": "2d2807a8f06342db05d49cddd815e16b1c25e82ef7c860df7a106ed8ac4280b0"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_eval/teacher_c1.json",
+      "bytes": 19110,
+      "sha256": "6a45acfebc71fbd1dfe314e381b3ddd067569d8f51d4f93f3c18bb25a5dc87d1"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_eval/teacher_c4.json",
+      "bytes": 19101,
+      "sha256": "f36d36bd7103dafab1270b9d6c76a2f3af071a7dafc7ca27b30c9c846fd96b16"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_train/ce.json",
+      "bytes": 18974,
+      "sha256": "bf7defa81b17c4fc183e3790b0023bf2d1efa2e53e62cc862e132c548b78ef67"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_train/shared_c1.json",
+      "bytes": 19107,
+      "sha256": "98962fad25dee33951c8a37dc0d43491f87c395c7a4a5c1f9499887768c2ec5c"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_train/shared_c4.json",
+      "bytes": 19117,
+      "sha256": "0b51b85db6a8f66b7b2743ebd385013a1d172593fc6a011448edbce1b7d78eae"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_train/shared_norm.json",
+      "bytes": 19195,
+      "sha256": "cef195d96d665d2ec0071b39d3323c4f8012a7afe704ab722511da95a9648c5b"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_train/teacher_c1.json",
+      "bytes": 19106,
+      "sha256": "52910b6cc50c5f5ceecf8b91c1b0735692832aaa81442e1e6fde4f027d1848d4"
+    },
+    {
+      "path": "one_step/cityscapes/ce/3407/60000/matched_train/teacher_c4.json",
+      "bytes": 19110,
+      "sha256": "5c2d948d3d98a8e30ca432711de3bf2efc72f4c488752287d8a2002cb9f07641"
+    },
+    {
+      "path": "one_step/cityscapes/summary_ce_seed1234_stage20000.json",
+      "bytes": 3073,
+      "sha256": "c61f430b8775c6e35e3d291379c1fc5f6c2bd0ecfdd628bdce0c81f4e3837243"
+    },
+    {
+      "path": "one_step/cityscapes/summary_ce_seed1234_stage40000.json",
+      "bytes": 3072,
+      "sha256": "046f4d6326af469492226de48c8f1a7c5e735e954633eacaa0761d3ec85e4153"
+    },
+    {
+      "path": "one_step/cityscapes/summary_ce_seed1234_stage60000.json",
+      "bytes": 3073,
+      "sha256": "9100f7fa2eaa16bede91d666eb7f08fc55f308b76ab9685ba92dfa84e9b0d461"
+    },
+    {
+      "path": "one_step/cityscapes/summary_ce_seed2025_stage20000.json",
+      "bytes": 3073,
+      "sha256": "0c2fc39692c7315da24c3aab1af3124c9ff41f9d23419085bc4ee5a94d675976"
+    },
+    {
+      "path": "one_step/cityscapes/summary_ce_seed2025_stage40000.json",
+      "bytes": 3073,
+      "sha256": "5e9252be41c50811bfd25b47154e7e04ecadf79f9d1106b439229a31c7ad764c"
+    },
+    {
+      "path": "one_step/cityscapes/summary_ce_seed2025_stage60000.json",
+      "bytes": 3073,
+      "sha256": "a749bc97872ac9064ac9b4b4462c558c3013179e1a0ede8cf4086ed5677cfc76"
+    },
+    {
+      "path": "one_step/cityscapes/summary_ce_seed3407_stage20000.json",
+      "bytes": 3105,
+      "sha256": "05105cf5ecf13860323df16531ed790cfb13f9e5ebdb91feecd8b69c1dca7182"
+    },
+    {
+      "path": "one_step/cityscapes/summary_ce_seed3407_stage40000.json",
+      "bytes": 3105,
+      "sha256": "29660902e7a5aa5608a15ea8cc9c727f526efcbf7c138a04f752b189777d511d"
+    },
+    {
+      "path": "one_step/cityscapes/summary_ce_seed3407_stage60000.json",
+      "bytes": 3104,
+      "sha256": "4408cd9278891cba50362f09ffc877e15e81cc042660f3bec5653efba0a57fa1"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/legacy_eval/ce.json",
+      "bytes": 20210,
+      "sha256": "467a8d89f762532a1f814b872f24ee8c54d9f5f6a6546fdea2cb5a7bae509d3d"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/legacy_eval/shared_c1.json",
+      "bytes": 20347,
+      "sha256": "b2a58cf9bdbea4aa48a115eceb458bac1bb32decf7f567a32b883b91df6063d0"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/legacy_eval/shared_c4.json",
+      "bytes": 20325,
+      "sha256": "7f3dc793753edd8905dd459bb97d52ff0c09e2cca903c03f3b0d6b6c34112da2"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/legacy_eval/shared_norm.json",
+      "bytes": 20432,
+      "sha256": "c43cd186e828bf9bd97ab616842ad0cb8bb1ec1ab8afa1d29e4947b7f9d8704d"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/legacy_eval/teacher_c1.json",
+      "bytes": 20359,
+      "sha256": "7ded4906164836d411103cb96437e0514dd67fc0b5873a4f561b63fbd07b247f"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/legacy_eval/teacher_c4.json",
+      "bytes": 20396,
+      "sha256": "b53486fcbc732b77376667339dfc4de335749e1b16a1a93eb62924d2105d77c3"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_eval/ce.json",
+      "bytes": 20216,
+      "sha256": "0def623a99d7cfb36b0e6d09da74756343e1aa038c351977ade74ec84fc1ea22"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_eval/shared_c1.json",
+      "bytes": 20363,
+      "sha256": "3ca8d40d95ac069876daed803346a350cf19aab7ff94331f720b40eaf06b1b9a"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_eval/shared_c4.json",
+      "bytes": 20364,
+      "sha256": "62b7d838393d0f8f4c300812ee15251d182fd648242a82ab03c66d9d8cce8d41"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_eval/shared_norm.json",
+      "bytes": 20438,
+      "sha256": "a52ed35469793d7ae7cc6c26cd859541cff88b9519746f197de572057900ec8f"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_eval/teacher_c1.json",
+      "bytes": 20364,
+      "sha256": "c452845bad0bea2b65b3506272aa468c1cd43b440e77df1f60bda080177a14a9"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_eval/teacher_c4.json",
+      "bytes": 20400,
+      "sha256": "d4adfda9c4f78bb58ab26beb4ef6625600ee56c5beb047911f65633227eecc72"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_train/ce.json",
+      "bytes": 20214,
+      "sha256": "e15b41a6a2a8b6242a351f9e55d34c6d946971e59846063edc7771e04a062270"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_train/shared_c1.json",
+      "bytes": 20340,
+      "sha256": "4b82673ca1fa8cee03ad119a3eec9eae211b00e9020964d3611c0b77d520d3d1"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_train/shared_c4.json",
+      "bytes": 20350,
+      "sha256": "39bbe9b5160027b5f658d1712afd35be22eec2f6adb830162e650174ebf44784"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_train/shared_norm.json",
+      "bytes": 20441,
+      "sha256": "061769b0931d63afba79afe92ce45292ceb60df3736e4315d8cacf7271810782"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_train/teacher_c1.json",
+      "bytes": 20344,
+      "sha256": "a85f42cb8eebdf6a8cd7ad56e3424b4e596224f1da048b240d5557dc745d55a3"
+    },
+    {
+      "path": "one_step/voc/ce/1234/20000/matched_train/teacher_c4.json",
+      "bytes": 20345,
+      "sha256": "2d1407e7a280d835b47f83d1e8092dab7ed7b5f7485120586a149d3f5c9016e5"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/legacy_eval/ce.json",
+      "bytes": 20139,
+      "sha256": "0dd9183b752df93db798589b8a0af01d07ca2019e7b2ad4658d6b5656eed6d46"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/legacy_eval/shared_c1.json",
+      "bytes": 20281,
+      "sha256": "61b1ad7c59df9c70226df24384996d31c8435f475998f717a701089134c74ad7"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/legacy_eval/shared_c4.json",
+      "bytes": 20283,
+      "sha256": "4e5802aabf2d2b88d8705b52da2220c64ea9b9f8bf8a2140cfeb627ae39d85d8"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/legacy_eval/shared_norm.json",
+      "bytes": 20383,
+      "sha256": "d797d3c965b614e6ac81174d1cde6549bdb070370c480a0849390077689d45e8"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/legacy_eval/teacher_c1.json",
+      "bytes": 20276,
+      "sha256": "a9c867f654b4c72e6defb6194ae5f3579f9ade397616cb478886eadaa554bae5"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/legacy_eval/teacher_c4.json",
+      "bytes": 20285,
+      "sha256": "7ebe2e35e1b8f80fbcdc5586c2cc22dac5f22c5d608adbc41e98cc06d4cfd104"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_eval/ce.json",
+      "bytes": 20137,
+      "sha256": "c77f6069be5a8b22a424c5916769dce3dc125941e6b00e9eede15babb52c2d61"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_eval/shared_c1.json",
+      "bytes": 20272,
+      "sha256": "769835f3899cfc71eaeed8df4a596cb5e0c4e9745e0b5241c85056009a918b91"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_eval/shared_c4.json",
+      "bytes": 20276,
+      "sha256": "151f8336aa6b3e6862969dfbae4f394648c19fc76fd922c78a77c7401dd6a9eb"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_eval/shared_norm.json",
+      "bytes": 20369,
+      "sha256": "f997df800f018fbd9454adf7d5ac9504130f42ed02056f22dcb40f5dfbb2c739"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_eval/teacher_c1.json",
+      "bytes": 20270,
+      "sha256": "547bdf87584009cc72f33c69ea3061271e105a6c958121f74d85f5209ebac94a"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_eval/teacher_c4.json",
+      "bytes": 20275,
+      "sha256": "bf35b71e95d22f23620c6357ff0b77038a121ad793775608f10b4dec62e975e6"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_train/ce.json",
+      "bytes": 20143,
+      "sha256": "e0af46a69ccc3fe1c1709204db41e05b5e98deda6acf376ea98d71694ac8fbb9"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_train/shared_c1.json",
+      "bytes": 20278,
+      "sha256": "241ed646ada30269cbd1a1e64033d7e4f2d976312f591ed7b58610642e20e1f2"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_train/shared_c4.json",
+      "bytes": 20276,
+      "sha256": "3866f5503c8a0a25a4d28c119c6d09be40dbd7f2ee722098f63f2d2f59385832"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_train/shared_norm.json",
+      "bytes": 20371,
+      "sha256": "5bfff4a20c89515b6e79dc76d797cfded9d2785dcf92d878777296448187694b"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_train/teacher_c1.json",
+      "bytes": 20273,
+      "sha256": "73f607e271f636e6c1bd62ede3606ae8d30501647e956d38c5ec45ca1e871db3"
+    },
+    {
+      "path": "one_step/voc/ce/1234/40000/matched_train/teacher_c4.json",
+      "bytes": 20282,
+      "sha256": "d85aea9264afec725ee145e879e75f193341139d05c04967f5e74eb91b386627"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/legacy_eval/ce.json",
+      "bytes": 20128,
+      "sha256": "8b25027d68b221da7479aa7a045175adf2088e5f2efe05d883c006966c3c8bf3"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/legacy_eval/shared_c1.json",
+      "bytes": 20268,
+      "sha256": "3e76e88412f0969e720064310900f83b0346b40a25934a34d8f28358da322b11"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/legacy_eval/shared_c4.json",
+      "bytes": 20261,
+      "sha256": "a37b2d046e014b7fd186c84f759b695ba90d3acb63b12685c1b313f50239113a"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/legacy_eval/shared_norm.json",
+      "bytes": 20357,
+      "sha256": "dd7ff62064f4ab27774bf1e87fd0cd85ad2c729ff48bc6d198996f8518c979ef"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/legacy_eval/teacher_c1.json",
+      "bytes": 20273,
+      "sha256": "e3c1ac7134bfa8e63032e55d0806b5386417911a7af8b0d10f6a2af7856d78ed"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/legacy_eval/teacher_c4.json",
+      "bytes": 20291,
+      "sha256": "c0a81ab21d71bf037a45a6e68f3544f6c06901ba5cd0d528bf53c9d6ffea793b"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_eval/ce.json",
+      "bytes": 20122,
+      "sha256": "cf5af7fe50d9c73d8cdc6deb2f67f7f6cd0b666bd29af4ffddeabb49bba7b411"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_eval/shared_c1.json",
+      "bytes": 20261,
+      "sha256": "b64f664904cc258b8bffb5bf2c392a639db0241cb8737c0842cd86e3c43c3bf7"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_eval/shared_c4.json",
+      "bytes": 20265,
+      "sha256": "b998afd3abb13405dfeee73c16ba24d79558e3fd330f7bc2822a42ae400af088"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_eval/shared_norm.json",
+      "bytes": 20373,
+      "sha256": "a490ec3f657a60e352c879cce0a6ee9ac6f9b7f73b3f2fdab4431b4d55f2be53"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_eval/teacher_c1.json",
+      "bytes": 20249,
+      "sha256": "13394be7907475b200d50f8c554fd7ebced117c7251913fe3239ea5649d85f71"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_eval/teacher_c4.json",
+      "bytes": 20278,
+      "sha256": "fa095d719ea4da4f30c437ffcea3920b8d949bb9af78f94e61773ad65280c1e9"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_train/ce.json",
+      "bytes": 20133,
+      "sha256": "565fb659851ad9b66d24fb4cb624ea45021b2a0da7a4e48af9d9fcc9eb091084"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_train/shared_c1.json",
+      "bytes": 20264,
+      "sha256": "910583b80dac4d3ebcd798ab4429439041a77179ad51ec842ec93b5a666619f7"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_train/shared_c4.json",
+      "bytes": 20277,
+      "sha256": "9e6e15a1bc7eb09c242b2c233b58432bd54b0279e84072151e5bde4350848f73"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_train/shared_norm.json",
+      "bytes": 20367,
+      "sha256": "0706ce0fa99969f04888886f773fb26670dbeb61899516f436fad7fd2bdbcfde"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_train/teacher_c1.json",
+      "bytes": 20278,
+      "sha256": "80478bc09d3f21f64ca7095ed90f245737dace53fea5606ecd6a6cfb2fe32018"
+    },
+    {
+      "path": "one_step/voc/ce/1234/60000/matched_train/teacher_c4.json",
+      "bytes": 20274,
+      "sha256": "03ce742ccb816ba021b025106a6ccbf0f07a9d358d898fbebfd2758b49522617"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/legacy_eval/ce.json",
+      "bytes": 20162,
+      "sha256": "b11338be4eefb82a822f9a17ba3f53a2aa3305338e31cea969541dac836d7ba9"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/legacy_eval/shared_c1.json",
+      "bytes": 20299,
+      "sha256": "c880fdcc001a8bbc7872166ef1ab2aadf90f6fd86ed77ef8db119e19bbf0f5d5"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/legacy_eval/shared_c4.json",
+      "bytes": 20291,
+      "sha256": "2dc753729f25c94cd4d5db1937ea25c75cc1716fe8c73326ee4d3f5f437bb7eb"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/legacy_eval/shared_norm.json",
+      "bytes": 20392,
+      "sha256": "820e2998d630cf7d883a8d21545e0806dbe7a2c0b22fc083dbbace5583fb7ada"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/legacy_eval/teacher_c1.json",
+      "bytes": 20307,
+      "sha256": "6729092333a0931c296c9e4cc9f5903656a4b4727c6cbe2177638ece37b871dc"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/legacy_eval/teacher_c4.json",
+      "bytes": 20365,
+      "sha256": "8de914b334dd9bd005ee4c07cfeffe1b53cfed133d9dee3d4aa44e4d55e646e1"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_eval/ce.json",
+      "bytes": 20160,
+      "sha256": "5a9d5e4cd445a47d1351d3d7c2b1816fc6d26e9aaf54b1eac09e2f3757ea566f"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_eval/shared_c1.json",
+      "bytes": 20295,
+      "sha256": "c13e6b789ac045cc433590c69624c0e983e6fe6055ba888353b813be251cc478"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_eval/shared_c4.json",
+      "bytes": 20285,
+      "sha256": "538e44573bd6fba13888c77227f29294d5493316df41b5ecc1cef96b65fa9856"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_eval/shared_norm.json",
+      "bytes": 20399,
+      "sha256": "ad97c5ecf41ca04c6c0c7f458eba73be68df60693ea474223ed81c2b3ba5954b"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_eval/teacher_c1.json",
+      "bytes": 20293,
+      "sha256": "a0716be7cc948259dfb1d25c77f19d81d8954a5c58be22260271c52a39c50e11"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_eval/teacher_c4.json",
+      "bytes": 20320,
+      "sha256": "efb18106db3f885a9173c48ab709a2d06497d54b741caf8501849ee57bb38cbe"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_train/ce.json",
+      "bytes": 20162,
+      "sha256": "32456b46433ba3e53a30ac1af864cf9c56241916098c0aef23b7f6c859661501"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_train/shared_c1.json",
+      "bytes": 20299,
+      "sha256": "605952d3800d78ebefb7157222a8699099bac5a77223c878ce49cb2dd0b7d760"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_train/shared_c4.json",
+      "bytes": 20298,
+      "sha256": "a0af9a34e34e388589012ffb7d701a0b1709fb01b60a4924578b591a84a8e761"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_train/shared_norm.json",
+      "bytes": 20396,
+      "sha256": "2c4b37b4b33b302e5acdd131d25a19f309c0f5bde3e5d6bf1642d25c2bc47408"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_train/teacher_c1.json",
+      "bytes": 20295,
+      "sha256": "5d1360faa5f8d51e124ac3e698a574517611424f954d06f7d1d3b3c72bd866c0"
+    },
+    {
+      "path": "one_step/voc/ce/2025/20000/matched_train/teacher_c4.json",
+      "bytes": 20295,
+      "sha256": "400c04855e807fa4b7261781dfed575b804467767d2905b81e0036d64187a5a2"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/legacy_eval/ce.json",
+      "bytes": 20174,
+      "sha256": "02802260231393e7c1296a5865c7071cf9c1677538270c56dc1b944fe53dd684"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/legacy_eval/shared_c1.json",
+      "bytes": 20315,
+      "sha256": "8a354fb7269e56064d0911788141b639de51757b55742d348021567b0c9cf7d7"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/legacy_eval/shared_c4.json",
+      "bytes": 20313,
+      "sha256": "e780341e8528a0722f5bf8dfcf635bb355fa17db4d5265f296891fb1caef50ce"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/legacy_eval/shared_norm.json",
+      "bytes": 20414,
+      "sha256": "2459a7914c4563547261fa3ef1146d733e4635771cf66873db0fb08e81e94183"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/legacy_eval/teacher_c1.json",
+      "bytes": 20332,
+      "sha256": "40390e96a08d6f97bc6b3f4b38f054b0a686b67becddd05ddece60ce3a9b69f8"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/legacy_eval/teacher_c4.json",
+      "bytes": 20417,
+      "sha256": "85701337e79e9cecc6527dd45ccc469bcd5849a9cde1ba25a72f7a7381326f73"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_eval/ce.json",
+      "bytes": 20176,
+      "sha256": "ed8c339136d0648f279e28cc398b38af4e400ca32161456d7563b0a7f961e035"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_eval/shared_c1.json",
+      "bytes": 20292,
+      "sha256": "3a11215f715434df6bfcc762f87e4efd40af6e9d4121e3f3da37d14972ccb15d"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_eval/shared_c4.json",
+      "bytes": 20268,
+      "sha256": "b6939fb7786c42d7aa4c6374e1f3fadda1a1011987cc66dbc0dd44b37317768b"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_eval/shared_norm.json",
+      "bytes": 20390,
+      "sha256": "d88765f0b384a4481ab288519de582f45f21683051bfb5d79f9eba50215b950a"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_eval/teacher_c1.json",
+      "bytes": 20305,
+      "sha256": "135ee2e19e5ad3a2c1cdce9963ac6c015b0d61badaadecad7bc31f75194c5deb"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_eval/teacher_c4.json",
+      "bytes": 20297,
+      "sha256": "b26e5571c09e004cdfe4a633755ab2d24545788e0a77d5e2e5e913e1b427ca0f"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_train/ce.json",
+      "bytes": 20188,
+      "sha256": "039082b62f196a8b62fef2edf6c642b3d9f5d4773b126a8d869aeeaad4ddc608"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_train/shared_c1.json",
+      "bytes": 20325,
+      "sha256": "204ea52beb91ae7f93b150a384e297c14ef4ddfd9c7f45539659a9d693d17fce"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_train/shared_c4.json",
+      "bytes": 20312,
+      "sha256": "da13719f43a575c1267de4536137bceb086e2e2f5dcd3f2399b8d0abde769d5f"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_train/shared_norm.json",
+      "bytes": 20416,
+      "sha256": "5aac93a44787fc192d7c1e83e7795f5cde0a07ad1bc83fc634aab7e1adf3da11"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_train/teacher_c1.json",
+      "bytes": 20320,
+      "sha256": "ea08ff1c21a85722b712bda974ed6cb35d170445b9688c5ee5daef15d7885231"
+    },
+    {
+      "path": "one_step/voc/ce/2025/40000/matched_train/teacher_c4.json",
+      "bytes": 20327,
+      "sha256": "46bef6705af55afe2d84c3c61e0b213fac8c6e6a1db6f83a57d7a0f8c978f47b"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/legacy_eval/ce.json",
+      "bytes": 20141,
+      "sha256": "52c5c66a8ca3baa6b9f2231c38e4bd9b239af4b0ed90679410241d74d43b4433"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/legacy_eval/shared_c1.json",
+      "bytes": 20279,
+      "sha256": "f3ff94f86c5825abc067efca07e54c7569236f209e72b66b0b0e206254626084"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/legacy_eval/shared_c4.json",
+      "bytes": 20286,
+      "sha256": "4fd773831549f1c39f0af81d8057b4f9d79de3fe4690e5eb72694c4a19ad3aba"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/legacy_eval/shared_norm.json",
+      "bytes": 20362,
+      "sha256": "ecde0bc29d906a4ea3c98aef79da7cd7320511fb1f56dde2b3715b6870b7d8aa"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/legacy_eval/teacher_c1.json",
+      "bytes": 20273,
+      "sha256": "fd2df3c5bc4070a7bf9ce738b577c8cd4d143d161b4efdb6462e02288d4e1429"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/legacy_eval/teacher_c4.json",
+      "bytes": 20303,
+      "sha256": "ffed45ac3bf7fccd21bb23854bf118bf0756582b60018af2cd82a00e5e09fd39"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_eval/ce.json",
+      "bytes": 20132,
+      "sha256": "daaaa90ba5e0374412b714468109f58e03462eecd945c1121d31aca3e9fe139d"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_eval/shared_c1.json",
+      "bytes": 20282,
+      "sha256": "ed4cff8f32182160e23526b0663b024067bb703ee062c0bb6c450c3c03ee9d8e"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_eval/shared_c4.json",
+      "bytes": 20275,
+      "sha256": "77a5ef0cd311d35cd75e5ed6f39ff9cfa6e53c7ecdcec400fe69b88c678663b1"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_eval/shared_norm.json",
+      "bytes": 20359,
+      "sha256": "e5c0b3e57c70627066d50eb1d0d1c2b07798908ecfef075c79e60c408d960644"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_eval/teacher_c1.json",
+      "bytes": 20274,
+      "sha256": "8df437d4849924b79a9ae15fcfaecf60420edc08d4b96d9a85e99e764ae512ee"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_eval/teacher_c4.json",
+      "bytes": 20279,
+      "sha256": "71d030b0003d920ccd28baeabb6c0d088c804b72c32b622041aad4ca4bcca24e"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_train/ce.json",
+      "bytes": 20152,
+      "sha256": "3317f0c253581b62f37da98895726291faaf023a5d9ab7e50a0bed77c61600e1"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_train/shared_c1.json",
+      "bytes": 20279,
+      "sha256": "7436f50816c198fac99afdd14f4bbe3b9e8f61744cd215240b41b6e82c69aea4"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_train/shared_c4.json",
+      "bytes": 20284,
+      "sha256": "132a31f449dee46232f45190d347c35a6576f6de57e74d041a558dd7bb8e1b18"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_train/shared_norm.json",
+      "bytes": 20380,
+      "sha256": "9d55dfe20bc00018edc6c6e4176f4e7a88e86a91b1c39d46f4ef4f12e189ecfb"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_train/teacher_c1.json",
+      "bytes": 20283,
+      "sha256": "2b46bb2b16a2ce8bb49a5e9f84ef323283be437ed474dc7a9abfd7de12fb2dc5"
+    },
+    {
+      "path": "one_step/voc/ce/2025/60000/matched_train/teacher_c4.json",
+      "bytes": 20290,
+      "sha256": "51dee9b56e41f31ed22b68c99344e5b379efb03378f0f6b8412669228a22e1f3"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/legacy_eval/ce.json",
+      "bytes": 20194,
+      "sha256": "d1caa76583776d04bd97e24fd9c43406c0cba63ad3de9c7af756f11e5a1e8f1a"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/legacy_eval/shared_c1.json",
+      "bytes": 20311,
+      "sha256": "85ebe232050affa925e1144f2c4626125c89c26a284083c847f87ae662e4de72"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/legacy_eval/shared_c4.json",
+      "bytes": 20255,
+      "sha256": "cc9fe1bad05fd362c96e3e89322c44f7dde5287db810161bcb50c401b4c9a71f"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/legacy_eval/shared_norm.json",
+      "bytes": 20404,
+      "sha256": "1987324eb61f4dede40e2c7a5891168d76b2f9a4ce06cfdaffd429582fa800fd"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/legacy_eval/teacher_c1.json",
+      "bytes": 20322,
+      "sha256": "530d5557c44a34bcae5d8657aaa4b86aadfa4d99582ca614c50b36b8820f7711"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/legacy_eval/teacher_c4.json",
+      "bytes": 20305,
+      "sha256": "d92f5ea26e30f51c418bb76ed3e311f974afde2a3ab5d5b5e2825d40f05c3c44"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_eval/ce.json",
+      "bytes": 20206,
+      "sha256": "2c5a8368353eaa5e6153e36da6f1d2f0e48f401e01875edc1c431c532997e0ed"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_eval/shared_c1.json",
+      "bytes": 20347,
+      "sha256": "07256965a05e9479b5a764c12e62387de014123b7de7d225df83709ace0b95dc"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_eval/shared_c4.json",
+      "bytes": 20325,
+      "sha256": "e6f5935129106bd2bfccf4b0f89b98ff3f0b0621d54b0ece67264ed9b85bda55"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_eval/shared_norm.json",
+      "bytes": 20432,
+      "sha256": "9355051f5df961e5f8ea08b1eb8ca8f7981668d7d99509e097fa4f9ad1c9354d"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_eval/teacher_c1.json",
+      "bytes": 20348,
+      "sha256": "0e9601d804f0acca5a6031a60d89a4c3f97e782a9b57d01764a802e32474bce8"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_eval/teacher_c4.json",
+      "bytes": 20331,
+      "sha256": "3ac07f7713263ad1edfee1bdb29bb4cfcdb6caf4b8b505328c3f32c7c3c50778"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_train/ce.json",
+      "bytes": 20194,
+      "sha256": "0026b0be3bc360cc3040accbe441f93a6d87492fb3c1dd5d90828f1ca4df5205"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_train/shared_c1.json",
+      "bytes": 20321,
+      "sha256": "e5bc2af2e8c5146774656bac53b27a31c252010a0a55a9a55670a6cce498cd70"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_train/shared_c4.json",
+      "bytes": 20332,
+      "sha256": "c2d38740f26958e5489453d4c5f26dde6b59d9a801192402408d0e3d85047b92"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_train/shared_norm.json",
+      "bytes": 20429,
+      "sha256": "de69eb0ec0f28a4a49e84063e40c9c932636bfaa36e4b8f2e1c0e7665b8195c8"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_train/teacher_c1.json",
+      "bytes": 20338,
+      "sha256": "fb7ebee84bada420d2954212edc09de461af7a21d9bfab91bbeaabd79af50ce9"
+    },
+    {
+      "path": "one_step/voc/ce/3407/20000/matched_train/teacher_c4.json",
+      "bytes": 20328,
+      "sha256": "114eea381b4988e53a23fdfae2640952ed5058fea801e541d8253fc913e5d243"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/legacy_eval/ce.json",
+      "bytes": 20152,
+      "sha256": "2b12ca8d2015a6e05be89062009ae31b3b861c4e0a1422c299c950b2c4c4855e"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/legacy_eval/shared_c1.json",
+      "bytes": 20302,
+      "sha256": "7664688b76dcf02a3e4eb70801cccd3dc50c0b39b33b15666b5ab7d99a118711"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/legacy_eval/shared_c4.json",
+      "bytes": 20059,
+      "sha256": "f7eab12faf75b6bb56f4c0d4a8434c3ffa8a96ac1265a5a5eeca9043824d6110"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/legacy_eval/shared_norm.json",
+      "bytes": 20383,
+      "sha256": "4ae72e2636e52d3a6260c140afc7dd734ff588fc42b6de1290f9b211cafef54e"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/legacy_eval/teacher_c1.json",
+      "bytes": 20299,
+      "sha256": "52d39f3564698cfcd40c6e28c531c6cf2575e0b373ca501a0bed946921bfbb47"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/legacy_eval/teacher_c4.json",
+      "bytes": 20342,
+      "sha256": "dda3a699554503a8b4b43d5948ae52bce6441512ece8a4d02b87d613fff2c4fb"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_eval/ce.json",
+      "bytes": 20155,
+      "sha256": "62b1d04dd18ccaca0d9d9d5776e534c1c91d407514c6bba5b1bfbdc9c6b6f0d4"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_eval/shared_c1.json",
+      "bytes": 20302,
+      "sha256": "efbc2393400ed84f65d3e62fd1d68ba80d27cf90c098eb2b18b35e20b819b6e6"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_eval/shared_c4.json",
+      "bytes": 20293,
+      "sha256": "35a2f0890b90e791becfb3d624c38b523077ff89f4c527aecb48a57903627be7"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_eval/shared_norm.json",
+      "bytes": 20390,
+      "sha256": "1af890e3f153d2c141ad6e38dbcc1c5538bbaa7199b1e9cee920776163f5ecfd"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_eval/teacher_c1.json",
+      "bytes": 20295,
+      "sha256": "82de86bf97947c2164c67b5bf3c2dc57eeaf6e77b5e289439f60db2b9efc3088"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_eval/teacher_c4.json",
+      "bytes": 20332,
+      "sha256": "25fe4311ca6cabaa74c4a4ce30db8bd6ad3dfbea1305d10b60ff6ff12b59d30e"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_train/ce.json",
+      "bytes": 20157,
+      "sha256": "6a4d418f205e4523763ec685424227dfef05ad3bd7069b68e2e82a166804b94e"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_train/shared_c1.json",
+      "bytes": 20299,
+      "sha256": "af340fcb769c08a1082ad4bfe8515f18736f436db67ea93b2534a78a285dc02c"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_train/shared_c4.json",
+      "bytes": 20289,
+      "sha256": "a8a6cf1c4cc9313993956b095d729c6f19397413f07bf5c36b5076557dbb4fb5"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_train/shared_norm.json",
+      "bytes": 20390,
+      "sha256": "abed06de2d3b6841343137631a3c37d8d86f3a6cc9f1791f02ef532cad7aa38d"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_train/teacher_c1.json",
+      "bytes": 20293,
+      "sha256": "49870ba99a2bd72ffb8bc41177703ecd6107800d9fdb001da0db23c625034e3d"
+    },
+    {
+      "path": "one_step/voc/ce/3407/40000/matched_train/teacher_c4.json",
+      "bytes": 20294,
+      "sha256": "e3d3bcb096405c71d0d4140263208204ce7a889ba698f521c4d46245b697f631"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/legacy_eval/ce.json",
+      "bytes": 20133,
+      "sha256": "83312167623c09a6a2c8f2e5563b48f5e1941fff5aab2d8cdce57d375d9985f9"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/legacy_eval/shared_c1.json",
+      "bytes": 20269,
+      "sha256": "494a5b0d8ee046d9ca96eeca686cdc62167145d57e5947672a139e97d39bc6a0"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/legacy_eval/shared_c4.json",
+      "bytes": 20264,
+      "sha256": "b7ad47bf804c98bca8889ac9a1a3cd964c22c34a2102f275699921e6e51cc62a"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/legacy_eval/shared_norm.json",
+      "bytes": 20359,
+      "sha256": "e36f8a7c42183f66070a12ee50cfc7f9763b500a8ad33c6679f17119457c5091"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/legacy_eval/teacher_c1.json",
+      "bytes": 20265,
+      "sha256": "998f9e70baaf60eaf92dec6c0d45b324959f65d967d6ce4fe77b4fc003898e53"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/legacy_eval/teacher_c4.json",
+      "bytes": 20261,
+      "sha256": "208694a66b00f9614c10601881dd75b4a3ebcb7eebecb7d6ef4aec61b5cce3eb"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_eval/ce.json",
+      "bytes": 20137,
+      "sha256": "5ea20c83b697a42d5a6af59b9aae04a04f17d35ce5169184df316b7b36f0bb21"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_eval/shared_c1.json",
+      "bytes": 20272,
+      "sha256": "46ee5ce0cb7fee83af7a12f97ae2d59c84f8a0841a55a4ca214097d1726fe345"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_eval/shared_c4.json",
+      "bytes": 20271,
+      "sha256": "6328aea239c516104e0824dc3d5e79f7003465555c83a1a36c141d3435525d3b"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_eval/shared_norm.json",
+      "bytes": 20359,
+      "sha256": "5f6306ede6db3f110d28213100f96a54e8ed3f254300a6a1db3cc70be7fdcafa"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_eval/teacher_c1.json",
+      "bytes": 20271,
+      "sha256": "0ccd326afdc7073d7d01246b0699ce05bc24f44e377647a444ac1e8516ba36b0"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_eval/teacher_c4.json",
+      "bytes": 20270,
+      "sha256": "a02d7df819a4adfcf950aada985ff444928991c2e1a1a3235edd3ba3dd82a47c"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_train/ce.json",
+      "bytes": 20136,
+      "sha256": "aa29dcdbd3467db9972c57d119a79fd6621af21e2c2be8280a5465214b98495d"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_train/shared_c1.json",
+      "bytes": 20273,
+      "sha256": "3c2c465899d20f7b418d7e3060a6af69f2341acbf273909acdd4b463a4e4ed71"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_train/shared_c4.json",
+      "bytes": 20273,
+      "sha256": "b64401ef00b302c45b30993348d4cd30a540584e14dd481a09f2ddfb00aac178"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_train/shared_norm.json",
+      "bytes": 20366,
+      "sha256": "6f1b4d9672577ab7bc661d70bfd46e7bbbfdf3a41dc4ac53485b136d9d9be0ae"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_train/teacher_c1.json",
+      "bytes": 20272,
+      "sha256": "292931005a2b2b0aaca2e0489038057b09b8f202ff48bfe61974107166d30fb4"
+    },
+    {
+      "path": "one_step/voc/ce/3407/60000/matched_train/teacher_c4.json",
+      "bytes": 20272,
+      "sha256": "68d92bc37075e7e06bf2153068fffd6bb7f1a5cd0ba63dc13fbcd99a0e7ac53c"
+    },
+    {
+      "path": "one_step/voc/summary_ce_seed1234_stage20000.json",
+      "bytes": 2938,
+      "sha256": "34257d8d5fe285148f05b5d007bd16400447fea82682f2d913342b9219e8f172"
+    },
+    {
+      "path": "one_step/voc/summary_ce_seed1234_stage40000.json",
+      "bytes": 2938,
+      "sha256": "c93ea1b979ebe84577e484adf02a78aa65dc041cc1adbff1212c8a3c1dd55e32"
+    },
+    {
+      "path": "one_step/voc/summary_ce_seed1234_stage60000.json",
+      "bytes": 2937,
+      "sha256": "bdd2b8d77c990d11e99005e9feef7096a5087ce2ac60515361f504b58b33a8ad"
+    },
+    {
+      "path": "one_step/voc/summary_ce_seed2025_stage20000.json",
+      "bytes": 2938,
+      "sha256": "e71bfd573416d90ba1ea3064888580498db4540550fb7300557266478e593f59"
+    },
+    {
+      "path": "one_step/voc/summary_ce_seed2025_stage40000.json",
+      "bytes": 2938,
+      "sha256": "c76b0e7f0766412ede6a39e197de199bb029fcbb7288f1edaa74d5e2f77571bb"
+    },
+    {
+      "path": "one_step/voc/summary_ce_seed2025_stage60000.json",
+      "bytes": 2937,
+      "sha256": "1a906b170ef8812ed0e80c1bc3fe3f55eaff61a8f81b742a3333490fdffb8fc9"
+    },
+    {
+      "path": "one_step/voc/summary_ce_seed3407_stage20000.json",
+      "bytes": 2970,
+      "sha256": "1820972c93100c78f056b09f85e63c6a0d041d12c095070a3e33972c2951c2b2"
+    },
+    {
+      "path": "one_step/voc/summary_ce_seed3407_stage40000.json",
+      "bytes": 2969,
+      "sha256": "479b40141a0eb70dd38dd488b8e5402113c152b79ae987c9c1cb9a25699ca164"
+    },
+    {
+      "path": "one_step/voc/summary_ce_seed3407_stage60000.json",
+      "bytes": 2970,
+      "sha256": "a71f89495ff46dda61f3355baabf2e09fe71bbf61950b21453ff0526e35e4346"
+    },
+    {
+      "path": "one_step_gate.json",
+      "bytes": 2414,
+      "sha256": "55c82341283a7b1d1b449588d6ebd653b5bf9970581eadd3ccf0e9aed23e1830"
+    },
+    {
+      "path": "registration.json",
+      "bytes": 2471743,
+      "sha256": "ecc86a1da30a97f156fc6d864df02bcd16b6f4556f28360d5cff20a08ac8b22e"
+    },
+    {
+      "path": "workflow.json",
+      "bytes": 732,
+      "sha256": "d0efbe57ee65e2dc74a2364b7303adc62e562873c9c6658e3030cd8ff66af4e7"
+    }
+  ]
+}
