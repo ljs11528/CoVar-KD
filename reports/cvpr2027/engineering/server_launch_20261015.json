@@ -1,0 +1,61 @@
+{
+  "status": "RUNNING",
+  "captured_at": "2026-10-15T05:13:36.887099+00:00",
+  "deployed_code_commit": "21bf0a03a1f57e915e097436646954dbbf9d82b6",
+  "phase": "one_step:ce",
+  "server": "original RTX3090 cohort",
+  "gpus": [
+    0,
+    2
+  ],
+  "registration_sha256": "ff6e4eb5d55ddb4082072ef4cc6e16f6cc780e79e44ebbcfd291d1d9b6a057e1",
+  "unit_tests_on_original_environment": {
+    "status": "PASS",
+    "code_commit": "21bf0a03a1f57e915e097436646954dbbf9d82b6",
+    "passed_tests": 18,
+    "torch": "2.0.1+cu118",
+    "cpu_only": true,
+    "archive_sha256": "3e96294c4386ceb27aa8a9eb8ef3cf5b5b3234204c0bd8ad91994bee7ca8f519"
+  },
+  "gpu_smoke": {
+    "voc": {
+      "status": "PASS",
+      "branches": 18,
+      "seconds": 84.67849907279015,
+      "peak_allocated_mib": 20759.638671875,
+      "diverged_branches": [],
+      "checkpoint_files_written": 0
+    },
+    "cityscapes": {
+      "status": "PASS",
+      "branches": 18,
+      "seconds": 349.8347884118557,
+      "peak_allocated_mib": 20834.23681640625,
+      "diverged_branches": [
+        {
+          "cohort": "ce",
+          "seed": 1234,
+          "checkpoint": 20000,
+          "mode": "legacy_eval",
+          "condition": "shared_c4",
+          "step": 3
+        },
+        {
+          "cohort": "ce",
+          "seed": 1234,
+          "checkpoint": 20000,
+          "mode": "legacy_eval",
+          "condition": "teacher_c4",
+          "step": 3
+        }
+      ],
+      "checkpoint_files_written": 0
+    }
+  },
+  "smoke_is_formal_evidence": false,
+  "mode_inputs_and_augmentations_paired": true,
+  "full_training_runs_launched": 0,
+  "session": "covar-p14-utility-r3",
+  "remote_output": "/data1/youwu/jingshi/kd/CoVar-KD-3090/reports/P14_Utility_20261015_revision3",
+  "workflow_policy": "Finish CE-start one-step diagnostics, evaluate the frozen gate, then conditionally run KD-start and 128-step diagnostics. Selector full training is not yet launched."
+}
