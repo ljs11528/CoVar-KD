@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "registration_sha256": "864e47279ed077e98aa62ecaa0351b1f17be2911a123ffdd86b37d5367ee9026",
+  "origin_registration_sha256": "ff6e4eb5d55ddb4082072ef4cc6e16f6cc780e79e44ebbcfd291d1d9b6a057e1",
+  "all_registered_scientific_fields_unchanged": true,
+  "source_files_match_deployed_registration": true,
+  "allowed_gpus": [
+    2,
+    3
+  ],
+  "datasets": {
+    "voc": {
+      "train_images": 10582,
+      "monitor_images": 256,
+      "starting_runs": 9,
+      "checkpoint_files": 27,
+      "update_streams": 27,
+      "updates_identical": true,
+      "monitor_ids_and_hashes_identical": true,
+      "original_checkpoint_args_identical": true,
+      "input_hashes_preserved": true
+    },
+    "cityscapes": {
+      "train_images": 2975,
+      "monitor_images": 256,
+      "starting_runs": 9,
+      "checkpoint_files": 27,
+      "update_streams": 27,
+      "updates_identical": true,
+      "monitor_ids_and_hashes_identical": true,
+      "original_checkpoint_args_identical": true,
+      "input_hashes_preserved": true
+    }
+  },
+  "environment": {
+    "python": "3.10.22",
+    "torch": "2.0.1+cu118",
+    "cuda": "11.8",
+    "cudnn": 8700,
+    "numpy": "1.24.4",
+    "opencv": "4.8.0",
+    "pillow": "9.5.0",
+    "gpu_inventory": "0, NVIDIA GeForce RTX 4090, 49140 MiB, 570.153.02\n1, NVIDIA GeForce RTX 4090, 49140 MiB, 570.153.02\n2, NVIDIA GeForce RTX 4090, 49140 MiB, 570.153.02\n3, NVIDIA GeForce RTX 4090, 49140 MiB, 570.153.02\n"
+  },
+  "deferred_copies_at_registration": 48
+}

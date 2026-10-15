@@ -57,6 +57,13 @@ diagnostics to a separate RTX 4090 cohort. The user allocated only idle GPUs
 with artifacts retained. Jobs use fixed original inputs and independent
 seed/checkpoint shards, without changing batch size or the scientific gate.
 
+[The verified Maker launch receipt](engineering/maker_launch_20261015.json)
+records 24 passing CPU checks, both passing GPU smoke contracts, and live
+CE-start jobs on physical GPUs 2 and 3. The [migration contract audit](engineering/maker_contract_20261015.json)
+confirms identical registered seeds, update streams, monitor bytes and origin
+checkpoint hashes. This is a timestamped execution snapshot, not a final result
+or an assertion that all checkpoint transfers or 80k training runs have finished.
+
 The new implementation is in [utility_study](../../utility_study/). In the
 original CUDA environment, from the repository root:
 
