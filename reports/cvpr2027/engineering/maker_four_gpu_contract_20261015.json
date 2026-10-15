@@ -1,0 +1,55 @@
+{
+  "status": "PASS",
+  "registration_sha256": "ecc86a1da30a97f156fc6d864df02bcd16b6f4556f28360d5cff20a08ac8b22e",
+  "parent_registration_sha256": "864e47279ed077e98aa62ecaa0351b1f17be2911a123ffdd86b37d5367ee9026",
+  "all_registered_scientific_fields_unchanged": true,
+  "source_files_match_deployed_registration": true,
+  "allowed_gpus": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "inherited_manifest_sha256": "4ac3da7aa1566b6a105a755ad0137062533c690c043633bec889ddfcddc7167b",
+  "inherited_records_are_byte_identical": true,
+  "original_registration_hashes_retained": true,
+  "datasets": {
+    "voc": {
+      "matched_batch": 16,
+      "train_images": 10582,
+      "monitor_images": 256,
+      "updates_identical": true
+    },
+    "cityscapes": {
+      "matched_batch": 8,
+      "train_images": 2975,
+      "monitor_images": 256,
+      "updates_identical": true
+    }
+  },
+  "resource_policy_summary": {
+    "authorized_shared_gpus": [
+      0,
+      1
+    ],
+    "minimum_free_mib": 28672,
+    "admission_requires_known_working_directory_and_command_prefix": true,
+    "unknown_gpu_processes_rejected": true,
+    "consecutive_samples": 2,
+    "keepalive_processes_may_be_signalled": false,
+    "exclusive_idle_gpus": [
+      2,
+      3
+    ]
+  },
+  "numerical_run_audit": {
+    "status": "PASS",
+    "comparison": "ae45d11 runner.run vs 8762a39 runner.run AST",
+    "excluded_differences": [
+      "continuation import",
+      "existing-result provenance validation",
+      "peak reserved memory report"
+    ],
+    "numerical_run_ast_unchanged": true
+  }
+}

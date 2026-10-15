@@ -1,0 +1,262 @@
+{
+  "captured_at": "2026-10-15T12:01:00.121231+00:00",
+  "code_commit": "8762a392ff0715b70074bdee61cfd254a578abc9",
+  "output": "/tmp/liujinshi-covar-kd-20261015/reports/P14_Utility_Maker_20261015_r3",
+  "durable": "/root/maker/makerdata/liujinshi/covar-kd/experiments/P14_Utility_Maker_20261015_r3",
+  "allowed_gpus": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "keepalive_processes_signalled": 0,
+  "controller_transition": {
+    "status": "PASS",
+    "stopped_only_study_controllers": [
+      {
+        "pid": 351730,
+        "command": "python -u /tmp/liujinshi-covar-kd-20261015/run_maker_utility.py --root /tmp/liujinshi-covar-kd-20261015 --out /tmp/liujinshi-covar-kd-20261015/reports/P14_Utility_Maker_20261015_r2 --durable /root/maker/makerdata/liujinshi/covar-kd/experiments/P14_Utility_Maker_20261015_r2 "
+      },
+      {
+        "pid": 351769,
+        "command": "/tmp/liujinshi-covar-kd-20261015/env/bin/python -u -m utility_study.workflow --root /tmp/liujinshi-covar-kd-20261015 --out /tmp/liujinshi-covar-kd-20261015/reports/P14_Utility_Maker_20261015_r2 --gpus 2,3 "
+      }
+    ],
+    "active_numerical_workers_interrupted": 0,
+    "keepalive_processes_signalled": 0,
+    "next_output": "/tmp/liujinshi-covar-kd-20261015/reports/P14_Utility_Maker_20261015_r3"
+  },
+  "cpu_verification": {
+    "returncode": 0,
+    "output": "...............................                                          [100%]\n31 passed in 1.06s\n",
+    "status": "PASS"
+  },
+  "resource_preflight_status": "PASS",
+  "resource_preflight_excluded_from_scientific_observations": true,
+  "per_card_preflight": {
+    "0": {
+      "status": "PASS",
+      "dataset": "voc",
+      "phase": "smoke",
+      "cohorts": [
+        "ce"
+      ],
+      "horizon": 3,
+      "registration_sha256": "ecc86a1da30a97f156fc6d864df02bcd16b6f4556f28360d5cff20a08ac8b22e",
+      "branches": 18,
+      "seconds": 319.7320448309183,
+      "peak_allocated_mib": 20759.638671875,
+      "peak_reserved_mib": 25870.0,
+      "full_training_runs_launched": 0,
+      "checkpoint_files_written": 0,
+      "diverged_branches": [],
+      "completed_at": "2026-10-15T11:54:55.168490+00:00",
+      "seeds": [
+        1234
+      ],
+      "checkpoints": [
+        20000
+      ],
+      "gpu": 0,
+      "pid": 517552
+    },
+    "1": {
+      "status": "PASS",
+      "dataset": "cityscapes",
+      "phase": "smoke",
+      "cohorts": [
+        "ce"
+      ],
+      "horizon": 3,
+      "registration_sha256": "ecc86a1da30a97f156fc6d864df02bcd16b6f4556f28360d5cff20a08ac8b22e",
+      "branches": 18,
+      "seconds": 642.289339736104,
+      "peak_allocated_mib": 20834.23681640625,
+      "peak_reserved_mib": 24384.0,
+      "full_training_runs_launched": 0,
+      "checkpoint_files_written": 0,
+      "diverged_branches": [
+        {
+          "cohort": "ce",
+          "seed": 1234,
+          "checkpoint": 20000,
+          "mode": "legacy_eval",
+          "condition": "shared_c4",
+          "step": 3
+        },
+        {
+          "cohort": "ce",
+          "seed": 1234,
+          "checkpoint": 20000,
+          "mode": "legacy_eval",
+          "condition": "teacher_c4",
+          "step": 3
+        }
+      ],
+      "completed_at": "2026-10-15T12:00:16.729918+00:00",
+      "seeds": [
+        1234
+      ],
+      "checkpoints": [
+        20000
+      ],
+      "gpu": 1,
+      "pid": 517553
+    },
+    "2": {
+      "status": "PASS",
+      "dataset": "voc",
+      "phase": "smoke",
+      "cohorts": [
+        "ce"
+      ],
+      "horizon": 3,
+      "registration_sha256": "ecc86a1da30a97f156fc6d864df02bcd16b6f4556f28360d5cff20a08ac8b22e",
+      "branches": 18,
+      "seconds": 50.9659003354609,
+      "peak_allocated_mib": 20759.638671875,
+      "peak_reserved_mib": 25870.0,
+      "full_training_runs_launched": 0,
+      "checkpoint_files_written": 0,
+      "diverged_branches": [],
+      "completed_at": "2026-10-15T11:50:19.101648+00:00",
+      "seeds": [
+        1234
+      ],
+      "checkpoints": [
+        20000
+      ],
+      "gpu": 2,
+      "pid": 517554
+    },
+    "3": {
+      "status": "PASS",
+      "dataset": "cityscapes",
+      "phase": "smoke",
+      "cohorts": [
+        "ce"
+      ],
+      "horizon": 3,
+      "registration_sha256": "ecc86a1da30a97f156fc6d864df02bcd16b6f4556f28360d5cff20a08ac8b22e",
+      "branches": 18,
+      "seconds": 250.93006756529212,
+      "peak_allocated_mib": 20834.23681640625,
+      "peak_reserved_mib": 24384.0,
+      "full_training_runs_launched": 0,
+      "checkpoint_files_written": 0,
+      "diverged_branches": [
+        {
+          "cohort": "ce",
+          "seed": 1234,
+          "checkpoint": 20000,
+          "mode": "legacy_eval",
+          "condition": "shared_c4",
+          "step": 3
+        },
+        {
+          "cohort": "ce",
+          "seed": 1234,
+          "checkpoint": 20000,
+          "mode": "legacy_eval",
+          "condition": "teacher_c4",
+          "step": 3
+        }
+      ],
+      "completed_at": "2026-10-15T11:53:39.456246+00:00",
+      "seeds": [
+        1234
+      ],
+      "checkpoints": [
+        20000
+      ],
+      "gpu": 3,
+      "pid": 517555
+    }
+  },
+  "workflow": {
+    "status": "RUNNING",
+    "pid": 527833,
+    "started_at": "2026-10-15T12:00:19.070777+00:00",
+    "max_gpus": 4,
+    "gpus": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "completed_phases": [
+      "smoke:ce"
+    ],
+    "full_training_runs_launched": 0,
+    "checkpoint_files_written": 0,
+    "registration_sha256": "ecc86a1da30a97f156fc6d864df02bcd16b6f4556f28360d5cff20a08ac8b22e",
+    "phase": "one_step:ce",
+    "reused_completed_cases": {
+      "smoke:ce": 2,
+      "one_step:ce": 12
+    }
+  },
+  "lanes": {
+    "gpu1.json": {
+      "status": "WAITING_INPUT",
+      "gpu": 1,
+      "phase": "one_step",
+      "updated_at": "2026-10-15T12:00:59.206627+00:00"
+    },
+    "gpu0.json": {
+      "status": "WAITING_INPUT",
+      "gpu": 0,
+      "phase": "one_step",
+      "updated_at": "2026-10-15T12:00:59.207373+00:00"
+    },
+    "gpu2.json": {
+      "status": "WAITING_INPUT",
+      "gpu": 2,
+      "phase": "one_step",
+      "updated_at": "2026-10-15T12:00:59.207157+00:00"
+    },
+    "gpu3.json": {
+      "status": "WAITING_INPUT",
+      "gpu": 3,
+      "phase": "one_step",
+      "updated_at": "2026-10-15T12:00:59.206945+00:00"
+    }
+  },
+  "inherited_scientific_records": {
+    "smoke": {
+      "branches": 36,
+      "statuses": {
+        "PASS": 34,
+        "DIVERGED": 2
+      }
+    },
+    "one_step": {
+      "branches": 216,
+      "statuses": {
+        "PASS": 216,
+        "DIVERGED": 0
+      }
+    },
+    "rollout": {
+      "branches": 0,
+      "statuses": {
+        "PASS": 0,
+        "DIVERGED": 0
+      }
+    }
+  },
+  "checkpoint_transfer": {
+    "expected_files": 54,
+    "verified_final_files": 12,
+    "status": "BLOCKED_SOURCE_SSH_PRE_AUTH_CLOSE",
+    "pending_files": 42
+  },
+  "backup": {
+    "status": "PASS",
+    "files": 384,
+    "index": "/oss-chengjuntao/makerdata/liujinshi/covar-kd/experiments/P14_Utility_Maker_20261015_r3/indexes/index-20261015T120016406713Z.json",
+    "at": "20261015T120016406713Z"
+  },
+  "gpu_snapshot": "0, 10226 MiB, 38294 MiB, 100 %\n1, 10236 MiB, 38284 MiB, 100 %\n2, 0 MiB, 48520 MiB, 0 %\n3, 0 MiB, 48520 MiB, 0 %\n",
+  "status": "WAITING_REGISTERED_CHECKPOINTS"
+}

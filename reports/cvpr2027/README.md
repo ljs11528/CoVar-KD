@@ -52,17 +52,25 @@ conditional on that stage; the approved upper bound is 12 fresh 80k trajectories
 Planned experiments are not reported as completed results.
 
 The [Maker execution amendment](maker_migration_20261015.md) moves the new
-diagnostics to a separate RTX 4090 cohort. The user allocated only idle GPUs
-2 and 3; existing jobs on 0 and 1 remain untouched. Old P14 compute is stopped,
+diagnostics to a separate RTX 4090 cohort. The user initially allocated idle GPUs
+2 and 3, then authorized all four cards while preserving the keepalive programs
+on 0 and 1. Old P14 compute is stopped,
 with artifacts retained. Jobs use fixed original inputs and independent
 seed/checkpoint shards, without changing batch size or the scientific gate.
 
-[The verified Maker launch receipt](engineering/maker_launch_20261015.json)
-records 24 passing CPU checks, both passing GPU smoke contracts, and live
+[The initial verified Maker launch receipt](engineering/maker_launch_20261015.json)
+records 24 passing CPU checks, both passing GPU smoke contracts, and then-live
 CE-start jobs on physical GPUs 2 and 3. The [migration contract audit](engineering/maker_contract_20261015.json)
 confirms identical registered seeds, update streams, monitor bytes and origin
 checkpoint hashes. This is a timestamped execution snapshot, not a final result
 or an assertion that all checkpoint transfers or 80k training runs have finished.
+
+The [four-GPU receipt](engineering/maker_four_gpu_launch_20261015.json) records
+the subsequent allocation, 31 passing CPU checks and per-card resource preflights.
+Its [continuation audit](engineering/maker_four_gpu_contract_20261015.json) binds
+the unchanged scientific contract and inherited observations. Completed r2 cases
+retain their original registration hashes and are counted once. Missing verified
+checkpoints remain an input dependency even when GPU lanes are available.
 
 The new implementation is in [utility_study](../../utility_study/). In the
 original CUDA environment, from the repository root:
@@ -76,4 +84,5 @@ The workflow preserves all existing model checkpoints, checks frozen runtime
 hashes against the published source snapshot, and stops before any selector
 full training. Its primary gate and intermediate branch records are explicit
 JSON artifacts in the output directory. Do not start a second controller for
-the same output or share occupied GPUs.
+the same output. Shared-card execution requires explicit authorization and the
+registered keepalive identity and free-memory checks.

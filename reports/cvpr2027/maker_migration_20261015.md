@@ -105,3 +105,17 @@ Checkpoint transfer is a separate dependency: at the amendment, 12 of 54 copies
 had passed verification, and the old server's SSH endpoint closed subsequent
 connections. Missing inputs leave lanes waiting rather than substituting states
 or bypassing the registered gate.
+
+The verified four-card preflight completed at 12:00 UTC: all 18 branches per
+card finished with restored state and finite matched-training updates. The two
+Cityscapes legacy-eval divergences remained recorded on each tested Cityscapes
+card. Peak allocated memory was 20,760 MiB (VOC) and 20,834 MiB (Cityscapes);
+peak reserved memory was 25,870 and 24,384 MiB, respectively. Shared-card jobs
+took longer while the keepalive programs remained active. These 72 extra smoke
+branches do not enter the scientific one-step or rollout observations.
+
+The r3 controller audited and reused both prior smoke cases and all 12 completed
+CE-start cases (216 formal branches). All four lanes then entered `WAITING_INPUT`
+for the missing registered checkpoints. The four-card preflight therefore
+establishes execution readiness, not completion of the remaining diagnostics or
+authorization of selector full training.
