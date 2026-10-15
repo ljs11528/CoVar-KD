@@ -21,8 +21,15 @@ def snapshot(out,durable):
     out,durable=Path(out),Path(durable)
     samples=[]
     for path in (out/"baselines").rglob("*.samples.pt"):
-        key=sha256(path);target=durable/"objects"/key[:2]/key
-        if not target.exists():store(target,path.read_bytes())
+        receipt=path.with_name(path.name.removesuffix(".samples.pt")+".json")
+        if not receipt.exists():continue
+        key=sha256(path)
+        if key!=read_json(receipt)["samples_sha256"]:raise RuntimeError("Baseline sample differs from completed receipt")
+        target=durable/"objects"/key[:2]/key
+        if not target.exists():
+            data=path.read_bytes()
+            if hashlib.sha256(data).hexdigest()!=key:raise RuntimeError("Baseline sample changed during backup")
+            store(target,data)
         samples.append(dict(relative=str(path.relative_to(out)),sha256=key,object=str(target)))
     manifest=[];buffer=io.BytesIO()
     with tarfile.open(fileobj=buffer,mode="w:gz",compresslevel=1) as tar:

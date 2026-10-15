@@ -125,3 +125,18 @@ def test_endpoint_serialization_preserves_float_parameters_and_bn_bytes(tmp_path
     state=cpu_state(model);path=tmp_path/'virtual.pth';torch.save({'student':state},path)
     loaded=torch.load(path,map_location='cpu',weights_only=False)['student']
     assert fingerprint(state)==fingerprint(loaded)
+
+
+def test_backup_requires_complete_sample_receipt_and_rejects_corruption(tmp_path):
+    from probe_validity.archive import snapshot
+    from utility_study.io import write_json,sha256
+    out,durable=tmp_path/'out',tmp_path/'durable'
+    sample=out/'baselines/voc/a.samples.pt';sample.parent.mkdir(parents=True)
+    sample.write_bytes(b'not-published-until-complete')
+    first=snapshot(out,durable)
+    assert first['baseline_sample_objects']==0
+    write_json(sample.with_name('a.json'),{'samples_sha256':sha256(sample)})
+    second=snapshot(out,durable)
+    assert second['baseline_sample_objects']==1
+    sample.write_bytes(b'corrupted-after-completion')
+    with pytest.raises(RuntimeError,match='differs from completed receipt'):snapshot(out,durable)

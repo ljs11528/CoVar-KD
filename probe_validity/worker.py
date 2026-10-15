@@ -44,6 +44,7 @@ def update(reg,out,job,gpu,preflight=False):
         if generated.exists() and not job.get("directions"):
             old=read_json(generated)
             if old["registration_sha256"]!=sha256(out/"registration.json"):raise ValueError("Existing branch registration differs")
+            if old["status"]!="PASS":raise RuntimeError("Preserve the existing failed numerical branch; do not rerun it as a success")
             for e in old["endpoints"]:
                 if sha256(e["state_file"])!=e["state_file_sha256"]:raise RuntimeError("Endpoint state changed")
             outputs.extend(old["endpoints"]);continue
@@ -188,10 +189,13 @@ def score(reg,out,job,gpu):
     refs=None
     if not job.get("baseline"):
         baseline=read_json(baseline_path.with_suffix(".json"))
+        if baseline["registration_sha256"]!=sha256(out/"registration.json"):raise RuntimeError("Baseline belongs to another registration")
         sample_path=baseline_path.with_suffix(".samples.pt")
         if sha256(sample_path)!=baseline["samples_sha256"]:raise RuntimeError("Baseline function sample bytes changed")
         refs=torch.load(sample_path,map_location="cpu",weights_only=False)
     receipt=read_json(out/"teachers"/job["dataset"]/job["pool"]/"receipt.json")
+    if receipt["registration_sha256"]!=sha256(out/"registration.json") or receipt["teacher_sha256"]!=cfg["input_sha256"][cfg["teacher"]]:
+        raise RuntimeError("Teacher cache provenance differs")
     teacher_files={r["index"]:r for r in receipt["images"]}
     endpoints=[None] if job.get("baseline") else job["endpoints"]
     all_scores=[]
@@ -228,7 +232,9 @@ def score(reg,out,job,gpu):
                     monitor_state_unchanged=True)
         if endpoint is None:
             sample_path=baseline_path.with_suffix(".samples.pt");sample_path.parent.mkdir(parents=True,exist_ok=True)
-            torch.save(metric.sample_logp,sample_path);result.update(samples_sha256=sha256(sample_path),samples_file=str(sample_path))
+            temporary=sample_path.with_name(sample_path.name+".tmp")
+            torch.save(metric.sample_logp,temporary);temporary.replace(sample_path)
+            result.update(samples_sha256=sha256(sample_path),samples_file=str(sample_path))
         else:result.update({k:v for k,v in endpoint.items() if k!="state_file"})
         if job.get("cross_gpu"):dest=out/"cross_gpu"/(endpoint["id"]+f"__gpu{gpu}.json")
         write_json(dest,result);all_scores.append(result)
@@ -253,7 +259,8 @@ def main():
         torch.backends.cudnn.benchmark=False;torch.backends.cudnn.allow_tf32=False;torch.backends.cuda.matmul.allow_tf32=False
         if job["kind"]=="score":torch.cuda.set_per_process_memory_fraction(reg["scoring_memory_cap_mib"]*2**20/torch.cuda.get_device_properties(0).total_memory)
         result={"update":update,"teacher":teacher,"score":score}[job["kind"]](reg,args.out,job,args.gpu)
-        result.update(admission=samples,pid=os.getpid(),at=now(),keepalive_processes_signalled=0)
+        result.update(admission=samples,pid=os.getpid(),at=now(),keepalive_processes_signalled=0,
+                      registration_sha256=sha256(args.out/"registration.json"),job_sha256=sha256(args.job))
         write_json(args.out/"done"/(job["id"]+".json"),result)
     except Exception as error:
         text=str(error)

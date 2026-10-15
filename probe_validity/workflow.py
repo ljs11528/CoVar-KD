@@ -36,7 +36,9 @@ class Queue:
         if not path.exists():write_json(path,job)
         done=self.out/"done"/(identity+".json")
         if done.exists():
-            if read_json(done)["status"]!="PASS":raise RuntimeError("Unexpected completed job status")
+            receipt=read_json(done)
+            if receipt["status"]!="PASS" or receipt["registration_sha256"]!=sha256(self.out/"registration.json") or receipt["job_sha256"]!=sha256(path):
+                raise RuntimeError("Completed job status or provenance differs")
             self.finished.add(identity);return
         self.pending[identity]=job
 
