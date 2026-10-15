@@ -140,3 +140,24 @@ def test_backup_requires_complete_sample_receipt_and_rejects_corruption(tmp_path
     assert second['baseline_sample_objects']==1
     sample.write_bytes(b'corrupted-after-completion')
     with pytest.raises(RuntimeError,match='differs from completed receipt'):snapshot(out,durable)
+
+
+def test_cpu_saved_activation_storage_preserves_gradients_and_buffers():
+    model=nn.Sequential(nn.Conv2d(3,4,1),nn.BatchNorm2d(4),nn.Dropout(.2),nn.Conv2d(4,2,1))
+    opt=torch.optim.SGD(model.parameters(),lr=.1,momentum=.9)
+    x=torch.randn(4,3,5,5);y=torch.randint(0,2,(4,5,5));snap=Snapshot.capture(model,opt);results=[]
+    from contextlib import nullcontext
+    for offload in (False,True):
+        snap.restore(model,opt)
+        with isolated_rng(873):
+            with (torch.autograd.graph.save_on_cpu(pin_memory=False) if offload else nullcontext()):loss=ce_loss(model(x),y)
+            loss.backward();opt.step();results.append(cpu_state(model))
+    assert fingerprint(results[0])==fingerprint(results[1])
+
+
+def test_frozen_teacher_eval_is_independent_of_chunk_size():
+    teacher=nn.Sequential(nn.Conv2d(3,4,1),nn.BatchNorm2d(4),nn.Dropout(.4),nn.Conv2d(4,2,1)).eval()
+    x=torch.randn(4,3,5,5)
+    with torch.no_grad():
+        whole=teacher(x);chunk=torch.cat([teacher(x[i:i+2]) for i in (0,2)])
+    torch.testing.assert_close(whole,chunk,atol=1e-6,rtol=1e-6)

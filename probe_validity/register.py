@@ -16,7 +16,7 @@ def code_files(code):
     for folder in ("probe_validity","utility_study"):
         paths.extend((code/folder).glob("*.py"))
     paths += [code/"tests/test_probe_validity.py",code/"tests/test_utility_study.py",
-              code/"reports/cvpr2027/followup_protocol_20261015.md",code/"reports/cvpr2027/p15_execution_20261015.md"]
+              code/"reports/cvpr2027/followup_protocol_20261015.md",code/"reports/cvpr2027/p15_execution_20261015.md",code.parent/"PCOS.py"]
     return {str(p):sha256(p) for p in sorted(paths)}
 
 
@@ -37,7 +37,11 @@ def main(root,out,code,resource_policy):
              authorized_phases=["p0","p1"],forbidden_phases=["p2","p3","p4","80k_full_training"],
              allowed_gpus=[0,1,2,3],resource_policy=read_json(resource_policy),tasks=tasks(),counts=expected_counts(),
              precision="FP32, TF32 off, cuDNN benchmark off; original nondeterministic kernels, measured in P0",
-             scoring_memory_cap_mib=6144,p0_rng="P14 registered first full matched batch; repeat RNG exactly",
+             scoring_memory_cap_mib=6144,update_memory_cap_mib=6144,activation_offload=True,
+             activation_offload_policy="torch.autograd.graph.save_on_cpu(pin_memory=False); CUDA forward/backward, exact dtype storage",
+             teacher_execution_order="Frozen eval teacher first, then student; assert teacher preserves CPU/CUDA RNG",
+             teacher_inference_batch=2,teacher_chunking="Per-image frozen CNN; verify batch2 versus batch1 before formal updates",
+             p0_rng="P14 registered first full matched batch; repeat RNG exactly",
              pool_B_seed=20261016,pool_B_size=256,pool_B_per_class=8,
              execution_split="Full-state float32 virtual endpoints serialized on NVMe, then evaluated independently; no batch changes",
              primary_p0="Resolve c4-c1 pixel CE against max(5*replay/cross-card endpoint range,1e-6) at all 8 dataset/stage/modes",

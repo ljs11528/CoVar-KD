@@ -40,6 +40,11 @@ def admissible(card,policy,kind):
     return card["free_mib"]>=minimum and all(keeper(p,policy) for p in card["processes"])
 
 
+def available_host_mib():
+    value=next(row.split()[1] for row in Path('/proc/meminfo').read_text().splitlines() if row.startswith('MemAvailable:'))
+    return int(value)//1024
+
+
 def acquire(gpu,policy,kind):
     handles=[]
     try:

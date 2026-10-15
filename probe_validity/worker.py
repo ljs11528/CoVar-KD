@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import nullcontext
 from datetime import datetime,timezone
 import os
 from pathlib import Path
@@ -38,6 +39,15 @@ def update(reg,out,job,gpu,preflight=False):
     x,y=rt.update_batch(entry)
     batch_sha=fingerprint({"images":x,"labels":y});baseline=Snapshot.capture(model,opt)
     original_hash=split_hashes(baseline.model,names);original_optimizer=fingerprint(baseline.optimizer)
+    teacher_chunk_error=None
+    if job["phase"]=="engineering":
+        with torch.no_grad():
+            batch2=rt.teacher(x[:2])[0]
+            singles=torch.cat([rt.teacher(x[i:i+1])[0] for i in range(2)])
+            teacher_chunk_error=float((batch2-singles).abs().max())
+            if teacher_chunk_error>1e-4:raise RuntimeError("Frozen teacher chunk equivalence exceeds tolerance")
+            del batch2,singles
+        baseline.verify(model,opt)
     outputs=[];direction_cache={};started=time.monotonic()
     for spec in job["branches"]:
         generated=out/"generated"/job["id"]/(spec["name"]+".json")
@@ -58,17 +68,29 @@ def update(reg,out,job,gpu,preflight=False):
                     for value in opt.state.values():
                         if "momentum_buffer" in value:value["momentum_buffer"].zero_()
                 opt.zero_grad(set_to_none=True)
+                bx,by=(x[:2],y[:2]) if spec.get("engineering_batch2") else (x,y)
+                offload=spec.get("activation_offload",reg["activation_offload"])
+                if job["phase"]!="engineering" and not offload:raise ValueError("Formal P15 branches use registered activation storage")
                 if spec.get("buffer_only"):
-                    with torch.no_grad():model(x)
+                    with torch.no_grad():model(bx)
                 else:
-                    logits=model(x)[0];task=ce_loss(logits,y);condition=spec["condition"]
+                    condition=spec["condition"]
+                    teacher=None
                     if condition!="ce":
-                        with torch.no_grad():teacher=rt.teacher(x)[0]
+                        rng_before=(torch.get_rng_state().clone(),torch.cuda.get_rng_state().clone())
+                        with torch.no_grad():teacher=torch.cat([rt.teacher(bx[i:i+reg["teacher_inference_batch"]])[0] for i in range(0,len(bx),reg["teacher_inference_batch"])])
+                        if not torch.equal(rng_before[0],torch.get_rng_state()) or not torch.equal(rng_before[1],torch.cuda.get_rng_state()):
+                            raise RuntimeError("Frozen teacher unexpectedly consumed RNG")
+                    torch.cuda.empty_cache()
+                    storage=torch.autograd.graph.save_on_cpu(pin_memory=False) if offload else nullcontext()
+                    with storage:
+                        logits=model(bx)[0];task=ce_loss(logits,by)
+                        knowledge=kd_loss(logits,teacher,by,"teacher" if condition.startswith("teacher") else "shared") if condition!="ce" else None
+                    if condition!="ce":
                         placement="teacher" if condition.startswith("teacher") else "shared"
-                        knowledge=kd_loss(logits,teacher,y,placement)
                         alpha=4. if condition.endswith("c4") else 1.
                         if condition=="shared_norm":
-                            other=kd_loss(logits,teacher,y,"teacher")
+                            with torch.autograd.graph.save_on_cpu(pin_memory=False):other=kd_loss(logits,teacher,by,"teacher")
                             ag=torch.autograd.grad(other,parameters,retain_graph=True,allow_unused=True)
                             bg=torch.autograd.grad(knowledge,parameters,retain_graph=True,allow_unused=True)
                             an,bn=gradient_norm(ag),gradient_norm(bg)
@@ -90,7 +112,8 @@ def update(reg,out,job,gpu,preflight=False):
                     objective.backward()
                     if any(p.grad is not None and not bool(torch.isfinite(p.grad).all()) for p in parameters):raise FloatingPointError("Nonfinite gradient")
                     opt.step()
-                    metadata={"local_ce":float(task.detach()),"objective":float(objective.detach()),"coefficient":alpha,"first_gradient":stats}
+                    metadata={"local_ce":float(task.detach()),"objective":float(objective.detach()),"coefficient":alpha,"first_gradient":stats,
+                              "batch_size":len(bx),"activation_offload":offload,"teacher_rng_preserved":True}
                     logits=task=objective=teacher=knowledge=None
                 step_state=cpu_state(model)
                 if any(v.is_floating_point() and not bool(torch.isfinite(v).all()) for v in step_state.values()):
@@ -145,10 +168,23 @@ def update(reg,out,job,gpu,preflight=False):
                     branch={"name":name,"coefficient_perturbation":sign*.1,"base":"CE step with original buffers"},
                     buffer_policy="original",state_file=str(path),state_file_sha256=save_state(path,state),update_gpu=gpu,monitor="B",**split_hashes(state,names)))
     if sha256(checkpoint)!=cfg["input_sha256"][checkpoint]:raise RuntimeError("Source checkpoint mutated")
+    comparisons=[]
+    if job["phase"]=="engineering":
+        for bn in ("running","batch"):
+            for drop in (False,True):
+                label=f"check_{bn}_drop{int(drop)}"
+                pair=[]
+                for storage in ("native","offload"):
+                    e=next(e for e in outputs if e["branch"]["name"]==label+"_"+storage and e["buffer_policy"]=="native")
+                    pair.append(torch.load(e["state_file"],map_location="cpu",weights_only=False)["student"])
+                error=max(float((pair[0][k].double()-pair[1][k].double()).abs().max()) for k in pair[0])
+                if error>1e-4:raise RuntimeError("Activation storage changes reference mini-batch state beyond engineering tolerance")
+                comparisons.append(dict(bn=bn,dropout=drop,reference_batch=2,max_state_absolute_error=error))
     summary=dict(status="PASS",job=job["id"],registration_sha256=sha256(out/"registration.json"),endpoints=outputs,
                  module_inventory=modules,seconds=time.monotonic()-started,update_gpu=gpu,
                  peak_allocated_mib=torch.cuda.max_memory_allocated()/2**20,peak_reserved_mib=torch.cuda.max_memory_reserved()/2**20,
-                 original_checkpoints_written=0,virtual_states_are_temporary=True)
+                 original_checkpoints_written=0,virtual_states_are_temporary=True,activation_storage_checks=comparisons,
+                 teacher_chunk_max_absolute_error=teacher_chunk_error)
     write_json(out/"bundles"/(job["id"]+".json"),summary)
     return summary
 
@@ -257,7 +293,8 @@ def main():
         import torch
         torch.set_num_threads(1);cv2.setNumThreads(1)
         torch.backends.cudnn.benchmark=False;torch.backends.cudnn.allow_tf32=False;torch.backends.cuda.matmul.allow_tf32=False
-        if job["kind"]=="score":torch.cuda.set_per_process_memory_fraction(reg["scoring_memory_cap_mib"]*2**20/torch.cuda.get_device_properties(0).total_memory)
+        cap=reg["scoring_memory_cap_mib"] if job["kind"]=="score" else reg["update_memory_cap_mib"]
+        torch.cuda.set_per_process_memory_fraction(cap*2**20/torch.cuda.get_device_properties(0).total_memory)
         result={"update":update,"teacher":teacher,"score":score}[job["kind"]](reg,args.out,job,args.gpu)
         result.update(admission=samples,pid=os.getpid(),at=now(),keepalive_processes_signalled=0,
                       registration_sha256=sha256(args.out/"registration.json"),job_sha256=sha256(args.job))

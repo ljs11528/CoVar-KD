@@ -13,7 +13,7 @@ import time
 
 from utility_study.io import read_json,sha256,write_json
 from .contracts import calibration,PRIMARY
-from .resources import inventory,admissible
+from .resources import inventory,admissible,available_host_mib
 
 
 def now():return datetime.now(timezone.utc).isoformat()
@@ -69,6 +69,9 @@ class Queue:
         for gpu in self.reg["allowed_gpus"]:
             if gpu in self.busy:continue
             candidates=[j for j in self.pending.values() if j.get("pinned_gpu",gpu)==gpu and admissible(cards[gpu],self.reg["resource_policy"],"score" if j["kind"]=="score" else "update")]
+            active_updates=sum(r["job"]["kind"]=="update" for r in self.busy.values())
+            required=self.reg["resource_policy"]["host_minimum_available_mib"]+(active_updates+1)*self.reg["resource_policy"]["host_reservation_per_update_mib"]
+            if available_host_mib()<required:candidates=[j for j in candidates if j["kind"]!="update"]
             if not candidates:continue
             # Keep large-memory lanes generating endpoints until the small queue is ready.
             candidates.sort(key=lambda j:(j["kind"]=="score",j.get("priority",10),j["id"]))
@@ -95,13 +98,20 @@ class Queue:
         pre=[]
         from .contracts import branch
         for d in ("voc","cityscapes"):
-            branches=[branch(f"check_{bn}_drop{int(drop)}",bn,drop,"shared_c1",buffer_policy="both") for bn in ("running","batch") for drop in (False,True)]
+            branches=[]
+            for bn in ("running","batch"):
+                for drop in (False,True):
+                    for storage in (False,True):
+                        branches.append(branch(f"check_{bn}_drop{int(drop)}_"+("offload" if storage else "native"),bn,drop,"shared_c1",
+                                               buffer_policy="native",engineering_batch2=True,activation_offload=storage))
+            for bn,drop in (("running",False),("batch",True)):
+                branches.append(branch(f"check_full_{bn}",bn,drop,"shared_c1",buffer_policy="native",activation_offload=True))
             pre.append(dict(id="preflight_update_"+d,kind="update",phase="engineering",dataset=d,seed=1234,stage=20000,stream="legacy",branches=branches,monitor="A"))
         self.state["phase"]="update_preflight";self.drain(pre)
         bases=[dict(id="preflight_base_"+d,kind="score",dataset=d,seed=1234,stage=20000,pool="A",baseline=True,preflight=True) for d in ("voc","cityscapes")]
         self.state["phase"]="score_preflight_baselines";self.drain(bases)
         city=read_json(self.out/"bundles/preflight_update_cityscapes.json")
-        endpoint=next(e for e in city["endpoints"] if e["branch"]["bn"]=="batch" and e["branch"]["dropout"] and e["buffer_policy"]=="updated")
+        endpoint=next(e for e in city["endpoints"] if e["branch"]["name"]=="check_full_batch")
         jobs=[dict(id=f"preflight_score_gpu{g}",kind="score",dataset="cityscapes",seed=1234,stage=20000,pool="A",preflight=True,
                    endpoints=[dict(endpoint,id=endpoint["id"]+f"__preflight_gpu{g}")],pinned_gpu=g) for g in self.reg["allowed_gpus"]]
         self.state["phase"]="four_gpu_score_preflight";self.drain(jobs)
@@ -110,7 +120,7 @@ class Queue:
         if any(v>(1e-4 if m=="hard_miou" else 1e-5) for m,v in ranges.items()):raise RuntimeError("Cross-card engineering replay exceeds predeclared tolerance")
         write_json(self.out/"preflight.json",dict(status="PASS",gpus=[0,1,2,3],native_cityscapes_images=2,cross_card_ranges=ranges,
                    allocation="One full-batch update lane wherever memory permits; all four eligible scoring lanes",engineering_excluded_from_primary=True,
-                   score_memory_cap_mib=6144,keepalive_processes_signalled=0))
+                   score_memory_cap_mib=6144,update_memory_cap_mib=6144,activation_storage_checks=city["activation_storage_checks"],keepalive_processes_signalled=0))
         self.backup()
 
     def phase(self,phase,selected=None):
