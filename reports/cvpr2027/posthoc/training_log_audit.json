@@ -1,0 +1,2347 @@
+{
+  "status": "PASS",
+  "runs": [
+    {
+      "dataset": "voc",
+      "id": "large_ce_seed1234",
+      "condition": "ce",
+      "seed": 1234,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.774682,
+          "task_loss_max": 1.5235,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.33013631578947367,
+          "task_loss_max": 1.0004,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2169474,
+          "task_loss_max": 0.9479,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1586115,
+          "task_loss_max": 0.8879,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1092471,
+          "task_loss_max": 0.3698,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 90.632204,
+          "miou_percent": 61.746144
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 92.030528,
+          "miou_percent": 66.875279
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 92.155556,
+          "miou_percent": 67.592889
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.467498,
+          "miou_percent": 68.876529
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_ce_seed2025",
+      "condition": "ce",
+      "seed": 2025,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.733336,
+          "task_loss_max": 1.3781,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.34040263157894735,
+          "task_loss_max": 1.0076,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2147524,
+          "task_loss_max": 0.5975,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1595267,
+          "task_loss_max": 0.7306,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1086341,
+          "task_loss_max": 0.4801,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 90.071456,
+          "miou_percent": 59.868497
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 90.037585,
+          "miou_percent": 60.545844
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 92.011726,
+          "miou_percent": 66.922653
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.552643,
+          "miou_percent": 68.897295
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_ce_seed3407",
+      "condition": "ce",
+      "seed": 3407,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.749244,
+          "task_loss_max": 1.4022,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.32972568421052634,
+          "task_loss_max": 0.9868,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2125976,
+          "task_loss_max": 0.6592,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1583196,
+          "task_loss_max": 0.6609,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.107802,
+          "task_loss_max": 0.244,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 91.384615,
+          "miou_percent": 64.156944
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 91.571038,
+          "miou_percent": 64.717174
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 92.381193,
+          "miou_percent": 68.731183
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.54815,
+          "miou_percent": 69.272864
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_migration_anchor_seed1234",
+      "condition": "teacher_c1",
+      "seed": 1234,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.860182,
+          "task_loss_max": 1.532,
+          "logged_kd_loss_mean": 0.67281,
+          "logged_kd_loss_max": 1.3291
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.3736858947368421,
+          "task_loss_max": 1.0003,
+          "logged_kd_loss_mean": 0.2642997894736842,
+          "logged_kd_loss_max": 0.804
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2382083,
+          "task_loss_max": 0.6061,
+          "logged_kd_loss_mean": 0.1512058,
+          "logged_kd_loss_max": 0.4854
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1764386,
+          "task_loss_max": 0.6186,
+          "logged_kd_loss_mean": 0.1014846,
+          "logged_kd_loss_max": 0.4721
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1320464,
+          "task_loss_max": 0.3328,
+          "logged_kd_loss_mean": 0.067439,
+          "logged_kd_loss_max": 0.1996
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 90.747915,
+          "miou_percent": 61.709154
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 90.587889,
+          "miou_percent": 61.225539
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 91.836305,
+          "miou_percent": 66.462356
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.553946,
+          "miou_percent": 69.456738
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_standard_T2_c4_seed1234",
+      "condition": "shared_c4",
+      "seed": 1234,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 1.212916,
+          "task_loss_max": 2.285,
+          "logged_kd_loss_mean": 3.332494,
+          "logged_kd_loss_max": 5.3345
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.5169607368421053,
+          "task_loss_max": 1.8202,
+          "logged_kd_loss_mean": 1.3495602105263158,
+          "logged_kd_loss_max": 4.2623
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2882034,
+          "task_loss_max": 1.3866,
+          "logged_kd_loss_mean": 0.6983339,
+          "logged_kd_loss_max": 2.7138
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1864031,
+          "task_loss_max": 1.0966,
+          "logged_kd_loss_mean": 0.4209227,
+          "logged_kd_loss_max": 2.2246
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1245818,
+          "task_loss_max": 0.8187,
+          "logged_kd_loss_mean": 0.256794,
+          "logged_kd_loss_max": 1.211
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 89.879855,
+          "miou_percent": 57.435495
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 90.270709,
+          "miou_percent": 59.265059
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 91.711799,
+          "miou_percent": 65.468472
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.520739,
+          "miou_percent": 68.441862
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_standard_T2_c4_seed2025",
+      "condition": "shared_c4",
+      "seed": 2025,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 1.267732,
+          "task_loss_max": 2.1291,
+          "logged_kd_loss_mean": 3.488302,
+          "logged_kd_loss_max": 5.095
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.5505195789473685,
+          "task_loss_max": 1.9478,
+          "logged_kd_loss_mean": 1.4295836842105263,
+          "logged_kd_loss_max": 4.3872
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2936845,
+          "task_loss_max": 0.915,
+          "logged_kd_loss_mean": 0.7163241,
+          "logged_kd_loss_max": 1.7634
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1938228,
+          "task_loss_max": 1.0271,
+          "logged_kd_loss_mean": 0.445233,
+          "logged_kd_loss_max": 2.0708
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1290548,
+          "task_loss_max": 0.5862,
+          "logged_kd_loss_mean": 0.2714465,
+          "logged_kd_loss_max": 1.1471
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 89.120393,
+          "miou_percent": 55.721253
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 89.198721,
+          "miou_percent": 56.225836
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 91.530095,
+          "miou_percent": 64.668548
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.038724,
+          "miou_percent": 66.477883
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_standard_T2_c4_seed3407",
+      "condition": "shared_c4",
+      "seed": 3407,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 1.195394,
+          "task_loss_max": 2.0972,
+          "logged_kd_loss_mean": 3.385726,
+          "logged_kd_loss_max": 4.902
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.525640947368421,
+          "task_loss_max": 1.5754,
+          "logged_kd_loss_mean": 1.3786577894736842,
+          "logged_kd_loss_max": 3.7297
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2880719,
+          "task_loss_max": 1.1099,
+          "logged_kd_loss_mean": 0.6982447,
+          "logged_kd_loss_max": 2.0415
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1946322,
+          "task_loss_max": 0.8092,
+          "logged_kd_loss_mean": 0.4427103,
+          "logged_kd_loss_max": 1.6487
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1270752,
+          "task_loss_max": 0.4483,
+          "logged_kd_loss_mean": 0.2630664,
+          "logged_kd_loss_max": 0.7635
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 89.774646,
+          "miou_percent": 58.552659
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 90.681121,
+          "miou_percent": 61.332864
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 91.504753,
+          "miou_percent": 64.473426
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.051098,
+          "miou_percent": 66.718084
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_teacher_T2_c4_seed1234",
+      "condition": "teacher_c4",
+      "seed": 1234,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 1.049316,
+          "task_loss_max": 1.6402,
+          "logged_kd_loss_mean": 3.272228,
+          "logged_kd_loss_max": 5.2952
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.4758364210526316,
+          "task_loss_max": 1.1305,
+          "logged_kd_loss_mean": 1.3289952631578947,
+          "logged_kd_loss_max": 3.7544
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2904231,
+          "task_loss_max": 0.7792,
+          "logged_kd_loss_mean": 0.6943816,
+          "logged_kd_loss_max": 2.5011
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.20999690000000001,
+          "task_loss_max": 0.578,
+          "logged_kd_loss_mean": 0.422313,
+          "logged_kd_loss_max": 1.8204
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1596983,
+          "task_loss_max": 0.4076,
+          "logged_kd_loss_mean": 0.2591546,
+          "logged_kd_loss_max": 0.869
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 89.65431,
+          "miou_percent": 58.055598
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 90.624652,
+          "miou_percent": 61.087865
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 91.387299,
+          "miou_percent": 65.34487
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.109282,
+          "miou_percent": 67.985255
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_teacher_T2_c4_seed2025",
+      "condition": "teacher_c4",
+      "seed": 2025,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 1.267852,
+          "task_loss_max": 2.3589,
+          "logged_kd_loss_mean": 4.028092,
+          "logged_kd_loss_max": 8.3648
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.6104517894736842,
+          "task_loss_max": 1.5401,
+          "logged_kd_loss_mean": 1.7842945263157894,
+          "logged_kd_loss_max": 5.1033
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.339339,
+          "task_loss_max": 0.8286,
+          "logged_kd_loss_mean": 0.8625026,
+          "logged_kd_loss_max": 2.4329
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.2390344,
+          "task_loss_max": 0.5483,
+          "logged_kd_loss_mean": 0.5241915,
+          "logged_kd_loss_max": 1.5841
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1776481,
+          "task_loss_max": 0.3963,
+          "logged_kd_loss_mean": 0.3227947,
+          "logged_kd_loss_max": 1.1004
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 86.173102,
+          "miou_percent": 45.371079
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 89.209561,
+          "miou_percent": 56.687731
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 89.71814,
+          "miou_percent": 59.155476
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 90.465159,
+          "miou_percent": 61.816108
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_shared_T2_c1_seed2025",
+      "condition": "shared_c1",
+      "seed": 2025,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.905092,
+          "task_loss_max": 1.7431,
+          "logged_kd_loss_mean": 0.717326,
+          "logged_kd_loss_max": 1.16
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.41605989473684213,
+          "task_loss_max": 1.9461,
+          "logged_kd_loss_mean": 0.3028463157894737,
+          "logged_kd_loss_max": 1.0783
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2357068,
+          "task_loss_max": 0.6948,
+          "logged_kd_loss_mean": 0.1604777,
+          "logged_kd_loss_max": 0.4156
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1667518,
+          "task_loss_max": 0.6397,
+          "logged_kd_loss_mean": 0.1055261,
+          "logged_kd_loss_max": 0.3271
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1140735,
+          "task_loss_max": 0.3115,
+          "logged_kd_loss_mean": 0.0658434,
+          "logged_kd_loss_max": 0.1769
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 90.436881,
+          "miou_percent": 60.650271
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 90.139226,
+          "miou_percent": 61.242151
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 91.812438,
+          "miou_percent": 65.491784
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.465343,
+          "miou_percent": 68.156594
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_teacher_T2_c1_seed2025",
+      "condition": "teacher_c1",
+      "seed": 2025,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.821602,
+          "task_loss_max": 1.4102,
+          "logged_kd_loss_mean": 0.64201,
+          "logged_kd_loss_max": 1.1265
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.38419273684210525,
+          "task_loss_max": 0.9554,
+          "logged_kd_loss_mean": 0.27303336842105264,
+          "logged_kd_loss_max": 0.7764
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.236263,
+          "task_loss_max": 0.5945,
+          "logged_kd_loss_mean": 0.1493845,
+          "logged_kd_loss_max": 0.4396
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1774659,
+          "task_loss_max": 0.6138,
+          "logged_kd_loss_mean": 0.1026021,
+          "logged_kd_loss_max": 0.4593
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1333665,
+          "task_loss_max": 0.2863,
+          "logged_kd_loss_mean": 0.068422,
+          "logged_kd_loss_max": 0.197
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 89.87254,
+          "miou_percent": 58.189338
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 90.108753,
+          "miou_percent": 62.415719
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 91.368966,
+          "miou_percent": 63.86714
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.202606,
+          "miou_percent": 68.45665
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_teacher_T2_c1_seed3407",
+      "condition": "teacher_c1",
+      "seed": 3407,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.83635,
+          "task_loss_max": 1.4432,
+          "logged_kd_loss_mean": 0.653138,
+          "logged_kd_loss_max": 1.18
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.3773295789473684,
+          "task_loss_max": 1.0713,
+          "logged_kd_loss_mean": 0.26717526315789475,
+          "logged_kd_loss_max": 0.8668
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.235728,
+          "task_loss_max": 0.6687,
+          "logged_kd_loss_mean": 0.1494474,
+          "logged_kd_loss_max": 0.5506
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1803043,
+          "task_loss_max": 0.5728,
+          "logged_kd_loss_mean": 0.1044962,
+          "logged_kd_loss_max": 0.4583
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1332486,
+          "task_loss_max": 0.2532,
+          "logged_kd_loss_mean": 0.0681271,
+          "logged_kd_loss_max": 0.1625
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 90.78144,
+          "miou_percent": 63.010538
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 91.074394,
+          "miou_percent": 63.562423
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 92.078425,
+          "miou_percent": 67.603505
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.376008,
+          "miou_percent": 68.85823
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_teacher_T2_c4_seed3407",
+      "condition": "teacher_c4",
+      "seed": 3407,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 1.022532,
+          "task_loss_max": 1.5387,
+          "logged_kd_loss_mean": 3.199928,
+          "logged_kd_loss_max": 5.1253
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.471254,
+          "task_loss_max": 1.3042,
+          "logged_kd_loss_mean": 1.3129052631578948,
+          "logged_kd_loss_max": 4.0456
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2840488,
+          "task_loss_max": 0.869,
+          "logged_kd_loss_mean": 0.6732102,
+          "logged_kd_loss_max": 2.7062
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.2120401,
+          "task_loss_max": 0.5688,
+          "logged_kd_loss_mean": 0.4284819,
+          "logged_kd_loss_max": 1.703
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1589947,
+          "task_loss_max": 0.3053,
+          "logged_kd_loss_mean": 0.2545366,
+          "logged_kd_loss_max": 0.6964
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 90.002991,
+          "miou_percent": 59.47873
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 90.449658,
+          "miou_percent": 61.797613
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 91.3245,
+          "miou_percent": 64.285141
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.051078,
+          "miou_percent": 67.624503
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_shared_T2_c1_seed3407",
+      "condition": "shared_c1",
+      "seed": 3407,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.86823,
+          "task_loss_max": 1.5118,
+          "logged_kd_loss_mean": 0.71932,
+          "logged_kd_loss_max": 1.2929
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.39053,
+          "task_loss_max": 1.3252,
+          "logged_kd_loss_mean": 0.28924084210526313,
+          "logged_kd_loss_max": 0.7882
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2337497,
+          "task_loss_max": 0.9425,
+          "logged_kd_loss_mean": 0.1587217,
+          "logged_kd_loss_max": 0.4907
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1672471,
+          "task_loss_max": 0.5884,
+          "logged_kd_loss_mean": 0.1055975,
+          "logged_kd_loss_max": 0.3114
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1122612,
+          "task_loss_max": 0.26,
+          "logged_kd_loss_mean": 0.0642378,
+          "logged_kd_loss_max": 0.1839
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 90.840084,
+          "miou_percent": 62.38324
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 91.369018,
+          "miou_percent": 64.841622
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 91.895127,
+          "miou_percent": 66.091365
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.503239,
+          "miou_percent": 68.762428
+        }
+      ]
+    },
+    {
+      "dataset": "voc",
+      "id": "large_shared_T2_c1_seed1234",
+      "condition": "shared_c1",
+      "seed": 1234,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.94092,
+          "task_loss_max": 1.9015,
+          "logged_kd_loss_mean": 0.740158,
+          "logged_kd_loss_max": 1.2728
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.3908326315789474,
+          "task_loss_max": 1.1237,
+          "logged_kd_loss_mean": 0.2895,
+          "logged_kd_loss_max": 0.7171
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2413279,
+          "task_loss_max": 0.8859,
+          "logged_kd_loss_mean": 0.1619636,
+          "logged_kd_loss_max": 0.4512
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1614983,
+          "task_loss_max": 0.8835,
+          "logged_kd_loss_mean": 0.1011464,
+          "logged_kd_loss_max": 0.4642
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.111295,
+          "task_loss_max": 0.3861,
+          "logged_kd_loss_mean": 0.0634458,
+          "logged_kd_loss_max": 0.1641
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 90.471367,
+          "miou_percent": 60.624647
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 91.414846,
+          "miou_percent": 63.958639
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 92.287109,
+          "miou_percent": 67.45047
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 92.629496,
+          "miou_percent": 68.73703
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_ce_seed1234",
+      "condition": "ce",
+      "seed": 1234,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.544636,
+          "task_loss_max": 1.1428,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.23687115789473684,
+          "task_loss_max": 0.809,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.1722578,
+          "task_loss_max": 0.8752,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1493503,
+          "task_loss_max": 0.4781,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1359557,
+          "task_loss_max": 0.6609,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.026716,
+          "miou_percent": 66.073198
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.524558,
+          "miou_percent": 68.941751
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.911756,
+          "miou_percent": 69.794851
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.128128,
+          "miou_percent": 71.517033
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_teacher_T2_c1_seed1234",
+      "condition": "teacher_c1",
+      "seed": 1234,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.519222,
+          "task_loss_max": 1.0475,
+          "logged_kd_loss_mean": 0.361738,
+          "logged_kd_loss_max": 0.8709
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.24995642105263158,
+          "task_loss_max": 0.811,
+          "logged_kd_loss_mean": 0.1388003157894737,
+          "logged_kd_loss_max": 0.6566
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.1909063,
+          "task_loss_max": 0.7892,
+          "logged_kd_loss_mean": 0.0923394,
+          "logged_kd_loss_max": 0.6453
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1706588,
+          "task_loss_max": 0.5656,
+          "logged_kd_loss_mean": 0.0760236,
+          "logged_kd_loss_max": 0.3623
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1592892,
+          "task_loss_max": 0.5284,
+          "logged_kd_loss_mean": 0.0666515,
+          "logged_kd_loss_max": 0.3437
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.338479,
+          "miou_percent": 67.551127
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.811287,
+          "miou_percent": 69.79157
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.013811,
+          "miou_percent": 70.833108
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.262486,
+          "miou_percent": 72.296035
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_shared_T2_c1_seed1234",
+      "condition": "shared_c1",
+      "seed": 1234,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.542052,
+          "task_loss_max": 1.1487,
+          "logged_kd_loss_mean": 0.411262,
+          "logged_kd_loss_max": 0.9012
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.23926431578947369,
+          "task_loss_max": 1.0505,
+          "logged_kd_loss_mean": 0.1386178947368421,
+          "logged_kd_loss_max": 0.609
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.169633,
+          "task_loss_max": 1.0471,
+          "logged_kd_loss_mean": 0.0861254,
+          "logged_kd_loss_max": 0.4713
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1456474,
+          "task_loss_max": 0.499,
+          "logged_kd_loss_mean": 0.0668224,
+          "logged_kd_loss_max": 0.2341
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.131767,
+          "task_loss_max": 0.7149,
+          "logged_kd_loss_mean": 0.0562147,
+          "logged_kd_loss_max": 0.2603
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.389603,
+          "miou_percent": 67.071115
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.794114,
+          "miou_percent": 69.830906
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.988548,
+          "miou_percent": 70.32043
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.290412,
+          "miou_percent": 72.667053
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_teacher_T2_c4_seed1234",
+      "condition": "teacher_c4",
+      "seed": 1234,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.595554,
+          "task_loss_max": 1.3215,
+          "logged_kd_loss_mean": 1.645552,
+          "logged_kd_loss_max": 4.437
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.2775902105263158,
+          "task_loss_max": 0.8412,
+          "logged_kd_loss_mean": 0.5358258947368421,
+          "logged_kd_loss_max": 2.6122
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2137009,
+          "task_loss_max": 0.8997,
+          "logged_kd_loss_mean": 0.32604,
+          "logged_kd_loss_max": 2.8697
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1916858,
+          "task_loss_max": 0.4135,
+          "logged_kd_loss_mean": 0.2499541,
+          "logged_kd_loss_max": 0.9867
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.17948,
+          "task_loss_max": 0.5016,
+          "logged_kd_loss_mean": 0.2049296,
+          "logged_kd_loss_max": 1.1465
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.196796,
+          "miou_percent": 65.291801
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.828663,
+          "miou_percent": 70.586668
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.890423,
+          "miou_percent": 70.411622
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.379197,
+          "miou_percent": 73.349428
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_shared_T2_c4_seed1234",
+      "condition": "shared_c4",
+      "seed": 1234,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.63649,
+          "task_loss_max": 1.8055,
+          "logged_kd_loss_mean": 1.656238,
+          "logged_kd_loss_max": 4.0784
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.2575924210526316,
+          "task_loss_max": 1.5335,
+          "logged_kd_loss_mean": 0.540164105263158,
+          "logged_kd_loss_max": 2.7554
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.1780123,
+          "task_loss_max": 1.339,
+          "logged_kd_loss_mean": 0.3267189,
+          "logged_kd_loss_max": 2.3801
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1511421,
+          "task_loss_max": 0.939,
+          "logged_kd_loss_mean": 0.2498323,
+          "logged_kd_loss_max": 1.3955
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1333817,
+          "task_loss_max": 0.7605,
+          "logged_kd_loss_mean": 0.2016137,
+          "logged_kd_loss_max": 1.0885
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.333051,
+          "miou_percent": 66.831255
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.566734,
+          "miou_percent": 69.456
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.932435,
+          "miou_percent": 70.601663
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.352119,
+          "miou_percent": 73.425782
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_ce_seed2025",
+      "condition": "ce",
+      "seed": 2025,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.618544,
+          "task_loss_max": 1.8357,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.2315398947368421,
+          "task_loss_max": 0.9935,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.1740886,
+          "task_loss_max": 0.8777,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1482875,
+          "task_loss_max": 0.3743,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1354315,
+          "task_loss_max": 1.2113,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.243413,
+          "miou_percent": 67.664193
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.305727,
+          "miou_percent": 67.601696
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.744583,
+          "miou_percent": 70.172755
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.04212,
+          "miou_percent": 71.419076
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_teacher_T2_c1_seed2025",
+      "condition": "teacher_c1",
+      "seed": 2025,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.595948,
+          "task_loss_max": 1.6268,
+          "logged_kd_loss_mean": 0.416522,
+          "logged_kd_loss_max": 1.3242
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.2443638947368421,
+          "task_loss_max": 0.8643,
+          "logged_kd_loss_mean": 0.13576694736842104,
+          "logged_kd_loss_max": 0.7492
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.1922124,
+          "task_loss_max": 0.7019,
+          "logged_kd_loss_mean": 0.0918645,
+          "logged_kd_loss_max": 0.4556
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1707347,
+          "task_loss_max": 0.3538,
+          "logged_kd_loss_mean": 0.0762493,
+          "logged_kd_loss_max": 0.2898
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1596024,
+          "task_loss_max": 0.8761,
+          "logged_kd_loss_mean": 0.0667905,
+          "logged_kd_loss_max": 0.4141
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.333589,
+          "miou_percent": 67.645054
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.623932,
+          "miou_percent": 68.484653
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.846123,
+          "miou_percent": 70.662212
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.243441,
+          "miou_percent": 72.01136
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_shared_T2_c1_seed2025",
+      "condition": "shared_c1",
+      "seed": 2025,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.651808,
+          "task_loss_max": 2.0255,
+          "logged_kd_loss_mean": 0.454786,
+          "logged_kd_loss_max": 1.326
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.23271284210526316,
+          "task_loss_max": 1.2467,
+          "logged_kd_loss_mean": 0.13582136842105264,
+          "logged_kd_loss_max": 0.5635
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.1709474,
+          "task_loss_max": 1.3045,
+          "logged_kd_loss_mean": 0.0848515,
+          "logged_kd_loss_max": 0.6133
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1454521,
+          "task_loss_max": 0.5057,
+          "logged_kd_loss_mean": 0.0678391,
+          "logged_kd_loss_max": 0.2628
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1308342,
+          "task_loss_max": 1.3829,
+          "logged_kd_loss_mean": 0.0557712,
+          "logged_kd_loss_max": 0.4117
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.341837,
+          "miou_percent": 67.482336
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.722735,
+          "miou_percent": 68.630804
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.975893,
+          "miou_percent": 70.746447
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.231948,
+          "miou_percent": 71.993013
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_teacher_T2_c4_seed2025",
+      "condition": "teacher_c4",
+      "seed": 2025,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.647004,
+          "task_loss_max": 1.9563,
+          "logged_kd_loss_mean": 1.793092,
+          "logged_kd_loss_max": 6.5315
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.2731902105263158,
+          "task_loss_max": 0.9018,
+          "logged_kd_loss_mean": 0.5270393684210526,
+          "logged_kd_loss_max": 3.0655
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2163661,
+          "task_loss_max": 0.737,
+          "logged_kd_loss_mean": 0.3282215,
+          "logged_kd_loss_max": 1.8452
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1907995,
+          "task_loss_max": 0.4816,
+          "logged_kd_loss_mean": 0.2477823,
+          "logged_kd_loss_max": 1.2088
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1792198,
+          "task_loss_max": 0.9174,
+          "logged_kd_loss_mean": 0.204412,
+          "logged_kd_loss_max": 1.8205
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.492677,
+          "miou_percent": 68.571312
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.717478,
+          "miou_percent": 68.259536
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.954199,
+          "miou_percent": 71.46553
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.284831,
+          "miou_percent": 72.617473
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_shared_T2_c4_seed2025",
+      "condition": "shared_c4",
+      "seed": 2025,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.690992,
+          "task_loss_max": 2.5644,
+          "logged_kd_loss_mean": 1.664804,
+          "logged_kd_loss_max": 5.5602
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.24959073684210525,
+          "task_loss_max": 1.4485,
+          "logged_kd_loss_mean": 0.5232584210526315,
+          "logged_kd_loss_max": 2.7933
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.1786607,
+          "task_loss_max": 0.9505,
+          "logged_kd_loss_mean": 0.32315119999999997,
+          "logged_kd_loss_max": 1.7704
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1473985,
+          "task_loss_max": 0.5126,
+          "logged_kd_loss_mean": 0.2463736,
+          "logged_kd_loss_max": 1.2113
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.132055,
+          "task_loss_max": 1.385,
+          "logged_kd_loss_mean": 0.1991707,
+          "logged_kd_loss_max": 1.4836
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.347782,
+          "miou_percent": 67.764868
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.734391,
+          "miou_percent": 68.153319
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.04196,
+          "miou_percent": 71.278875
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.329482,
+          "miou_percent": 72.741303
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_ce_seed3407",
+      "condition": "ce",
+      "seed": 3407,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.574338,
+          "task_loss_max": 1.176,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.23764336842105263,
+          "task_loss_max": 1.2064,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.1713868,
+          "task_loss_max": 0.8454,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1484445,
+          "task_loss_max": 0.5201,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1326424,
+          "task_loss_max": 0.3731,
+          "logged_kd_loss_mean": 0.0,
+          "logged_kd_loss_max": 0.0
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.352099,
+          "miou_percent": 66.118581
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.534865,
+          "miou_percent": 68.357403
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.854429,
+          "miou_percent": 70.438955
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.166117,
+          "miou_percent": 71.188834
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_teacher_T2_c1_seed3407",
+      "condition": "teacher_c1",
+      "seed": 3407,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.56785,
+          "task_loss_max": 1.2985,
+          "logged_kd_loss_mean": 0.394162,
+          "logged_kd_loss_max": 1.0662
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.2517738947368421,
+          "task_loss_max": 0.8427,
+          "logged_kd_loss_mean": 0.1420256842105263,
+          "logged_kd_loss_max": 0.6459
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.1904405,
+          "task_loss_max": 0.6615,
+          "logged_kd_loss_mean": 0.0901598,
+          "logged_kd_loss_max": 0.5181
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1695259,
+          "task_loss_max": 0.4684,
+          "logged_kd_loss_mean": 0.074719,
+          "logged_kd_loss_max": 0.3601
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1562174,
+          "task_loss_max": 0.3499,
+          "logged_kd_loss_mean": 0.0650743,
+          "logged_kd_loss_max": 0.2319
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.392415,
+          "miou_percent": 66.51622
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.690685,
+          "miou_percent": 68.515618
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.00159,
+          "miou_percent": 70.946652
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.263935,
+          "miou_percent": 71.65667
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_shared_T2_c1_seed3407",
+      "condition": "shared_c1",
+      "seed": 3407,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.593272,
+          "task_loss_max": 1.3964,
+          "logged_kd_loss_mean": 0.422086,
+          "logged_kd_loss_max": 1.0706
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.2418117894736842,
+          "task_loss_max": 1.5681,
+          "logged_kd_loss_mean": 0.1406298947368421,
+          "logged_kd_loss_max": 0.7426
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.1685518,
+          "task_loss_max": 0.7251,
+          "logged_kd_loss_mean": 0.0844237,
+          "logged_kd_loss_max": 0.3505
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.14436,
+          "task_loss_max": 0.6452,
+          "logged_kd_loss_mean": 0.066799,
+          "logged_kd_loss_max": 0.3019
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1290768,
+          "task_loss_max": 0.3628,
+          "logged_kd_loss_mean": 0.0550256,
+          "logged_kd_loss_max": 0.1812
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.353621,
+          "miou_percent": 66.605858
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.641377,
+          "miou_percent": 68.177229
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.072581,
+          "miou_percent": 71.75626
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.305029,
+          "miou_percent": 72.462481
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_teacher_T2_c4_seed3407",
+      "condition": "teacher_c4",
+      "seed": 3407,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.617154,
+          "task_loss_max": 1.3141,
+          "logged_kd_loss_mean": 1.67875,
+          "logged_kd_loss_max": 4.286
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.2763197894736842,
+          "task_loss_max": 0.7937,
+          "logged_kd_loss_mean": 0.5383378947368421,
+          "logged_kd_loss_max": 2.5206
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.2133493,
+          "task_loss_max": 0.5424,
+          "logged_kd_loss_mean": 0.3174922,
+          "logged_kd_loss_max": 1.6133
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1910919,
+          "task_loss_max": 0.5163,
+          "logged_kd_loss_mean": 0.2465411,
+          "logged_kd_loss_max": 1.4897
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.176677,
+          "task_loss_max": 0.3618,
+          "logged_kd_loss_mean": 0.1992901,
+          "logged_kd_loss_max": 0.6482
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.365371,
+          "miou_percent": 65.80569
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.617824,
+          "miou_percent": 69.108208
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.07003,
+          "miou_percent": 71.82186
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.36039,
+          "miou_percent": 73.58796
+        }
+      ]
+    },
+    {
+      "dataset": "cityscapes",
+      "id": "city_large_shared_T2_c4_seed3407",
+      "condition": "shared_c4",
+      "seed": 3407,
+      "logged_steps": 4000,
+      "all_logged_losses_finite": true,
+      "complete_20_step_log_sequence": true,
+      "windows": [
+        {
+          "start_exclusive": 0,
+          "end_inclusive": 1000,
+          "records": 50,
+          "task_loss_mean": 0.677034,
+          "task_loss_max": 1.6567,
+          "logged_kd_loss_mean": 1.673632,
+          "logged_kd_loss_max": 4.2201
+        },
+        {
+          "start_exclusive": 1000,
+          "end_inclusive": 20000,
+          "records": 950,
+          "task_loss_mean": 0.2583534736842105,
+          "task_loss_max": 1.2887,
+          "logged_kd_loss_mean": 0.5429733684210526,
+          "logged_kd_loss_max": 2.4718
+        },
+        {
+          "start_exclusive": 20000,
+          "end_inclusive": 40000,
+          "records": 1000,
+          "task_loss_mean": 0.1760626,
+          "task_loss_max": 0.6083,
+          "logged_kd_loss_mean": 0.3209413,
+          "logged_kd_loss_max": 1.7216
+        },
+        {
+          "start_exclusive": 40000,
+          "end_inclusive": 60000,
+          "records": 1000,
+          "task_loss_mean": 0.1468045,
+          "task_loss_max": 0.7605,
+          "logged_kd_loss_mean": 0.2428621,
+          "logged_kd_loss_max": 1.3717
+        },
+        {
+          "start_exclusive": 60000,
+          "end_inclusive": 80000,
+          "records": 1000,
+          "task_loss_mean": 0.1294895,
+          "task_loss_max": 0.4161,
+          "logged_kd_loss_mean": 0.1948246,
+          "logged_kd_loss_max": 0.6892
+        }
+      ],
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.228784,
+          "miou_percent": 65.108431
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.047822,
+          "miou_percent": 66.848928
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.063151,
+          "miou_percent": 71.385603
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.34018,
+          "miou_percent": 73.173215
+        }
+      ]
+    }
+  ],
+  "logged_steps": 120000,
+  "note": "Logged losses are rounded observations every 20 steps, not a guarantee about every intervening tensor. Recovery prefixes are trimmed at the saved step."
+}

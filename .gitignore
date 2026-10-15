@@ -69,3 +69,30 @@ data/winycg/checkpoints/
 
 # VSCode
 .vscode/
+
+# Local datasets, connection material, and credentials
+.DS_Store
+data/
+dataset/VOCAug/
+dataset/Cityscapes/
+.env
+.env.*
+!.env.example
+id_rsa
+id_rsa.*
+id_ed25519*
+*.pem
+*.key
+*.p12
+*.pfx
+/ljs11528
+/ljs11528.pub
+*ssh_config
+*known_hosts
+*cookies*.txt
+
+# Curated, small research evidence (raw tensors/assets remain excluded)
+!reports/**/*.json
+!reports/**/*.csv
+!reports/**/figures/*.png
+!repro/**/*.json

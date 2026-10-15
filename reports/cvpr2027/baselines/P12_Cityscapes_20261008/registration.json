@@ -1,0 +1,368 @@
+{
+  "status": "REGISTERED",
+  "cohort": "P12_Cityscapes_20261008",
+  "registered_at": "2026-10-08T05:16:26.104928+00:00",
+  "environment": {
+    "python": "3.10.20",
+    "torch": "2.0.1+cu118",
+    "cuda": "11.8",
+    "cudnn": 8700,
+    "numpy": "1.24.4",
+    "opencv": "4.8.0"
+  },
+  "research_question": "Replicate temperature-placement by loss-coefficient sensitivity on an independent dataset",
+  "runs": [
+    {
+      "id": "city_large_ce_seed1234",
+      "student": "large",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": 1.0,
+      "coefficient": 0.0,
+      "gpu_count": 1,
+      "priority": 0,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_teacher_T2_c1_seed1234",
+      "student": "large",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": 2.0,
+      "coefficient": 1.0,
+      "gpu_count": 1,
+      "priority": 1,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_shared_T2_c1_seed1234",
+      "student": "large",
+      "seed": 1234,
+      "mode": "masked",
+      "temperature": 2.0,
+      "coefficient": 1.0,
+      "gpu_count": 1,
+      "priority": 2,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_teacher_T2_c4_seed1234",
+      "student": "large",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "priority": 3,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_shared_T2_c4_seed1234",
+      "student": "large",
+      "seed": 1234,
+      "mode": "masked",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "priority": 4,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_ce_seed2025",
+      "student": "large",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": 1.0,
+      "coefficient": 0.0,
+      "gpu_count": 1,
+      "priority": 10,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_teacher_T2_c1_seed2025",
+      "student": "large",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": 2.0,
+      "coefficient": 1.0,
+      "gpu_count": 1,
+      "priority": 11,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_shared_T2_c1_seed2025",
+      "student": "large",
+      "seed": 2025,
+      "mode": "masked",
+      "temperature": 2.0,
+      "coefficient": 1.0,
+      "gpu_count": 1,
+      "priority": 12,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_teacher_T2_c4_seed2025",
+      "student": "large",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "priority": 13,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_shared_T2_c4_seed2025",
+      "student": "large",
+      "seed": 2025,
+      "mode": "masked",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "priority": 14,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_ce_seed3407",
+      "student": "large",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": 1.0,
+      "coefficient": 0.0,
+      "gpu_count": 1,
+      "priority": 20,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_teacher_T2_c1_seed3407",
+      "student": "large",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": 2.0,
+      "coefficient": 1.0,
+      "gpu_count": 1,
+      "priority": 21,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_shared_T2_c1_seed3407",
+      "student": "large",
+      "seed": 3407,
+      "mode": "masked",
+      "temperature": 2.0,
+      "coefficient": 1.0,
+      "gpu_count": 1,
+      "priority": 22,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_teacher_T2_c4_seed3407",
+      "student": "large",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "priority": 23,
+      "kind": "independent_dataset_factorial"
+    },
+    {
+      "id": "city_large_shared_T2_c4_seed3407",
+      "student": "large",
+      "seed": 3407,
+      "mode": "masked",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "priority": 24,
+      "kind": "independent_dataset_factorial"
+    }
+  ],
+  "formal_runs": 15,
+  "seeds": [
+    1234,
+    2025,
+    3407
+  ],
+  "dataset": {
+    "name": "Cityscapes",
+    "classes": 19,
+    "train": 2975,
+    "val": 500,
+    "root": "/data1/youwu/jingshi/kd/data/Cityscapes",
+    "fine_only": true,
+    "test_not_used": true,
+    "extra_data": false
+  },
+  "teacher": {
+    "model": "DeepLabV3-ResNet101",
+    "path": "/data1/youwu/jingshi/kd/CoVar-KD-3090/shared/data/winycg/cirkd/teachers/deeplabv3_resnet101_citys_best_model.pth",
+    "url": "https://github.com/winycg/CIRKD/releases/download/segv0.1/deeplabv3_resnet101_citys_best_model.pth",
+    "bytes": 317039973,
+    "sha256": "799e7271408990f2f38eaf3db34382b45694127e906fdadd5735048c7c6def24",
+    "compatibility": "pending strict state_dict and validation"
+  },
+  "student": {
+    "model": "DeepLabV3-MobileNetV3-Large",
+    "initialization": "Existing ImageNet backbone; freshly initialized 19-class head",
+    "pretrained_base_sha256": "bc2c3fd391519fcd987035145d1aa407431051b7f2391db663feb2bc4a9d7c1a"
+  },
+  "max_iterations": 80000,
+  "crop": [
+    512,
+    1024
+  ],
+  "global_batch": 8,
+  "world_size": 1,
+  "workers": 4,
+  "optimizer": {
+    "name": "SGD",
+    "lr": 0.01,
+    "momentum": 0.9,
+    "weight_decay": 0.0001,
+    "power": 0.9
+  },
+  "normalization": "Original BGR channel order minus [104.00698793,116.66876762,122.67891434]",
+  "augmentation": "Original random scale 0.5:0.1:2.0, random crop and horizontal flip",
+  "bn": "Single-GPU BatchNorm, common to every condition",
+  "precision": "Original P11 FP32/TF32 defaults; no AMP; no fast CE or feature-release changes",
+  "losses": "CE + c * mean valid-pixel KL(q_teacher(Tt) || p_student(Ts)); other distillation terms off",
+  "conditions": [
+    {
+      "name": "CE",
+      "c": 0
+    },
+    {
+      "name": "teacher_c1",
+      "Tt": 2,
+      "Ts": 1,
+      "c": 1
+    },
+    {
+      "name": "shared_c1",
+      "Tt": 2,
+      "Ts": 2,
+      "c": 1
+    },
+    {
+      "name": "teacher_c4",
+      "Tt": 2,
+      "Ts": 1,
+      "c": 4
+    },
+    {
+      "name": "shared_c4",
+      "Tt": 2,
+      "Ts": 2,
+      "c": 4
+    }
+  ],
+  "endpoints": {
+    "primary": "80k final mIoU on all 500 validation images",
+    "evaluation": "Native 1024x2048 single-scale, no flip, bilinear logits align_corners=True",
+    "checkpoints": [
+      20000,
+      40000,
+      60000,
+      80000
+    ],
+    "save_latest_every": 2000,
+    "reporting": "All three seeds, paired deltas, mean and sample SD; retain negative results"
+  },
+  "contrasts": [
+    "teacher_c1 - CE",
+    "shared_c1 - CE",
+    "teacher_c1 - shared_c1",
+    "teacher_c4 - teacher_c1",
+    "shared_c4 - shared_c1",
+    "(teacher_c4-shared_c4) - (teacher_c1-shared_c1)"
+  ],
+  "limits": [
+    "Fixed T=2 selected from historical VOC, without Cityscapes temperature tuning",
+    "Batch/crop/lr and teacher differ from VOC; compare treatments within each dataset, not raw scores across datasets",
+    "This validates the scalar-temperature mechanism, not the full adaptive CoVar method",
+    "No early stopping based on validation gain or sign; all 15 registered runs remain in the queue",
+    "Public source teacher test mIoU is not a target for this single-scale validation protocol"
+  ],
+  "recovery": "Atomic full states retained every 2k; no automatic restart or unverified sampler resume",
+  "scheduling": {
+    "allowed_gpu_indices": [
+      0,
+      1,
+      2,
+      4,
+      5,
+      6
+    ],
+    "excluded_gpu_indices": [
+      3
+    ],
+    "idle_gate": "No compute process, memory <1024MiB and utilization <=10% for 30s; recheck before launch",
+    "ordering": "Seed1234 five conditions first (CE, c1 teacher/shared, c4 teacher/shared), then seeds2025 and3407",
+    "minimum_free_disk_gib": 20
+  },
+  "source_sha256": {
+    "PCOS.py": "65bee8f26f8cf6f2d6c9c3e2448eb3b5c7e893e76040175e88e3d238e2d0c9b3",
+    "train_kd_3090.py": "2d97c62c9813bca88177eaf990bd578b0372a0beae3b052c402819068a730974",
+    "losses/cwd.py": "a2f2713b897b5eed3dd96dba7073a781821bc29051b51684c2beed0316320c85",
+    "losses/adv.py": "331908bbffb9b61e0c77305236cdc083b1574d13cbe07ee66cb84ed7ecb9fd39",
+    "losses/kd.py": "bf420e5d0725ca057173cbdfe6e240e9d4a01325405c8c8d4d8171638ffd7805",
+    "losses/skd.py": "a932f887f22d10fb76f7e7a70afdfb642ca85422aff2873ce157ee173aaeb333",
+    "losses/dsd.py": "410d0075d4e69bcda13036c36c79f2c0fc325de0318029ded30fc6c117b5bb58",
+    "losses/at.py": "8d0aaaf77f372ef91740d97581b7063e7c141b48ebd4eeab300f25387bdffffb",
+    "losses/cirkd_mini_batch.py": "05a0b81216948a6dee30eaabf2d3f55b63ed15e8977b19bb674fb8ff63dd0848",
+    "losses/gcn.py": "f9f36f209e67ab1c122490b4460988ce06f71d2ca10e35e7ba1d850eba70fae9",
+    "losses/cirkd_channel.py": "ba9a71f33c9eeeacd393830310cf2827b7dc5620e130ece041b1f678363002d2",
+    "losses/task.py": "7c71247d4450c08e49444cccd156c315f7474aa8cbf010463af2471b523fad4c",
+    "losses/ifvd.py": "daad7aeab7157e7da0d04e601cedd0a59cdc9e9f97d3c32f437947f63b3eeccd",
+    "losses/__init__.py": "cc1f37b2ec793bb021b8332637452a9038ff253d5ca9d961a7aec18caa0b4174",
+    "losses/fitnet.py": "aa13ea816fe4d4be6a113acbd972d5219f56059c3ca84f5aa129cf768860d841",
+    "losses/cirkd_memory.py": "374918b0b4f2ccdeb731d9faeb1275f8cafd0273ea41977b66a3f33b27a231ef",
+    "utils/covar_temperature.py": "d677bfa48ff9a8fd6af1fe89c16d2295fa48a8c496b39dad01b5fadab2357da3",
+    "utils/rtc_o12_calibration.py": "5e23f3e1bd526017aa2046faff621dd284093d91dead9088dd4d7d9ddb641d9e",
+    "utils/score.py": "ba3d546a2cbea1fbbbfb7576e942423381f1789b212a812a64713f3db239d452",
+    "utils/region_teachability.py": "386b3ebaee55e167914a7f23cc6f23d4308f2a342d82b716286ed4ec7a65973d",
+    "utils/distributed.py": "e85e5566f000134aa178503b62087ae84810fdd61ae5ac54b3f7483b0cf4e740",
+    "utils/visualize.py": "e1e173c1cee304ef232883786657c46bee7bedd9ccea91aeb0df544249c49eb5",
+    "utils/task_aligned_temperature.py": "0ff8dd4f20c082a1ade73e91f68acb87b75c80b41538efdebb5c93336c2b668b",
+    "utils/flops.py": "7e87fb2d46a56794c743bb386b123c14a29ceea1336293df96e93eeef4971b1c",
+    "utils/covar_metrics.py": "4fa95e5844820d28c1985468e8927cd1b4efefd5c51eca25691005d85db4d3d1",
+    "utils/teacher_only_kd.py": "17f92f4eef6f447dc2a2faf8e1ddb2d2b523f508b0e32972de8c0158c79cc2c5",
+    "utils/__init__.py": "b6fe7805c7f7134615f240067c7c4dd6aaad975c3cf5a910df3d67ca978b5031",
+    "utils/logger.py": "3bf562b9da41dfc7b1698570e9d3990199f8098e75adee11f057f0191f38aa0f",
+    "utils/rtc_temperature.py": "01b7b6e6aa0d513561332510347b52ea9411330dfb0f2da54abdc36f2375fe59",
+    "utils/sagan.py": "8ec56662bc7001baafd076cc5b0e980b3454e705ed61ae96c3ae80c64d8b7e7a",
+    "models/upernet.py": "111602b3e56c835a8d6f693682f2e850f22a6ff6aef550bfc5136a21ed58faf9",
+    "models/pspnet.py": "a0c9fb0feb1ff3b2ef32919026faf4480a37c629f6ab0eddcb9edd7b2eb79ce8",
+    "models/deeplabv3.py": "e92d07085da3f47ee05ceab947a3d9676d53eec7880bd6b64a5af380d365e1a1",
+    "models/model_zoo.py": "0cce215cd8b4ce89a9e2df63d09a218582eca33e42abf59fc95e374b35e19c97",
+    "models/segformer.py": "b93e3ad0e327884c2d745492af5d58367a36c0e72dd88b7314e80aedbf1f9c98",
+    "models/deeplabv3_mobilenetv3.py": "a360e50c5c998c8edcae627bf07aa4883978fa379a7e728d63b7a86a30e30434",
+    "models/deeplabv3_mobile.py": "d2e5e74b8afdfea3c68b750872b55d28e41b310d25b8a1e17725271e32966936",
+    "models/__init__.py": "5ed7aaa2526290128986abd9b53b6f6bb99a893db059326e814b8995c9f0e469",
+    "models/psp_mobile.py": "03cff603160a7ebfe6e8087ae3b2ddfd54727a77d4fcdcf4d44f60027ad93052",
+    "models/segbase.py": "399684dc315190e001538551a44dd10b3917da1649f0442e0635daa56be0bf88",
+    "models/base_models/resnetv1b.py": "858febabeeb2eaf5fecc213c17616cc633df448b96645bfd24c41081ef633f13",
+    "models/base_models/drop.py": "49a39c37fb9cf604e9d3817f09e0ca7b5553249d33f9f47fbd41fac7e01f43d1",
+    "models/base_models/irconv.py": "683d2d9684f9d669d6a12e4d0535bd09ac1f440de23e5932a2d0daf568d63ac8",
+    "models/base_models/activation.py": "3e58e74ee64ae3e743c5197a71e7f60f6d20165b471e0b555336f48d38bc9332",
+    "models/base_models/hrnet.py": "bf6209649ad07b554ed5d371a0a4ce292b3bcdfcab5b685192f0efd2f1c44a39",
+    "models/base_models/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "models/base_models/mobilevit.py": "b2c3f21645ba7719d422582a20e476d49722a31e7d0ca68c43c9e105260ce790",
+    "models/base_models/mobilenetv3.py": "35754d04e0b27a5061fc7c554374797563774375bcc13223d14899450529c73f",
+    "models/base_models/mobilenetv2.py": "ce009ea1202e150e3179484824144ba2e2a6999d2a8eb8e402354cf452087e30",
+    "models/base_models/normalization.py": "be6357443cd26eaa79ca9f2f208c6ac26b49f8c1ebfa44604798aa08c0422324",
+    "dataset/cityscapes.py": "98f7ae76abd3518c0d49a5121247556e541b24db55aed3006be3084c8fdecf40",
+    "dataset/camvid.py": "2c492a1f0c0353cc81506bb82341d956920011eb3b082d02a10ff15a3acfa756",
+    "dataset/coco_stuff_164k.py": "7f475e28e8aac1bc48f44860f5ee5b6bbd5d6e845e88747adb6954d625ac5ed9",
+    "dataset/voc.py": "6349da2dd2e5a8ca5173509fe4f8112788c9fb7cae98f50ae6448d52d4fe5863",
+    "dataset/ade20k.py": "05ecf2ae9197d317a40f031afaec7ff75eda1e581108191ed48abdc1d13b0094"
+  },
+  "base_runtime": "/data1/youwu/jingshi/kd/CoVar-KD-3090/runtime-large",
+  "dependencies": {
+    "run_controller": "dcde675b17e9e8f9d76e0877404d3264e48b9ef6069aec1a5df56914f9c907f7",
+    "continue_controller": "0acfae8d2f757161f9b42259c133462fee37e782ecf6d678cc9c33e9174d5ccb",
+    "controller": "7cc16b94dfbb94d82671f0eee7744437ec95d4b9c0896d3cf4e7c22a6e0dd51d",
+    "preflight": "7dbfd17746177bb639ceba700d36076f3efcc2ac640d7de65bedece180d57f3a"
+  }
+}

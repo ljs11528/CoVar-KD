@@ -1,0 +1,1122 @@
+{
+  "updated_at": "2026-10-14T04:39:39.333651+00:00",
+  "runs": [
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_ce_seed1234",
+        "student": "large",
+        "seed": 1234,
+        "mode": "teacher_only",
+        "temperature": 1.0,
+        "coefficient": 0.0,
+        "gpu_count": 1,
+        "priority": 0,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-09T00:25:08.223469+00:00",
+      "final_miou_percent": 71.517033,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.026716,
+          "miou_percent": 66.073198
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.524558,
+          "miou_percent": 68.941751
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.911756,
+          "miou_percent": 69.794851
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.128128,
+          "miou_percent": 71.517033
+        }
+      ],
+      "log_sha256": "1a2d3537d84019f51b1c5af9a43b8564fd703d9b0f6982d70dce13834e4a1447",
+      "checkpoint_sha256": "08fb8418884a43d2314494ef8a18194df3ecdbc4f28c34307d3222798e112eeb",
+      "continuation": {
+        "iteration": 34000,
+        "prefix_root": "/data1/youwu/jingshi/kd/CoVar-KD-3090/runs/P12_Cityscapes_20261008/formal/city_large_ce_seed1234",
+        "prefix_log_sha256": "8b4305728eb983000de7f9ba559d7c0c3d82f69368a9aa27afa5416d731ff6d8",
+        "resume_checkpoint_sha256": "b5d061c9be76f5433711a52615c4618a78114323d83a0828c7ab9a8c7d5ffdaf",
+        "discarded_unsaved_prefix_after_iteration": 34000,
+        "data_stream_audit": "/data1/youwu/jingshi/kd/CoVar-KD-3090/reports/P12_Cityscapes_20261008/recovery_20261008/city_large_ce_seed1234/audit.json"
+      }
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_teacher_T2_c1_seed1234",
+        "student": "large",
+        "seed": 1234,
+        "mode": "teacher_only",
+        "temperature": 2.0,
+        "coefficient": 1.0,
+        "gpu_count": 1,
+        "priority": 1,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-09T06:41:28.628103+00:00",
+      "final_miou_percent": 72.296035,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.338479,
+          "miou_percent": 67.551127
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.811287,
+          "miou_percent": 69.79157
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.013811,
+          "miou_percent": 70.833108
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.262486,
+          "miou_percent": 72.296035
+        }
+      ],
+      "log_sha256": "2b72b704e741841c80c265b1414f6a9b1e1af70e293dc71f8f323ee778d6b8ee",
+      "checkpoint_sha256": "02bdb0c0e180538ccde2051e868e658250d02ef8a13cfabf625cae2669ce43ab",
+      "continuation": {
+        "iteration": 6000,
+        "prefix_root": "/data1/youwu/jingshi/kd/CoVar-KD-3090/runs/P12_Cityscapes_20261008/formal/city_large_teacher_T2_c1_seed1234",
+        "prefix_log_sha256": "13e2db4b51338269b794fb97f6b49bcf338d6a7f9d4e6fcff0d91740608a5864",
+        "resume_checkpoint_sha256": "4c1d18098c5c971eb763394e7900e9b5c9bb33018b01b7b94bfb4df2933b8200",
+        "discarded_unsaved_prefix_after_iteration": 6000,
+        "data_stream_audit": "/data1/youwu/jingshi/kd/CoVar-KD-3090/reports/P12_Cityscapes_20261008/recovery_20261008/city_large_teacher_T2_c1_seed1234/audit.json"
+      }
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_shared_T2_c1_seed1234",
+        "student": "large",
+        "seed": 1234,
+        "mode": "masked",
+        "temperature": 2.0,
+        "coefficient": 1.0,
+        "gpu_count": 1,
+        "priority": 2,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "no_double_T_squared": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-09T18:11:41.601292+00:00",
+      "final_miou_percent": 72.667053,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.389603,
+          "miou_percent": 67.071115
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.794114,
+          "miou_percent": 69.830906
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.988548,
+          "miou_percent": 70.32043
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.290412,
+          "miou_percent": 72.667053
+        }
+      ],
+      "log_sha256": "13d2cf30144fed1be177277b14b1b6032752577fd321c6f4355c1c598c947b93",
+      "checkpoint_sha256": "7590d28ff257d307b2eee90df52637bba4347ee1358f7af67a4ddb612b04fa2f"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_teacher_T2_c4_seed1234",
+        "student": "large",
+        "seed": 1234,
+        "mode": "teacher_only",
+        "temperature": 2.0,
+        "coefficient": 4.0,
+        "gpu_count": 1,
+        "priority": 3,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-10T00:31:21.788806+00:00",
+      "final_miou_percent": 73.349428,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.196796,
+          "miou_percent": 65.291801
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.828663,
+          "miou_percent": 70.586668
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.890423,
+          "miou_percent": 70.411622
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.379197,
+          "miou_percent": 73.349428
+        }
+      ],
+      "log_sha256": "475cf27043b54498e6fe01bc4205054de7cf26db5fbde610e604c8b0d34979fa",
+      "checkpoint_sha256": "214ee98691715cc642911627246b3a5e5924d0c4df35aeca42d8166ecf525492"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_shared_T2_c4_seed1234",
+        "student": "large",
+        "seed": 1234,
+        "mode": "masked",
+        "temperature": 2.0,
+        "coefficient": 4.0,
+        "gpu_count": 1,
+        "priority": 4,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "no_double_T_squared": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-10T11:58:01.294864+00:00",
+      "final_miou_percent": 73.425782,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.333051,
+          "miou_percent": 66.831255
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.566734,
+          "miou_percent": 69.456
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.932435,
+          "miou_percent": 70.601663
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.352119,
+          "miou_percent": 73.425782
+        }
+      ],
+      "log_sha256": "72656a33bf4ab23a8e8dc33195518c7ca79b766886b2dbe5d7e125fd9cda7d56",
+      "checkpoint_sha256": "64b168e1f8e010e9f0fc374ea7be9e51ee20dc2a1c16af4fb4c47ed7004716b3"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_ce_seed2025",
+        "student": "large",
+        "seed": 2025,
+        "mode": "teacher_only",
+        "temperature": 1.0,
+        "coefficient": 0.0,
+        "gpu_count": 1,
+        "priority": 10,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-10T18:20:13.360785+00:00",
+      "final_miou_percent": 71.419076,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.243413,
+          "miou_percent": 67.664193
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.305727,
+          "miou_percent": 67.601696
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.744583,
+          "miou_percent": 70.172755
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.04212,
+          "miou_percent": 71.419076
+        }
+      ],
+      "log_sha256": "53dbb5cce9d4ec6f24342e4be9af25e67b00c8d4e42bbb3bd74446355a58d169",
+      "checkpoint_sha256": "7fad22aa7556d9c2b7e663f5ecc6a4ff160ba14807bbbb5d8bb3336f912b97fa"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_teacher_T2_c1_seed2025",
+        "student": "large",
+        "seed": 2025,
+        "mode": "teacher_only",
+        "temperature": 2.0,
+        "coefficient": 1.0,
+        "gpu_count": 1,
+        "priority": 11,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-11T05:44:18.892128+00:00",
+      "final_miou_percent": 72.01136,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.333589,
+          "miou_percent": 67.645054
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.623932,
+          "miou_percent": 68.484653
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.846123,
+          "miou_percent": 70.662212
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.243441,
+          "miou_percent": 72.01136
+        }
+      ],
+      "log_sha256": "b1b5436df5b1680db14314c938e80aaf9aad488dbd21ba04a6cbfe6a412b0d6d",
+      "checkpoint_sha256": "b9f39166324c59ce3bfa99a433c2e76dcb75898393fc40361a967714e97e3fb0"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_shared_T2_c1_seed2025",
+        "student": "large",
+        "seed": 2025,
+        "mode": "masked",
+        "temperature": 2.0,
+        "coefficient": 1.0,
+        "gpu_count": 1,
+        "priority": 12,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "no_double_T_squared": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-11T12:07:21.224224+00:00",
+      "final_miou_percent": 71.993013,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.341837,
+          "miou_percent": 67.482336
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.722735,
+          "miou_percent": 68.630804
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.975893,
+          "miou_percent": 70.746447
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.231948,
+          "miou_percent": 71.993013
+        }
+      ],
+      "log_sha256": "5a9c586b8e900c72628474dd772e454120c66529f1e780d3710057fc9d44ce64",
+      "checkpoint_sha256": "36a7ac1b7a1a3bae3904638e4eca19f93bf7981d79a873719b8bb84c4e84dcfc"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_teacher_T2_c4_seed2025",
+        "student": "large",
+        "seed": 2025,
+        "mode": "teacher_only",
+        "temperature": 2.0,
+        "coefficient": 4.0,
+        "gpu_count": 1,
+        "priority": 13,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-11T23:30:28.360768+00:00",
+      "final_miou_percent": 72.617473,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.492677,
+          "miou_percent": 68.571312
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.717478,
+          "miou_percent": 68.259536
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.954199,
+          "miou_percent": 71.46553
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.284831,
+          "miou_percent": 72.617473
+        }
+      ],
+      "log_sha256": "15e3a77c108fe2cfb38905b2a278d29d9c787a4ab1100973aa6302ebae4ee6a7",
+      "checkpoint_sha256": "c5b62e9100afd214618f3fb94b5d96377388b1eaf2bce0f22fe8fb97255f705e"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_shared_T2_c4_seed2025",
+        "student": "large",
+        "seed": 2025,
+        "mode": "masked",
+        "temperature": 2.0,
+        "coefficient": 4.0,
+        "gpu_count": 1,
+        "priority": 14,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "no_double_T_squared": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-12T05:54:05.222602+00:00",
+      "final_miou_percent": 72.741303,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.347782,
+          "miou_percent": 67.764868
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.734391,
+          "miou_percent": 68.153319
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.04196,
+          "miou_percent": 71.278875
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.329482,
+          "miou_percent": 72.741303
+        }
+      ],
+      "log_sha256": "7376e245b88f9301d85d0e070ddb56a04afc2e37bea79c4e630c123311afd695",
+      "checkpoint_sha256": "354b3641e0bb786a3993f202441448cc7ad049b98aabc78a942e8f8fbbd2feb3"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_ce_seed3407",
+        "student": "large",
+        "seed": 3407,
+        "mode": "teacher_only",
+        "temperature": 1.0,
+        "coefficient": 0.0,
+        "gpu_count": 1,
+        "priority": 20,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-12T17:15:03.574298+00:00",
+      "final_miou_percent": 71.188834,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.352099,
+          "miou_percent": 66.118581
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.534865,
+          "miou_percent": 68.357403
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 94.854429,
+          "miou_percent": 70.438955
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.166117,
+          "miou_percent": 71.188834
+        }
+      ],
+      "log_sha256": "125b403424062582f271fb764a1168edd2416fa1713c146a225adf22a84641e6",
+      "checkpoint_sha256": "6d0b9758811352e40528a42887064731373a83477d96ac4a05fc8fc5e0b9a58b"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_teacher_T2_c1_seed3407",
+        "student": "large",
+        "seed": 3407,
+        "mode": "teacher_only",
+        "temperature": 2.0,
+        "coefficient": 1.0,
+        "gpu_count": 1,
+        "priority": 21,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-12T23:40:19.133735+00:00",
+      "final_miou_percent": 71.65667,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.392415,
+          "miou_percent": 66.51622
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.690685,
+          "miou_percent": 68.515618
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.00159,
+          "miou_percent": 70.946652
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.263935,
+          "miou_percent": 71.65667
+        }
+      ],
+      "log_sha256": "713bd2b0d1efedc3b673f02af24d40d8c1bdee540bc7b75a518e53fa3bc8ccba",
+      "checkpoint_sha256": "9bf449780d9906962a87dd6faded14948c2f6445b09b0fe81aab68778948f344"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_shared_T2_c1_seed3407",
+        "student": "large",
+        "seed": 3407,
+        "mode": "masked",
+        "temperature": 2.0,
+        "coefficient": 1.0,
+        "gpu_count": 1,
+        "priority": 22,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "no_double_T_squared": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-13T10:59:49.278690+00:00",
+      "final_miou_percent": 72.462481,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.353621,
+          "miou_percent": 66.605858
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.641377,
+          "miou_percent": 68.177229
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.072581,
+          "miou_percent": 71.75626
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.305029,
+          "miou_percent": 72.462481
+        }
+      ],
+      "log_sha256": "039b908206359fb5ca4e882b98dfa85978bf3a9689ec0c6344a08b4eda0ffc1b",
+      "checkpoint_sha256": "9becc6140d86a173c8f379de9da23cecf46394bddc40a27cf739213cea0bf724"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_teacher_T2_c4_seed3407",
+        "student": "large",
+        "seed": 3407,
+        "mode": "teacher_only",
+        "temperature": 2.0,
+        "coefficient": 4.0,
+        "gpu_count": 1,
+        "priority": 23,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-13T17:30:41.502242+00:00",
+      "final_miou_percent": 73.58796,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.365371,
+          "miou_percent": 65.80569
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.617824,
+          "miou_percent": 69.108208
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.07003,
+          "miou_percent": 71.82186
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.36039,
+          "miou_percent": 73.58796
+        }
+      ],
+      "log_sha256": "a4f875d672e6b9fd0b8befaf7e83481285e89d8ef4c816470c33ea65b1c18fce",
+      "checkpoint_sha256": "e3ede6edf580fc5f06db9087e4e01c2771291af4f6c4bef25d52a0a60e82dded"
+    },
+    {
+      "status": "PASS",
+      "spec": {
+        "id": "city_large_shared_T2_c4_seed3407",
+        "student": "large",
+        "seed": 3407,
+        "mode": "masked",
+        "temperature": 2.0,
+        "coefficient": 4.0,
+        "gpu_count": 1,
+        "priority": 24,
+        "kind": "independent_dataset_factorial"
+      },
+      "checks": {
+        "iteration": true,
+        "optimizer": true,
+        "rng": true,
+        "finite": true,
+        "training_end": true,
+        "final_log": true,
+        "world_size": true,
+        "classes": true,
+        "dataset": true,
+        "max_iterations": true,
+        "seed": true,
+        "lr": true,
+        "workers": true,
+        "batch_size": true,
+        "crop_size": true,
+        "kd_loss_mode": true,
+        "lambda_kd": true,
+        "kd_temperature": true,
+        "teacher_output_temp": true,
+        "teacher_pretrained": true,
+        "data": true,
+        "p11_fast_ce": true,
+        "p11_logits_only": true,
+        "no_other_losses": true,
+        "no_double_T_squared": true,
+        "kd_active_or_zero": true,
+        "validation_count": true,
+        "validation_full_500": true,
+        "milestone_20000": true,
+        "milestone_40000": true,
+        "milestone_60000": true,
+        "milestone_80000": true
+      },
+      "completed_at": "2026-10-14T04:39:39.197062+00:00",
+      "final_miou_percent": 73.173215,
+      "validations": [
+        {
+          "iteration": 20000,
+          "pixacc_percent": 94.228784,
+          "miou_percent": 65.108431
+        },
+        {
+          "iteration": 40000,
+          "pixacc_percent": 94.047822,
+          "miou_percent": 66.848928
+        },
+        {
+          "iteration": 60000,
+          "pixacc_percent": 95.063151,
+          "miou_percent": 71.385603
+        },
+        {
+          "iteration": 80000,
+          "pixacc_percent": 95.34018,
+          "miou_percent": 73.173215
+        }
+      ],
+      "log_sha256": "7db44f58a5cd76174f7befb1c49f82c3fba54762d6cf164e1c6cc4fbb803f479",
+      "checkpoint_sha256": "7da29473daf8366c3372b40c99652f3f36cde7a79fe901e8438285ad9b0497fd"
+    }
+  ]
+}

@@ -1,0 +1,687 @@
+{
+  "schema_version": 1,
+  "snapshot_date": "2026-10-15",
+  "scope": "Existing source snapshots and compact evidence; no new experimental results.",
+  "files": {
+    "repro/rtx3090/environment-core-constraints.txt": {
+      "source": "current_3090/CoVar-KD-3090/environment-core-constraints.txt",
+      "bytes": 584,
+      "sha256": "e42cbfe2169329f7758520e244a18951f3296c24ee24726bb13f0ba3196677bf"
+    },
+    "repro/rtx3090/environment-reference-freeze.txt": {
+      "source": "current_3090/CoVar-KD-3090/environment-reference-freeze.txt",
+      "bytes": 4349,
+      "sha256": "51504cbe197e6796094a35e1dafb20fdf60bf1442dfc18b7ed7fc833662539a5"
+    },
+    "reports/cvpr2027/baselines/P11_3090_20261002/environment-freeze.txt": {
+      "source": "current_3090/CoVar-KD-3090/reports/P11_3090_20261002/environment-freeze.txt",
+      "bytes": 855,
+      "sha256": "ee15336a9f93cda82e42ba799bacf5b81a11075403eda5778d3348dcb81f8571"
+    },
+    "reports/cvpr2027/baselines/P11_3090_20261002/protocol.json": {
+      "source": "current_3090/CoVar-KD-3090/reports/P11_3090_20261002/protocol.json",
+      "bytes": 8112,
+      "sha256": "c695e126c115716245b227eeec08f55fa754800983429887fc23c5dcc7ed0aba"
+    },
+    "reports/cvpr2027/baselines/P11_3090_20261002/results.json": {
+      "source": "current_3090/CoVar-KD-3090/reports/P11_3090_20261002/results.json",
+      "bytes": 32995,
+      "sha256": "32455072d45c0bacf74862af8a0c92031c15885861ae68d8110376fb0c099719"
+    },
+    "reports/cvpr2027/baselines/P12_Cityscapes_20261008/data_and_loss_audit.json": {
+      "source": "current_3090/CoVar-KD-3090/reports/P12_Cityscapes_20261008/data_and_loss_audit.json",
+      "bytes": 3332,
+      "sha256": "f14fee00450f8acc0d0aa8bcfe95f30409d633172c92daa0de545c2a45e6e259"
+    },
+    "reports/cvpr2027/baselines/P12_Cityscapes_20261008/registration.json": {
+      "source": "current_3090/CoVar-KD-3090/reports/P12_Cityscapes_20261008/registration.json",
+      "bytes": 14070,
+      "sha256": "0af471b1c8db866d22434ddb888a8799dc781c49284e94056e82eac89a015b72"
+    },
+    "reports/cvpr2027/baselines/P12_Cityscapes_20261008/results.json": {
+      "source": "current_3090/CoVar-KD-3090/reports/P12_Cityscapes_20261008/results.json",
+      "bytes": 32785,
+      "sha256": "52929fcf03c1534f333eaa7efac9d1b53166cea212d3cd83cd4e905432847098"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/train_kd_3090.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/train_kd_3090.py",
+      "bytes": 129825,
+      "sha256": "2d97c62c9813bca88177eaf990bd578b0372a0beae3b052c402819068a730974"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/dataset/ade20k.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/dataset/ade20k.py",
+      "bytes": 5481,
+      "sha256": "05ecf2ae9197d317a40f031afaec7ff75eda1e581108191ed48abdc1d13b0094"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/dataset/camvid.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/dataset/camvid.py",
+      "bytes": 5012,
+      "sha256": "2c492a1f0c0353cc81506bb82341d956920011eb3b082d02a10ff15a3acfa756"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/dataset/cityscapes.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/dataset/cityscapes.py",
+      "bytes": 8033,
+      "sha256": "98f7ae76abd3518c0d49a5121247556e541b24db55aed3006be3084c8fdecf40"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/dataset/coco_stuff_164k.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/dataset/coco_stuff_164k.py",
+      "bytes": 5295,
+      "sha256": "7f475e28e8aac1bc48f44860f5ee5b6bbd5d6e845e88747adb6954d625ac5ed9"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/dataset/voc.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/dataset/voc.py",
+      "bytes": 5425,
+      "sha256": "6349da2dd2e5a8ca5173509fe4f8112788c9fb7cae98f50ae6448d52d4fe5863"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/__init__.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/__init__.py",
+      "bytes": 282,
+      "sha256": "cc1f37b2ec793bb021b8332637452a9038ff253d5ca9d961a7aec18caa0b4174"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/adv.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/adv.py",
+      "bytes": 3303,
+      "sha256": "331908bbffb9b61e0c77305236cdc083b1574d13cbe07ee66cb84ed7ecb9fd39"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/at.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/at.py",
+      "bytes": 430,
+      "sha256": "8d0aaaf77f372ef91740d97581b7063e7c141b48ebd4eeab300f25387bdffffb"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/cirkd_channel.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/cirkd_channel.py",
+      "bytes": 5774,
+      "sha256": "ba9a71f33c9eeeacd393830310cf2827b7dc5620e130ece041b1f678363002d2"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/cirkd_memory.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/cirkd_memory.py",
+      "bytes": 7838,
+      "sha256": "374918b0b4f2ccdeb731d9faeb1275f8cafd0273ea41977b66a3f33b27a231ef"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/cirkd_mini_batch.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/cirkd_mini_batch.py",
+      "bytes": 2999,
+      "sha256": "05a0b81216948a6dee30eaabf2d3f55b63ed15e8977b19bb674fb8ff63dd0848"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/cwd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/cwd.py",
+      "bytes": 2545,
+      "sha256": "a2f2713b897b5eed3dd96dba7073a781821bc29051b51684c2beed0316320c85"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/dsd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/dsd.py",
+      "bytes": 2449,
+      "sha256": "410d0075d4e69bcda13036c36c79f2c0fc325de0318029ded30fc6c117b5bb58"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/fitnet.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/fitnet.py",
+      "bytes": 529,
+      "sha256": "aa13ea816fe4d4be6a113acbd972d5219f56059c3ca84f5aa129cf768860d841"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/gcn.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/gcn.py",
+      "bytes": 1633,
+      "sha256": "f9f36f209e67ab1c122490b4460988ce06f71d2ca10e35e7ba1d850eba70fae9"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/ifvd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/ifvd.py",
+      "bytes": 1477,
+      "sha256": "daad7aeab7157e7da0d04e601cedd0a59cdc9e9f97d3c32f437947f63b3eeccd"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/kd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/kd.py",
+      "bytes": 727,
+      "sha256": "bf420e5d0725ca057173cbdfe6e240e9d4a01325405c8c8d4d8171638ffd7805"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/skd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/skd.py",
+      "bytes": 1157,
+      "sha256": "a932f887f22d10fb76f7e7a70afdfb642ca85422aff2873ce157ee173aaeb333"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/losses/task.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/losses/task.py",
+      "bytes": 520,
+      "sha256": "7c71247d4450c08e49444cccd156c315f7474aa8cbf010463af2471b523fad4c"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/__init__.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/__init__.py",
+      "bytes": 16,
+      "sha256": "5ed7aaa2526290128986abd9b53b6f6bb99a893db059326e814b8995c9f0e469"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/deeplabv3.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/deeplabv3.py",
+      "bytes": 6380,
+      "sha256": "e92d07085da3f47ee05ceab947a3d9676d53eec7880bd6b64a5af380d365e1a1"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/deeplabv3_mobile.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/deeplabv3_mobile.py",
+      "bytes": 5852,
+      "sha256": "d2e5e74b8afdfea3c68b750872b55d28e41b310d25b8a1e17725271e32966936"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/deeplabv3_mobilenetv3.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/deeplabv3_mobilenetv3.py",
+      "bytes": 5602,
+      "sha256": "a360e50c5c998c8edcae627bf07aa4883978fa379a7e728d63b7a86a30e30434"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/model_zoo.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/model_zoo.py",
+      "bytes": 837,
+      "sha256": "0cce215cd8b4ce89a9e2df63d09a218582eca33e42abf59fc95e374b35e19c97"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/psp_mobile.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/psp_mobile.py",
+      "bytes": 4793,
+      "sha256": "03cff603160a7ebfe6e8087ae3b2ddfd54727a77d4fcdcf4d44f60027ad93052"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/pspnet.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/pspnet.py",
+      "bytes": 5367,
+      "sha256": "a0c9fb0feb1ff3b2ef32919026faf4480a37c629f6ab0eddcb9edd7b2eb79ce8"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/segbase.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/segbase.py",
+      "bytes": 3172,
+      "sha256": "399684dc315190e001538551a44dd10b3917da1649f0442e0635daa56be0bf88"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/segformer.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/segformer.py",
+      "bytes": 21673,
+      "sha256": "b93e3ad0e327884c2d745492af5d58367a36c0e72dd88b7314e80aedbf1f9c98"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/upernet.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/upernet.py",
+      "bytes": 6272,
+      "sha256": "111602b3e56c835a8d6f693682f2e850f22a6ff6aef550bfc5136a21ed58faf9"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/base_models/__init__.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/base_models/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/base_models/activation.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/base_models/activation.py",
+      "bytes": 4346,
+      "sha256": "3e58e74ee64ae3e743c5197a71e7f60f6d20165b471e0b555336f48d38bc9332"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/base_models/drop.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/base_models/drop.py",
+      "bytes": 3535,
+      "sha256": "49a39c37fb9cf604e9d3817f09e0ca7b5553249d33f9f47fbd41fac7e01f43d1"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/base_models/hrnet.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/base_models/hrnet.py",
+      "bytes": 15139,
+      "sha256": "bf6209649ad07b554ed5d371a0a4ce292b3bcdfcab5b685192f0efd2f1c44a39"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/base_models/irconv.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/base_models/irconv.py",
+      "bytes": 8061,
+      "sha256": "683d2d9684f9d669d6a12e4d0535bd09ac1f440de23e5932a2d0daf568d63ac8"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/base_models/mobilenetv2.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/base_models/mobilenetv2.py",
+      "bytes": 6882,
+      "sha256": "ce009ea1202e150e3179484824144ba2e2a6999d2a8eb8e402354cf452087e30"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/base_models/mobilenetv3.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/base_models/mobilenetv3.py",
+      "bytes": 14675,
+      "sha256": "35754d04e0b27a5061fc7c554374797563774375bcc13223d14899450529c73f"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/base_models/mobilevit.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/base_models/mobilevit.py",
+      "bytes": 34465,
+      "sha256": "b2c3f21645ba7719d422582a20e476d49722a31e7d0ca68c43c9e105260ce790"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/base_models/normalization.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/base_models/normalization.py",
+      "bytes": 5312,
+      "sha256": "be6357443cd26eaa79ca9f2f208c6ac26b49f8c1ebfa44604798aa08c0422324"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/models/base_models/resnetv1b.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/models/base_models/resnetv1b.py",
+      "bytes": 12094,
+      "sha256": "858febabeeb2eaf5fecc213c17616cc633df448b96645bfd24c41081ef633f13"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/__init__.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/__init__.py",
+      "bytes": 66,
+      "sha256": "b6fe7805c7f7134615f240067c7c4dd6aaad975c3cf5a910df3d67ca978b5031"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/covar_metrics.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/covar_metrics.py",
+      "bytes": 10355,
+      "sha256": "4fa95e5844820d28c1985468e8927cd1b4efefd5c51eca25691005d85db4d3d1"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/covar_temperature.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/covar_temperature.py",
+      "bytes": 6243,
+      "sha256": "d677bfa48ff9a8fd6af1fe89c16d2295fa48a8c496b39dad01b5fadab2357da3"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/distributed.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/distributed.py",
+      "bytes": 9084,
+      "sha256": "e85e5566f000134aa178503b62087ae84810fdd61ae5ac54b3f7483b0cf4e740"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/flops.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/flops.py",
+      "bytes": 2151,
+      "sha256": "7e87fb2d46a56794c743bb386b123c14a29ceea1336293df96e93eeef4971b1c"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/logger.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/logger.py",
+      "bytes": 1062,
+      "sha256": "3bf562b9da41dfc7b1698570e9d3990199f8098e75adee11f057f0191f38aa0f"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/region_teachability.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/region_teachability.py",
+      "bytes": 3464,
+      "sha256": "386b3ebaee55e167914a7f23cc6f23d4308f2a342d82b716286ed4ec7a65973d"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/rtc_o12_calibration.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/rtc_o12_calibration.py",
+      "bytes": 25980,
+      "sha256": "5e23f3e1bd526017aa2046faff621dd284093d91dead9088dd4d7d9ddb641d9e"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/rtc_temperature.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/rtc_temperature.py",
+      "bytes": 32239,
+      "sha256": "01b7b6e6aa0d513561332510347b52ea9411330dfb0f2da54abdc36f2375fe59"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/sagan.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/sagan.py",
+      "bytes": 6551,
+      "sha256": "8ec56662bc7001baafd076cc5b0e980b3454e705ed61ae96c3ae80c64d8b7e7a"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/score.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/score.py",
+      "bytes": 6321,
+      "sha256": "ba3d546a2cbea1fbbbfb7576e942423381f1789b212a812a64713f3db239d452"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/task_aligned_temperature.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/task_aligned_temperature.py",
+      "bytes": 15639,
+      "sha256": "0ff8dd4f20c082a1ade73e91f68acb87b75c80b41538efdebb5c93336c2b668b"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/teacher_only_kd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/teacher_only_kd.py",
+      "bytes": 1862,
+      "sha256": "17f92f4eef6f447dc2a2faf8e1ddb2d2b523f508b0e32972de8c0158c79cc2c5"
+    },
+    "repro/rtx3090/runtime-cityscapes-large/utils/visualize.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-cityscapes-large/utils/visualize.py",
+      "bytes": 9992,
+      "sha256": "e1e173c1cee304ef232883786657c46bee7bedd9ccea91aeb0df544249c49eb5"
+    },
+    "repro/rtx3090/runtime-large/train_kd_3090.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/train_kd_3090.py",
+      "bytes": 129825,
+      "sha256": "2d97c62c9813bca88177eaf990bd578b0372a0beae3b052c402819068a730974"
+    },
+    "repro/rtx3090/runtime-large/dataset/ade20k.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/dataset/ade20k.py",
+      "bytes": 5481,
+      "sha256": "05ecf2ae9197d317a40f031afaec7ff75eda1e581108191ed48abdc1d13b0094"
+    },
+    "repro/rtx3090/runtime-large/dataset/camvid.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/dataset/camvid.py",
+      "bytes": 5012,
+      "sha256": "2c492a1f0c0353cc81506bb82341d956920011eb3b082d02a10ff15a3acfa756"
+    },
+    "repro/rtx3090/runtime-large/dataset/cityscapes.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/dataset/cityscapes.py",
+      "bytes": 7995,
+      "sha256": "3a46169a0d740ccd644491b99facf176d871425553fb5c9800a2f5fb4b80657c"
+    },
+    "repro/rtx3090/runtime-large/dataset/coco_stuff_164k.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/dataset/coco_stuff_164k.py",
+      "bytes": 5295,
+      "sha256": "7f475e28e8aac1bc48f44860f5ee5b6bbd5d6e845e88747adb6954d625ac5ed9"
+    },
+    "repro/rtx3090/runtime-large/dataset/voc.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/dataset/voc.py",
+      "bytes": 5425,
+      "sha256": "6349da2dd2e5a8ca5173509fe4f8112788c9fb7cae98f50ae6448d52d4fe5863"
+    },
+    "repro/rtx3090/runtime-large/losses/__init__.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/__init__.py",
+      "bytes": 282,
+      "sha256": "cc1f37b2ec793bb021b8332637452a9038ff253d5ca9d961a7aec18caa0b4174"
+    },
+    "repro/rtx3090/runtime-large/losses/adv.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/adv.py",
+      "bytes": 3303,
+      "sha256": "331908bbffb9b61e0c77305236cdc083b1574d13cbe07ee66cb84ed7ecb9fd39"
+    },
+    "repro/rtx3090/runtime-large/losses/at.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/at.py",
+      "bytes": 430,
+      "sha256": "8d0aaaf77f372ef91740d97581b7063e7c141b48ebd4eeab300f25387bdffffb"
+    },
+    "repro/rtx3090/runtime-large/losses/cirkd_channel.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/cirkd_channel.py",
+      "bytes": 5774,
+      "sha256": "ba9a71f33c9eeeacd393830310cf2827b7dc5620e130ece041b1f678363002d2"
+    },
+    "repro/rtx3090/runtime-large/losses/cirkd_memory.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/cirkd_memory.py",
+      "bytes": 7838,
+      "sha256": "374918b0b4f2ccdeb731d9faeb1275f8cafd0273ea41977b66a3f33b27a231ef"
+    },
+    "repro/rtx3090/runtime-large/losses/cirkd_mini_batch.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/cirkd_mini_batch.py",
+      "bytes": 2999,
+      "sha256": "05a0b81216948a6dee30eaabf2d3f55b63ed15e8977b19bb674fb8ff63dd0848"
+    },
+    "repro/rtx3090/runtime-large/losses/cwd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/cwd.py",
+      "bytes": 2545,
+      "sha256": "a2f2713b897b5eed3dd96dba7073a781821bc29051b51684c2beed0316320c85"
+    },
+    "repro/rtx3090/runtime-large/losses/dsd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/dsd.py",
+      "bytes": 2449,
+      "sha256": "410d0075d4e69bcda13036c36c79f2c0fc325de0318029ded30fc6c117b5bb58"
+    },
+    "repro/rtx3090/runtime-large/losses/fitnet.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/fitnet.py",
+      "bytes": 529,
+      "sha256": "aa13ea816fe4d4be6a113acbd972d5219f56059c3ca84f5aa129cf768860d841"
+    },
+    "repro/rtx3090/runtime-large/losses/gcn.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/gcn.py",
+      "bytes": 1633,
+      "sha256": "f9f36f209e67ab1c122490b4460988ce06f71d2ca10e35e7ba1d850eba70fae9"
+    },
+    "repro/rtx3090/runtime-large/losses/ifvd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/ifvd.py",
+      "bytes": 1477,
+      "sha256": "daad7aeab7157e7da0d04e601cedd0a59cdc9e9f97d3c32f437947f63b3eeccd"
+    },
+    "repro/rtx3090/runtime-large/losses/kd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/kd.py",
+      "bytes": 727,
+      "sha256": "bf420e5d0725ca057173cbdfe6e240e9d4a01325405c8c8d4d8171638ffd7805"
+    },
+    "repro/rtx3090/runtime-large/losses/skd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/skd.py",
+      "bytes": 1157,
+      "sha256": "a932f887f22d10fb76f7e7a70afdfb642ca85422aff2873ce157ee173aaeb333"
+    },
+    "repro/rtx3090/runtime-large/losses/task.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/losses/task.py",
+      "bytes": 520,
+      "sha256": "7c71247d4450c08e49444cccd156c315f7474aa8cbf010463af2471b523fad4c"
+    },
+    "repro/rtx3090/runtime-large/models/__init__.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/__init__.py",
+      "bytes": 16,
+      "sha256": "5ed7aaa2526290128986abd9b53b6f6bb99a893db059326e814b8995c9f0e469"
+    },
+    "repro/rtx3090/runtime-large/models/deeplabv3.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/deeplabv3.py",
+      "bytes": 6380,
+      "sha256": "e92d07085da3f47ee05ceab947a3d9676d53eec7880bd6b64a5af380d365e1a1"
+    },
+    "repro/rtx3090/runtime-large/models/deeplabv3_mobile.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/deeplabv3_mobile.py",
+      "bytes": 5852,
+      "sha256": "d2e5e74b8afdfea3c68b750872b55d28e41b310d25b8a1e17725271e32966936"
+    },
+    "repro/rtx3090/runtime-large/models/deeplabv3_mobilenetv3.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/deeplabv3_mobilenetv3.py",
+      "bytes": 5602,
+      "sha256": "a360e50c5c998c8edcae627bf07aa4883978fa379a7e728d63b7a86a30e30434"
+    },
+    "repro/rtx3090/runtime-large/models/model_zoo.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/model_zoo.py",
+      "bytes": 837,
+      "sha256": "0cce215cd8b4ce89a9e2df63d09a218582eca33e42abf59fc95e374b35e19c97"
+    },
+    "repro/rtx3090/runtime-large/models/psp_mobile.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/psp_mobile.py",
+      "bytes": 4793,
+      "sha256": "03cff603160a7ebfe6e8087ae3b2ddfd54727a77d4fcdcf4d44f60027ad93052"
+    },
+    "repro/rtx3090/runtime-large/models/pspnet.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/pspnet.py",
+      "bytes": 5367,
+      "sha256": "a0c9fb0feb1ff3b2ef32919026faf4480a37c629f6ab0eddcb9edd7b2eb79ce8"
+    },
+    "repro/rtx3090/runtime-large/models/segbase.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/segbase.py",
+      "bytes": 3172,
+      "sha256": "399684dc315190e001538551a44dd10b3917da1649f0442e0635daa56be0bf88"
+    },
+    "repro/rtx3090/runtime-large/models/segformer.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/segformer.py",
+      "bytes": 21673,
+      "sha256": "b93e3ad0e327884c2d745492af5d58367a36c0e72dd88b7314e80aedbf1f9c98"
+    },
+    "repro/rtx3090/runtime-large/models/upernet.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/upernet.py",
+      "bytes": 6272,
+      "sha256": "111602b3e56c835a8d6f693682f2e850f22a6ff6aef550bfc5136a21ed58faf9"
+    },
+    "repro/rtx3090/runtime-large/models/base_models/__init__.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/base_models/__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "repro/rtx3090/runtime-large/models/base_models/activation.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/base_models/activation.py",
+      "bytes": 4346,
+      "sha256": "3e58e74ee64ae3e743c5197a71e7f60f6d20165b471e0b555336f48d38bc9332"
+    },
+    "repro/rtx3090/runtime-large/models/base_models/drop.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/base_models/drop.py",
+      "bytes": 3535,
+      "sha256": "49a39c37fb9cf604e9d3817f09e0ca7b5553249d33f9f47fbd41fac7e01f43d1"
+    },
+    "repro/rtx3090/runtime-large/models/base_models/hrnet.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/base_models/hrnet.py",
+      "bytes": 15139,
+      "sha256": "bf6209649ad07b554ed5d371a0a4ce292b3bcdfcab5b685192f0efd2f1c44a39"
+    },
+    "repro/rtx3090/runtime-large/models/base_models/irconv.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/base_models/irconv.py",
+      "bytes": 8061,
+      "sha256": "683d2d9684f9d669d6a12e4d0535bd09ac1f440de23e5932a2d0daf568d63ac8"
+    },
+    "repro/rtx3090/runtime-large/models/base_models/mobilenetv2.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/base_models/mobilenetv2.py",
+      "bytes": 6882,
+      "sha256": "ce009ea1202e150e3179484824144ba2e2a6999d2a8eb8e402354cf452087e30"
+    },
+    "repro/rtx3090/runtime-large/models/base_models/mobilenetv3.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/base_models/mobilenetv3.py",
+      "bytes": 14675,
+      "sha256": "35754d04e0b27a5061fc7c554374797563774375bcc13223d14899450529c73f"
+    },
+    "repro/rtx3090/runtime-large/models/base_models/mobilevit.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/base_models/mobilevit.py",
+      "bytes": 34465,
+      "sha256": "b2c3f21645ba7719d422582a20e476d49722a31e7d0ca68c43c9e105260ce790"
+    },
+    "repro/rtx3090/runtime-large/models/base_models/normalization.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/base_models/normalization.py",
+      "bytes": 5312,
+      "sha256": "be6357443cd26eaa79ca9f2f208c6ac26b49f8c1ebfa44604798aa08c0422324"
+    },
+    "repro/rtx3090/runtime-large/models/base_models/resnetv1b.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/models/base_models/resnetv1b.py",
+      "bytes": 12094,
+      "sha256": "858febabeeb2eaf5fecc213c17616cc633df448b96645bfd24c41081ef633f13"
+    },
+    "repro/rtx3090/runtime-large/utils/__init__.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/__init__.py",
+      "bytes": 66,
+      "sha256": "b6fe7805c7f7134615f240067c7c4dd6aaad975c3cf5a910df3d67ca978b5031"
+    },
+    "repro/rtx3090/runtime-large/utils/covar_metrics.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/covar_metrics.py",
+      "bytes": 10355,
+      "sha256": "4fa95e5844820d28c1985468e8927cd1b4efefd5c51eca25691005d85db4d3d1"
+    },
+    "repro/rtx3090/runtime-large/utils/covar_temperature.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/covar_temperature.py",
+      "bytes": 6243,
+      "sha256": "d677bfa48ff9a8fd6af1fe89c16d2295fa48a8c496b39dad01b5fadab2357da3"
+    },
+    "repro/rtx3090/runtime-large/utils/distributed.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/distributed.py",
+      "bytes": 9084,
+      "sha256": "e85e5566f000134aa178503b62087ae84810fdd61ae5ac54b3f7483b0cf4e740"
+    },
+    "repro/rtx3090/runtime-large/utils/flops.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/flops.py",
+      "bytes": 2151,
+      "sha256": "7e87fb2d46a56794c743bb386b123c14a29ceea1336293df96e93eeef4971b1c"
+    },
+    "repro/rtx3090/runtime-large/utils/logger.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/logger.py",
+      "bytes": 1062,
+      "sha256": "3bf562b9da41dfc7b1698570e9d3990199f8098e75adee11f057f0191f38aa0f"
+    },
+    "repro/rtx3090/runtime-large/utils/region_teachability.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/region_teachability.py",
+      "bytes": 3464,
+      "sha256": "386b3ebaee55e167914a7f23cc6f23d4308f2a342d82b716286ed4ec7a65973d"
+    },
+    "repro/rtx3090/runtime-large/utils/rtc_o12_calibration.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/rtc_o12_calibration.py",
+      "bytes": 25980,
+      "sha256": "5e23f3e1bd526017aa2046faff621dd284093d91dead9088dd4d7d9ddb641d9e"
+    },
+    "repro/rtx3090/runtime-large/utils/rtc_temperature.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/rtc_temperature.py",
+      "bytes": 32239,
+      "sha256": "01b7b6e6aa0d513561332510347b52ea9411330dfb0f2da54abdc36f2375fe59"
+    },
+    "repro/rtx3090/runtime-large/utils/sagan.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/sagan.py",
+      "bytes": 6551,
+      "sha256": "8ec56662bc7001baafd076cc5b0e980b3454e705ed61ae96c3ae80c64d8b7e7a"
+    },
+    "repro/rtx3090/runtime-large/utils/score.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/score.py",
+      "bytes": 6286,
+      "sha256": "262257115cb180f159cc283a85d6b068baeba0d63f45d9c4b4bedc4f81262361"
+    },
+    "repro/rtx3090/runtime-large/utils/task_aligned_temperature.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/task_aligned_temperature.py",
+      "bytes": 15639,
+      "sha256": "0ff8dd4f20c082a1ade73e91f68acb87b75c80b41538efdebb5c93336c2b668b"
+    },
+    "repro/rtx3090/runtime-large/utils/teacher_only_kd.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/teacher_only_kd.py",
+      "bytes": 1862,
+      "sha256": "17f92f4eef6f447dc2a2faf8e1ddb2d2b523f508b0e32972de8c0158c79cc2c5"
+    },
+    "repro/rtx3090/runtime-large/utils/visualize.py": {
+      "source": "current_3090/CoVar-KD-3090/runtime-large/utils/visualize.py",
+      "bytes": 9992,
+      "sha256": "e1e173c1cee304ef232883786657c46bee7bedd9ccea91aeb0df544249c49eb5"
+    },
+    "reports/cvpr2027/posthoc/analysis_report_zh.md": {
+      "source": "execution_posthoc_20261015/analysis_report_zh.md",
+      "bytes": 11015,
+      "sha256": "3c89890af7ad0c456dca20defbc087c475b8515aa667cd1c8dee3a710bd1c815"
+    },
+    "reports/cvpr2027/posthoc/analysis_summary.json": {
+      "source": "execution_posthoc_20261015/analysis_summary.json",
+      "bytes": 608570,
+      "sha256": "e4c591274321b5e17260c079b119eaf809c48f675e45fe2fa5d9da43bae300aa"
+    },
+    "reports/cvpr2027/posthoc/p0_summary.json": {
+      "source": "execution_posthoc_20261015/p0_summary.json",
+      "bytes": 7711,
+      "sha256": "0ee46e8c8760af70a54aac04a2114094cb3b0a0f49fe399a7c9875f7e20195d6"
+    },
+    "reports/cvpr2027/posthoc/final_audit.json": {
+      "source": "execution_posthoc_20261015/final_audit.json",
+      "bytes": 68014,
+      "sha256": "418d7c6b63fd16c8f78efe2f211be6380b6bc18fffd1212217bb4989cb0207ac"
+    },
+    "reports/cvpr2027/posthoc/registration.json": {
+      "source": "execution_posthoc_20261015/registration.json",
+      "bytes": 294561,
+      "sha256": "44bc351a2199c75528dea1796685c0e42be243048f4aa5145025802134b21608"
+    },
+    "reports/cvpr2027/posthoc/training_log_audit.json": {
+      "source": "execution_posthoc_20261015/training_log_audit.json",
+      "bytes": 65567,
+      "sha256": "971ad8fadde0310606d7e941792fc5281932eb4b0795f8ef21dbd0960d026cad"
+    },
+    "reports/cvpr2027/posthoc/figures/class_coefficient_effects.png": {
+      "source": "execution_posthoc_20261015/figures/class_coefficient_effects.png",
+      "bytes": 134450,
+      "sha256": "42e521786226477a092522b155641ce9629880c99e9b92a2c3ba680a9984f096"
+    },
+    "reports/cvpr2027/posthoc/figures/final_results.png": {
+      "source": "execution_posthoc_20261015/figures/final_results.png",
+      "bytes": 85129,
+      "sha256": "f8c3fed689fd069ef716e64bc49cf62ff65b8e5d267ab3eb40faf9833e6211cb"
+    },
+    "reports/cvpr2027/posthoc/figures/local_update_diagnostics.png": {
+      "source": "execution_posthoc_20261015/figures/local_update_diagnostics.png",
+      "bytes": 260687,
+      "sha256": "1376a5e4001c9f7a01d755549b834dde85215d3125f85b7658beed301761a1f9"
+    },
+    "reports/cvpr2027/posthoc/figures/teacher_regions.png": {
+      "source": "execution_posthoc_20261015/figures/teacher_regions.png",
+      "bytes": 148110,
+      "sha256": "581ec0eb2a04183ced4b6dc42f36f3d443f334ca4107e9f651a8474d3ff6e02b"
+    },
+    "reports/cvpr2027/posthoc/figures/validation_curves.png": {
+      "source": "execution_posthoc_20261015/figures/validation_curves.png",
+      "bytes": 243174,
+      "sha256": "5b9432430f41fe2fbb90855ba1d888b7bab591ba6362e6a8936580f389c5f145"
+    },
+    "repro/posthoc_20261015/evaluate.py": {
+      "source": "execution_posthoc_20261015/evaluate.py",
+      "bytes": 9475,
+      "sha256": "bb2ca6228669f5b88771c656b4c69958018ddf78a30aece01bf17143070d836a"
+    },
+    "repro/posthoc_20261015/probe.py": {
+      "source": "execution_posthoc_20261015/probe.py",
+      "bytes": 15392,
+      "sha256": "a132a1da07bd392c321c843162a4667b1bbfd7014c19ec5b55549f16157dd4fd"
+    },
+    "repro/posthoc_20261015/aggregate.py": {
+      "source": "execution_posthoc_20261015/aggregate.py",
+      "bytes": 10865,
+      "sha256": "704774be2719ae40f7a9e604a5a83aa788f985f0bd77a2e1a256c0d7076bd8ee"
+    },
+    "repro/posthoc_20261015/collect.py": {
+      "source": "execution_posthoc_20261015/collect.py",
+      "bytes": 8690,
+      "sha256": "b6dfb31b619d314b11d9f71b9b739d515cb48f33270f4c127cad29fb55b480ff"
+    },
+    "repro/posthoc_20261015/final_audit.py": {
+      "source": "execution_posthoc_20261015/final_audit.py",
+      "bytes": 4996,
+      "sha256": "aab9376914ff3a6815e97e039994e6387d2c51a0c2d0f920ef75e426c9765208"
+    },
+    "repro/posthoc_20261015/log_audit.py": {
+      "source": "execution_posthoc_20261015/log_audit.py",
+      "bytes": 2593,
+      "sha256": "142b522e8d280dfaef37a6ff39529be7b436d523cfa985afcb00379adbb95689"
+    },
+    "repro/posthoc_20261015/build_report.py": {
+      "source": "execution_posthoc_20261015/build_report.py",
+      "bytes": 13864,
+      "sha256": "5ab84ed1b0257c48cba52ff10d1a396a20ce8bad5da6dacd568ca763bfdbec04"
+    },
+    "reports/cvpr2027/posthoc/probe/voc/summary.json": {
+      "source": "execution_posthoc_20261015/probe/voc/summary.json",
+      "bytes": 24014,
+      "sha256": "7bceba86a1cc61dcee13bca408bf048c34fef5049b2ceb93bdf461417c0ecf78"
+    },
+    "reports/cvpr2027/posthoc/probe/cityscapes/summary.json": {
+      "source": "execution_posthoc_20261015/probe/cityscapes/summary.json",
+      "bytes": 24118,
+      "sha256": "d1d1ed15e31894e6028ba777eee47961f27dab6d4225dcb746d44399238741ee"
+    }
+  }
+}

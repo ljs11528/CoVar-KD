@@ -1,3 +1,11 @@
+# CoVar-KD research repository
+
+Current controlled experiments and their limitations are recorded in
+[the CVPR 2027 research index](reports/cvpr2027/README.md).
+The original benchmark tables below are upstream reference results, not the
+new controlled results from this project. Datasets and model weights are not
+stored in Git.
+
 #  CoVar+KD (coming soon)
 
 ## Requirement

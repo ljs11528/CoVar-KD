@@ -1,0 +1,270 @@
+{
+  "cohort": "P11_3090_20261002",
+  "registered_at": "2026-10-02T09:53:45.338050+00:00",
+  "runtime": {
+    "python": "3.10.20",
+    "torch": "2.0.1+cu118",
+    "cuda": "11.8",
+    "cudnn": 8700,
+    "numpy": "1.24.4",
+    "opencv": "4.8.0"
+  },
+  "patches": {
+    "small": {
+      "original_sha256": "d739ac5c85cc26326ae5b4165da8d67c45e3662f649c2104144f4aa416f778eb",
+      "modified_sha256": "6bce0a3fa79bebb338ada84fdb95aa9ba79948d2b8115f8adb53df3120620602",
+      "original_preserved": true
+    },
+    "large": {
+      "original_sha256": "4afb177d613a175881dedf26d622a3161ef660ae74a596241863a84473fc2c73",
+      "modified_sha256": "2d97c62c9813bca88177eaf990bd578b0372a0beae3b052c402819068a730974",
+      "original_preserved": true
+    }
+  },
+  "source_sha256": {
+    "runtime-small/train_kd.py": "d739ac5c85cc26326ae5b4165da8d67c45e3662f649c2104144f4aa416f778eb",
+    "runtime-small/train_kd_3090.py": "6bce0a3fa79bebb338ada84fdb95aa9ba79948d2b8115f8adb53df3120620602",
+    "runtime-small/dataset/voc.py": "6349da2dd2e5a8ca5173509fe4f8112788c9fb7cae98f50ae6448d52d4fe5863",
+    "runtime-small/utils/distributed.py": "e85e5566f000134aa178503b62087ae84810fdd61ae5ac54b3f7483b0cf4e740",
+    "runtime-small/models/deeplabv3_mobilenetv3.py": "a360e50c5c998c8edcae627bf07aa4883978fa379a7e728d63b7a86a30e30434",
+    "runtime-small/models/base_models/mobilenetv3.py": "35754d04e0b27a5061fc7c554374797563774375bcc13223d14899450529c73f",
+    "runtime-large/train_kd.py": "4afb177d613a175881dedf26d622a3161ef660ae74a596241863a84473fc2c73",
+    "runtime-large/train_kd_3090.py": "2d97c62c9813bca88177eaf990bd578b0372a0beae3b052c402819068a730974",
+    "runtime-large/dataset/voc.py": "6349da2dd2e5a8ca5173509fe4f8112788c9fb7cae98f50ae6448d52d4fe5863",
+    "runtime-large/utils/distributed.py": "e85e5566f000134aa178503b62087ae84810fdd61ae5ac54b3f7483b0cf4e740",
+    "runtime-large/models/deeplabv3_mobilenetv3.py": "a360e50c5c998c8edcae627bf07aa4883978fa379a7e728d63b7a86a30e30434",
+    "runtime-large/models/base_models/mobilenetv3.py": "35754d04e0b27a5061fc7c554374797563774375bcc13223d14899450529c73f"
+  },
+  "gpu_inventory": {
+    "0": {
+      "uuid": "GPU-9b7a35a7-e058-1168-6ad2-d8edfd7d6d22",
+      "name": "NVIDIA GeForce RTX 3090",
+      "memory_mib": 18,
+      "utilization": 0
+    },
+    "1": {
+      "uuid": "GPU-cde93a8c-98bf-fb1e-38a7-e928ea8944f2",
+      "name": "NVIDIA GeForce RTX 3090",
+      "memory_mib": 15,
+      "utilization": 0
+    },
+    "2": {
+      "uuid": "GPU-aa1e543a-0190-5ae0-8b86-1a0497cb9f4f",
+      "name": "NVIDIA GeForce RTX 3090",
+      "memory_mib": 1849,
+      "utilization": 100
+    },
+    "3": {
+      "uuid": "GPU-134ac705-5b44-a577-1e7a-a97e149ef746",
+      "name": "NVIDIA GeForce RTX 3090",
+      "memory_mib": 16885,
+      "utilization": 0
+    },
+    "4": {
+      "uuid": "GPU-f207041d-fea5-0134-46b6-a2d8b31f8621",
+      "name": "NVIDIA GeForce RTX 3090",
+      "memory_mib": 5706,
+      "utilization": 50
+    },
+    "5": {
+      "uuid": "GPU-5344ba7c-d9de-6944-8741-6524ea1c2e9d",
+      "name": "NVIDIA GeForce RTX 3090",
+      "memory_mib": 1411,
+      "utilization": 8
+    },
+    "6": {
+      "uuid": "GPU-ae4078f7-ed8a-f1b0-9535-9f41bed9400b",
+      "name": "NVIDIA GeForce RTX 3090",
+      "memory_mib": 15,
+      "utilization": 0
+    }
+  },
+  "plan": [
+    {
+      "id": "small_ce_seed2025",
+      "priority": 10,
+      "student": "small",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": 1.0,
+      "coefficient": 0.0,
+      "gpu_count": 2,
+      "kind": "missing_control"
+    },
+    {
+      "id": "small_ce_seed3407",
+      "priority": 10,
+      "student": "small",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": 1.0,
+      "coefficient": 0.0,
+      "gpu_count": 2,
+      "kind": "missing_control"
+    },
+    {
+      "id": "large_ce_seed1234",
+      "priority": 10,
+      "student": "large",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": 1.0,
+      "coefficient": 0.0,
+      "gpu_count": 1,
+      "kind": "missing_control"
+    },
+    {
+      "id": "large_ce_seed2025",
+      "priority": 10,
+      "student": "large",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": 1.0,
+      "coefficient": 0.0,
+      "gpu_count": 1,
+      "kind": "missing_control"
+    },
+    {
+      "id": "large_ce_seed3407",
+      "priority": 10,
+      "student": "large",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": 1.0,
+      "coefficient": 0.0,
+      "gpu_count": 1,
+      "kind": "missing_control"
+    },
+    {
+      "id": "small_migration_anchor_seed1234",
+      "priority": 11,
+      "student": "small",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": 1.5,
+      "coefficient": 1.0,
+      "gpu_count": 2,
+      "kind": "migration_anchor"
+    },
+    {
+      "id": "large_migration_anchor_seed1234",
+      "priority": 11,
+      "student": "large",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": 2.0,
+      "coefficient": 1.0,
+      "gpu_count": 1,
+      "kind": "migration_anchor"
+    },
+    {
+      "id": "large_standard_T2_c4_seed1234",
+      "priority": 12,
+      "student": "large",
+      "seed": 1234,
+      "mode": "masked",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "kind": "missing_control"
+    },
+    {
+      "id": "large_standard_T2_c4_seed2025",
+      "priority": 12,
+      "student": "large",
+      "seed": 2025,
+      "mode": "masked",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "kind": "missing_control"
+    },
+    {
+      "id": "large_standard_T2_c4_seed3407",
+      "priority": 12,
+      "student": "large",
+      "seed": 3407,
+      "mode": "masked",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "kind": "missing_control"
+    },
+    {
+      "id": "large_teacher_T2_c4_seed1234",
+      "priority": 20,
+      "student": "large",
+      "seed": 1234,
+      "mode": "teacher_only",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "kind": "loss_scale_control"
+    },
+    {
+      "id": "large_teacher_T2_c4_seed2025",
+      "priority": 20,
+      "student": "large",
+      "seed": 2025,
+      "mode": "teacher_only",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "kind": "loss_scale_control"
+    },
+    {
+      "id": "large_teacher_T2_c4_seed3407",
+      "priority": 20,
+      "student": "large",
+      "seed": 3407,
+      "mode": "teacher_only",
+      "temperature": 2.0,
+      "coefficient": 4.0,
+      "gpu_count": 1,
+      "kind": "loss_scale_control"
+    }
+  ],
+  "formal_run_count": 13,
+  "max_iterations": 80000,
+  "global_batch": 16,
+  "crop": [
+    512,
+    512
+  ],
+  "workers_per_rank": 4,
+  "optimizer": {
+    "name": "SGD",
+    "lr": 0.02,
+    "momentum": 0.9,
+    "weight_decay": 0.0001
+  },
+  "schedule": "unchanged original 80k poly",
+  "precision": "original FP32/TF32 defaults, no AMP",
+  "fast_ce_enabled": false,
+  "teacher_feature_release_enabled": false,
+  "optimization_decision": "Disabled after preflight_v2 40-step trajectory equivalence checks failed; keep original teacher/student forward path.",
+  "primary_endpoint": "80k final VOC validation mIoU",
+  "save_per_iters": 2000,
+  "keep_checkpoint_iters": [
+    20000,
+    40000,
+    60000,
+    80000
+  ],
+  "resume_audit": {
+    "iteration": 20000,
+    "world_size": 2,
+    "has_optimizer": true,
+    "has_rank_rng": true,
+    "has_sampler_cursor": false,
+    "has_worker_states": false,
+    "decision": "fresh_missing_seed_2025",
+    "reason": "Original IterationBasedBatchSampler restarts its epoch at start_iter; sampler cursor and worker augmentation RNG were not saved."
+  },
+  "cohort_limits": [
+    "Hardware migration is recorded; anchors do not establish equivalence.",
+    "P7 software was not fully registered; old/new Small results remain labeled by cohort.",
+    "T=2 was selected using historical VOC validation; new controls are local sensitivity experiments.",
+    "No conditional T=4 or full 2x2 expansion is automatically launched."
+  ]
+}
