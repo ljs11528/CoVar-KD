@@ -51,6 +51,13 @@ new training seed. The first formal virtual update uses the original poly LR at
 saved_iteration+1. Legacy names denote BN mode and batch size, not a bit-exact
 replay of the older batch2 diagnostic.
 
+P13 hashed CE intermediate checkpoints and final KD checkpoints. The 36 selected
+KD intermediate checkpoints are first hashed in P14, with explicit provenance
+and iteration/seed/protocol checks; they are existing training artifacts, not
+new training or inputs claimed to have a prior P13 hash. The first registration
+attempt stopped before GPU use on this missing-hash distinction and is retained
+as an engineering failure, excluded from scientific inference.
+
 ## Stage B: freeze the intervention
 
 For both conditions, train CE+c*masked_KL with Shared teacher/student temperature

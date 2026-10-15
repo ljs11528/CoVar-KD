@@ -10,7 +10,7 @@ from utility_study.core import (
     PooledMetrics, Snapshot, ce_loss, choose_coefficient, evaluation_mode,
     isolated_rng, kd_loss, restored_state, rng_state, tree_equal,
 )
-from utility_study.register import monitoring_indices
+from utility_study.register import monitoring_indices, validate_checkpoint_metadata
 from utility_study.workflow import gate_from_values
 
 
@@ -182,3 +182,18 @@ def test_primary_gate_requires_both_datasets_and_does_not_authorize_full_trainin
     for seed in (1234, 2025, 3407):
         values["cityscapes", seed, 40000] = -1.
     assert not gate_from_values(values)["pass"]
+
+
+def test_newly_registered_kd_intermediates_must_match_the_audited_run():
+    args = {"seed": 1234, "dataset": "voc", "student_model": "deeplabv3", "student_backbone": "large",
+            "lambda_kd": 4., "kd_loss_mode": "masked", "batch_size": 16, "max_iterations": 80000,
+            "lr": .02, "teacher_pretrained": "/teacher.pth", "crop_size": [512, 512]}
+    state = {"iteration": 20000, "student": {}, "optimizer": {}, "args": copy.deepcopy(args)}
+    run = {"args": args}
+    validate_checkpoint_metadata(state, run, 20000)
+    state["args"]["seed"] = 2025
+    with pytest.raises(ValueError, match="seed"):
+        validate_checkpoint_metadata(state, run, 20000)
+    state["args"]["seed"] = 1234
+    with pytest.raises(ValueError, match="iteration"):
+        validate_checkpoint_metadata(state, run, 40000)

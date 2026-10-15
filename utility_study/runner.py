@@ -46,7 +46,7 @@ def run(args):
     from PIL import Image
     from .core import (PooledMetrics, Snapshot, ce_loss, evaluation_mode, gradient_norm,
                        isolated_rng, kd_loss, restored_state, tree_equal)
-    from .register import CITY_IDS
+    from .register import CITY_IDS, validate_checkpoint_metadata
 
     torch.set_num_threads(1)
     cv2.setNumThreads(1)
@@ -154,7 +154,7 @@ def run(args):
                 if sha256(checkpoint) != config["input_sha256"][checkpoint]:
                     raise RuntimeError("Source training checkpoint changed")
                 checkpoint_state = torch.load(checkpoint, map_location="cpu", weights_only=False)
-                assert checkpoint_state["iteration"] == stage and checkpoint_state["args"]["seed"] == seed
+                validate_checkpoint_metadata(checkpoint_state, run_record, stage)
                 student.load_state_dict(checkpoint_state["student"], strict=True)
                 for name in ("criterion_cwd", "criterion_fitnet"):
                     getattr(trainer, name).load_state_dict(checkpoint_state[name], strict=True)

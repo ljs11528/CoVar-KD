@@ -14,6 +14,17 @@ COHORTS = ("ce", "shared_c1", "shared_c4")
 MODES = ("legacy_eval", "matched_eval", "matched_train")
 
 
+def validate_checkpoint_metadata(state, run, stage):
+    if state.get("iteration") != stage or "student" not in state or "optimizer" not in state:
+        raise ValueError("Incomplete checkpoint or incorrect saved iteration")
+    for key in ("seed", "dataset", "student_model", "student_backbone", "lambda_kd",
+                "kd_loss_mode", "batch_size", "max_iterations", "lr", "teacher_pretrained"):
+        if state["args"].get(key) != run["args"].get(key):
+            raise ValueError(f"Checkpoint configuration differs from its audited run: {key}")
+    if list(state["args"]["crop_size"]) != list(run["args"]["crop_size"]):
+        raise ValueError("Checkpoint crop differs from its audited run")
+
+
 def monitoring_indices(presence, classes, size=256, per_class=8, seed=20261015):
     rng = random.Random(seed)
     selected = set()
@@ -107,13 +118,27 @@ def main(root, out):
         selected = [r for r in old["runs"] if r["condition"] in COHORTS]
         assert len(selected) == 9
         inputs = {old["teacher"], old["train_list"]}
+        checkpoint_inputs = {}
         for run in selected:
             inputs.update(run["checkpoints"][str(k)] for k in record["checkpoints"])
-        input_sha = {}
+            checkpoint_inputs.update({run["checkpoints"][str(k)]: (run, k) for k in record["checkpoints"]})
+        input_sha, hash_provenance = {}, {}
         for name in sorted(inputs):
             digest = sha256(name)
-            if digest != old["input_sha256"][name]:
+            previous_digest = old["input_sha256"].get(name)
+            if previous_digest is not None and digest != previous_digest:
                 raise RuntimeError(f"Original input changed: {name}")
+            if previous_digest is None:
+                if name not in checkpoint_inputs or checkpoint_inputs[name][0]["condition"] == "ce":
+                    raise RuntimeError("Unexpected input without a previous hash")
+                import torch
+                run, stage = checkpoint_inputs[name]
+                state = torch.load(name, map_location="cpu", weights_only=False)
+                validate_checkpoint_metadata(state, run, stage)
+                del state
+                hash_provenance[name] = "existing_KD_intermediate_first_hashed_in_P14"
+            else:
+                hash_provenance[name] = "matched_P13_hash"
             input_sha[name] = digest
         runtime = Path(old["runtime"])
         for path in sorted(runtime.rglob("*.py")):
@@ -128,6 +153,7 @@ def main(root, out):
             "runtime": old["runtime"], "data": old["data"], "train_list": old["train_list"],
             "val_list": old["val_list"], "classes": old["classes"], "teacher": old["teacher"],
             "runs": selected, "monitor": monitor, "updates": schedules, "input_sha256": input_sha,
+            "input_hash_provenance": hash_provenance,
             "train_count": len(files), "matched_batch": old["runs"][0]["args"]["batch_size"],
             "monitor_class_image_counts": [sum(k in presence[i] for i in indices) for k in range(old["classes"])],
         }
