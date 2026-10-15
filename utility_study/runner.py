@@ -16,9 +16,9 @@ import time
 from .io import read_json, sha256, source_hashes, verify_sources, write_json
 
 
-def acquire_gpu(gpu):
-    if gpu not in (0, 2):
-        raise ValueError("Registered resource policy permits only GPU 0 or 2")
+def acquire_gpu(gpu, allowed=(0, 2)):
+    if gpu not in allowed:
+        raise ValueError("GPU is outside the immutable registered resource policy")
     locks = []
     for name in (f"/tmp/covar-kd-gpu-{gpu}.lock", f"/tmp/covar-p13-gpu-{gpu}.lock"):
         handle = open(name, "a+")
@@ -60,6 +60,9 @@ def run(args):
     out = Path(args.out).resolve()
     work = out / args.phase / args.dataset
     work.mkdir(parents=True, exist_ok=True)
+    shard = shard_name(args.seeds, args.stages)
+    worker = work / "workers" / shard
+    worker.mkdir(parents=True, exist_ok=True)
     runtime = Path(config["runtime"])
     sys.path.insert(0, str(runtime))
     os.chdir(runtime)
@@ -81,10 +84,13 @@ def run(args):
     module.logger = logging.getLogger("utility-study")
     ce_reference = next(r for r in config["runs"] if r["condition"] == "ce" and r["seed"] == 1234)
     constructor = argparse.Namespace(**ce_reference["args"])
+    # Checkpoint args remain the original training provenance. Only execution
+    # paths are remapped when replaying the state on another machine.
+    constructor.data, constructor.teacher_pretrained = config["data"], config["teacher"]
     constructor.batch_size = config["matched_batch"]
     constructor.workers, constructor.max_iterations, constructor.resume = 0, 1, None
     constructor.student_pretrained_base, constructor.student_pretrained = "None", "None"
-    constructor.log_dir, constructor.save_dir = str(work / "constructor"), str(work / "unused-checkpoints")
+    constructor.log_dir, constructor.save_dir = str(worker / "constructor"), str(worker / "unused-checkpoints")
     constructor.device, constructor.device_type = "cuda", "cuda"
     constructor.distributed, constructor.num_gpus, constructor.local_rank = False, 1, 0
     trainer = module.Trainer(constructor)
@@ -140,8 +146,8 @@ def run(args):
     conditions = {"ce": (None, 0.), "shared_c1": ("shared", 1.), "shared_c4": ("shared", 4.),
                   "teacher_c1": ("teacher", 1.), "teacher_c4": ("teacher", 4.), "shared_norm": ("shared", None)}
     smoke = args.phase == "smoke"
-    stages = [20000] if smoke else registration["checkpoints"]
-    seeds = [1234] if smoke else registration["seeds"]
+    stages = selected_stages(registration, args.stages, smoke)
+    seeds = selected_seeds(registration, args.seeds, smoke)
     cohorts = ["ce"] if smoke else args.cohorts.split(",")
     if set(cohorts) - set(registration["cohorts"]):
         raise ValueError("Unregistered starting cohort")
@@ -238,7 +244,7 @@ def run(args):
                                     if step + 1 in (1, horizon):
                                         checkpoints[str(step + 1)] = monitor_scores()
                                     if horizon > 3 and (step + 1) % 16 == 0:
-                                        write_json(work / "state.json", {"status": "RUNNING", "phase": args.phase,
+                                        write_json(worker / "state.json", {"status": "RUNNING", "phase": args.phase,
                                                    "cohort": cohort, "seed": seed, "checkpoint": stage, "mode": mode,
                                                    "condition": condition, "virtual_step": step + 1, "gpu": args.gpu,
                                                    "pid": os.getpid(), "completed_branches": len(outputs)})
@@ -280,7 +286,7 @@ def run(args):
                             result = clean(result)
                         write_json(path, result)
                         outputs.append(str(path))
-                        write_json(work / "state.json", {"status": "RUNNING", "phase": args.phase, "gpu": args.gpu,
+                        write_json(worker / "state.json", {"status": "RUNNING", "phase": args.phase, "gpu": args.gpu,
                                    "cohort": cohort, "seed": seed, "checkpoint": stage, "mode": mode,
                                    "condition": condition, "completed_branches": len(outputs), "pid": os.getpid(),
                                    "elapsed_seconds": time.monotonic() - started})
@@ -311,9 +317,38 @@ def run(args):
                                       "mode": r["mode"], "condition": r["condition"], "step": r["failed_virtual_step"]}
                                      for r in records if r["status"] == "DIVERGED"],
                "completed_at": datetime.now(timezone.utc).isoformat()}
-    write_json(work / ("summary_" + "_".join(cohorts) + ".json"), summary)
-    write_json(work / "state.json", summary)
+    summary.update(seeds=seeds, checkpoints=stages, gpu=args.gpu, pid=os.getpid())
+    suffix = "_" + shard if shard != "all" else ""
+    write_json(work / ("summary_" + "_".join(cohorts) + suffix + ".json"), summary)
+    write_json(worker / "state.json", summary)
     print("PHASE_PASS", args.dataset, args.phase, len(outputs), flush=True)
+
+
+def selected_seeds(registration, requested, smoke=False):
+    seeds = [int(x) for x in requested.split(",")] if requested else registration["seeds"]
+    if not seeds or len(set(seeds)) != len(seeds) or set(seeds) - set(registration["seeds"]):
+        raise ValueError("Unregistered or repeated seed shard")
+    if smoke:
+        if requested and seeds != [1234]:
+            raise ValueError("Smoke is registered only for seed1234")
+        return [1234]
+    return seeds
+
+
+def selected_stages(registration, requested, smoke=False):
+    stages = [int(x) for x in requested.split(",")] if requested else registration["checkpoints"]
+    if not stages or len(set(stages)) != len(stages) or set(stages) - set(registration["checkpoints"]):
+        raise ValueError("Unregistered or repeated checkpoint shard")
+    if smoke:
+        if requested and stages != [20000]:
+            raise ValueError("Smoke is registered only for checkpoint20k")
+        return [20000]
+    return stages
+
+
+def shard_name(seeds, stages):
+    return "_".join(part for part in ("seed" + seeds.replace(",", "_") if seeds else "",
+                                      "stage" + stages.replace(",", "_") if stages else "") if part) or "all"
 
 
 def main():
@@ -324,12 +359,14 @@ def main():
     parser.add_argument("--gpu", type=int, required=True)
     parser.add_argument("--phase", choices=("smoke", "one_step", "rollout"), required=True)
     parser.add_argument("--cohorts", default="ce,shared_c1,shared_c4")
+    parser.add_argument("--seeds", default="", help="Disjoint registered seed shard; paired inputs are unchanged")
+    parser.add_argument("--stages", default="", help="Disjoint registered checkpoint shard")
     args = parser.parse_args()
-    locks = acquire_gpu(args.gpu)
+    locks = acquire_gpu(args.gpu, read_json(args.registration)["allowed_gpus"])
     try:
         run(args)
     except Exception as error:
-        write_json(Path(args.out) / args.phase / args.dataset / "failure.json",
+        write_json(Path(args.out) / args.phase / args.dataset / "workers" / shard_name(args.seeds, args.stages) / "failure.json",
                    {"status": "FAILED", "error": repr(error), "phase": args.phase,
                     "source_hashes": source_hashes(), "pid": os.getpid()})
         raise

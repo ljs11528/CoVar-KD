@@ -11,7 +11,9 @@ from utility_study.core import (
     isolated_rng, kd_loss, restored_state, rng_state, tree_equal, virtual_outcome,
 )
 from utility_study.register import monitoring_indices, paired_updates, validate_checkpoint_metadata
-from utility_study.workflow import gate_from_values
+from utility_study.workflow import gate_from_values, phase_jobs, validate_gpus, pop_ready_job
+from utility_study.runner import selected_seeds, selected_stages, shard_name
+from utility_study.migrate import dataset_paths
 
 
 @pytest.mark.parametrize("mode,student_t", [("teacher", 1.0), ("shared", 2.0)])
@@ -232,3 +234,71 @@ def test_nonfinite_monitor_predictions_are_distinguished_from_a_wrong_class_mapp
         PooledMetrics(2).add(torch.full((1, 2, 2, 2), float("nan")), y)
     with pytest.raises(ValueError):
         PooledMetrics(3).add(torch.zeros(1, 2, 2, 2), y)
+
+
+def test_seed_queue_partitions_cases_without_duplicate_scientific_observations():
+    registered = {"seeds": [1234, 2025, 3407], "checkpoints": [20000, 40000, 60000], "allowed_gpus": [2, 3], "max_gpus": 2}
+    jobs = phase_jobs("one_step", registered["seeds"])
+    assert len(jobs) == len(set(jobs)) == 18
+    assert set(jobs) == {(d, s, k) for d in ("voc", "cityscapes") for s in registered["seeds"] for k in registered["checkpoints"]}
+    assert phase_jobs("smoke", registered["seeds"]) == [("voc", 1234, 20000), ("cityscapes", 1234, 20000)]
+    assert selected_seeds(registered, "2025") == [2025]
+    validate_gpus([2, 3], registered)
+    for allocation in ([0, 1], [2], [2, 2], [0, 1, 2, 3]):
+        with pytest.raises(ValueError):
+            validate_gpus(allocation, registered)
+    for seeds in ("0", "1234,1234"):
+        with pytest.raises(ValueError):
+            selected_seeds(registered, seeds)
+    with pytest.raises(ValueError):
+        selected_seeds(registered, "2025", smoke=True)
+    assert selected_stages(registered, "40000") == [40000]
+    assert shard_name("1234", "20000") != shard_name("1234", "40000")
+    for stages in ("80000", "20000,20000"):
+        with pytest.raises(ValueError):
+            selected_stages(registered, stages)
+    with pytest.raises(ValueError):
+        selected_stages(registered, "40000", smoke=True)
+
+
+def test_pending_copies_do_not_block_other_ready_cases_and_partial_files_are_not_ready(tmp_path):
+    a, b = tmp_path / "a.pth", tmp_path / "b.pth"
+    a.with_suffix(".pth.partial").touch()
+    b.touch()
+    runs = [{"seed": 1234, "condition": "ce", "checkpoints": {"20000": str(a), "40000": str(b)}}]
+    registration = {"datasets": {"voc": {"runs": runs}}}
+    pending = [("voc", 1234, 20000), ("voc", 1234, 40000)]
+    assert pop_ready_job(pending, registration, "ce") == ("voc", 1234, 40000)
+    assert pop_ready_job(pending, registration, "ce") is None
+    a.with_suffix(".pth.partial").replace(a)
+    assert pop_ready_job(pending, registration, "ce") == ("voc", 1234, 20000)
+    assert pending == []
+
+
+def test_migration_remaps_paths_but_preserves_checkpoint_args_and_paired_inputs(tmp_path):
+    stages = [20000, 40000, 60000]
+    original_args = {"teacher_pretrained": "/old/teacher.pth", "data": "/old/data", "seed": 1234}
+    paths = {str(k): f"/old/checkpoints/{k}.pth" for k in stages}
+    inputs = {"/old/teacher.pth": "teacher", "/old/runtime-large/train_kd_3090.py": "runtime",
+              "/old/runtime-large/dataset/list/voc/train_aug.txt": "split", **{p: str(k) for k, p in paths.items()}}
+    updates = paired_updates(list(range(256, 600)), 16, 1234, 20000)
+    old = {"runtime": "/old/runtime-large", "data": "/old/data", "teacher": "/old/teacher.pth",
+           "train_list": "/old/runtime-large/dataset/list/voc/train_aug.txt",
+           "val_list": "/old/runtime-large/dataset/list/voc/val.txt",
+           "runs": [{"args": original_args, "checkpoints": paths}],
+           "monitor": [{"img": "/old/data/JPEGImages/a.jpg", "label": "/old/data/SegmentationClassAug/a.png"}],
+           "updates": updates, "input_sha256": inputs,
+           "input_hash_provenance": {p: "original" for p in inputs}}
+    untouched = copy.deepcopy(old)
+    transfers = {p: {"sha256": str(k), "relative": f"checkpoints/voc/ce/1234/{k}.pth"} for k, p in paths.items()}
+    mapped = dataset_paths(old, "voc", tmp_path, transfers)
+    assert old == untouched
+    assert mapped["runs"][0]["args"] == original_args
+    assert mapped["updates"] == updates
+    assert mapped["runs"][0]["origin_checkpoints"] == paths
+    assert all(str(tmp_path) in p for p in mapped["input_sha256"])
+    assert set(mapped["input_origins"].values()) == set(inputs)
+    assert mapped["monitor"][0]["img"] == str(tmp_path / "shared/dataset/VOCAug/JPEGImages/a.jpg")
+    transfers[paths["20000"]]["sha256"] = "wrong"
+    with pytest.raises(RuntimeError, match="manifest"):
+        dataset_paths(old, "voc", tmp_path, transfers)

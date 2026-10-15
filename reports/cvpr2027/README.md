@@ -51,6 +51,12 @@ restored-state diagnostics on existing checkpoints. Full selector training is
 conditional on that stage; the approved upper bound is 12 fresh 80k trajectories.
 Planned experiments are not reported as completed results.
 
+The [Maker execution amendment](maker_migration_20261015.md) moves the new
+diagnostics to a separate RTX 4090 cohort. The user allocated only idle GPUs
+2 and 3; existing jobs on 0 and 1 remain untouched. Old P14 compute is stopped,
+with artifacts retained. Jobs use fixed original inputs and independent
+seed/checkpoint shards, without changing batch size or the scientific gate.
+
 The new implementation is in [utility_study](../../utility_study/). In the
 original CUDA environment, from the repository root:
 
