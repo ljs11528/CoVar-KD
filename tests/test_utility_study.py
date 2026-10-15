@@ -14,6 +14,8 @@ from utility_study.register import monitoring_indices, paired_updates, validate_
 from utility_study.workflow import gate_from_values, phase_jobs, validate_gpus, pop_ready_job
 from utility_study.runner import selected_seeds, selected_stages, shard_name, wait_for_idle_gpu
 from utility_study.migrate import dataset_paths
+from utility_study.continuation import amend, accepts_record, completed_job, scientific_contract, validate_continuation
+from utility_study.io import read_json, sha256, source_hashes, write_json
 
 
 @pytest.mark.parametrize("mode,student_t", [("teacher", 1.0), ("shared", 2.0)])
@@ -299,6 +301,90 @@ def test_gpu_admission_times_out_without_using_an_occupied_card(monkeypatch):
     monkeypatch.setattr(runner.time, "monotonic", lambda: next(ticks))
     with pytest.raises(RuntimeError, match="did not become idle"):
         wait_for_idle_gpu(3, timeout=1)
+
+
+@pytest.mark.parametrize("known,free,admitted", [(True, 37488, True), (False, 37488, False), (True, 18000, False)])
+def test_shared_admission_preserves_known_keepers_but_requires_headroom(monkeypatch, known, free, admitted):
+    import utility_study.runner as runner
+    policy = {"minimum_free_mib": 28672}
+    ticks = iter([0., .1, 2.])
+    def query(command, **kwargs):
+        return f"1, GPU-one, {free}\n" if "--query-gpu=index,uuid,memory.free" in command else "101, GPU-one\n"
+    monkeypatch.setattr(runner.subprocess, "check_output", query)
+    monkeypatch.setattr(runner, "authorized_keeper", lambda pid, p: pid == 101 and known)
+    monkeypatch.setattr(runner.time, "monotonic", lambda: next(ticks))
+    monkeypatch.setattr(runner.time, "sleep", lambda _: None)
+    if admitted:
+        runner.wait_for_shared_gpu(1, policy, timeout=1)
+    else:
+        with pytest.raises(RuntimeError, match="unknown process"):
+            runner.wait_for_shared_gpu(1, policy, timeout=1)
+
+
+def continuation_fixture(tmp_path):
+    parent, out = tmp_path / "parent", tmp_path / "next"
+    registered = {"allowed_gpus": [2, 3], "max_gpus": 2, "source_hashes": source_hashes(),
+                  "created_at": "original", "modes": ["matched_eval", "matched_train"],
+                  "conditions": ["shared_c1", "shared_c4"], "precision": "FP32",
+                  "datasets": {"voc": {"runs": [{"seed": 1234, "condition": "ce", "checkpoints": {"20000": "/state"}}],
+                                       "input_sha256": {"/state": "checkpoint"}, "matched_batch": 16}}}
+    write_json(parent / "registration.json", registered)
+    reg_hash = sha256(parent / "registration.json")
+    for mode in registered["modes"]:
+        for condition in registered["conditions"]:
+            write_json(parent / "one_step/voc/ce/1234/20000" / mode / (condition + ".json"),
+                       {"dataset": "voc", "seed": 1234, "checkpoint": 20000, "cohort": "ce", "mode": mode,
+                        "condition": condition, "horizon": 1, "checkpoint_sha256": "checkpoint",
+                        "registration_sha256": reg_hash, "status": "DIVERGED" if mode == "matched_eval" else "PASS",
+                        "state_restored": True})
+    write_json(parent / "one_step/voc/summary_ce_seed1234_stage20000.json",
+               {"registration_sha256": reg_hash, "status": "PASS", "horizon": 1, "branches": 4})
+    new = amend(parent, out, [0, 1, 2, 3], {"shared_gpus": {"1": {"minimum_free_mib": 28672}}})
+    return parent, out, registered, new
+
+
+def test_resource_amendment_preserves_observations_and_reuses_complete_cases(tmp_path):
+    parent, out, old, new = continuation_fixture(tmp_path)
+    assert scientific_contract(old) == scientific_contract(new)
+    assert new["allowed_gpus"] == [0, 1, 2, 3] and new["max_gpus"] == 4
+    for source in (parent / "one_step").rglob("*.json"):
+        assert source.read_bytes() == (out / source.relative_to(parent)).read_bytes()
+    assert completed_job(out, "one_step", "voc", 1234, 20000, "ce", new, sha256(out / "registration.json"))
+    assert not completed_job(out, "one_step", "voc", 2025, 20000, "ce", new, sha256(out / "registration.json"))
+    with pytest.raises(FileExistsError):
+        amend(parent, out, [0, 1, 2, 3], {})
+
+
+def test_continuation_rejects_changed_batch_and_tampered_inherited_record(tmp_path):
+    _, out, _, new = continuation_fixture(tmp_path)
+    changed = copy.deepcopy(new)
+    changed["datasets"]["voc"]["matched_batch"] = 8
+    with pytest.raises(RuntimeError, match="scientific contract"):
+        validate_continuation(changed, out)
+    target = out / "one_step/voc/ce/1234/20000/matched_train/shared_c1.json"
+    row = read_json(target)
+    row["status"] = "DIVERGED"
+    write_json(target, row)
+    with pytest.raises(RuntimeError, match="Inherited record changed"):
+        validate_continuation(new, out)
+    assert not accepts_record(target, row, new, sha256(out / "registration.json"), out)
+
+
+def test_parent_registration_hash_alone_does_not_accept_an_unattested_observation(tmp_path):
+    _, out, _, new = continuation_fixture(tmp_path)
+    path = out / "unattested.json"
+    row = {"registration_sha256": new["continuation"]["parent_registration_sha256"]}
+    write_json(path, row)
+    assert not accepts_record(path, row, new, sha256(out / "registration.json"), out)
+
+
+def test_resource_amendment_rejects_a_changed_numerical_core(tmp_path):
+    parent, _, _, _ = continuation_fixture(tmp_path)
+    row = read_json(parent / "registration.json")
+    row["source_hashes"]["core.py"] = "different"
+    write_json(parent / "registration.json", row)
+    with pytest.raises(RuntimeError, match="Protected numerical"):
+        amend(parent, tmp_path / "disallowed", [0, 1, 2, 3], {})
 
 
 def test_migration_remaps_paths_but_preserves_checkpoint_args_and_paired_inputs(tmp_path):

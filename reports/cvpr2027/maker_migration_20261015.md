@@ -3,7 +3,8 @@
 The user requested rerunning the required supplementary experiments on the
 Maker server with four RTX 4090 GPUs. Inspection found unrelated jobs on GPUs
 0 and 1. The user then explicitly allocated **only GPUs 2 and 3**, preserving
-the existing jobs. This amendment changes execution resources, not the primary
+the existing jobs. A later allocation below authorizes all four GPUs while
+preserving those programs. This amendment changes execution resources, not the primary
 hypothesis, contrast, monitoring pool, update streams or scientific stopping gate.
 
 The old P14 revision 3 controller and its remaining diagnostic work were stopped
@@ -46,7 +47,8 @@ takes the next ready case after finishing. Pending copies do not block ready
 cases; unverified partial files are never used. The queue fails explicitly if
 required copies have not arrived within 24 hours of the phase starting.
 This preserves each example/augmentation stream and the original BN batch.
-Do not use GPUs 0 or 1, increase batch size or combine seeds with DDP.
+The initial allocation excluded GPUs 0 and 1. Do not increase batch size or
+combine seeds with DDP when changing the number of available cards.
 
 Execution remains: CPU verification, GPU smoke, CE-start one-step diagnostics,
 then the registered primary gate. The same positive Shared-c4 minus Shared-c1
@@ -75,3 +77,31 @@ visible immediately and stops only children launched by this controller.
 Numerical divergence remains an explicitly recorded diagnostic outcome.
 No metric formula, update, monitor image, seed, checkpoint, coefficient or
 scientific gate changes in this repair. Repeat CPU and GPU verification.
+
+## Four-GPU allocation with keepalive coexistence
+
+The user subsequently identified the GPU0/1 occupants as keepalive programs and
+authorized training on all four cards without terminating those programs.
+At inspection GPU0 was empty and GPU1 had about 37 GiB free. Formal single-card
+diagnostics previously peaked at about 20.8 GiB allocated. The new shared-card
+admission requires two consecutive readings with at least 28 GiB free and accepts
+only the explicitly recorded keepalive command prefixes in their known working
+directory. Other processes are not silently accepted. GPU utilization alone does
+not reject an authorized shared card. GPUs2/3 retain exclusive idle admission.
+All process signals remain restricted to this study's own launched children.
+
+Continue in `P14_Utility_Maker_20261015_r3` using an isolated, hashed source tree.
+The r2 controller is stopped only while it has no active workers. Copy every
+existing raw observation, including divergences, byte for byte. Each retains its
+original registration hash. The new registration binds the parent registration
+and a complete inherited-file hash manifest; the scientific contract must match
+exactly. Completed cases are audited and skipped, while incomplete cases retain
+their observations and finish only missing branches. No repeated case becomes an
+additional scientific sample. Extra smoke jobs on all four physical cards are
+resource preflights, explicitly excluded from the scientific observations.
+
+The four-card queue retains every original experimental and scientific gate.
+Checkpoint transfer is a separate dependency: at the amendment, 12 of 54 copies
+had passed verification, and the old server's SSH endpoint closed subsequent
+connections. Missing inputs leave lanes waiting rather than substituting states
+or bypassing the registered gate.

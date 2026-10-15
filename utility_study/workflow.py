@@ -14,6 +14,7 @@ import threading
 import time
 
 from .io import read_json, sha256, verify_sources, write_json
+from .continuation import accepts_record, completed_job, validate_continuation
 
 
 def gate_from_values(values):
@@ -34,15 +35,17 @@ def gate_from_values(values):
             "full_training_authorized_by_this_gate_alone": False}
 
 
-def primary_gate(out, registration_hash):
+def primary_gate(out, registration_hash, registered=None):
     values = {}
     for dataset in ("voc", "cityscapes"):
         for seed in (1234, 2025, 3407):
             for stage in (20000, 40000, 60000):
                 base = Path(out) / "one_step" / dataset / "ce" / str(seed) / str(stage) / "matched_train"
-                a, b = (read_json(base / (name + ".json")) for name in ("shared_c1", "shared_c4"))
-                for row in (a, b):
-                    assert row["status"] == "PASS" and row["registration_sha256"] == registration_hash
+                paths = [base / (name + ".json") for name in ("shared_c1", "shared_c4")]
+                a, b = map(read_json, paths)
+                for path, row in zip(paths, (a, b)):
+                    assert row["status"] == "PASS"
+                    assert accepts_record(path, row, registered or {}, registration_hash, Path(out))
                     assert row["horizon"] == 1 and row["state_restored"]
                 values[dataset, seed, stage] = b["after"]["1"]["pixel_ce"] - a["after"]["1"]["pixel_ce"]
     gate = gate_from_values(values)
@@ -95,6 +98,10 @@ def main(root, out, gpu_list):
         state["phase"] = name + ":" + cohorts
         write_json(out / "workflow.json", state)
         pending = phase_jobs(name, registered["seeds"], registered["checkpoints"])
+        reused = [case for case in pending if completed_job(out, name, *case, cohorts, registered, state["registration_sha256"])]
+        pending = [case for case in pending if case not in reused]
+        state.setdefault("reused_completed_cases", {})[name + ":" + cohorts] = len(reused)
+        write_json(out / "workflow.json", state)
         queue_lock = threading.Lock()
         failed = threading.Event()
         waiting_since = time.monotonic()
@@ -171,11 +178,12 @@ def main(root, out, gpu_list):
             subprocess.run([sys.executable, "-u", "-m", "utility_study.register", "--root", str(root), "--out", str(out)], check=True)
         registered = read_json(out / "registration.json")
         verify_sources(registered["source_hashes"])
+        validate_continuation(registered, out)
         validate_gpus(gpus, registered)
         state["registration_sha256"] = sha256(out / "registration.json")
         phase("smoke")
         phase("one_step", "ce")
-        gate = primary_gate(out, state["registration_sha256"])
+        gate = primary_gate(out, state["registration_sha256"], registered)
         state["primary_gate_pass"] = gate["pass"]
         if not gate["pass"]:
             state.update(status="SCIENTIFIC_STOP", phase="primary_gate",

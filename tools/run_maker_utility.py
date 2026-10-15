@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 import threading
 import time
 
@@ -62,8 +63,13 @@ def backup(root, out, durable, copied):
 
 def main(args):
     root, out, durable = Path(args.root).resolve(), Path(args.out).resolve(), Path(args.durable).resolve()
+    package_root = Path(__file__).resolve().parents[1]
+    if not (package_root/'utility_study').is_dir():
+        package_root = root
+    sys.path.insert(0, str(package_root))
+    gpus = [int(x) for x in args.gpus.split(',')]
     out.mkdir(parents=True, exist_ok=True)
-    state = {'status': 'PREPARING', 'pid': os.getpid(), 'gpus': [2, 3],
+    state = {'status': 'PREPARING', 'pid': os.getpid(), 'gpus': gpus,
              'started_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
              'root': str(root), 'out': str(out), 'durable': str(durable)}
     state_file = root/'preparation.json'
@@ -99,19 +105,59 @@ def main(args):
         cpu = dict(os.environ, CUDA_VISIBLE_DEVICES='', OMP_NUM_THREADS='1', MKL_NUM_THREADS='1',
                    OPENBLAS_NUM_THREADS='1', PYTHONDONTWRITEBYTECODE='1')
         test = subprocess.run([python, '-m', 'pytest', '-q', 'tests/test_utility_study.py'],
-                              cwd=root, env=cpu, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+                              cwd=package_root, env=cpu, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         write(root/'cpu_verification.json', {'returncode': test.returncode, 'output': test.stdout,
                                            'status': 'PASS' if test.returncode == 0 else 'FAILED'})
         print(test.stdout, flush=True)
         test.check_returncode()
-        subprocess.run([python, '-u', '-m', 'utility_study.migrate', '--origin-registration',
-                        str(root/'migration/origin_registration.json'), '--transfer-manifest',
-                        str(root/'migration/checkpoint_transfer_manifest.json'), '--root', str(root),
-                        '--out', str(out), '--gpus', '2,3', '--defer-checkpoints'], cwd=root, env=cpu, check=True)
+        if args.resume_from:
+            from utility_study.continuation import amend
+            policy = json.loads(Path(args.resource_policy).read_text()) if args.resource_policy else {}
+            amend(args.resume_from, out, gpus, policy)
+        else:
+            subprocess.run([python, '-u', '-m', 'utility_study.migrate', '--origin-registration',
+                            str(root/'migration/origin_registration.json'), '--transfer-manifest',
+                            str(root/'migration/checkpoint_transfer_manifest.json'), '--root', str(root),
+                            '--out', str(out), '--gpus', args.gpus, '--defer-checkpoints'], cwd=package_root, env=cpu, check=True)
+        if args.resource_preflight:
+            state.update(status='RESOURCE_PREFLIGHT')
+            write(state_file, state)
+            children = []
+            try:
+                for index, gpu in enumerate(gpus):
+                    dataset = ('voc', 'cityscapes')[index % 2]
+                    scratch = out/'resource_preflight'/('gpu'+str(gpu))
+                    scratch.mkdir(parents=True, exist_ok=True)
+                    command = [python, '-u', '-m', 'utility_study.runner', '--registration', str(out/'registration.json'),
+                               '--out', str(scratch), '--dataset', dataset, '--gpu', str(gpu), '--phase', 'smoke',
+                               '--cohorts', 'ce', '--seeds', '1234', '--stages', '20000']
+                    with (scratch/'worker.log').open('a') as log:
+                        child = subprocess.Popen(command, cwd=package_root, stdin=subprocess.DEVNULL,
+                                                 stdout=log, stderr=subprocess.STDOUT)
+                    children.append((gpu, dataset, scratch, child))
+                results = []
+                while children:
+                    for entry in list(children):
+                        gpu, dataset, scratch, child = entry
+                        if child.poll() is None:
+                            continue
+                        if child.returncode:
+                            raise RuntimeError(f'Resource preflight failed on GPU{gpu}: {scratch}/worker.log')
+                        summary = json.loads((scratch/'smoke'/dataset/'summary_ce_seed1234_stage20000.json').read_text())
+                        results.append(summary)
+                        children.remove(entry)
+                    if children:
+                        time.sleep(2)
+                write(out/'resource_preflight.json', {'status': 'PASS', 'gpus': gpus, 'results': results,
+                      'excluded_from_scientific_observations': True, 'keepalive_processes_signalled': 0})
+            finally:
+                for _, _, _, child in children:
+                    if child.poll() is None:
+                        child.terminate()
         state.update(status='RUNNING_DIAGNOSTICS')
         write(state_file, state)
         subprocess.run([python, '-u', '-m', 'utility_study.workflow', '--root', str(root),
-                        '--out', str(out), '--gpus', '2,3'], cwd=root, check=True)
+                        '--out', str(out), '--gpus', args.gpus], cwd=package_root, check=True)
         state.update(status=json.loads((out/'workflow.json').read_text())['status'])
     except Exception as error:
         state.update(status='FAILED', error=repr(error))
@@ -128,4 +174,8 @@ if __name__ == '__main__':
     parser.add_argument('--root', required=True)
     parser.add_argument('--out', required=True)
     parser.add_argument('--durable', required=True)
+    parser.add_argument('--gpus', default='2,3')
+    parser.add_argument('--resume-from', help='Completed Maker observations to preserve byte for byte')
+    parser.add_argument('--resource-policy', help='Explicit shared-GPU admission policy JSON')
+    parser.add_argument('--resource-preflight', action='store_true', help='Excluded smoke jobs on every allocated GPU')
     main(parser.parse_args())

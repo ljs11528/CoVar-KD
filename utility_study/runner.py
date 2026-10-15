@@ -33,7 +33,39 @@ def wait_for_idle_gpu(gpu, timeout=60, poll_seconds=2):
         time.sleep(poll_seconds)
 
 
-def acquire_gpu(gpu, allowed=(0, 2)):
+def authorized_keeper(pid, policy):
+    try:
+        proc = Path("/proc") / str(pid)
+        cwd = str((proc / "cwd").resolve(strict=True))
+        command = (proc / "cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace").strip()
+        return cwd == policy["allowed_process_cwd"] and any(
+            command.startswith(prefix) for prefix in policy["allowed_command_prefixes"])
+    except (OSError, ProcessLookupError):
+        return False
+
+
+def wait_for_shared_gpu(gpu, policy, timeout=60, poll_seconds=2):
+    started, consecutive = time.monotonic(), 0
+    while True:
+        rows = subprocess.check_output([
+            "nvidia-smi", "--query-gpu=index,uuid,memory.free", "--format=csv,noheader,nounits"
+        ], text=True)
+        selected = next([x.strip() for x in row.split(",")] for row in rows.splitlines() if int(row.split(",")[0]) == gpu)
+        apps = subprocess.check_output([
+            "nvidia-smi", "--query-compute-apps=pid,gpu_uuid", "--format=csv,noheader,nounits"
+        ], text=True)
+        pids = [int(row.split(",")[0]) for row in apps.splitlines() if row.split(",")[-1].strip() == selected[1]]
+        accepted = int(selected[2]) >= policy["minimum_free_mib"] and all(authorized_keeper(pid, policy) for pid in pids)
+        consecutive = consecutive + 1 if accepted else 0
+        if consecutive >= 2:
+            print("GPU_SHARED_ADMITTED", gpu, "free_mib", selected[2], "preserved_pids", pids, flush=True)
+            return
+        if time.monotonic() - started >= timeout:
+            raise RuntimeError(f"GPU {gpu} lacks registered free memory or has an unknown process: {selected}, {pids}")
+        time.sleep(poll_seconds)
+
+
+def acquire_gpu(gpu, allowed=(0, 2), resource_policy=None):
     if gpu not in allowed:
         raise ValueError("GPU is outside the immutable registered resource policy")
     locks = []
@@ -42,7 +74,11 @@ def acquire_gpu(gpu, allowed=(0, 2)):
         fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
         locks.append(handle)
     try:
-        wait_for_idle_gpu(gpu)
+        shared = (resource_policy or {}).get("shared_gpus", {}).get(str(gpu))
+        if shared:
+            wait_for_shared_gpu(gpu, shared)
+        else:
+            wait_for_idle_gpu(gpu)
     except Exception:
         for handle in locks:
             handle.close()
@@ -64,6 +100,7 @@ def run(args):
     from .core import (PooledMetrics, Snapshot, ce_loss, evaluation_mode, gradient_norm,
                        isolated_rng, kd_loss, virtual_outcome)
     from .register import CITY_IDS, validate_checkpoint_metadata
+    from .continuation import accepts_record
 
     torch.set_num_threads(1)
     cv2.setNumThreads(1)
@@ -198,7 +235,8 @@ def run(args):
                         path = work / cohort / str(seed) / str(stage) / mode / (condition + ".json")
                         if path.exists():
                             result = read_json(path)
-                            if result["registration_sha256"] != reg_hash or result["horizon"] != horizon or result["status"] not in ("PASS", "DIVERGED"):
+                            if (not accepts_record(path, result, registration, reg_hash, out)
+                                    or result["horizon"] != horizon or result["status"] not in ("PASS", "DIVERGED")):
                                 raise RuntimeError("Existing branch belongs to a different registration")
                             outputs.append(str(path))
                             continue
@@ -329,6 +367,7 @@ def run(args):
                "horizon": horizon, "registration_sha256": reg_hash, "branches": len(outputs),
                "files": outputs, "seconds": time.monotonic() - started,
                "peak_allocated_mib": torch.cuda.max_memory_allocated() / 1024 ** 2,
+               "peak_reserved_mib": torch.cuda.max_memory_reserved() / 1024 ** 2,
                "full_training_runs_launched": 0, "checkpoint_files_written": 0,
                "diverged_branches": [{"cohort": r["cohort"], "seed": r["seed"], "checkpoint": r["checkpoint"],
                                       "mode": r["mode"], "condition": r["condition"], "step": r["failed_virtual_step"]}
@@ -379,7 +418,8 @@ def main():
     parser.add_argument("--seeds", default="", help="Disjoint registered seed shard; paired inputs are unchanged")
     parser.add_argument("--stages", default="", help="Disjoint registered checkpoint shard")
     args = parser.parse_args()
-    locks = acquire_gpu(args.gpu, read_json(args.registration)["allowed_gpus"])
+    registered = read_json(args.registration)
+    locks = acquire_gpu(args.gpu, registered["allowed_gpus"], registered.get("resource_policy"))
     try:
         run(args)
     except Exception as error:
