@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "scope": "CPU engineering checks, not an experiment result",
+  "command": "python -m pytest tests/test_utility_study.py -q",
+  "passed_tests": 14,
+  "python": "3.12.14",
+  "torch": "2.8.0",
+  "test_source_sha256": "fed9f9d73d0b621e323fbb30d2f8f29007d5697213e117cf638c8f303c26511b",
+  "source_hashes": {
+    "__init__.py": "2d93c45ae267a58931b94c1b56bed4c3bee599b4b8f5b01318ae2ee9655c366e",
+    "core.py": "746cb98d5f0dfe6479f077039ad3a4f3774e165eebaad6582cebf271edd2e6ca",
+    "io.py": "21d6e7251ef00a92020b9929dd038e085e10716e556f18d9312d1f1bcb6ec567",
+    "register.py": "c8591634e59c569f2356facda82c3541889dbf7fb23bfbf8f85b079a53427de5",
+    "runner.py": "d211cb569c46b74c9f315e7e61fb6e7bc8fb1ae7b2048d842ef627599627f2f4",
+    "workflow.py": "92b8ff20e71505c9efde57c3eeeeab49a9cb6980e64958a49d6a11edf20eb4df"
+  }
+}

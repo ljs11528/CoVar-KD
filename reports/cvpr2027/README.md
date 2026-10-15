@@ -50,3 +50,17 @@ See [the research protocol](utility_protocol_20261015.md). The first stage is
 restored-state diagnostics on existing checkpoints. Full selector training is
 conditional on that stage; the approved upper bound is 12 fresh 80k trajectories.
 Planned experiments are not reported as completed results.
+
+The new implementation is in [utility_study](../../utility_study/). In the
+original CUDA environment, from the repository root:
+
+```bash
+python -m pytest tests/test_utility_study.py -q
+python -u -m utility_study.workflow --root /path/to/CoVar-KD-3090 --out /path/to/new/P14_Utility --gpus 0,2
+```
+
+The workflow preserves all existing model checkpoints, checks frozen runtime
+hashes against the published source snapshot, and stops before any selector
+full training. Its primary gate and intermediate branch records are explicit
+JSON artifacts in the output directory. Do not start a second controller for
+the same output or share occupied GPUs.

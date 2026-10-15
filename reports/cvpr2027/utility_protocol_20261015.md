@@ -41,6 +41,16 @@ stop selector training and report the protocol dependence; do not attribute the
 historical reversal to metric choice. CE and KD starting trajectories are
 reported separately. Any additional mode-specific result remains secondary.
 
+The execution order is GPU smoke, one-step CE-start diagnostics, and the primary
+gate. Only if it passes do one-step KD-start and 128-step diagnostics follow.
+The smoke uses 8 monitor images, seed1234/20k and three steps; it is excluded from
+formal inference. Formal monitoring uses all 256 images. A 128-step condition
+also records its first step, allowing the two horizons to share the same prefix.
+There is one fixed paired update stream per seed/stage/mode; a stream is not a
+new training seed. The first formal virtual update uses the original poly LR at
+saved_iteration+1. Legacy names denote BN mode and batch size, not a bit-exact
+replay of the older batch2 diagnostic.
+
 ## Stage B: freeze the intervention
 
 For both conditions, train CE+c*masked_KL with Shared teacher/student temperature
