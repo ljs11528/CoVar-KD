@@ -125,6 +125,18 @@ def test_optimizer_rng_bn_resume_matches_continuous_cpu():
     advance(restored,newopt,8)
     assert tree_equal(restored.state_dict(),expected[0]) and tree_equal(newopt.state_dict(),expected[1])
 
+def test_cpu_saved_activations_pin_option_preserves_gradients_and_rng():
+    torch.manual_seed(37)
+    model=torch.nn.Sequential(torch.nn.Linear(3,4),torch.nn.BatchNorm1d(4),torch.nn.Dropout(.2),torch.nn.Linear(4,2))
+    initial=copy.deepcopy(model.state_dict());initial_rng=rng_state();x=torch.randn(8,3);y=torch.randn(8,2)
+    results=[]
+    for pinned in (False,True):
+        model.load_state_dict(initial);model.zero_grad(set_to_none=True);restore_rng(initial_rng)
+        with torch.autograd.graph.save_on_cpu(pin_memory=pinned):loss=(model(x)-y).square().mean()
+        loss.backward()
+        results.append((copy.deepcopy(model.state_dict()),[p.grad.clone() for p in model.parameters()],rng_state()))
+    assert tree_equal(results[0],results[1])
+
 def test_snapshot_restores_training_flags_gradients_and_optimizer():
     m=torch.nn.Sequential(torch.nn.Linear(3,4),torch.nn.BatchNorm1d(4),torch.nn.Dropout(.2));o=torch.optim.SGD(m.parameters(),lr=.01,momentum=.9)
     snap=Snapshot.capture(m,o);m.train();m(torch.randn(8,3)).sum().backward();o.step()

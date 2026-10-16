@@ -12,8 +12,14 @@ read-only concatenated finite check, retaining exactly the same Boolean
 predicate and unmodified gradients. The new registration binds all four
 original16-step states and requires max absolute state error at most1e-4 before
 formal probes. All mathematical settings, streams and workload remain fixed.
-The new execution uses an independent r2 output and does not pool the original
-engineering observations with scientific probe scores.
+Revision r2 measured the concatenated check without materially improving step
+time. Before formal probes, revision r3 additionally enables pinned CPU saved
+activation storage and nonblocking host-to-device restoration, without dtype
+conversion or any change to CUDA arithmetic. It must pass the same four
+16-step comparisons against the original unpinned implementation, using the
+same predeclared1e-4 maximum absolute state tolerance. CPU checks also compare
+the offload options for state, gradients and RNG. Each revision has its own
+registration and output; engineering observations are not scientific probes.
 
 P1 completed 912 scored endpoints, 576 optimizer updates and 72 buffer-only
 forwards. At fixed dropout and original buffers, changing BN forward statistics

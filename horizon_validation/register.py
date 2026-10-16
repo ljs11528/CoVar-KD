@@ -29,7 +29,7 @@ def register(root,out,code,policy):
         precision='FP32; TF32 off; cuDNN benchmark off; full student batches; CPU saved activations',
         allocation='All four cards with 8192 MiB free admission, 6144 MiB allocator cap; preserve all keepalives',
         teacher_inference_batch=2,stage=20000,schedule_total=80000,scoring_memory_cap_mib=6144,update_memory_cap_mib=6144,
-        activation_offload=True,p0_bands=read_json(p15path.parent/'p0_calibration.json')['numerical_bands'],
+        activation_offload=True,activation_pin_memory=True,p0_bands=read_json(p15path.parent/'p0_calibration.json')['numerical_bands'],
         gradient_validation='Read-only concatenated finite check; identical Boolean predicate, no gradient mutation',
         engineering_reference={},
         source_checkpoint_writes=0,full_80k_trajectories=0,forbidden_phases=['p3','p4','80k_full_training'],datasets={})

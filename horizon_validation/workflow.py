@@ -119,7 +119,7 @@ class Queue:
                 equivalence[f'{d}_{source}']=error
                 if error>1e-4:raise RuntimeError('16-step engineering equivalence exceeds predeclared tolerance')
                 del a,b
-        write_json(self.out/'engineering/gradient_check_equivalence.json',dict(status='PASS',max_state_absolute_errors=equivalence,tolerance=1e-4,steps=16,at=now()))
+        write_json(self.out/'engineering/gradient_check_equivalence.json',dict(status='PASS',max_state_absolute_errors=equivalence,tolerance=1e-4,steps=16,activation_pin_memory=self.reg['activation_pin_memory'],at=now()))
         pre=[self.baseline(d,1234,c) for d in DATASETS for c in SOURCES]
         self.state['phase']='native_score_preflight';self.drain(pre)
         # CE baselines share exact P15 source weights/pool and primary reductions.

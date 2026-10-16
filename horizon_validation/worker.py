@@ -88,7 +88,7 @@ def update(reg,out,job,gpu):
                     rb=(torch.get_rng_state().clone(),torch.cuda.get_rng_state().clone())
                     with torch.no_grad():teacher=torch.cat([rt.teacher(x[i:i+2])[0] for i in range(0,len(x),2)])
                     if not torch.equal(rb[0],torch.get_rng_state()) or not torch.equal(rb[1],torch.cuda.get_rng_state()):raise RuntimeError('Teacher consumed RNG')
-                with torch.autograd.graph.save_on_cpu(pin_memory=False):
+                with torch.autograd.graph.save_on_cpu(pin_memory=reg['activation_pin_memory']):
                     logits=model(x)[0];task=ce_loss(logits,y)
                     loss=task if teacher is None else task+job['coefficient']*kd_loss(logits,teacher,y,'shared')
                 if not bool(torch.isfinite(loss)):raise FloatingPointError('Nonfinite objective')
