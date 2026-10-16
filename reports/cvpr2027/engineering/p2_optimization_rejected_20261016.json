@@ -1,0 +1,194 @@
+{
+  "status": "REJECTED_ENGINEERING_OPTIMIZATION",
+  "at": "2026-10-16T07:55:55.239944+00:00",
+  "tolerance": 0.0001,
+  "rows": [
+    {
+      "job": "bench_voc_ce",
+      "max_abs_error": 0.59521484375,
+      "largest_differences": [
+        {
+          "key": "pretrained.layer0.bn.running_var",
+          "max_abs_error": 0.59521484375
+        },
+        {
+          "key": "pretrained.layer4.expand_conv.bn.running_var",
+          "max_abs_error": 0.0037136077880859375
+        },
+        {
+          "key": "pretrained.layer2.linear_conv.bn.running_var",
+          "max_abs_error": 0.0021210908889770508
+        },
+        {
+          "key": "pretrained.layer3.expand_conv.bn.running_var",
+          "max_abs_error": 0.0017962455749511719
+        },
+        {
+          "key": "pretrained.layer7.expand_conv.bn.running_var",
+          "max_abs_error": 0.001728057861328125
+        },
+        {
+          "key": "pretrained.layer7.linear_conv.bn.running_var",
+          "max_abs_error": 0.0009775161743164062
+        },
+        {
+          "key": "pretrained.layer0.bn.running_mean",
+          "max_abs_error": 0.0008977353572845459
+        },
+        {
+          "key": "pretrained.layer6.expand_conv.bn.running_var",
+          "max_abs_error": 0.0008292198181152344
+        }
+      ],
+      "original_endpoint_sha256": "335c6bb3668417059e500e537f767fd9e5137d083657e81f91d5a3c6215fd075",
+      "optimized_endpoint_sha256": "16d1add1f73e94a24cf26aeddf65a7de048c25ff3a950e69bb09cc028e941ad5"
+    },
+    {
+      "job": "bench_voc_shared_c1",
+      "max_abs_error": 0.28125,
+      "largest_differences": [
+        {
+          "key": "pretrained.layer0.bn.running_var",
+          "max_abs_error": 0.28125
+        },
+        {
+          "key": "pretrained.layer4.expand_conv.bn.running_var",
+          "max_abs_error": 0.000396728515625
+        },
+        {
+          "key": "pretrained.layer0.bn.running_mean",
+          "max_abs_error": 0.00036872178316116333
+        },
+        {
+          "key": "pretrained.layer2.linear_conv.bn.running_var",
+          "max_abs_error": 0.0003590583801269531
+        },
+        {
+          "key": "pretrained.layer7.linear_conv.bn.running_var",
+          "max_abs_error": 0.0002193450927734375
+        },
+        {
+          "key": "pretrained.layer3.expand_conv.bn.running_var",
+          "max_abs_error": 0.0001964569091796875
+        },
+        {
+          "key": "pretrained.layer7.expand_conv.bn.running_var",
+          "max_abs_error": 0.00017261505126953125
+        },
+        {
+          "key": "pretrained.layer5.expand_conv.bn.running_var",
+          "max_abs_error": 0.00016498565673828125
+        }
+      ],
+      "original_endpoint_sha256": "531406dea1a824241510e621c5c85e9e0238b9d4e0e6073e5392404d074a76ec",
+      "optimized_endpoint_sha256": "97b319c3588d55d8a7f485b5c94043be2d0de1de9ca934215c5bab0eee581d98"
+    },
+    {
+      "job": "bench_cityscapes_ce",
+      "max_abs_error": 0.085205078125,
+      "largest_differences": [
+        {
+          "key": "pretrained.layer0.bn.running_var",
+          "max_abs_error": 0.085205078125
+        },
+        {
+          "key": "pretrained.layer0.bn.running_mean",
+          "max_abs_error": 0.0029740333557128906
+        },
+        {
+          "key": "pretrained.layer4.expand_conv.bn.running_var",
+          "max_abs_error": 0.000453948974609375
+        },
+        {
+          "key": "pretrained.layer7.expand_conv.bn.running_var",
+          "max_abs_error": 0.0002231597900390625
+        },
+        {
+          "key": "pretrained.layer2.linear_conv.bn.running_var",
+          "max_abs_error": 0.00019741058349609375
+        },
+        {
+          "key": "pretrained.layer3.expand_conv.bn.running_var",
+          "max_abs_error": 0.0001583099365234375
+        },
+        {
+          "key": "pretrained.layer2.depthwise_conv.bn.running_var",
+          "max_abs_error": 0.00010764598846435547
+        },
+        {
+          "key": "pretrained.layer5.expand_conv.bn.running_var",
+          "max_abs_error": 0.00010752677917480469
+        }
+      ],
+      "original_endpoint_sha256": "0883231b4a01630cdda73127b0fdc8dcb4373e8cfad46914fb9eddeb43682158",
+      "optimized_endpoint_sha256": "7a2e3f49838e89f814d1acec9ef59473004a5e7cac0f956609c70af237d2c1da"
+    },
+    {
+      "job": "bench_cityscapes_shared_c1",
+      "max_abs_error": 0.15020751953125,
+      "largest_differences": [
+        {
+          "key": "pretrained.layer0.bn.running_var",
+          "max_abs_error": 0.15020751953125
+        },
+        {
+          "key": "pretrained.layer0.bn.running_mean",
+          "max_abs_error": 0.009294509887695312
+        },
+        {
+          "key": "pretrained.layer4.expand_conv.bn.running_var",
+          "max_abs_error": 0.0023326873779296875
+        },
+        {
+          "key": "pretrained.layer2.linear_conv.bn.running_var",
+          "max_abs_error": 0.001739501953125
+        },
+        {
+          "key": "pretrained.layer3.expand_conv.bn.running_var",
+          "max_abs_error": 0.0008339881896972656
+        },
+        {
+          "key": "pretrained.layer7.expand_conv.bn.running_var",
+          "max_abs_error": 0.0002574920654296875
+        },
+        {
+          "key": "pretrained.layer1.linear_conv.bn.running_var",
+          "max_abs_error": 0.00022602081298828125
+        },
+        {
+          "key": "pretrained.layer11.expand_conv.bn.running_var",
+          "max_abs_error": 0.0001983642578125
+        }
+      ],
+      "original_endpoint_sha256": "49267cbc196457ff455413562bbc630d312395b24b1002d42c8996416d0a4c8c",
+      "optimized_endpoint_sha256": "b57a434da8ca73b9a285f28186ca5e64305d4fe0b95ef9192df9a9f98e7139b4"
+    }
+  ],
+  "formal_probe_scores": 0,
+  "decision": "Reject optimization; restore original frozen registration and arithmetic. Do not relax the engineering tolerance.",
+  "causality": "Cross-execution state differences do not isolate a cause; no claim that the finite predicate changes mathematical gradients.",
+  "engineering_revision": "P2_HorizonValidation_20261016_r2",
+  "rejected_code_commit": "1029a007187424fcc394bf77184dfac2914de945",
+  "rejected_registration_sha256": "28d8a1c4fa98c64469f65a0d426654807fabd031e2b6d30b0999a5f290123c98",
+  "rejected_cpu_tests": 60,
+  "original_frozen_registration_sha256": "73a7158498e403520b964865ae7e3150ba357cf3afd23c40249d93f2fa6156f8",
+  "restored_code_commit": "c322cc294d8f83d3837d5cdfd29bc364373501bb",
+  "original_resume_cpu": {
+    "status": "PASS",
+    "returncode": 0,
+    "output": "...........................................................              [100%]\n59 passed in 1.12s\n",
+    "location": "Maker CPU; CUDA disabled",
+    "at": "2026-10-16T07:54:20.343458+00:00"
+  },
+  "proposed_pinned_storage": {
+    "code_commit": "1ad376a",
+    "cpu_tests_passed": 61,
+    "gpu_deployed": false,
+    "disposition": "Not deployed; abandon optional optimization and resume the unchanged original runtime"
+  },
+  "original_resume_at_utc": "2026-10-16T07:54:20.345951+00:00",
+  "keepalive_processes_signalled": 0,
+  "source_checkpoint_writes": 0,
+  "old_server_model_commands": 0,
+  "evidence_source": "/tmp/liujinshi-covar-kd-20261015/reports/P2_HorizonValidation_20261016_r2/engineering/equivalence_failure_audit.json"
+}

@@ -7,7 +7,7 @@ import pytest
 import torch
 
 from horizon_validation.contracts import stream,tasks,counts,decisions,best_candidate,gate
-from horizon_validation.worker import save,load_checked,publish_endpoint,finite_gradients
+from horizon_validation.worker import save,load_checked,publish_endpoint
 from utility_study.core import Snapshot,rng_state,restore_rng,tree_equal
 
 def fixtures():
@@ -98,16 +98,6 @@ def test_resource_retry_preserves_prior_endpoint_and_model_bytes(tmp_path):
     assert load_checked(records[0])['student']['w'].item()==1.
     assert load_checked(records[1])['student']['w'].item()==2.
 
-def test_batched_gradient_validation_is_exact_and_read_only():
-    model=torch.nn.Sequential(torch.nn.Linear(3,4),torch.nn.Linear(4,2))
-    for value in (0.,1e30,float('inf'),float('nan')):
-        for p in model.parameters():p.grad=torch.full_like(p,2.)
-        next(model.parameters()).grad.flatten()[0]=value
-        before=[p.grad.clone() for p in model.parameters()]
-        expected=all(bool(torch.isfinite(p.grad).all()) for p in model.parameters())
-        assert finite_gradients(model)==expected
-        for a,p in zip(before,model.parameters()):assert torch.equal(torch.isnan(a),torch.isnan(p.grad)) and torch.equal(torch.nan_to_num(a),torch.nan_to_num(p.grad))
-
 def test_optimizer_rng_bn_resume_matches_continuous_cpu():
     torch.manual_seed(42)
     model=torch.nn.Sequential(torch.nn.Linear(3,4),torch.nn.BatchNorm1d(4),torch.nn.Dropout(.2),torch.nn.Linear(4,2))
@@ -124,18 +114,6 @@ def test_optimizer_rng_bn_resume_matches_continuous_cpu():
     restored.load_state_dict(saved[0]);newopt.load_state_dict(saved[1]);restore_rng(random_state)
     advance(restored,newopt,8)
     assert tree_equal(restored.state_dict(),expected[0]) and tree_equal(newopt.state_dict(),expected[1])
-
-def test_cpu_saved_activations_pin_option_preserves_gradients_and_rng():
-    torch.manual_seed(37)
-    model=torch.nn.Sequential(torch.nn.Linear(3,4),torch.nn.BatchNorm1d(4),torch.nn.Dropout(.2),torch.nn.Linear(4,2))
-    initial=copy.deepcopy(model.state_dict());initial_rng=rng_state();x=torch.randn(8,3);y=torch.randn(8,2)
-    results=[]
-    for pinned in (False,True):
-        model.load_state_dict(initial);model.zero_grad(set_to_none=True);restore_rng(initial_rng)
-        with torch.autograd.graph.save_on_cpu(pin_memory=pinned):loss=(model(x)-y).square().mean()
-        loss.backward()
-        results.append((copy.deepcopy(model.state_dict()),[p.grad.clone() for p in model.parameters()],rng_state()))
-    assert tree_equal(results[0],results[1])
 
 def test_snapshot_restores_training_flags_gradients_and_optimizer():
     m=torch.nn.Sequential(torch.nn.Linear(3,4),torch.nn.BatchNorm1d(4),torch.nn.Dropout(.2));o=torch.optim.SGD(m.parameters(),lr=.01,momentum=.9)

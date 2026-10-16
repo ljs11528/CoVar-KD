@@ -106,20 +106,6 @@ class Queue:
             benches.append(dict(id=f'bench_{d}_{source}',kind='update',phase='engineering',dataset=d,seed=1234,source=source,coefficient=1,
                 stream=0,mode='train',steps=16,horizons=[16],repeat=0,pinned_gpu=g,priority=0))
         self.drain(benches)
-        import torch
-        equivalence={}
-        for d in DATASETS:
-            for source in SOURCES:
-                old=self.reg['engineering_reference'][f'{d}_{source}']
-                new=read_json(self.out/'bundles'/f'bench_{d}_{source}.json')['endpoints'][0]
-                if old['source_state_sha256']!=new['source_state_sha256']:raise RuntimeError('Engineering source states differ')
-                a=torch.load(old['state_file'],map_location='cpu',weights_only=False)['student']
-                b=torch.load(new['state_file'],map_location='cpu',weights_only=False)['student']
-                error=max(float((a[k].double()-b[k].double()).abs().max()) for k in a)
-                equivalence[f'{d}_{source}']=error
-                if error>1e-4:raise RuntimeError('16-step engineering equivalence exceeds predeclared tolerance')
-                del a,b
-        write_json(self.out/'engineering/gradient_check_equivalence.json',dict(status='PASS',max_state_absolute_errors=equivalence,tolerance=1e-4,steps=16,activation_pin_memory=self.reg['activation_pin_memory'],at=now()))
         pre=[self.baseline(d,1234,c) for d in DATASETS for c in SOURCES]
         self.state['phase']='native_score_preflight';self.drain(pre)
         # CE baselines share exact P15 source weights/pool and primary reductions.
@@ -130,7 +116,7 @@ class Queue:
             b=read_json(parent/'baselines'/d/'1234_20000_B.json')['scores']
             errors[d]={m:abs(a[m]-b[m]) for m in ('pixel_ce','class_ce','soft_miou','hard_miou')}
             if any(v>1e-5 for v in errors[d].values()):raise RuntimeError('P2 baseline scoring differs from frozen P15')
-        write_json(self.out/'preflight.json',dict(status='PASS',gpus=[0,1,2,3],full_batch=True,steps_per_benchmark=16,primary_baseline_errors=errors,gradient_check_equivalence=equivalence,at=now()))
+        write_json(self.out/'preflight.json',dict(status='PASS',gpus=[0,1,2,3],full_batch=True,steps_per_benchmark=16,primary_baseline_errors=errors,at=now()))
         self.estimate()
 
     def estimate(self):

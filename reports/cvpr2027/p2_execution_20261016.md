@@ -5,31 +5,12 @@ its mechanism prerequisite, using all four Maker RTX 4090 cards where the
 existing keepalive programs leave capacity. P3, P4 and 80k training are not
 launched by this execution. P14's failed gate remains part of the record.
 
-Engineering revision: before any formal P2 probe score, the initial queue was
-preserved and superseded. Its four 16-step benchmarks took about16--17 seconds
-per update. Replace hundreds of per-parameter CUDA finite reductions with one
-read-only concatenated finite check, retaining exactly the same Boolean
-predicate and unmodified gradients. The new registration binds all four
-original16-step states and requires max absolute state error at most1e-4 before
-formal probes. All mathematical settings, streams and workload remain fixed.
-Revision r2 measured the concatenated check without materially improving step
-time. Before formal probes, revision r3 additionally enables pinned CPU saved
-activation storage and nonblocking host-to-device restoration, without dtype
-conversion or any change to CUDA arithmetic. It must pass the same four
-16-step comparisons against the original unpinned implementation, using the
-same predeclared1e-4 maximum absolute state tolerance. CPU checks also compare
-the offload options for state, gradients and RNG. Each revision has its own
-registration and output; engineering observations are not scientific probes.
-
 P1 completed 912 scored endpoints, 576 optimizer updates and 72 buffer-only
 forwards. At fixed dropout and original buffers, changing BN forward statistics
 reversed c4-c1 pixel-CE ordering in 15/18 VOC and 14/18 Cityscapes paired flows.
 The seed-mean BN intervention had the same direction in all three training
 seeds of each dataset. Buffer transplantation alone caused no resolved ordering
-flips. The full counts include the four predesignated discovery cases; excluding
-them, fixed-dropout-off confirmation comparisons reversed13/16 on each dataset,
-with the same seed-mean intervention direction in all three seeds. Reducing the
-original global learning rate to 0.1 reversed all six VOC
+flips. Reducing the original global learning rate to 0.1 reversed all six VOC
 eval comparisons in the seed1234 control. These observations support testing
 state and horizon matched diagnostic validity. They do not establish that a
 local signal predicts subsequent validation performance.
