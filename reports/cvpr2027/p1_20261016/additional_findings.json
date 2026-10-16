@@ -1,0 +1,154 @@
+{
+  "voc": {
+    "train_ce_vs_soft_disjoint_choices": 3,
+    "choice_pairs": 18,
+    "controls": {
+      "lr_0.1:eval": {
+        "n": 6,
+        "mean_before": 0.15045636355207392,
+        "mean_after": -0.0016766129316858845,
+        "before_positive": 6,
+        "after_positive": 0,
+        "after_negative": 6
+      },
+      "lr_0.1:train": {
+        "n": 6,
+        "mean_before": -0.0007409834690280739,
+        "mean_after": -9.679495969209158e-05,
+        "before_positive": 0,
+        "after_positive": 0,
+        "after_negative": 6
+      },
+      "zero_momentum:eval": {
+        "n": 6,
+        "mean_before": 0.15045636355207392,
+        "mean_after": 0.1511796106116709,
+        "before_positive": 6,
+        "after_positive": 5,
+        "after_negative": 0
+      },
+      "teacher_c1_minus_ce:eval": {
+        "n": 6,
+        "mean_before": 0.005776840818518046,
+        "mean_after": 0.02821765835047901,
+        "before_positive": 3,
+        "after_positive": 6,
+        "after_negative": 0
+      },
+      "shared_norm_minus_ce:eval": {
+        "n": 6,
+        "mean_before": 0.005776840818518046,
+        "mean_after": 0.018797095829147212,
+        "before_positive": 3,
+        "after_positive": 4,
+        "after_negative": 2
+      },
+      "teacher_c1_minus_ce:train": {
+        "n": 6,
+        "mean_before": -0.0002930457908814123,
+        "mean_after": -6.04923273733506e-06,
+        "before_positive": 0,
+        "after_positive": 3,
+        "after_negative": 2
+      },
+      "shared_norm_minus_ce:train": {
+        "n": 6,
+        "mean_before": -0.0002930457908814123,
+        "mean_after": -0.0004037452766217156,
+        "before_positive": 0,
+        "after_positive": 0,
+        "after_negative": 6
+      }
+    },
+    "directional": {
+      "eval": {
+        "n": 6,
+        "negative_slope_positive_finite_contrast": 4,
+        "slope_mean": 0.0010255514389099472,
+        "curvature_mean": 0.007572444435229725
+      },
+      "train": {
+        "n": 6,
+        "negative_slope_positive_finite_contrast": 0,
+        "slope_mean": -0.00029856602478432287,
+        "curvature_mean": 2.0924991734246518e-05
+      }
+    }
+  },
+  "cityscapes": {
+    "train_ce_vs_soft_disjoint_choices": 2,
+    "choice_pairs": 18,
+    "controls": {
+      "lr_0.1:eval": {
+        "n": 6,
+        "mean_before": 0.08368167091975336,
+        "mean_after": 0.00012294114720511756,
+        "before_positive": 6,
+        "after_positive": 4,
+        "after_negative": 2
+      },
+      "lr_0.1:train": {
+        "n": 6,
+        "mean_before": -0.0002146250645608319,
+        "mean_after": -2.62828591860928e-05,
+        "before_positive": 1,
+        "after_positive": 0,
+        "after_negative": 4
+      },
+      "zero_momentum:eval": {
+        "n": 6,
+        "mean_before": 0.08368167091975336,
+        "mean_after": 0.08259294953716606,
+        "before_positive": 6,
+        "after_positive": 6,
+        "after_negative": 0
+      },
+      "teacher_c1_minus_ce:eval": {
+        "n": 6,
+        "mean_before": 0.00436680820548789,
+        "mean_after": 0.01361443418033057,
+        "before_positive": 6,
+        "after_positive": 6,
+        "after_negative": 0
+      },
+      "shared_norm_minus_ce:eval": {
+        "n": 6,
+        "mean_before": 0.00436680820548789,
+        "mean_after": 0.013060797185025943,
+        "before_positive": 6,
+        "after_positive": 6,
+        "after_negative": 0
+      },
+      "teacher_c1_minus_ce:train": {
+        "n": 6,
+        "mean_before": -8.246036089672633e-05,
+        "mean_after": -8.508724617694215e-05,
+        "before_positive": 1,
+        "after_positive": 1,
+        "after_negative": 5
+      },
+      "shared_norm_minus_ce:train": {
+        "n": 6,
+        "mean_before": -8.246036089672633e-05,
+        "mean_after": -0.0001401030355480115,
+        "before_positive": 1,
+        "after_positive": 1,
+        "after_negative": 5
+      }
+    },
+    "directional": {
+      "eval": {
+        "n": 6,
+        "negative_slope_positive_finite_contrast": 2,
+        "slope_mean": 0.002461000864942761,
+        "curvature_mean": 0.003183200215597463
+      },
+      "train": {
+        "n": 6,
+        "negative_slope_positive_finite_contrast": 0,
+        "slope_mean": -7.803134375310161e-05,
+        "curvature_mean": 5.246171654501215e-06
+      }
+    }
+  }
+}

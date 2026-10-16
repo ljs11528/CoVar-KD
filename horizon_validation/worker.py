@@ -28,6 +28,15 @@ def load_checked(endpoint):
     if sha256(endpoint['state_file'])!=endpoint['state_file_sha256']:raise RuntimeError('Endpoint bytes changed')
     return torch.load(endpoint['state_file'],map_location='cpu',weights_only=False)
 
+def publish_endpoint(out,endpoint):
+    """Keep any published resource-attempt endpoint and its immutable state."""
+    path=out/'endpoints'/endpoint['task']/f"h{endpoint['horizon']}.json"
+    if path.exists():
+        old=read_json(path)
+        if old['registration_sha256']!=endpoint['registration_sha256'] or old['job_sha256']!=endpoint['job_sha256']:raise RuntimeError('Endpoint history provenance changed')
+        write_json(out/'endpoint_history'/endpoint['task']/(f"h{endpoint['horizon']}_"+str(time.time_ns())+'.json'),old)
+    write_json(path,endpoint)
+
 def update(reg,out,job,gpu):
     import torch
     from utility_study.core import Snapshot,isolated_rng,ce_loss,kd_loss,_clone_cpu,rng_state,restore_rng
@@ -59,7 +68,7 @@ def update(reg,out,job,gpu):
             if e['registration_sha256']!=registration_sha or e['job_sha256']!=job_sha:raise RuntimeError('Old endpoint provenance differs')
             if sha256(e['state_file'])!=e['state_file_sha256']:raise RuntimeError('Old endpoint changed')
             endpoints.append(e)
-    started=time.monotonic()
+    started=time.monotonic();attempt_id=str(os.getpid())+'_'+str(time.time_ns())
     try:
         set_update_mode(model,'batch' if job['mode']=='train' else 'running',job['mode']=='train')
         for step in range(resume_step+1,job['steps']+1):
@@ -86,12 +95,12 @@ def update(reg,out,job,gpu):
                 if any(v.is_floating_point() and not bool(torch.isfinite(v).all()) for v in state.values()):raise FloatingPointError('Nonfinite state')
                 counters={k:int(v)-int(baseline.model[k]) for k,v in state.items() if k.endswith('num_batches_tracked')}
                 if any(v!=(step if job['mode']=='train' else 0) for v in counters.values()):raise RuntimeError('BN counter differs from rollout horizon')
-                path=out/'states'/job['id']/f'h{step}.pth'
+                path=out/'states'/job['id']/attempt_id/f'h{step}.pth'
                 e={k:job[k] for k in ('dataset','seed','source','coefficient','stream','mode','repeat','phase')}
                 e.update(id=job['id']+f'__h{step}',task=job['id'],horizon=step,state_file=str(path),state_file_sha256=save(path,{'student':state}),
                     registration_sha256=registration_sha,job_sha256=job_sha,update_gpu=gpu,
                     source_state_sha256=source_hash,**split_hashes(state,parameter_names))
-                write_json(out/'endpoints'/job['id']/f'h{step}.json',e)
+                publish_endpoint(out,e)
                 endpoints=[old for old in endpoints if old['horizon']!=step]+[e];del state
             if job['phase']=='fork' and step%250==0:
                 path=out/'checkpoints'/job['id']/f'step_{step:04d}.pth'

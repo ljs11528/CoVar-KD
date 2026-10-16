@@ -7,7 +7,7 @@ import pytest
 import torch
 
 from horizon_validation.contracts import stream,tasks,counts,decisions,best_candidate,gate
-from horizon_validation.worker import save,load_checked
+from horizon_validation.worker import save,load_checked,publish_endpoint
 from utility_study.core import Snapshot,rng_state,restore_rng,tree_equal
 
 def fixtures():
@@ -86,6 +86,17 @@ def test_serialized_checkpoint_tamper_detection(tmp_path):
     assert torch.equal(load_checked({'state_file':str(path),'state_file_sha256':digest})['student']['w'],torch.ones(2))
     path.write_bytes(path.read_bytes()+b'x')
     with pytest.raises(RuntimeError):load_checked({'state_file':str(path),'state_file_sha256':digest})
+
+def test_resource_retry_preserves_prior_endpoint_and_model_bytes(tmp_path):
+    records=[]
+    for i in (1,2):
+        path=tmp_path/'states'/str(i)/'h1.pth'
+        e=dict(task='probe_same',horizon=1,registration_sha256='r',job_sha256='j',state_file=str(path),state_file_sha256=save(path,{'student':{'w':torch.tensor([float(i)])}}))
+        publish_endpoint(tmp_path,e);records.append(e)
+    history=list((tmp_path/'endpoint_history'/'probe_same').glob('*.json'))
+    assert len(history)==1 and json.loads(history[0].read_text())==records[0]
+    assert load_checked(records[0])['student']['w'].item()==1.
+    assert load_checked(records[1])['student']['w'].item()==2.
 
 def test_optimizer_rng_bn_resume_matches_continuous_cpu():
     torch.manual_seed(42)
