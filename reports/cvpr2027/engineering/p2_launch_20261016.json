@@ -1,0 +1,365 @@
+{
+  "status": "VERIFIED_P2_RUNNING",
+  "snapshot_at_utc": "2026-10-16T07:58:04.510913+00:00",
+  "server": "Maker new four-card server",
+  "output": "/tmp/liujinshi-covar-kd-20261015/reports/P2_HorizonValidation_20261016",
+  "scientific_phase": "probes",
+  "formal_probe_started_at_utc": "2026-10-16T07:57:35.130608+00:00",
+  "resume": {
+    "status": "ORIGINAL_FROZEN_P2_RESUMED",
+    "pid": 1085088,
+    "command": [
+      "/tmp/liujinshi-covar-kd-20261015/env/bin/python",
+      "-u",
+      "-c",
+      "from horizon_validation.workflow import Queue; Queue('/tmp/liujinshi-covar-kd-20261015/reports/P2_HorizonValidation_20261016','/root/maker/makerdata/liujinshi/covar-kd/experiments/P2_HorizonValidation_20261016').run()"
+    ],
+    "output": "/tmp/liujinshi-covar-kd-20261015/reports/P2_HorizonValidation_20261016",
+    "code": "/tmp/liujinshi-covar-kd-20261015/code_P2_28a8e9d19fff",
+    "code_commit": "c322cc294d8f83d3837d5cdfd29bc364373501bb",
+    "registration_sha256": "73a7158498e403520b964865ae7e3150ba357cf3afd23c40249d93f2fa6156f8",
+    "at": "2026-10-16T07:54:20.345951+00:00",
+    "cpu": {
+      "status": "PASS",
+      "returncode": 0,
+      "output": "...........................................................              [100%]\n59 passed in 1.12s\n",
+      "location": "Maker CPU; CUDA disabled",
+      "at": "2026-10-16T07:54:20.343458+00:00"
+    },
+    "reason": "Reject r2 optimization after its predeclared engineering equivalence failure; use original registered unmodified arithmetic and saved activations.",
+    "keepalive_processes_signalled": 0,
+    "old_server_model_commands": 0,
+    "source_files_verified": true,
+    "source_checkpoint_writes": 0
+  },
+  "original_source_bundle_sha256": "28a8e9d19fff2f8aef61a1df3c4a3c9c93b10174823f39836f63d40d87de93d6",
+  "original_cpu_verification": {
+    "status": "PASS",
+    "returncode": 0,
+    "output": "...........................................................              [100%]\n59 passed in 2.06s\n",
+    "source_bundle_sha256": "28a8e9d19fff2f8aef61a1df3c4a3c9c93b10174823f39836f63d40d87de93d6",
+    "code_commit": "c322cc294d8f83d3837d5cdfd29bc364373501bb",
+    "at": "2026-10-16T07:29:33.227157+00:00",
+    "location": "Maker CPU; CUDA disabled"
+  },
+  "preflight": {
+    "status": "PASS",
+    "gpus": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "full_batch": true,
+    "steps_per_benchmark": 16,
+    "primary_baseline_errors": {
+      "voc": {
+        "pixel_ce": 0.0,
+        "class_ce": 0.0,
+        "soft_miou": 0.0,
+        "hard_miou": 0.0
+      },
+      "cityscapes": {
+        "pixel_ce": 0.0,
+        "class_ce": 0.0,
+        "soft_miou": 0.0,
+        "hard_miou": 0.0
+      }
+    },
+    "at": "2026-10-16T07:57:34.387202+00:00"
+  },
+  "engineering_benchmarks": [
+    {
+      "status": "PASS",
+      "job": "bench_cityscapes_ce",
+      "phase": "engineering",
+      "dataset": "cityscapes",
+      "endpoints": [
+        {
+          "dataset": "cityscapes",
+          "seed": 1234,
+          "source": "ce",
+          "coefficient": 1,
+          "stream": 0,
+          "mode": "train",
+          "repeat": 0,
+          "phase": "engineering",
+          "id": "bench_cityscapes_ce__h16",
+          "task": "bench_cityscapes_ce",
+          "horizon": 16,
+          "state_file": "/tmp/liujinshi-covar-kd-20261015/reports/P2_HorizonValidation_20261016/states/bench_cityscapes_ce/1072722_1792135796118392543/h16.pth",
+          "state_file_sha256": "0883231b4a01630cdda73127b0fdc8dcb4373e8cfad46914fb9eddeb43682158",
+          "registration_sha256": "73a7158498e403520b964865ae7e3150ba357cf3afd23c40249d93f2fa6156f8",
+          "job_sha256": "37a92c1401b1e5f9cb5af53ca98f74f03d2fd132580bcc4c61e5ef6246f54371",
+          "update_gpu": 1,
+          "source_state_sha256": "4ed0ddcee397d4d125b099d1e41a602c598842eae4fca29aa5f7b66f777965ce",
+          "parameters_sha256": "5fa7f2caeb6fc9fca22ec1cf64e691b49fe938b5ba328f18f54fd30f077915c5",
+          "buffers_sha256": "54030a915e40c0c9205501fdb651f5e80d81438854d9d15bcc8b400e88651ef0",
+          "full_state_sha256": "10a2c75e37dd5afa9ad76f1ccbfd0fb5d33dcf388de2e3044cf398e7799f1219"
+        }
+      ],
+      "steps": 16,
+      "resumed_from": 0,
+      "seconds": 268.4005678072572,
+      "step_seconds": {
+        "mean": 16.679456933867186,
+        "steady_median": 16.986581960693,
+        "measured_steps": 16
+      },
+      "peak_allocated_mib": 2539.8076171875,
+      "peak_reserved_mib": 5244.0,
+      "complete_state_restored": true,
+      "source_checkpoint_writes": 0,
+      "gpu": 1
+    },
+    {
+      "status": "PASS",
+      "job": "bench_voc_shared_c1",
+      "phase": "engineering",
+      "dataset": "voc",
+      "endpoints": [
+        {
+          "dataset": "voc",
+          "seed": 1234,
+          "source": "shared_c1",
+          "coefficient": 1,
+          "stream": 0,
+          "mode": "train",
+          "repeat": 0,
+          "phase": "engineering",
+          "id": "bench_voc_shared_c1__h16",
+          "task": "bench_voc_shared_c1",
+          "horizon": 16,
+          "state_file": "/tmp/liujinshi-covar-kd-20261015/reports/P2_HorizonValidation_20261016/states/bench_voc_shared_c1/1072723_1792135788140072639/h16.pth",
+          "state_file_sha256": "531406dea1a824241510e621c5c85e9e0238b9d4e0e6073e5392404d074a76ec",
+          "registration_sha256": "73a7158498e403520b964865ae7e3150ba357cf3afd23c40249d93f2fa6156f8",
+          "job_sha256": "745d019d6a45b9ae89cce8d97405599ddc0b33a78363cc1a55ed4accc0907867",
+          "update_gpu": 2,
+          "source_state_sha256": "207f499fec7633c651dad8f1230b003fa1095f8919a451883461f05ef74bf8e3",
+          "parameters_sha256": "ffdc13c1661bb027961158b50f9e1c416b082f26736f6aa260dabf5e9e74ec22",
+          "buffers_sha256": "a9d38cefe70e3876cc3f2ad0fbb46fffb66435db1119cafd81a91c31ae55105a",
+          "full_state_sha256": "9e26b24c3d338dc5e25f0e1c14f78646437d9ea2f2ed5e7d0b62104aaaf35620"
+        }
+      ],
+      "steps": 16,
+      "resumed_from": 0,
+      "seconds": 251.86318683996797,
+      "step_seconds": {
+        "mean": 15.634841383667663,
+        "steady_median": 15.437103366479278,
+        "measured_steps": 16
+      },
+      "peak_allocated_mib": 1705.87109375,
+      "peak_reserved_mib": 3798.0,
+      "complete_state_restored": true,
+      "source_checkpoint_writes": 0,
+      "gpu": 2
+    },
+    {
+      "status": "PASS",
+      "job": "bench_voc_ce",
+      "phase": "engineering",
+      "dataset": "voc",
+      "endpoints": [
+        {
+          "dataset": "voc",
+          "seed": 1234,
+          "source": "ce",
+          "coefficient": 1,
+          "stream": 0,
+          "mode": "train",
+          "repeat": 0,
+          "phase": "engineering",
+          "id": "bench_voc_ce__h16",
+          "task": "bench_voc_ce",
+          "horizon": 16,
+          "state_file": "/tmp/liujinshi-covar-kd-20261015/reports/P2_HorizonValidation_20261016/states/bench_voc_ce/1073272_1792135834597480590/h16.pth",
+          "state_file_sha256": "335c6bb3668417059e500e537f767fd9e5137d083657e81f91d5a3c6215fd075",
+          "registration_sha256": "73a7158498e403520b964865ae7e3150ba357cf3afd23c40249d93f2fa6156f8",
+          "job_sha256": "7b6b53ecf9e25d0d9a9eeb471d03fe6299cc80cd98a5fda49146be9d91d18d32",
+          "update_gpu": 0,
+          "source_state_sha256": "53f5a78059a7db07ba99394aa58bc983ab1eab7f16f4413908f8400d5a8c4442",
+          "parameters_sha256": "7deb902d93049a2a2c6cfa140e25be91f53539b02f04c77134dc25b93bc2528e",
+          "buffers_sha256": "ce3876d1042808d19c128815d876b43c6b49ed1da5fb7a732e4f8759e6c61297",
+          "full_state_sha256": "a4cccdbf57c75af6cf5285b9143ca226e5a3995db6af09518bc5fcc5f74a1ee4"
+        }
+      ],
+      "steps": 16,
+      "resumed_from": 0,
+      "seconds": 268.8736416660249,
+      "step_seconds": {
+        "mean": 16.694619406480342,
+        "steady_median": 16.44140937551856,
+        "measured_steps": 16
+      },
+      "peak_allocated_mib": 1705.87109375,
+      "peak_reserved_mib": 3798.0,
+      "complete_state_restored": true,
+      "source_checkpoint_writes": 0,
+      "gpu": 0
+    },
+    {
+      "status": "PASS",
+      "job": "bench_cityscapes_shared_c1",
+      "phase": "engineering",
+      "dataset": "cityscapes",
+      "endpoints": [
+        {
+          "dataset": "cityscapes",
+          "seed": 1234,
+          "source": "shared_c1",
+          "coefficient": 1,
+          "stream": 0,
+          "mode": "train",
+          "repeat": 0,
+          "phase": "engineering",
+          "id": "bench_cityscapes_shared_c1__h16",
+          "task": "bench_cityscapes_shared_c1",
+          "horizon": 16,
+          "state_file": "/tmp/liujinshi-covar-kd-20261015/reports/P2_HorizonValidation_20261016/states/bench_cityscapes_shared_c1/1072724_1792135796015915921/h16.pth",
+          "state_file_sha256": "49267cbc196457ff455413562bbc630d312395b24b1002d42c8996416d0a4c8c",
+          "registration_sha256": "73a7158498e403520b964865ae7e3150ba357cf3afd23c40249d93f2fa6156f8",
+          "job_sha256": "ac9ac48740df899802f3a81b55b793eb0ebc10a9661fdac0076d5954febda75a",
+          "update_gpu": 3,
+          "source_state_sha256": "d57b9861ba604a4388976ac1382900a637a9f5b1011a9a8eda9d143a48a32192",
+          "parameters_sha256": "84c494afb6d33bbffe6859edae528b416d9dc37268308d53290961ee471426b0",
+          "buffers_sha256": "adb5ad8186101341b931b96b3da76e6bfa9782a8f70ee883d9fa522ebbf1a24c",
+          "full_state_sha256": "7ef00611895fd16001ab78a6cc0e0b92e700e1f3b5229711c2fb782f5f236b86"
+        }
+      ],
+      "steps": 16,
+      "resumed_from": 0,
+      "seconds": 265.73635172843933,
+      "step_seconds": {
+        "mean": 16.507718476932496,
+        "steady_median": 16.364467408508062,
+        "measured_steps": 16
+      },
+      "peak_allocated_mib": 2539.8076171875,
+      "peak_reserved_mib": 5244.0,
+      "complete_state_restored": true,
+      "source_checkpoint_writes": 0,
+      "gpu": 3
+    }
+  ],
+  "actual_four_card_workers": {
+    "0": {
+      "job": "probe_cityscapes_1234_ce_c0_flow0_eval",
+      "kind": "update",
+      "pid": 1086759,
+      "started_at": "2026-10-16T07:57:35.130608+00:00",
+      "live_own_worker": true,
+      "progress": null,
+      "log_tail": "8 images are loaded!\n500 images are loaded!\n2975 images are loaded!\n"
+    },
+    "1": {
+      "job": "probe_cityscapes_1234_ce_c0_flow0_train",
+      "kind": "update",
+      "pid": 1086760,
+      "started_at": "2026-10-16T07:57:35.134126+00:00",
+      "live_own_worker": true,
+      "progress": null,
+      "log_tail": "8 images are loaded!\n500 images are loaded!\n2975 images are loaded!\n"
+    },
+    "3": {
+      "job": "probe_cityscapes_1234_ce_c0_flow1_train",
+      "kind": "update",
+      "pid": 1086762,
+      "started_at": "2026-10-16T07:57:35.141028+00:00",
+      "live_own_worker": true,
+      "progress": null,
+      "log_tail": "8 images are loaded!\n500 images are loaded!\n2975 images are loaded!\n"
+    },
+    "2": {
+      "job": "probe_cityscapes_1234_ce_c0_flow2_eval",
+      "kind": "update",
+      "pid": 1087289,
+      "started_at": "2026-10-16T07:58:03.243620+00:00",
+      "live_own_worker": true,
+      "progress": null,
+      "log_tail": ""
+    }
+  },
+  "formal_completed_update_bundles": 1,
+  "probe_scores_completed": 0,
+  "validation_scores_completed": 0,
+  "measured_eta": {
+    "at": "2026-10-16T07:57:34.387821+00:00",
+    "step_seconds": {
+      "voc": 15.939256370998919,
+      "cityscapes": 16.675524684600532
+    },
+    "monitor_256_image_seconds": {
+      "voc": 18.119119483977556,
+      "cityscapes": 171.16393124870956
+    },
+    "training_gpu_hours": 410.1308717741631,
+    "monitoring_gpu_hours": 14.511700556172679,
+    "validation_gpu_hours_upper_estimate": 2.184308003059341,
+    "ideal_four_card_hours": 106.70672008334878,
+    "planning_wall_hours_range": [
+      128.04806410001854,
+      181.40142414169293
+    ],
+    "limitation": "Benchmark extrapolation; capacity/keepalive competition and archive latency vary. Official val has not been scored before frozen choices."
+  },
+  "stage_budget": {
+    "probes_and_monitor_wall_hours_range": [
+      29.54842853230238,
+      41.86027375409504
+    ],
+    "forks_and_validation_wall_hours_range": [
+      98.49963556771615,
+      139.5411503875979
+    ],
+    "total_wall_hours_range": [
+      128.04806410001854,
+      181.40142414169293
+    ],
+    "estimated_finish_beijing_range": [
+      "2026-10-22T00:00:27.417962+08:00",
+      "2026-10-24T05:21:39.514112+08:00"
+    ],
+    "interpretation": "Prospective extrapolation from shared-card full-batch update and B-score benchmarks; official validation scores remain unseen; capacity and archive latency vary."
+  },
+  "durable_backup": {
+    "status": "PASS",
+    "at": "20261016T075721364782Z",
+    "index": "/root/maker/makerdata/liujinshi/covar-kd/experiments/P2_HorizonValidation_20261016/indexes/20261016T075721364782Z.json",
+    "index_sha256": "ecc862fda1b3dbcab3d4a6b9297441f187e37a52988a00c2fba2fae7c40cf829",
+    "snapshot": "/root/maker/makerdata/liujinshi/covar-kd/experiments/P2_HorizonValidation_20261016/snapshots/390d2919b00c69052081a018da3842c3fd8575275120ea3890b2a2c194784aed.tar.gz",
+    "snapshot_sha256": "390d2919b00c69052081a018da3842c3fd8575275120ea3890b2a2c194784aed",
+    "scientific_json_count": 66,
+    "baseline_sample_objects": 0
+  },
+  "workload": {
+    "source_states": 12,
+    "train_128_step_rollouts_including_replays": 144,
+    "eval_one_step_branches": 108,
+    "probe_endpoint_scores": 540,
+    "source_baselines": 12,
+    "actual_2k_forks": 36,
+    "official_full_validation_scores": 36,
+    "probe_optimizer_updates": 18540,
+    "fork_optimizer_updates": 72000,
+    "total_optimizer_updates": 90540
+  },
+  "active_execution": {
+    "code_commit": "c322cc294d8f83d3837d5cdfd29bc364373501bb",
+    "optimization_disposition": "r2 rejected before formal probe scores; original unmodified registration resumed",
+    "registration_sha256": "73a7158498e403520b964865ae7e3150ba357cf3afd23c40249d93f2fa6156f8",
+    "all_source_files_hash_verified": true,
+    "full_student_batch": true,
+    "precision": "FP32; TF32 off",
+    "activation_offload": "Original unpinned CPU saved activations",
+    "per_worker_allocator_cap_mib": 6144
+  },
+  "keepalive_processes_signalled": 0,
+  "old_server_model_commands": 0,
+  "source_checkpoint_writes": 0,
+  "full_80k_trajectories": 0,
+  "scientific_limits": "P1 supports the mechanism prerequisite. P2 predictive and regret outcomes are not yet available. Probe choices must be frozen before official validation. No P3/P4 or full 80k training is launched.",
+  "historical_resource_attempts": {
+    "RESOURCE_RETRY": 1
+  }
+}

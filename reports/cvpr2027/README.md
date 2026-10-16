@@ -1,6 +1,6 @@
 # Controlled dense-prediction distillation experiments
 
-Snapshot: 2026-10-15. The current research question is when local distillation
+Snapshot: 2026-10-16. The current research question is when local distillation
 diagnostics can guide subsequent dense-prediction training.
 
 The Maker cohort completed all 324 formal CE-start one-step branches. Its
@@ -10,22 +10,44 @@ before KD-start diagnostics, 128-step rollouts or selector training. The
 records, training-state effects, metric rankings and gradient controls. The
 [revised follow-up plan](followup_protocol_20261015.md) prioritizes causal controls
 and same-checkpoint continuation tests before allocating full training. That
-plan's P0/P1 queue is now running on Maker, with P1 conditional on P0 numerical
-calibration. This is an execution update, not evidence that a new selector
-works. All future model experiments must run on Maker; the old server is a
-read-only checkpoint source.
+plan's P0 calibration passed and P1 completed all 912 scored endpoints on Maker.
+All future model experiments must run on Maker; the old server is a read-only
+checkpoint source.
 
 The [P15 execution contract](p15_execution_20261015.md) freezes the concrete
 P0/P1 implementation and memory settings. The
 [verified P15 launch receipt](engineering/p15_launch_20261015.json) records
 47 passing CPU checks, full-batch GPU preflights for both datasets, four-card
 scoring agreement and then-live formal P0 workers on all four cards. P0 has
-72 primary one-step replays and 16 separate cross-card scores. If its registered
-numerical-resolution gate passes, the detached queue proceeds to the 36 fixed
-P1 cases (912 scored endpoints), starting with the four discovery cases.
-P2 and full training remain outside this launch. The scientific follow-up
+72 primary one-step replays and 16 separate cross-card scores, all passed.
+The 36 fixed P1 cases then completed, starting with four discovery cases.
+The [complete P1 analysis](p1_20261016/analysis_zh.md) reports the intervention
+results, seed and stage variation, finite-step controls and evidence limits.
+Excluding the predesignated discovery cases, the fixed-dropout-off BN-forward
+intervention reversed coefficient ordering in 13/16 paired flows on each
+dataset. These are nested flows within three training seeds. P1 supports
+testing subsequent predictive validity; it does not establish a useful selector.
+The scientific follow-up
 document is preserved as the original prelaunch plan; its historical
-`PLAN_NOT_LAUNCHED` status is superseded for P0/P1 by this launch receipt.
+`PLAN_NOT_LAUNCHED` status is superseded for P0/P1 by the verified execution.
+
+The user subsequently authorized P2. Its [frozen execution contract](p2_execution_20261016.md)
+uses 12 original 20k CE/KD source states, 540 probe endpoints at horizons1/16/128,
+and 36 independent 2k continuations, totaling 90,540 optimizer updates. All
+choices are frozen and durably verified before official validation is scored.
+The [verified P2 launch receipt](engineering/p2_launch_20261016.json) records the
+original frozen implementation, four-card preflights, measured duration budget
+and four live formal workers at 15:58 Beijing time. Both CE source baseline
+scores match P15 exactly on all four primary metrics. Measured full-batch step
+time is 15.94s for VOC and 16.68s for Cityscapes. The planning budget is about
+30--42 hours for probes and scoring, then another98--140 hours for the 2k
+continuations and validation, totaling128--181 hours under shared-card capacity.
+A proposed finite-check optimization failed its
+predeclared state-equivalence check before formal probe scores and was rejected;
+the unmodified original registration was resumed. Its failure remains in the
+[engineering record](engineering/p2_optimization_rejected_20261016.json).
+P2 will report same-checkpoint selection regret and stop after its registered
+allocation gate. P3/P4 and full 80k training require a later execution.
 
 Existing keepalive programs now occupy memory on all four GPUs and remain
 running. Full student batches are preserved by storing backward activations
@@ -33,8 +55,8 @@ on CPU; the model still computes in FP32 on CUDA. Each worker caps its
 PyTorch allocation at 6144 MiB, and independent tasks use all four cards when
 the registered admission checks pass. Results and registration are copied
 to the large persistent volume as SHA-verified snapshots. The receipt is
-a timestamped launch snapshot; live progress and final P0/P1 outcomes belong
-to the execution output, not to this snapshot.
+a timestamped launch snapshot; live P2 progress belongs to the execution output.
+The completed P0/P1 outcomes are documented in the complete P1 analysis above.
 
 ## Existing evidence
 
