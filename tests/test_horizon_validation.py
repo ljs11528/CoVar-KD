@@ -7,7 +7,7 @@ import pytest
 import torch
 
 from horizon_validation.contracts import stream,tasks,counts,decisions,best_candidate,gate
-from horizon_validation.worker import save,load_checked,publish_endpoint
+from horizon_validation.worker import save,load_checked,publish_endpoint,finite_gradients
 from utility_study.core import Snapshot,rng_state,restore_rng,tree_equal
 
 def fixtures():
@@ -97,6 +97,16 @@ def test_resource_retry_preserves_prior_endpoint_and_model_bytes(tmp_path):
     assert len(history)==1 and json.loads(history[0].read_text())==records[0]
     assert load_checked(records[0])['student']['w'].item()==1.
     assert load_checked(records[1])['student']['w'].item()==2.
+
+def test_batched_gradient_validation_is_exact_and_read_only():
+    model=torch.nn.Sequential(torch.nn.Linear(3,4),torch.nn.Linear(4,2))
+    for value in (0.,1e30,float('inf'),float('nan')):
+        for p in model.parameters():p.grad=torch.full_like(p,2.)
+        next(model.parameters()).grad.flatten()[0]=value
+        before=[p.grad.clone() for p in model.parameters()]
+        expected=all(bool(torch.isfinite(p.grad).all()) for p in model.parameters())
+        assert finite_gradients(model)==expected
+        for a,p in zip(before,model.parameters()):assert torch.equal(torch.isnan(a),torch.isnan(p.grad)) and torch.equal(torch.nan_to_num(a),torch.nan_to_num(p.grad))
 
 def test_optimizer_rng_bn_resume_matches_continuous_cpu():
     torch.manual_seed(42)

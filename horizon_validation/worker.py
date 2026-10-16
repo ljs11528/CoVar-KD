@@ -37,6 +37,13 @@ def publish_endpoint(out,endpoint):
         write_json(out/'endpoint_history'/endpoint['task']/(f"h{endpoint['horizon']}_"+str(time.time_ns())+'.json'),old)
     write_json(path,endpoint)
 
+def finite_gradients(model):
+    """One read-only concatenated check avoids hundreds of tiny CUDA reductions."""
+    import torch
+    gradients=[p.grad.detach().reshape(-1) for p in model.parameters() if p.grad is not None]
+    if not gradients:raise RuntimeError('No student gradients')
+    return bool(torch.isfinite(torch.cat(gradients)).all())
+
 def update(reg,out,job,gpu):
     import torch
     from utility_study.core import Snapshot,isolated_rng,ce_loss,kd_loss,_clone_cpu,rng_state,restore_rng
@@ -86,7 +93,7 @@ def update(reg,out,job,gpu):
                     loss=task if teacher is None else task+job['coefficient']*kd_loss(logits,teacher,y,'shared')
                 if not bool(torch.isfinite(loss)):raise FloatingPointError('Nonfinite objective')
                 loss.backward()
-                if not bool(torch.stack([torch.isfinite(p.grad).all() for p in model.parameters() if p.grad is not None]).all()):raise FloatingPointError('Nonfinite gradient')
+                if not finite_gradients(model):raise FloatingPointError('Nonfinite gradient')
                 opt.step();torch.cuda.synchronize()
                 loss_value=float(loss.detach());del x,y,teacher,logits,task,loss
             elapsed=time.monotonic()-tick;times.append(elapsed)

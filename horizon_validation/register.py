@@ -30,6 +30,8 @@ def register(root,out,code,policy):
         allocation='All four cards with 8192 MiB free admission, 6144 MiB allocator cap; preserve all keepalives',
         teacher_inference_batch=2,stage=20000,schedule_total=80000,scoring_memory_cap_mib=6144,update_memory_cap_mib=6144,
         activation_offload=True,p0_bands=read_json(p15path.parent/'p0_calibration.json')['numerical_bands'],
+        gradient_validation='Read-only concatenated finite check; identical Boolean predicate, no gradient mutation',
+        engineering_reference={},
         source_checkpoint_writes=0,full_80k_trajectories=0,forbidden_phases=['p3','p4','80k_full_training'],datasets={})
     for d in DATASETS:
         cfg=copy.deepcopy(p15['datasets'][d]);old=parent['datasets'][d]
@@ -64,5 +66,14 @@ def register(root,out,code,policy):
                 if sha256(item['img'])!=item['image_sha256'] or sha256(item['label'])!=item['label_sha256']:raise ValueError('Pool bytes changed')
         reg['datasets'][d]=cfg
         print('REGISTERED_P2_DATASET',d,'SOURCES=6','VAL='+str(len(val)),flush=True)
+    reference=root/'reports/P2_HorizonValidation_20261016'
+    if sha256(reference/'registration.json')!='73a7158498e403520b964865ae7e3150ba357cf3afd23c40249d93f2fa6156f8':raise ValueError('Unexpected engineering reference')
+    for d in DATASETS:
+        for source in SOURCES:
+            r=read_json(reference/'bundles'/f'bench_{d}_{source}.json')
+            if r['status']!='PASS':raise ValueError('Incomplete engineering reference')
+            e=r['endpoints'][0]
+            if sha256(e['state_file'])!=e['state_file_sha256']:raise ValueError('Reference state changed')
+            reg['engineering_reference'][f'{d}_{source}']=e
     write_json(out/'registration.json',reg)
     return reg
